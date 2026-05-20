@@ -43,7 +43,7 @@ the subclass first, then on `httpStatus` for retry decisions.
 npm install @getflute/sdk
 
 # Pin to exact patch for reproducible CI:
-npm install @getflute/sdk@0.2.0 --save-exact
+npm install @getflute/sdk@0.2.1 --save-exact
 ```
 
 Engines: Node `>= 20.19.0`. The SDK ships ESM and CJS builds with full
