@@ -47,9 +47,11 @@ describe('Construction', () => {
     expect(flute.environment).toBe('sandbox');
     // Regression guard: the v2 REST API endpoints are served at the API host
     // root, NOT under `/isv-api/`. See comment in `src/environment.ts`.
-    expect(flute.baseUrls.isvApi).toBe('https://api.uat.arise.risewithaurora.com');
-    expect(flute.baseUrls.payIntApi).toBe('https://api.uat.arise.risewithaurora.com/pay-int-api');
-    expect(flute.baseUrls.oauth).toBe('https://oauth.uat.arise.risewithaurora.com');
+    // Note the irregular OAuth ordering: `sandbox.oauth.api` (sandbox prefix
+    // before `oauth`), NOT `oauth.sandbox.api`.
+    expect(flute.baseUrls.isvApi).toBe('https://sandbox.api.flute.com');
+    expect(flute.baseUrls.payIntApi).toBe('https://sandbox.api.flute.com/pay-int-api');
+    expect(flute.baseUrls.oauth).toBe('https://sandbox.oauth.api.flute.com');
   });
 
   it('uses the production hosts when environment is production', () => {
@@ -59,9 +61,19 @@ describe('Construction', () => {
       environment: Environment.Production,
     });
     expect(flute.environment).toBe('production');
-    expect(flute.baseUrls.isvApi).toBe('https://api.arise.risewithaurora.com');
-    expect(flute.baseUrls.payIntApi).toBe('https://api.arise.risewithaurora.com/pay-int-api');
-    expect(flute.baseUrls.oauth).toBe('https://oauth.arise.risewithaurora.com');
+    expect(flute.baseUrls.isvApi).toBe('https://api.flute.com');
+    expect(flute.baseUrls.payIntApi).toBe('https://api.flute.com/pay-int-api');
+    expect(flute.baseUrls.oauth).toBe('https://oauth.api.flute.com');
+  });
+
+  it('never falls back to a decommissioned arise / UAT host (regression: #endpoints)', () => {
+    for (const environment of [Environment.Sandbox, Environment.Production]) {
+      const flute = new Flute({ clientId: 'cid', clientSecret: 'shh', environment });
+      for (const url of Object.values(flute.baseUrls)) {
+        expect(url).toContain('flute.com');
+        expect(url).not.toMatch(/arise|risewithaurora|\buat\b/);
+      }
+    }
   });
 
   it('honours per-environment URL overrides', () => {

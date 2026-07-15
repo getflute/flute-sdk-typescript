@@ -254,10 +254,10 @@ minutes; override with `{ toleranceSeconds }` if needed (set to
 
 ## Environments
 
-| Environment     | Core REST API                              | Pay-Int API                                            | OAuth                                        |
-| --------------- | ------------------------------------------ | ------------------------------------------------------ | -------------------------------------------- |
-| `sandbox` (UAT) | `https://api.uat.arise.risewithaurora.com` | `https://api.uat.arise.risewithaurora.com/pay-int-api` | `https://oauth.uat.arise.risewithaurora.com` |
-| `production`    | `https://api.arise.risewithaurora.com`     | `https://api.arise.risewithaurora.com/pay-int-api`     | `https://oauth.arise.risewithaurora.com`     |
+| Environment  | Core REST API                   | Pay-Int API                                 | OAuth                                 |
+| ------------ | ------------------------------- | ------------------------------------------- | ------------------------------------- |
+| `sandbox`    | `https://sandbox.api.flute.com` | `https://sandbox.api.flute.com/pay-int-api` | `https://sandbox.oauth.api.flute.com` |
+| `production` | `https://api.flute.com`         | `https://api.flute.com/pay-int-api`         | `https://oauth.api.flute.com`         |
 
 Sandbox and production credentials are **separate**. Provisioning
 each pair is the operator's responsibility; the agent never creates
