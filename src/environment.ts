@@ -7,7 +7,7 @@ import type { FluteEnvironment } from './client.js';
  * The public surface targets three prefixes:
  *
  * - `isvApi` — the v2 REST API segment (transactions, settings) hosted
- *   under `${apiHost}` (e.g. `api.uat.arise.risewithaurora.com`).
+ *   under `${apiHost}` (e.g. `api.flute.com`, `sandbox.api.flute.com`).
  * - `payIntApi` — the Payment Integrations API (payment sessions),
  *   which still lives under v1 paths at the time this SDK ships.
  * - `oauth` — the Identity Service base URL. The token endpoint is
@@ -31,15 +31,15 @@ export interface EnvironmentEndpoints {
 // host is a dedicated `oauth.*` subdomain (the token endpoint is
 // `/oauth2/token`).
 const SANDBOX_DEFAULTS: EnvironmentEndpoints = {
-  isvApi: 'https://api.uat.arise.risewithaurora.com',
-  payIntApi: 'https://api.uat.arise.risewithaurora.com/pay-int-api',
-  oauth: 'https://oauth.uat.arise.risewithaurora.com',
+  isvApi: 'https://sandbox.api.flute.com',
+  payIntApi: 'https://sandbox.api.flute.com/pay-int-api',
+  oauth: 'https://sandbox.oauth.api.flute.com',
 };
 
 const PRODUCTION_DEFAULTS: EnvironmentEndpoints = {
-  isvApi: 'https://api.arise.risewithaurora.com',
-  payIntApi: 'https://api.arise.risewithaurora.com/pay-int-api',
-  oauth: 'https://oauth.arise.risewithaurora.com',
+  isvApi: 'https://api.flute.com',
+  payIntApi: 'https://api.flute.com/pay-int-api',
+  oauth: 'https://oauth.api.flute.com',
 };
 
 /**
