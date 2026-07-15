@@ -13,12 +13,14 @@ token exchange (`POST ${oauth}/oauth2/token`).
 
 Both environments now default to the official `flute.com` hosts:
 
-- **Sandbox** — `https://sandbox.api.flute.com`,
+- **Sandbox**: `https://sandbox.api.flute.com`,
   `https://sandbox.api.flute.com/pay-int-api`,
-  OAuth `https://sandbox.oauth.api.flute.com`
-- **Production** — `https://api.flute.com`,
+  OAuth base `https://sandbox.oauth.api.flute.com`
+  (resolved token endpoint `https://sandbox.oauth.api.flute.com/oauth2/token`)
+- **Production**: `https://api.flute.com`,
   `https://api.flute.com/pay-int-api`,
-  OAuth `https://oauth.api.flute.com`
+  OAuth base `https://oauth.api.flute.com`
+  (resolved token endpoint `https://oauth.api.flute.com/oauth2/token`)
 
 ⚠️ **This also changes the default _production_ endpoints.** If you depended on
 the previous `*.arise.risewithaurora.com` production defaults, review before

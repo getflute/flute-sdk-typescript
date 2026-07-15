@@ -441,15 +441,20 @@ const flute = new Flute({
 
 ## Environments
 
-The SDK ships with two named environments. The token endpoint is
-always `${oauth}/oauth2/token`. HTTPS is enforced on every base URL
-except `localhost` / `127.0.0.1` / `[::1]`, which the SDK accepts over
-plain HTTP for local development.
+The SDK ships with two named environments. Every value below is a base
+URL; the SDK appends the relevant path itself. For OAuth, the token
+endpoint is always `${oauth}/oauth2/token`. HTTPS is enforced on every
+base URL except `localhost` / `127.0.0.1` / `[::1]`, which the SDK
+accepts over plain HTTP for local development.
 
-| Environment  | Core REST API                   | Pay-Int API                                 | OAuth                                 |
+| Environment  | Core REST API                   | Pay-Int API                                 | OAuth (base)                          |
 | ------------ | ------------------------------- | ------------------------------------------- | ------------------------------------- |
 | `sandbox`    | `https://sandbox.api.flute.com` | `https://sandbox.api.flute.com/pay-int-api` | `https://sandbox.oauth.api.flute.com` |
 | `production` | `https://api.flute.com`         | `https://api.flute.com/pay-int-api`         | `https://oauth.api.flute.com`         |
+
+The resolved OAuth token endpoints are
+`https://sandbox.oauth.api.flute.com/oauth2/token` (sandbox) and
+`https://oauth.api.flute.com/oauth2/token` (production).
 
 ### When to use which
 
