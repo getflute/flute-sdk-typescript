@@ -5,6 +5,11 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
+  schedule:
+    # Daily at 06:00 UTC. Drives the `spec-drift` job only — see its comment
+    # for why that check is not part of the per-PR matrix.
+    - cron: '0 6 * * *'
+  workflow_dispatch:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -39,6 +44,8 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      # Closes the `spec → types` half of the contract chain. The other half
+      # (`backend → spec`) is the `spec-drift` job below.
       - name: Verify generated types are in sync with the OpenAPI spec
         run: |
           npm run openapi:types
@@ -64,3 +71,101 @@ jobs:
           name: coverage
           path: coverage/
           retention-days: 14
+
+  # Closes the `backend → spec` half of the contract chain.
+  #
+  # `verify` proves the generated types match the committed spec. It cannot
+  # prove the committed spec still matches the backend — and it didn't: the
+  # spec went ~3 months stale, during which `calculate-amount` changed from GET
+  # to POST, `CaptureRequestDto.amount` became `captureAmount`, list responses
+  # moved from `total` to `pageInfo`, and a strict-JSON-binding change upstream
+  # turned every stale field name into a hard 400.
+  #
+  # Deliberately NOT part of the PR matrix: a backend deploy would then redden
+  # unrelated pull requests, which is somebody else's change and not something
+  # the PR author can fix. Scheduled + manual instead, and it files an issue so
+  # a red scheduled run cannot quietly rot.
+  spec-drift:
+    name: OpenAPI spec drift (backend → spec)
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Setup Node 22
+        uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      # The URL is a secret rather than a literal: this repository is public and
+      # the swagger document is served from a non-production host that is not
+      # part of the published surface. Forks without the secret skip cleanly
+      # instead of failing.
+      - name: Compare the committed spec against the live document
+        id: drift
+        env:
+          ISV_API_SPEC_URL: ${{ secrets.ISV_API_SPEC_URL }}
+        run: |
+          set -o pipefail
+          if [ -z "${ISV_API_SPEC_URL}" ]; then
+            echo "::warning::ISV_API_SPEC_URL is not configured; drift check skipped."
+            echo 'status=skipped' >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          if npm run --silent openapi:check 2>&1 | tee drift.log; then
+            echo 'status=clean' >> "$GITHUB_OUTPUT"
+          else
+            echo 'status=drift' >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Summarise
+        run: |
+          {
+            echo '### OpenAPI spec drift'
+            echo
+            echo "Result: **${{ steps.drift.outputs.status }}**"
+            if [ -f drift.log ]; then
+              echo
+              echo '```'
+              cat drift.log
+              echo '```'
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: File or update the drift issue
+        if: steps.drift.outputs.status == 'drift'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          TITLE='OpenAPI spec drift: openapi/isv-api-v2.json is behind the backend'
+          BODY=$(
+            printf 'The committed spec no longer matches the live ISV API v2 document.\n\n'
+            printf 'Run: %s\n\n```\n' "$RUN_URL"
+            cat drift.log
+            printf '\n```\n\nTo resolve:\n\n'
+            printf '1. `ISV_API_SPEC_URL=<url> npm run openapi:fetch`\n'
+            printf '2. `npm run openapi:types`\n'
+            printf '3. Fix the resulting compile errors — they are the contract changes.\n'
+            printf '4. Commit the spec and the generated types together.\n'
+          )
+          EXISTING=$(gh issue list --state open --search "$TITLE in:title" --json number --jq '.[0].number // empty')
+          if [ -n "$EXISTING" ]; then
+            gh issue comment "$EXISTING" --body "$BODY"
+            echo "Commented on existing issue #$EXISTING."
+          else
+            gh issue create --title "$TITLE" --body "$BODY"
+          fi
+
+      - name: Fail on drift
+        if: steps.drift.outputs.status == 'drift'
+        run: |
+          echo '::error::Committed OpenAPI spec is behind the backend. See the issue filed by this run.'
+          exit 1

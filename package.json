@@ -64,6 +64,8 @@
     "verify": "npm run lint && npm run typecheck && npm run test && npm run build",
     "release": "changeset publish",
     "version-packages": "changeset version",
+    "openapi:fetch": "node scripts/fetch-openapi-spec.mjs",
+    "openapi:check": "node scripts/fetch-openapi-spec.mjs --check",
     "openapi:types": "openapi-typescript ./openapi/isv-api-v2.json -o ./src/types/generated/isv-api-v2.d.ts",
     "prepare": "husky"
   },

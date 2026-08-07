@@ -64,5 +64,27 @@ export default tseslint.config(
       '@typescript-eslint/no-floating-promises': 'off',
     },
   },
+  // Build tooling, not shipped code. These are plain ESM scripts that sit
+  // outside `tsconfig.json`, so the type-aware rules have no program to
+  // resolve them against; they also print to stdout by design.
+  {
+    files: ['scripts/**/*.mjs'],
+    extends: [tseslint.configs.disableTypeChecked],
+    languageOptions: {
+      globals: {
+        console: 'readonly',
+        fetch: 'readonly',
+        process: 'readonly',
+        AbortSignal: 'readonly',
+      },
+      parserOptions: {
+        projectService: false,
+        project: null,
+      },
+    },
+    rules: {
+      'no-console': 'off',
+    },
+  },
   prettier,
 );

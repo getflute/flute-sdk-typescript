@@ -15,7 +15,10 @@ export interface paths {
         get: {
             parameters: {
                 query?: {
-                    /** @description Optional merchant identifier to filter API keys. If not provided, returns keys for all merchants belonging to the affiliate */
+                    /**
+                     * @description Optional merchant identifier to filter API keys. If not provided, returns keys for all merchants belonging to the affiliate
+                     * @example 8db2ff47-b143-4adb-ab58-a4a017504db2
+                     */
                     merchantId?: string;
                 };
                 header?: never;
@@ -34,14 +37,14 @@ export interface paths {
                          * @example {
                          *       "apiKeys": [
                          *         {
-                         *           "clientId": "f1e2d3c4-b5a6-7890-abcd-ef1234567890",
-                         *           "merchantId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
-                         *           "name": "Production API Key"
+                         *           "apiKeyName": "Production API Key",
+                         *           "clientId": "80bb3659-9a62-470b-92f5-d8c5d16d47b0",
+                         *           "merchantId": "886e77d0-e86f-4710-92f6-e2b84b29bd9e"
                          *         },
                          *         {
-                         *           "clientId": "d4c3b2a1-9876-5432-abcd-ef1234567890",
-                         *           "merchantId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
-                         *           "name": "Staging API Key"
+                         *           "apiKeyName": "Staging API Key",
+                         *           "clientId": "7f191870-7de7-495a-9037-fabeefbdd089",
+                         *           "merchantId": "9040dc53-46e3-4816-b3b3-c83d885c2b07"
                          *         }
                          *       ]
                          *     }
@@ -57,25 +60,56 @@ export interface paths {
                     content: {
                         /**
                          * @example {
+                         *       "cause": "One or more fields failed validation rules.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "One or more validation errors occurred.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "V0000",
                          *       "errors": {
                          *         "Email": [
                          *           "'Email' is not a valid email address."
                          *         ]
                          *       },
-                         *       "details": "One or more validation errors occurred.",
-                         *       "statusCode": 400,
-                         *       "source": "<Service>",
                          *       "exceptionType": "ValidationException",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "entityId": null,
-                         *       "errorCode": "V0000",
-                         *       "title": "Validation failed",
-                         *       "cause": "One or more fields failed validation rules.",
                          *       "resolution": "Review the errors and correct the invalid fields.",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
+                         *       "source": "<Service>",
+                         *       "statusCode": 400,
+                         *       "title": "Validation failed"
                          *     }
                          */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.ValidationExceptionExample"];
+                        "application/json": components["schemas"]["ValidationExceptionExample"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Forbidden */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "You do not have permission to access this resource.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "You do not have permission to access this resource.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "F0000",
+                         *       "exceptionType": "ForbiddenException",
+                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 403,
+                         *       "title": "Access forbidden"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ForbiddenExceptionExample"];
                     };
                 };
                 /** @description Not Found */
@@ -86,20 +120,44 @@ export interface paths {
                     content: {
                         /**
                          * @example {
-                         *       "details": "Entity with ID b31fbe9f-eebb-45ce-9cae-92265389f47f does not exist or has been deleted",
-                         *       "statusCode": 404,
-                         *       "source": "<Service>",
-                         *       "exceptionType": "NotFoundException",
+                         *       "cause": "The requested resource does not exist or has been deleted.",
                          *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Entity with ID b31fbe9f-eebb-45ce-9cae-92265389f47f does not exist or has been deleted",
+                         *       "documentationUrl": "https://developer.flute.com/",
                          *       "entityId": "b31fbe9f-eebb-45ce-9cae-92265389f47f",
                          *       "errorCode": "N0000",
-                         *       "title": "Resource not found",
-                         *       "cause": "The requested resource does not exist or has been deleted.",
+                         *       "exceptionType": "NotFoundException",
                          *       "resolution": "Verify the resource ID is correct or retrieve a list of available resources.",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
+                         *       "source": "<Service>",
+                         *       "statusCode": 404,
+                         *       "title": "Resource not found"
                          *     }
                          */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.NotFoundExceptionExample"];
+                        "application/json": components["schemas"]["NotFoundExceptionExample"];
+                    };
+                };
+                /** @description Too Many Requests */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "Too many requests sent in a short period.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Too many requests sent in a short period.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "R0000",
+                         *       "exceptionType": "RateLimitExceededException",
+                         *       "resolution": "Wait before retrying the request. Check the Retry-After header for more information.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 429,
+                         *       "title": "Rate limit exceeded"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["RateLimitExceededExceptionExample"];
                     };
                 };
                 /** @description Internal Server Error */
@@ -110,20 +168,20 @@ export interface paths {
                     content: {
                         /**
                          * @example {
-                         *       "details": "An unexpected error occurred while processing the request.",
-                         *       "statusCode": 500,
-                         *       "source": "<Service>",
-                         *       "exceptionType": "IntegrationException",
+                         *       "cause": "An unexpected error occurred while processing the request",
                          *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "An unexpected error occurred while processing the request.",
+                         *       "documentationUrl": "https://developer.flute.com/",
                          *       "entityId": null,
                          *       "errorCode": "I0000",
-                         *       "title": "Internal server error",
-                         *       "cause": "An unexpected error occurred while processing the request",
+                         *       "exceptionType": "IntegrationException",
                          *       "resolution": "Please contact support with the correlation ID if the issue persists",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
+                         *       "source": "<Service>",
+                         *       "statusCode": 500,
+                         *       "title": "Internal server error"
                          *     }
                          */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.InternalExceptionExample"];
+                        "application/json": components["schemas"]["InternalExceptionExample"];
                     };
                 };
             };
@@ -152,8 +210,8 @@ export interface paths {
                 content: {
                     /**
                      * @example {
-                     *       "merchantId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
-                     *       "name": "Production API Key"
+                     *       "apiKeyName": "Production API Key",
+                     *       "merchantId": "0b627967-4204-4d7a-aa13-e6eb0d58f543"
                      *     }
                      */
                     "application/json": components["schemas"]["CreateApiKeyRequestDto"];
@@ -168,8 +226,8 @@ export interface paths {
                     content: {
                         /**
                          * @example {
-                         *       "clientId": "f1e2d3c4-b5a6-7890-abcd-ef1234567890",
-                         *       "clientSecret": "sk_live_a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6"
+                         *       "clientId": "97e7c13c-059c-4734-b017-2a20847a79d0",
+                         *       "clientSecret": "1f80d6e1-9901-48b6-a862-6cfad1612e99"
                          *     }
                          */
                         "application/json": components["schemas"]["CreateApiKeyResponseDto"];
@@ -183,25 +241,56 @@ export interface paths {
                     content: {
                         /**
                          * @example {
+                         *       "cause": "One or more fields failed validation rules.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "One or more validation errors occurred.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "V0000",
                          *       "errors": {
                          *         "Email": [
                          *           "'Email' is not a valid email address."
                          *         ]
                          *       },
-                         *       "details": "One or more validation errors occurred.",
-                         *       "statusCode": 400,
-                         *       "source": "<Service>",
                          *       "exceptionType": "ValidationException",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "entityId": null,
-                         *       "errorCode": "V0000",
-                         *       "title": "Validation failed",
-                         *       "cause": "One or more fields failed validation rules.",
                          *       "resolution": "Review the errors and correct the invalid fields.",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
+                         *       "source": "<Service>",
+                         *       "statusCode": 400,
+                         *       "title": "Validation failed"
                          *     }
                          */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.ValidationExceptionExample"];
+                        "application/json": components["schemas"]["ValidationExceptionExample"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Forbidden */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "You do not have permission to access this resource.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "You do not have permission to access this resource.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "F0000",
+                         *       "exceptionType": "ForbiddenException",
+                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 403,
+                         *       "title": "Access forbidden"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ForbiddenExceptionExample"];
                     };
                 };
                 /** @description Not Found */
@@ -212,20 +301,68 @@ export interface paths {
                     content: {
                         /**
                          * @example {
-                         *       "details": "Entity with ID b31fbe9f-eebb-45ce-9cae-92265389f47f does not exist or has been deleted",
-                         *       "statusCode": 404,
-                         *       "source": "<Service>",
-                         *       "exceptionType": "NotFoundException",
+                         *       "cause": "The requested resource does not exist or has been deleted.",
                          *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Entity with ID b31fbe9f-eebb-45ce-9cae-92265389f47f does not exist or has been deleted",
+                         *       "documentationUrl": "https://developer.flute.com/",
                          *       "entityId": "b31fbe9f-eebb-45ce-9cae-92265389f47f",
                          *       "errorCode": "N0000",
-                         *       "title": "Resource not found",
-                         *       "cause": "The requested resource does not exist or has been deleted.",
+                         *       "exceptionType": "NotFoundException",
                          *       "resolution": "Verify the resource ID is correct or retrieve a list of available resources.",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
+                         *       "source": "<Service>",
+                         *       "statusCode": 404,
+                         *       "title": "Resource not found"
                          *     }
                          */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.NotFoundExceptionExample"];
+                        "application/json": components["schemas"]["NotFoundExceptionExample"];
+                    };
+                };
+                /** @description Conflict */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "The request conflicts with the current state of the resource.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "The request conflicts with the current state of the resource.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "C0000",
+                         *       "exceptionType": "ConflictException",
+                         *       "resolution": "Refresh the resource state and retry the operation, or use a different idempotency key.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 409,
+                         *       "title": "Resource conflict"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ConflictExceptionExample"];
+                    };
+                };
+                /** @description Too Many Requests */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "Too many requests sent in a short period.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Too many requests sent in a short period.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "R0000",
+                         *       "exceptionType": "RateLimitExceededException",
+                         *       "resolution": "Wait before retrying the request. Check the Retry-After header for more information.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 429,
+                         *       "title": "Rate limit exceeded"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["RateLimitExceededExceptionExample"];
                     };
                 };
                 /** @description Internal Server Error */
@@ -236,20 +373,20 @@ export interface paths {
                     content: {
                         /**
                          * @example {
-                         *       "details": "An unexpected error occurred while processing the request.",
-                         *       "statusCode": 500,
-                         *       "source": "<Service>",
-                         *       "exceptionType": "IntegrationException",
+                         *       "cause": "An unexpected error occurred while processing the request",
                          *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "An unexpected error occurred while processing the request.",
+                         *       "documentationUrl": "https://developer.flute.com/",
                          *       "entityId": null,
                          *       "errorCode": "I0000",
-                         *       "title": "Internal server error",
-                         *       "cause": "An unexpected error occurred while processing the request",
+                         *       "exceptionType": "IntegrationException",
                          *       "resolution": "Please contact support with the correlation ID if the issue persists",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
+                         *       "source": "<Service>",
+                         *       "statusCode": 500,
+                         *       "title": "Internal server error"
                          *     }
                          */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.InternalExceptionExample"];
+                        "application/json": components["schemas"]["InternalExceptionExample"];
                     };
                 };
             };
@@ -270,15 +407,22 @@ export interface paths {
         get?: never;
         put?: never;
         post?: never;
-        /** Revoke API Key Required API Permission: General Configurations */
+        /**
+         * Revoke API Key Required API Permission: General Configurations
+         * @description Revoke an API key managed by your affiliate account. The clientId
+         *     uniquely identifies the key — no additional filters are required.
+         *
+         *     **Note:** This endpoint requires the Bearer token to be an Affiliate (ISV) token. Merchant tokens are not accepted.
+         */
         delete: {
             parameters: {
-                query: {
-                    /** @description Merchant identifier */
-                    merchantId: string;
-                };
+                query?: never;
                 header?: never;
                 path: {
+                    /**
+                     * @description The API key client identifier (also referred to as the API key ID). Returned by the Create API Key response and listed by GET /api-keys.
+                     * @example aa98aa89-07ae-4a23-b441-48725f0386e6
+                     */
                     clientId: string;
                 };
                 cookie?: never;
@@ -300,430 +444,56 @@ export interface paths {
                     content: {
                         /**
                          * @example {
+                         *       "cause": "One or more fields failed validation rules.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "One or more validation errors occurred.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "V0000",
                          *       "errors": {
                          *         "Email": [
                          *           "'Email' is not a valid email address."
                          *         ]
                          *       },
-                         *       "details": "One or more validation errors occurred.",
-                         *       "statusCode": 400,
-                         *       "source": "<Service>",
                          *       "exceptionType": "ValidationException",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "entityId": null,
-                         *       "errorCode": "V0000",
-                         *       "title": "Validation failed",
-                         *       "cause": "One or more fields failed validation rules.",
                          *       "resolution": "Review the errors and correct the invalid fields.",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
-                         *     }
-                         */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.ValidationExceptionExample"];
-                    };
-                };
-                /** @description Not Found */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        /**
-                         * @example {
-                         *       "details": "Entity with ID b31fbe9f-eebb-45ce-9cae-92265389f47f does not exist or has been deleted",
-                         *       "statusCode": 404,
                          *       "source": "<Service>",
-                         *       "exceptionType": "NotFoundException",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "entityId": "b31fbe9f-eebb-45ce-9cae-92265389f47f",
-                         *       "errorCode": "N0000",
-                         *       "title": "Resource not found",
-                         *       "cause": "The requested resource does not exist or has been deleted.",
-                         *       "resolution": "Verify the resource ID is correct or retrieve a list of available resources.",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
-                         *     }
-                         */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.NotFoundExceptionExample"];
-                    };
-                };
-                /** @description Internal Server Error */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        /**
-                         * @example {
-                         *       "details": "An unexpected error occurred while processing the request.",
-                         *       "statusCode": 500,
-                         *       "source": "<Service>",
-                         *       "exceptionType": "IntegrationException",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "entityId": null,
-                         *       "errorCode": "I0000",
-                         *       "title": "Internal server error",
-                         *       "cause": "An unexpected error occurred while processing the request",
-                         *       "resolution": "Please contact support with the correlation ID if the issue persists",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
-                         *     }
-                         */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.InternalExceptionExample"];
-                    };
-                };
-            };
-        };
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v2/customers/{id}/payment-methods": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** List Payment Methods Required API Permission: Get Customer Details */
-        get: {
-            parameters: {
-                query?: {
-                    /** @description Page number */
-                    page?: number;
-                    /** @description Page size */
-                    pageSize?: number;
-                    /** @description Order by field */
-                    orderBy?: string;
-                    /** @description Sort ascending */
-                    asc?: boolean;
-                    /** @description Search string */
-                    search?: string;
-                    /** @description Created date from (ISO 8601) */
-                    createdFrom?: string;
-                    /** @description Created date to (ISO 8601) */
-                    createdTo?: string;
-                };
-                header?: never;
-                path: {
-                    id: string;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        /**
-                         * @example {
-                         *       "items": [
-                         *         {
-                         *           "id": "11111111-1111-1111-1111-111111111111",
-                         *           "name": "My Visa Card",
-                         *           "isDefault": true,
-                         *           "type": "Card",
-                         *           "card": {
-                         *             "cardMask": "************1111",
-                         *             "expirationMonth": 12,
-                         *             "expirationYear": 2027,
-                         *             "cardTokenType": "Local"
-                         *           },
-                         *           "ach": null
-                         *         },
-                         *         {
-                         *           "id": "22222222-2222-2222-2222-222222222222",
-                         *           "name": "Business Checking",
-                         *           "isDefault": false,
-                         *           "type": "ElectronicCheck",
-                         *           "card": null,
-                         *           "ach": {
-                         *             "accountNumber": "****6789",
-                         *             "routingNumber": "021000021",
-                         *             "accountType": "Checking",
-                         *             "accountHolderType": "Business",
-                         *             "taxId": "***-**-6789"
-                         *           }
-                         *         }
-                         *       ],
-                         *       "total": 2
-                         *     }
-                         */
-                        "application/json": components["schemas"]["Contracts.Page`1[[Arise.IsvApiBff.Contracts.v2.Customers.PaymentMethods.Responses.GetCustomerPaymentMethodsResponseDto, Arise.IsvApiBff.Contracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"];
-                    };
-                };
-                /** @description Bad Request */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        /**
-                         * @example {
-                         *       "errors": {
-                         *         "Email": [
-                         *           "'Email' is not a valid email address."
-                         *         ]
-                         *       },
-                         *       "details": "One or more validation errors occurred.",
                          *       "statusCode": 400,
-                         *       "source": "<Service>",
-                         *       "exceptionType": "ValidationException",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "entityId": null,
-                         *       "errorCode": "V0000",
-                         *       "title": "Validation failed",
-                         *       "cause": "One or more fields failed validation rules.",
-                         *       "resolution": "Review the errors and correct the invalid fields.",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
+                         *       "title": "Validation failed"
                          *     }
                          */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.ValidationExceptionExample"];
+                        "application/json": components["schemas"]["ValidationExceptionExample"];
                     };
                 };
-                /** @description Not Found */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        /**
-                         * @example {
-                         *       "details": "Entity with ID b31fbe9f-eebb-45ce-9cae-92265389f47f does not exist or has been deleted",
-                         *       "statusCode": 404,
-                         *       "source": "<Service>",
-                         *       "exceptionType": "NotFoundException",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "entityId": "b31fbe9f-eebb-45ce-9cae-92265389f47f",
-                         *       "errorCode": "N0000",
-                         *       "title": "Resource not found",
-                         *       "cause": "The requested resource does not exist or has been deleted.",
-                         *       "resolution": "Verify the resource ID is correct or retrieve a list of available resources.",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
-                         *     }
-                         */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.NotFoundExceptionExample"];
-                    };
-                };
-                /** @description Internal Server Error */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        /**
-                         * @example {
-                         *       "details": "An unexpected error occurred while processing the request.",
-                         *       "statusCode": 500,
-                         *       "source": "<Service>",
-                         *       "exceptionType": "IntegrationException",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "entityId": null,
-                         *       "errorCode": "I0000",
-                         *       "title": "Internal server error",
-                         *       "cause": "An unexpected error occurred while processing the request",
-                         *       "resolution": "Please contact support with the correlation ID if the issue persists",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
-                         *     }
-                         */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.InternalExceptionExample"];
-                    };
-                };
-            };
-        };
-        put?: never;
-        /** Add Payment Method Required API Permission: Manage Customers */
-        post: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    id: string;
-                };
-                cookie?: never;
-            };
-            requestBody?: {
-                content: {
-                    /**
-                     * @example {
-                     *       "card": {
-                     *         "name": "My Visa Card",
-                     *         "cardNumber": "4111111111111111",
-                     *         "securityCode": "123",
-                     *         "expirationMonth": 12,
-                     *         "expirationYear": 2027
-                     *       },
-                     *       "ach": null
-                     *     }
-                     */
-                    "application/json": components["schemas"]["CreateCustomerPaymentMethodRequestDto"];
-                };
-            };
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        /**
-                         * @example {
-                         *       "paymentMethodId": "22222222-2222-2222-2222-222222222222"
-                         *     }
-                         */
-                        "application/json": components["schemas"]["CreatePaymentMethodResponseDto"];
-                    };
-                };
-                /** @description Bad Request */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        /**
-                         * @example {
-                         *       "errors": {
-                         *         "Email": [
-                         *           "'Email' is not a valid email address."
-                         *         ]
-                         *       },
-                         *       "details": "One or more validation errors occurred.",
-                         *       "statusCode": 400,
-                         *       "source": "<Service>",
-                         *       "exceptionType": "ValidationException",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "entityId": null,
-                         *       "errorCode": "V0000",
-                         *       "title": "Validation failed",
-                         *       "cause": "One or more fields failed validation rules.",
-                         *       "resolution": "Review the errors and correct the invalid fields.",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
-                         *     }
-                         */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.ValidationExceptionExample"];
-                    };
-                };
-                /** @description Not Found */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        /**
-                         * @example {
-                         *       "details": "Entity with ID b31fbe9f-eebb-45ce-9cae-92265389f47f does not exist or has been deleted",
-                         *       "statusCode": 404,
-                         *       "source": "<Service>",
-                         *       "exceptionType": "NotFoundException",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "entityId": "b31fbe9f-eebb-45ce-9cae-92265389f47f",
-                         *       "errorCode": "N0000",
-                         *       "title": "Resource not found",
-                         *       "cause": "The requested resource does not exist or has been deleted.",
-                         *       "resolution": "Verify the resource ID is correct or retrieve a list of available resources.",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
-                         *     }
-                         */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.NotFoundExceptionExample"];
-                    };
-                };
-                /** @description Internal Server Error */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        /**
-                         * @example {
-                         *       "details": "An unexpected error occurred while processing the request.",
-                         *       "statusCode": 500,
-                         *       "source": "<Service>",
-                         *       "exceptionType": "IntegrationException",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "entityId": null,
-                         *       "errorCode": "I0000",
-                         *       "title": "Internal server error",
-                         *       "cause": "An unexpected error occurred while processing the request",
-                         *       "resolution": "Please contact support with the correlation ID if the issue persists",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
-                         *     }
-                         */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.InternalExceptionExample"];
-                    };
-                };
-            };
-        };
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v2/customers/{id}/payment-methods/{paymentMethodId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        /** Update Payment Method Required API Permission: Manage Customers */
-        put: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    id: string;
-                    paymentMethodId: string;
-                };
-                cookie?: never;
-            };
-            requestBody?: {
-                content: {
-                    /**
-                     * @example {
-                     *       "name": "My Updated Card"
-                     *     }
-                     */
-                    "application/json": components["schemas"]["UpdatePaymentMethodRequestDto"];
-                };
-            };
-            responses: {
-                /** @description OK */
-                200: {
+                /** @description Unauthorized */
+                401: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content?: never;
                 };
-                /** @description Bad Request */
-                400: {
+                /** @description Forbidden */
+                403: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
                         /**
                          * @example {
-                         *       "errors": {
-                         *         "Email": [
-                         *           "'Email' is not a valid email address."
-                         *         ]
-                         *       },
-                         *       "details": "One or more validation errors occurred.",
-                         *       "statusCode": 400,
-                         *       "source": "<Service>",
-                         *       "exceptionType": "ValidationException",
+                         *       "cause": "You do not have permission to access this resource.",
                          *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "You do not have permission to access this resource.",
+                         *       "documentationUrl": "https://developer.flute.com/",
                          *       "entityId": null,
-                         *       "errorCode": "V0000",
-                         *       "title": "Validation failed",
-                         *       "cause": "One or more fields failed validation rules.",
-                         *       "resolution": "Review the errors and correct the invalid fields.",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
+                         *       "errorCode": "F0000",
+                         *       "exceptionType": "ForbiddenException",
+                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 403,
+                         *       "title": "Access forbidden"
                          *     }
                          */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.ValidationExceptionExample"];
+                        "application/json": components["schemas"]["ForbiddenExceptionExample"];
                     };
                 };
                 /** @description Not Found */
@@ -734,20 +504,68 @@ export interface paths {
                     content: {
                         /**
                          * @example {
-                         *       "details": "Entity with ID b31fbe9f-eebb-45ce-9cae-92265389f47f does not exist or has been deleted",
-                         *       "statusCode": 404,
-                         *       "source": "<Service>",
-                         *       "exceptionType": "NotFoundException",
+                         *       "cause": "The requested resource does not exist or has been deleted.",
                          *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Entity with ID b31fbe9f-eebb-45ce-9cae-92265389f47f does not exist or has been deleted",
+                         *       "documentationUrl": "https://developer.flute.com/",
                          *       "entityId": "b31fbe9f-eebb-45ce-9cae-92265389f47f",
                          *       "errorCode": "N0000",
-                         *       "title": "Resource not found",
-                         *       "cause": "The requested resource does not exist or has been deleted.",
+                         *       "exceptionType": "NotFoundException",
                          *       "resolution": "Verify the resource ID is correct or retrieve a list of available resources.",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
+                         *       "source": "<Service>",
+                         *       "statusCode": 404,
+                         *       "title": "Resource not found"
                          *     }
                          */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.NotFoundExceptionExample"];
+                        "application/json": components["schemas"]["NotFoundExceptionExample"];
+                    };
+                };
+                /** @description Conflict */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "The request conflicts with the current state of the resource.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "The request conflicts with the current state of the resource.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "C0000",
+                         *       "exceptionType": "ConflictException",
+                         *       "resolution": "Refresh the resource state and retry the operation, or use a different idempotency key.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 409,
+                         *       "title": "Resource conflict"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ConflictExceptionExample"];
+                    };
+                };
+                /** @description Too Many Requests */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "Too many requests sent in a short period.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Too many requests sent in a short period.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "R0000",
+                         *       "exceptionType": "RateLimitExceededException",
+                         *       "resolution": "Wait before retrying the request. Check the Retry-After header for more information.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 429,
+                         *       "title": "Rate limit exceeded"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["RateLimitExceededExceptionExample"];
                     };
                 };
                 /** @description Internal Server Error */
@@ -758,238 +576,24 @@ export interface paths {
                     content: {
                         /**
                          * @example {
-                         *       "details": "An unexpected error occurred while processing the request.",
-                         *       "statusCode": 500,
-                         *       "source": "<Service>",
-                         *       "exceptionType": "IntegrationException",
+                         *       "cause": "An unexpected error occurred while processing the request",
                          *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "An unexpected error occurred while processing the request.",
+                         *       "documentationUrl": "https://developer.flute.com/",
                          *       "entityId": null,
                          *       "errorCode": "I0000",
-                         *       "title": "Internal server error",
-                         *       "cause": "An unexpected error occurred while processing the request",
-                         *       "resolution": "Please contact support with the correlation ID if the issue persists",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
-                         *     }
-                         */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.InternalExceptionExample"];
-                    };
-                };
-            };
-        };
-        post?: never;
-        /** Delete Payment Method Required API Permission: Manage Customers */
-        delete: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    id: string;
-                    paymentMethodId: string;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Bad Request */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        /**
-                         * @example {
-                         *       "errors": {
-                         *         "Email": [
-                         *           "'Email' is not a valid email address."
-                         *         ]
-                         *       },
-                         *       "details": "One or more validation errors occurred.",
-                         *       "statusCode": 400,
-                         *       "source": "<Service>",
-                         *       "exceptionType": "ValidationException",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "entityId": null,
-                         *       "errorCode": "V0000",
-                         *       "title": "Validation failed",
-                         *       "cause": "One or more fields failed validation rules.",
-                         *       "resolution": "Review the errors and correct the invalid fields.",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
-                         *     }
-                         */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.ValidationExceptionExample"];
-                    };
-                };
-                /** @description Not Found */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        /**
-                         * @example {
-                         *       "details": "Entity with ID b31fbe9f-eebb-45ce-9cae-92265389f47f does not exist or has been deleted",
-                         *       "statusCode": 404,
-                         *       "source": "<Service>",
-                         *       "exceptionType": "NotFoundException",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "entityId": "b31fbe9f-eebb-45ce-9cae-92265389f47f",
-                         *       "errorCode": "N0000",
-                         *       "title": "Resource not found",
-                         *       "cause": "The requested resource does not exist or has been deleted.",
-                         *       "resolution": "Verify the resource ID is correct or retrieve a list of available resources.",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
-                         *     }
-                         */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.NotFoundExceptionExample"];
-                    };
-                };
-                /** @description Internal Server Error */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        /**
-                         * @example {
-                         *       "details": "An unexpected error occurred while processing the request.",
-                         *       "statusCode": 500,
-                         *       "source": "<Service>",
                          *       "exceptionType": "IntegrationException",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "entityId": null,
-                         *       "errorCode": "I0000",
-                         *       "title": "Internal server error",
-                         *       "cause": "An unexpected error occurred while processing the request",
                          *       "resolution": "Please contact support with the correlation ID if the issue persists",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
-                         *     }
-                         */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.InternalExceptionExample"];
-                    };
-                };
-            };
-        };
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v2/customers/{id}/payment-methods/{paymentMethodId}/set-default": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        /** Set as Default Required API Permission: Manage Customers */
-        put: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    id: string;
-                    paymentMethodId: string;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Bad Request */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        /**
-                         * @example {
-                         *       "errors": {
-                         *         "Email": [
-                         *           "'Email' is not a valid email address."
-                         *         ]
-                         *       },
-                         *       "details": "One or more validation errors occurred.",
-                         *       "statusCode": 400,
                          *       "source": "<Service>",
-                         *       "exceptionType": "ValidationException",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "entityId": null,
-                         *       "errorCode": "V0000",
-                         *       "title": "Validation failed",
-                         *       "cause": "One or more fields failed validation rules.",
-                         *       "resolution": "Review the errors and correct the invalid fields.",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
-                         *     }
-                         */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.ValidationExceptionExample"];
-                    };
-                };
-                /** @description Not Found */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        /**
-                         * @example {
-                         *       "details": "Entity with ID b31fbe9f-eebb-45ce-9cae-92265389f47f does not exist or has been deleted",
-                         *       "statusCode": 404,
-                         *       "source": "<Service>",
-                         *       "exceptionType": "NotFoundException",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "entityId": "b31fbe9f-eebb-45ce-9cae-92265389f47f",
-                         *       "errorCode": "N0000",
-                         *       "title": "Resource not found",
-                         *       "cause": "The requested resource does not exist or has been deleted.",
-                         *       "resolution": "Verify the resource ID is correct or retrieve a list of available resources.",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
-                         *     }
-                         */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.NotFoundExceptionExample"];
-                    };
-                };
-                /** @description Internal Server Error */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        /**
-                         * @example {
-                         *       "details": "An unexpected error occurred while processing the request.",
                          *       "statusCode": 500,
-                         *       "source": "<Service>",
-                         *       "exceptionType": "IntegrationException",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "entityId": null,
-                         *       "errorCode": "I0000",
-                         *       "title": "Internal server error",
-                         *       "cause": "An unexpected error occurred while processing the request",
-                         *       "resolution": "Please contact support with the correlation ID if the issue persists",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
+                         *       "title": "Internal server error"
                          *     }
                          */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.InternalExceptionExample"];
+                        "application/json": components["schemas"]["InternalExceptionExample"];
                     };
                 };
             };
         };
-        post?: never;
-        delete?: never;
         options?: never;
         head?: never;
         patch?: never;
@@ -1006,8 +610,8 @@ export interface paths {
         get: {
             parameters: {
                 query?: {
-                    /** @description Page number (1-based) */
-                    page?: number;
+                    /** @description Zero-based page index. */
+                    pageIndex?: number;
                     /** @description Page size */
                     pageSize?: number;
                     /** @description Sort ascending */
@@ -1020,8 +624,11 @@ export interface paths {
                     email?: string;
                     /** @description Filter by company name */
                     companyName?: string;
-                    /** @description Filter by mobile phone number. */
-                    mobileNumber?: string;
+                    /**
+                     * @description Filter by mobile phone number. Free-form search input — E.164 format is not required here
+                     *     so callers can search by partial digits or legacy formats.
+                     */
+                    mobilePhoneNumber?: string;
                     /** @description Created date from (ISO 8601) */
                     createdFrom?: string;
                     /** @description Created date to (ISO 8601) */
@@ -1043,48 +650,54 @@ export interface paths {
                          * @example {
                          *       "items": [
                          *         {
-                         *           "id": "11111111-1111-1111-1111-111111111111",
-                         *           "externalId": "CUST-EXT-001",
-                         *           "firstName": "John",
-                         *           "lastName": "Doe",
-                         *           "companyName": "Acme Corp",
-                         *           "email": "john.doe@acme.com",
-                         *           "mobileNumber": "+1-555-123-4567",
                          *           "billingAddress": {
+                         *             "addressLine1": "123 Main Street",
+                         *             "addressLine2": null,
                          *             "city": "New York",
                          *             "countryCode": "US",
-                         *             "line1": "123 Main Street",
-                         *             "line2": null,
                          *             "postalCode": "10001",
                          *             "stateCode": "NY"
                          *           },
-                         *           "lastTransactionDate": "2026-05-04T17:04:52.3059636Z",
+                         *           "companyName": "Acme Corp",
+                         *           "customerId": "f81ca0b7-fa2e-4a6c-be9e-7def348c1ddf",
+                         *           "email": "john.doe@acme.com",
+                         *           "externalId": "CUST-EXT-001",
+                         *           "firstName": "John",
+                         *           "lastName": "Doe",
+                         *           "lastTransactionDate": "2026-01-01T00:00:00Z",
+                         *           "mobilePhoneNumber": "+14125553845",
                          *           "paymentMethodsCount": 3
                          *         },
                          *         {
-                         *           "id": "22222222-2222-2222-2222-222222222222",
-                         *           "externalId": "CUST-EXT-002",
-                         *           "firstName": "Jane",
-                         *           "lastName": "Smith",
-                         *           "companyName": "Tech Solutions Inc",
-                         *           "email": "jane.smith@techsolutions.com",
-                         *           "mobileNumber": "+1-555-987-6543",
                          *           "billingAddress": {
+                         *             "addressLine1": "456 Oak Avenue",
+                         *             "addressLine2": null,
                          *             "city": "Los Angeles",
                          *             "countryCode": "US",
-                         *             "line1": "456 Oak Avenue",
-                         *             "line2": null,
                          *             "postalCode": "90001",
                          *             "stateCode": "CA"
                          *           },
-                         *           "lastTransactionDate": "2026-05-07T17:04:52.3059668Z",
+                         *           "companyName": "Tech Solutions Inc",
+                         *           "customerId": "a98bbbba-40e6-4114-970a-078ebfdcbac2",
+                         *           "email": "jane.smith@techsolutions.com",
+                         *           "externalId": "CUST-EXT-002",
+                         *           "firstName": "Jane",
+                         *           "lastName": "Smith",
+                         *           "lastTransactionDate": "2026-01-01T00:00:00Z",
+                         *           "mobilePhoneNumber": "+14155557890",
                          *           "paymentMethodsCount": 1
                          *         }
                          *       ],
-                         *       "total": 2
+                         *       "pageInfo": {
+                         *         "hasMore": false,
+                         *         "pageIndex": 0,
+                         *         "pageSize": 20,
+                         *         "totalItems": 2,
+                         *         "totalPages": 1
+                         *       }
                          *     }
                          */
-                        "application/json": components["schemas"]["Contracts.Page`1[[Arise.IsvApiBff.Contracts.v2.Customers.Responses.ListCustomersResponseDto, Arise.IsvApiBff.Contracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"];
+                        "application/json": components["schemas"]["PagedResponseDtoOfListCustomersResponseDto"];
                     };
                 };
                 /** @description Bad Request */
@@ -1095,25 +708,56 @@ export interface paths {
                     content: {
                         /**
                          * @example {
+                         *       "cause": "One or more fields failed validation rules.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "One or more validation errors occurred.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "V0000",
                          *       "errors": {
                          *         "Email": [
                          *           "'Email' is not a valid email address."
                          *         ]
                          *       },
-                         *       "details": "One or more validation errors occurred.",
-                         *       "statusCode": 400,
-                         *       "source": "<Service>",
                          *       "exceptionType": "ValidationException",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "entityId": null,
-                         *       "errorCode": "V0000",
-                         *       "title": "Validation failed",
-                         *       "cause": "One or more fields failed validation rules.",
                          *       "resolution": "Review the errors and correct the invalid fields.",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
+                         *       "source": "<Service>",
+                         *       "statusCode": 400,
+                         *       "title": "Validation failed"
                          *     }
                          */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.ValidationExceptionExample"];
+                        "application/json": components["schemas"]["ValidationExceptionExample"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Forbidden */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "You do not have permission to access this resource.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "You do not have permission to access this resource.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "F0000",
+                         *       "exceptionType": "ForbiddenException",
+                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 403,
+                         *       "title": "Access forbidden"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ForbiddenExceptionExample"];
                     };
                 };
                 /** @description Not Found */
@@ -1124,20 +768,44 @@ export interface paths {
                     content: {
                         /**
                          * @example {
-                         *       "details": "Entity with ID b31fbe9f-eebb-45ce-9cae-92265389f47f does not exist or has been deleted",
-                         *       "statusCode": 404,
-                         *       "source": "<Service>",
-                         *       "exceptionType": "NotFoundException",
+                         *       "cause": "The requested resource does not exist or has been deleted.",
                          *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Entity with ID b31fbe9f-eebb-45ce-9cae-92265389f47f does not exist or has been deleted",
+                         *       "documentationUrl": "https://developer.flute.com/",
                          *       "entityId": "b31fbe9f-eebb-45ce-9cae-92265389f47f",
                          *       "errorCode": "N0000",
-                         *       "title": "Resource not found",
-                         *       "cause": "The requested resource does not exist or has been deleted.",
+                         *       "exceptionType": "NotFoundException",
                          *       "resolution": "Verify the resource ID is correct or retrieve a list of available resources.",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
+                         *       "source": "<Service>",
+                         *       "statusCode": 404,
+                         *       "title": "Resource not found"
                          *     }
                          */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.NotFoundExceptionExample"];
+                        "application/json": components["schemas"]["NotFoundExceptionExample"];
+                    };
+                };
+                /** @description Too Many Requests */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "Too many requests sent in a short period.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Too many requests sent in a short period.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "R0000",
+                         *       "exceptionType": "RateLimitExceededException",
+                         *       "resolution": "Wait before retrying the request. Check the Retry-After header for more information.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 429,
+                         *       "title": "Rate limit exceeded"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["RateLimitExceededExceptionExample"];
                     };
                 };
                 /** @description Internal Server Error */
@@ -1148,20 +816,20 @@ export interface paths {
                     content: {
                         /**
                          * @example {
-                         *       "details": "An unexpected error occurred while processing the request.",
-                         *       "statusCode": 500,
-                         *       "source": "<Service>",
-                         *       "exceptionType": "IntegrationException",
+                         *       "cause": "An unexpected error occurred while processing the request",
                          *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "An unexpected error occurred while processing the request.",
+                         *       "documentationUrl": "https://developer.flute.com/",
                          *       "entityId": null,
                          *       "errorCode": "I0000",
-                         *       "title": "Internal server error",
-                         *       "cause": "An unexpected error occurred while processing the request",
+                         *       "exceptionType": "IntegrationException",
                          *       "resolution": "Please contact support with the correlation ID if the issue persists",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
+                         *       "source": "<Service>",
+                         *       "statusCode": 500,
+                         *       "title": "Internal server error"
                          *     }
                          */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.InternalExceptionExample"];
+                        "application/json": components["schemas"]["InternalExceptionExample"];
                     };
                 };
             };
@@ -1179,41 +847,48 @@ export interface paths {
                 content: {
                     /**
                      * @example {
-                     *       "firstName": "John",
-                     *       "lastName": "Doe",
-                     *       "companyName": "Acme Corp",
-                     *       "email": "john.doe@acme.com",
-                     *       "mobileNumber": "+1-555-123-4567",
-                     *       "hasSmsConsent": true,
-                     *       "shouldUseBillingAsShippingAddress": true,
                      *       "billingAddress": {
+                     *         "addressLine1": "123 Main Street",
+                     *         "addressLine2": "Suite 100",
                      *         "city": "New York",
                      *         "countryCode": "US",
-                     *         "line1": "123 Main Street",
-                     *         "line2": "Suite 100",
                      *         "postalCode": "10001",
                      *         "stateCode": "NY"
                      *       },
-                     *       "shippingAddress": null,
-                     *       "paymentMethodsCards": [
-                     *         {
-                     *           "name": "My Visa Card",
-                     *           "cardNumber": "4111111111111111",
-                     *           "securityCode": "123",
-                     *           "expirationMonth": 12,
-                     *           "expirationYear": 2026
-                     *         }
-                     *       ],
+                     *       "companyName": "Acme Corp",
+                     *       "email": "john.doe@acme.com",
+                     *       "firstName": "John",
+                     *       "hasSmsConsent": true,
+                     *       "lastName": "Doe",
+                     *       "mobilePhoneNumber": "+14125553845",
                      *       "paymentMethodsAchAccounts": [
                      *         {
-                     *           "name": "Business Checking",
-                     *           "routingNumber": "021000021",
-                     *           "accountNumber": "123456789",
-                     *           "taxId": "12-3456789",
                      *           "accountHolderType": "Personal",
-                     *           "accountType": "Checking"
+                     *           "accountNumber": "123456789",
+                     *           "accountType": "Checking",
+                     *           "paymentName": "Business Checking",
+                     *           "routingNumber": "021000021",
+                     *           "taxId": "12-3456789"
                      *         }
-                     *       ]
+                     *       ],
+                     *       "paymentMethodsCards": [
+                     *         {
+                     *           "cardNumber": "4111111111111111",
+                     *           "expirationMonth": 12,
+                     *           "expirationYear": 2026,
+                     *           "paymentName": "My Visa Card",
+                     *           "securityCode": "123"
+                     *         }
+                     *       ],
+                     *       "shippingAddress": {
+                     *         "addressLine1": "456 Market Street",
+                     *         "addressLine2": "Apt 7B",
+                     *         "city": "Brooklyn",
+                     *         "countryCode": "US",
+                     *         "postalCode": "11201",
+                     *         "stateCode": "NY"
+                     *       },
+                     *       "shouldUseBillingAsShippingAddress": false
                      *     }
                      */
                     "application/json": components["schemas"]["CreateCustomerRequestDto"];
@@ -1228,7 +903,7 @@ export interface paths {
                     content: {
                         /**
                          * @example {
-                         *       "customerId": "11111111-1111-1111-1111-111111111111"
+                         *       "customerId": "e0bfe4be-c02a-4ded-bbdf-07a8bf8544c8"
                          *     }
                          */
                         "application/json": components["schemas"]["CreateCustomerResponseDto"];
@@ -1242,25 +917,56 @@ export interface paths {
                     content: {
                         /**
                          * @example {
+                         *       "cause": "One or more fields failed validation rules.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "One or more validation errors occurred.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "V0000",
                          *       "errors": {
                          *         "Email": [
                          *           "'Email' is not a valid email address."
                          *         ]
                          *       },
-                         *       "details": "One or more validation errors occurred.",
-                         *       "statusCode": 400,
-                         *       "source": "<Service>",
                          *       "exceptionType": "ValidationException",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "entityId": null,
-                         *       "errorCode": "V0000",
-                         *       "title": "Validation failed",
-                         *       "cause": "One or more fields failed validation rules.",
                          *       "resolution": "Review the errors and correct the invalid fields.",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
+                         *       "source": "<Service>",
+                         *       "statusCode": 400,
+                         *       "title": "Validation failed"
                          *     }
                          */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.ValidationExceptionExample"];
+                        "application/json": components["schemas"]["ValidationExceptionExample"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Forbidden */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "You do not have permission to access this resource.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "You do not have permission to access this resource.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "F0000",
+                         *       "exceptionType": "ForbiddenException",
+                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 403,
+                         *       "title": "Access forbidden"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ForbiddenExceptionExample"];
                     };
                 };
                 /** @description Not Found */
@@ -1271,20 +977,68 @@ export interface paths {
                     content: {
                         /**
                          * @example {
-                         *       "details": "Entity with ID b31fbe9f-eebb-45ce-9cae-92265389f47f does not exist or has been deleted",
-                         *       "statusCode": 404,
-                         *       "source": "<Service>",
-                         *       "exceptionType": "NotFoundException",
+                         *       "cause": "The requested resource does not exist or has been deleted.",
                          *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Entity with ID b31fbe9f-eebb-45ce-9cae-92265389f47f does not exist or has been deleted",
+                         *       "documentationUrl": "https://developer.flute.com/",
                          *       "entityId": "b31fbe9f-eebb-45ce-9cae-92265389f47f",
                          *       "errorCode": "N0000",
-                         *       "title": "Resource not found",
-                         *       "cause": "The requested resource does not exist or has been deleted.",
+                         *       "exceptionType": "NotFoundException",
                          *       "resolution": "Verify the resource ID is correct or retrieve a list of available resources.",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
+                         *       "source": "<Service>",
+                         *       "statusCode": 404,
+                         *       "title": "Resource not found"
                          *     }
                          */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.NotFoundExceptionExample"];
+                        "application/json": components["schemas"]["NotFoundExceptionExample"];
+                    };
+                };
+                /** @description Conflict */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "The request conflicts with the current state of the resource.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "The request conflicts with the current state of the resource.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "C0000",
+                         *       "exceptionType": "ConflictException",
+                         *       "resolution": "Refresh the resource state and retry the operation, or use a different idempotency key.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 409,
+                         *       "title": "Resource conflict"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ConflictExceptionExample"];
+                    };
+                };
+                /** @description Too Many Requests */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "Too many requests sent in a short period.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Too many requests sent in a short period.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "R0000",
+                         *       "exceptionType": "RateLimitExceededException",
+                         *       "resolution": "Wait before retrying the request. Check the Retry-After header for more information.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 429,
+                         *       "title": "Rate limit exceeded"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["RateLimitExceededExceptionExample"];
                     };
                 };
                 /** @description Internal Server Error */
@@ -1295,20 +1049,20 @@ export interface paths {
                     content: {
                         /**
                          * @example {
-                         *       "details": "An unexpected error occurred while processing the request.",
-                         *       "statusCode": 500,
-                         *       "source": "<Service>",
-                         *       "exceptionType": "IntegrationException",
+                         *       "cause": "An unexpected error occurred while processing the request",
                          *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "An unexpected error occurred while processing the request.",
+                         *       "documentationUrl": "https://developer.flute.com/",
                          *       "entityId": null,
                          *       "errorCode": "I0000",
-                         *       "title": "Internal server error",
-                         *       "cause": "An unexpected error occurred while processing the request",
+                         *       "exceptionType": "IntegrationException",
                          *       "resolution": "Please contact support with the correlation ID if the issue persists",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
+                         *       "source": "<Service>",
+                         *       "statusCode": 500,
+                         *       "title": "Internal server error"
                          *     }
                          */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.InternalExceptionExample"];
+                        "application/json": components["schemas"]["InternalExceptionExample"];
                     };
                 };
             };
@@ -1319,7 +1073,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/v2/customers/{id}": {
+    "/v2/customers/{customerId}": {
         parameters: {
             query?: never;
             header?: never;
@@ -1332,7 +1086,11 @@ export interface paths {
                 query?: never;
                 header?: never;
                 path: {
-                    id: string;
+                    /**
+                     * @description The customer identifier.
+                     * @example 299eea56-ba50-4d8d-9bb0-89c4dfce6f73
+                     */
+                    customerId: string;
                 };
                 cookie?: never;
             };
@@ -1346,65 +1104,65 @@ export interface paths {
                     content: {
                         /**
                          * @example {
-                         *       "id": "11111111-1111-1111-1111-111111111111",
-                         *       "externalId": "CUST-EXT-12345",
-                         *       "firstName": "John",
-                         *       "lastName": "Doe",
-                         *       "companyName": "Acme Corp",
-                         *       "email": "john.doe@acme.com",
-                         *       "mobileNumber": "+1-555-123-4567",
-                         *       "hasSmsConsent": true,
-                         *       "shouldUseBillingAsShippingAddress": true,
+                         *       "achAccounts": [
+                         *         {
+                         *           "accountHolderType": "Personal",
+                         *           "accountNumber": "****6789",
+                         *           "accountType": "Checking",
+                         *           "isDefault": false,
+                         *           "paymentMethodId": "a7402e6f-7b52-4884-9214-b68dcd7b80bf",
+                         *           "paymentName": "Business Checking",
+                         *           "routingNumber": "021000021",
+                         *           "taxId": "***-**-6789"
+                         *         }
+                         *       ],
                          *       "billingAddress": {
+                         *         "addressLine1": "123 Main Street",
+                         *         "addressLine2": "Suite 100",
                          *         "city": "New York",
                          *         "countryCode": "US",
-                         *         "line1": "123 Main Street",
-                         *         "line2": "Suite 100",
                          *         "postalCode": "10001",
                          *         "stateCode": "NY"
                          *       },
-                         *       "shippingAddress": null,
-                         *       "lastTransactionDate": "2026-05-04T17:04:52.3524908Z",
-                         *       "transactionsCount": 25,
-                         *       "transactionsVolume": 12500,
-                         *       "lastTransactionAmount": 150,
-                         *       "numberOfSubscriptions": 2,
                          *       "cards": [
                          *         {
                          *           "cardMask": "************1111",
-                         *           "expirationMonth": 12,
-                         *           "expirationYear": 2026,
                          *           "cardTokenType": null,
                          *           "cardType": "Visa",
                          *           "creditDebitType": "Credit",
-                         *           "id": "33333333-3333-3333-3333-333333333333",
-                         *           "name": "My Visa Card",
-                         *           "isDefault": true
+                         *           "expirationMonth": 12,
+                         *           "expirationYear": 2026,
+                         *           "isDefault": true,
+                         *           "paymentMethodId": "e5348db9-85cf-4d9d-a27c-88013f8944be",
+                         *           "paymentName": "My Visa Card"
                          *         },
                          *         {
                          *           "cardMask": "************5555",
-                         *           "expirationMonth": 6,
-                         *           "expirationYear": 2027,
                          *           "cardTokenType": null,
                          *           "cardType": "MasterCard",
                          *           "creditDebitType": "Debit",
-                         *           "id": "44444444-4444-4444-4444-444444444444",
-                         *           "name": "Personal MasterCard",
-                         *           "isDefault": false
+                         *           "expirationMonth": 6,
+                         *           "expirationYear": 2027,
+                         *           "isDefault": false,
+                         *           "paymentMethodId": "911e5ed6-95db-4ceb-8c49-5dc997ce0b3d",
+                         *           "paymentName": "Personal MasterCard"
                          *         }
                          *       ],
-                         *       "achAccounts": [
-                         *         {
-                         *           "accountNumber": "****6789",
-                         *           "routingNumber": "021000021",
-                         *           "accountType": "Checking",
-                         *           "accountHolderType": "Personal",
-                         *           "taxId": "***-**-6789",
-                         *           "id": "55555555-5555-5555-5555-555555555555",
-                         *           "name": "Business Checking",
-                         *           "isDefault": false
-                         *         }
-                         *       ]
+                         *       "companyName": "Acme Corp",
+                         *       "customerId": "61e5435f-7cec-4a7b-8523-64358cac7fac",
+                         *       "email": "john.doe@acme.com",
+                         *       "externalId": "CUST-EXT-12345",
+                         *       "firstName": "John",
+                         *       "hasSmsConsent": true,
+                         *       "lastName": "Doe",
+                         *       "lastTransactionAmount": 150,
+                         *       "lastTransactionDate": "2026-01-01T00:00:00Z",
+                         *       "mobilePhoneNumber": "+14125553845",
+                         *       "numberOfSubscriptions": 2,
+                         *       "shippingAddress": null,
+                         *       "shouldUseBillingAsShippingAddress": true,
+                         *       "transactionsCount": 25,
+                         *       "transactionsVolume": 12500
                          *     }
                          */
                         "application/json": components["schemas"]["GetCustomerResponseDto"];
@@ -1418,154 +1176,56 @@ export interface paths {
                     content: {
                         /**
                          * @example {
+                         *       "cause": "One or more fields failed validation rules.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "One or more validation errors occurred.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "V0000",
                          *       "errors": {
                          *         "Email": [
                          *           "'Email' is not a valid email address."
                          *         ]
                          *       },
-                         *       "details": "One or more validation errors occurred.",
-                         *       "statusCode": 400,
-                         *       "source": "<Service>",
                          *       "exceptionType": "ValidationException",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "entityId": null,
-                         *       "errorCode": "V0000",
-                         *       "title": "Validation failed",
-                         *       "cause": "One or more fields failed validation rules.",
                          *       "resolution": "Review the errors and correct the invalid fields.",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
-                         *     }
-                         */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.ValidationExceptionExample"];
-                    };
-                };
-                /** @description Not Found */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        /**
-                         * @example {
-                         *       "details": "Entity with ID b31fbe9f-eebb-45ce-9cae-92265389f47f does not exist or has been deleted",
-                         *       "statusCode": 404,
                          *       "source": "<Service>",
-                         *       "exceptionType": "NotFoundException",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "entityId": "b31fbe9f-eebb-45ce-9cae-92265389f47f",
-                         *       "errorCode": "N0000",
-                         *       "title": "Resource not found",
-                         *       "cause": "The requested resource does not exist or has been deleted.",
-                         *       "resolution": "Verify the resource ID is correct or retrieve a list of available resources.",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
+                         *       "statusCode": 400,
+                         *       "title": "Validation failed"
                          *     }
                          */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.NotFoundExceptionExample"];
+                        "application/json": components["schemas"]["ValidationExceptionExample"];
                     };
                 };
-                /** @description Internal Server Error */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        /**
-                         * @example {
-                         *       "details": "An unexpected error occurred while processing the request.",
-                         *       "statusCode": 500,
-                         *       "source": "<Service>",
-                         *       "exceptionType": "IntegrationException",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "entityId": null,
-                         *       "errorCode": "I0000",
-                         *       "title": "Internal server error",
-                         *       "cause": "An unexpected error occurred while processing the request",
-                         *       "resolution": "Please contact support with the correlation ID if the issue persists",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
-                         *     }
-                         */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.InternalExceptionExample"];
-                    };
-                };
-            };
-        };
-        /** Update Customer Required API Permission: Manage Customers */
-        put: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    id: string;
-                };
-                cookie?: never;
-            };
-            requestBody?: {
-                content: {
-                    /**
-                     * @example {
-                     *       "firstName": "Jane",
-                     *       "lastName": "Smith",
-                     *       "companyName": "Tech Solutions Inc",
-                     *       "email": "jane.smith@techsolutions.com",
-                     *       "mobileNumber": "+1-555-987-6543",
-                     *       "hasSmsConsent": false,
-                     *       "shouldUseBillingAsShippingAddress": false,
-                     *       "billingAddress": {
-                     *         "city": "Los Angeles",
-                     *         "countryCode": "US",
-                     *         "line1": "456 Oak Avenue",
-                     *         "line2": "Floor 5",
-                     *         "postalCode": "90001",
-                     *         "stateCode": "CA"
-                     *       },
-                     *       "shippingAddress": {
-                     *         "city": "San Francisco",
-                     *         "countryCode": "US",
-                     *         "line1": "789 Pine Road",
-                     *         "line2": null,
-                     *         "postalCode": "94102",
-                     *         "stateCode": "CA"
-                     *       }
-                     *     }
-                     */
-                    "application/json": components["schemas"]["UpdateCustomerRequestDto"];
-                };
-            };
-            responses: {
-                /** @description OK */
-                200: {
+                /** @description Unauthorized */
+                401: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content?: never;
                 };
-                /** @description Bad Request */
-                400: {
+                /** @description Forbidden */
+                403: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
                         /**
                          * @example {
-                         *       "errors": {
-                         *         "Email": [
-                         *           "'Email' is not a valid email address."
-                         *         ]
-                         *       },
-                         *       "details": "One or more validation errors occurred.",
-                         *       "statusCode": 400,
-                         *       "source": "<Service>",
-                         *       "exceptionType": "ValidationException",
+                         *       "cause": "You do not have permission to access this resource.",
                          *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "You do not have permission to access this resource.",
+                         *       "documentationUrl": "https://developer.flute.com/",
                          *       "entityId": null,
-                         *       "errorCode": "V0000",
-                         *       "title": "Validation failed",
-                         *       "cause": "One or more fields failed validation rules.",
-                         *       "resolution": "Review the errors and correct the invalid fields.",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
+                         *       "errorCode": "F0000",
+                         *       "exceptionType": "ForbiddenException",
+                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 403,
+                         *       "title": "Access forbidden"
                          *     }
                          */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.ValidationExceptionExample"];
+                        "application/json": components["schemas"]["ForbiddenExceptionExample"];
                     };
                 };
                 /** @description Not Found */
@@ -1576,20 +1236,44 @@ export interface paths {
                     content: {
                         /**
                          * @example {
-                         *       "details": "Entity with ID b31fbe9f-eebb-45ce-9cae-92265389f47f does not exist or has been deleted",
-                         *       "statusCode": 404,
-                         *       "source": "<Service>",
-                         *       "exceptionType": "NotFoundException",
+                         *       "cause": "The requested resource does not exist or has been deleted.",
                          *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Entity with ID b31fbe9f-eebb-45ce-9cae-92265389f47f does not exist or has been deleted",
+                         *       "documentationUrl": "https://developer.flute.com/",
                          *       "entityId": "b31fbe9f-eebb-45ce-9cae-92265389f47f",
                          *       "errorCode": "N0000",
-                         *       "title": "Resource not found",
-                         *       "cause": "The requested resource does not exist or has been deleted.",
+                         *       "exceptionType": "NotFoundException",
                          *       "resolution": "Verify the resource ID is correct or retrieve a list of available resources.",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
+                         *       "source": "<Service>",
+                         *       "statusCode": 404,
+                         *       "title": "Resource not found"
                          *     }
                          */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.NotFoundExceptionExample"];
+                        "application/json": components["schemas"]["NotFoundExceptionExample"];
+                    };
+                };
+                /** @description Too Many Requests */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "Too many requests sent in a short period.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Too many requests sent in a short period.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "R0000",
+                         *       "exceptionType": "RateLimitExceededException",
+                         *       "resolution": "Wait before retrying the request. Check the Retry-After header for more information.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 429,
+                         *       "title": "Rate limit exceeded"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["RateLimitExceededExceptionExample"];
                     };
                 };
                 /** @description Internal Server Error */
@@ -1600,24 +1284,25 @@ export interface paths {
                     content: {
                         /**
                          * @example {
-                         *       "details": "An unexpected error occurred while processing the request.",
-                         *       "statusCode": 500,
-                         *       "source": "<Service>",
-                         *       "exceptionType": "IntegrationException",
+                         *       "cause": "An unexpected error occurred while processing the request",
                          *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "An unexpected error occurred while processing the request.",
+                         *       "documentationUrl": "https://developer.flute.com/",
                          *       "entityId": null,
                          *       "errorCode": "I0000",
-                         *       "title": "Internal server error",
-                         *       "cause": "An unexpected error occurred while processing the request",
+                         *       "exceptionType": "IntegrationException",
                          *       "resolution": "Please contact support with the correlation ID if the issue persists",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
+                         *       "source": "<Service>",
+                         *       "statusCode": 500,
+                         *       "title": "Internal server error"
                          *     }
                          */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.InternalExceptionExample"];
+                        "application/json": components["schemas"]["InternalExceptionExample"];
                     };
                 };
             };
         };
+        put?: never;
         post?: never;
         /** Delete Customer Required API Permission: Manage Customers */
         delete: {
@@ -1625,7 +1310,11 @@ export interface paths {
                 query?: never;
                 header?: never;
                 path: {
-                    id: string;
+                    /**
+                     * @description The customer identifier.
+                     * @example ef1f203a-2a58-45bd-9215-bda2881656ae
+                     */
+                    customerId: string;
                 };
                 cookie?: never;
             };
@@ -1646,25 +1335,56 @@ export interface paths {
                     content: {
                         /**
                          * @example {
+                         *       "cause": "One or more fields failed validation rules.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "One or more validation errors occurred.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "V0000",
                          *       "errors": {
                          *         "Email": [
                          *           "'Email' is not a valid email address."
                          *         ]
                          *       },
-                         *       "details": "One or more validation errors occurred.",
-                         *       "statusCode": 400,
-                         *       "source": "<Service>",
                          *       "exceptionType": "ValidationException",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "entityId": null,
-                         *       "errorCode": "V0000",
-                         *       "title": "Validation failed",
-                         *       "cause": "One or more fields failed validation rules.",
                          *       "resolution": "Review the errors and correct the invalid fields.",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
+                         *       "source": "<Service>",
+                         *       "statusCode": 400,
+                         *       "title": "Validation failed"
                          *     }
                          */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.ValidationExceptionExample"];
+                        "application/json": components["schemas"]["ValidationExceptionExample"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Forbidden */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "You do not have permission to access this resource.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "You do not have permission to access this resource.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "F0000",
+                         *       "exceptionType": "ForbiddenException",
+                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 403,
+                         *       "title": "Access forbidden"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ForbiddenExceptionExample"];
                     };
                 };
                 /** @description Not Found */
@@ -1675,20 +1395,68 @@ export interface paths {
                     content: {
                         /**
                          * @example {
-                         *       "details": "Entity with ID b31fbe9f-eebb-45ce-9cae-92265389f47f does not exist or has been deleted",
-                         *       "statusCode": 404,
-                         *       "source": "<Service>",
-                         *       "exceptionType": "NotFoundException",
+                         *       "cause": "The requested resource does not exist or has been deleted.",
                          *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Entity with ID b31fbe9f-eebb-45ce-9cae-92265389f47f does not exist or has been deleted",
+                         *       "documentationUrl": "https://developer.flute.com/",
                          *       "entityId": "b31fbe9f-eebb-45ce-9cae-92265389f47f",
                          *       "errorCode": "N0000",
-                         *       "title": "Resource not found",
-                         *       "cause": "The requested resource does not exist or has been deleted.",
+                         *       "exceptionType": "NotFoundException",
                          *       "resolution": "Verify the resource ID is correct or retrieve a list of available resources.",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
+                         *       "source": "<Service>",
+                         *       "statusCode": 404,
+                         *       "title": "Resource not found"
                          *     }
                          */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.NotFoundExceptionExample"];
+                        "application/json": components["schemas"]["NotFoundExceptionExample"];
+                    };
+                };
+                /** @description Conflict */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "The request conflicts with the current state of the resource.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "The request conflicts with the current state of the resource.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "C0000",
+                         *       "exceptionType": "ConflictException",
+                         *       "resolution": "Refresh the resource state and retry the operation, or use a different idempotency key.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 409,
+                         *       "title": "Resource conflict"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ConflictExceptionExample"];
+                    };
+                };
+                /** @description Too Many Requests */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "Too many requests sent in a short period.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Too many requests sent in a short period.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "R0000",
+                         *       "exceptionType": "RateLimitExceededException",
+                         *       "resolution": "Wait before retrying the request. Check the Retry-After header for more information.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 429,
+                         *       "title": "Rate limit exceeded"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["RateLimitExceededExceptionExample"];
                     };
                 };
                 /** @description Internal Server Error */
@@ -1699,50 +1467,341 @@ export interface paths {
                     content: {
                         /**
                          * @example {
-                         *       "details": "An unexpected error occurred while processing the request.",
-                         *       "statusCode": 500,
-                         *       "source": "<Service>",
-                         *       "exceptionType": "IntegrationException",
+                         *       "cause": "An unexpected error occurred while processing the request",
                          *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "An unexpected error occurred while processing the request.",
+                         *       "documentationUrl": "https://developer.flute.com/",
                          *       "entityId": null,
                          *       "errorCode": "I0000",
-                         *       "title": "Internal server error",
-                         *       "cause": "An unexpected error occurred while processing the request",
+                         *       "exceptionType": "IntegrationException",
                          *       "resolution": "Please contact support with the correlation ID if the issue persists",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
+                         *       "source": "<Service>",
+                         *       "statusCode": 500,
+                         *       "title": "Internal server error"
                          *     }
                          */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.InternalExceptionExample"];
+                        "application/json": components["schemas"]["InternalExceptionExample"];
                     };
                 };
             };
         };
         options?: never;
         head?: never;
-        patch?: never;
+        /**
+         * Update Customer Required API Permission: Manage Customers
+         * @description Partial update (JSON Merge Patch, RFC 7396): send only the fields you want to change.
+         *     An omitted field is left unchanged; an explicit `null` clears a clearable field; nested
+         *     addresses merge recursively. Returns the full updated customer.
+         */
+        patch: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description The customer identifier.
+                     * @example 03a3c202-018c-43ff-b607-a912a6f00007
+                     */
+                    customerId: string;
+                };
+                cookie?: never;
+            };
+            /** @description The customer fields to update. */
+            requestBody?: {
+                content: {
+                    /**
+                     * @example {
+                     *       "billingAddress": {
+                     *         "addressLine1": "456 Oak Avenue",
+                     *         "addressLine2": "Floor 5",
+                     *         "city": "Los Angeles",
+                     *         "countryCode": "US",
+                     *         "postalCode": "90001",
+                     *         "stateCode": "CA"
+                     *       },
+                     *       "companyName": "Tech Solutions Inc",
+                     *       "email": "jane.smith@techsolutions.com",
+                     *       "firstName": "Jane",
+                     *       "hasSmsConsent": false,
+                     *       "lastName": "Smith",
+                     *       "mobilePhoneNumber": "+15559876543",
+                     *       "shippingAddress": {
+                     *         "addressLine1": "789 Pine Road",
+                     *         "city": "San Francisco",
+                     *         "countryCode": "US",
+                     *         "postalCode": "94102",
+                     *         "stateCode": "CA"
+                     *       },
+                     *       "shouldUseBillingAsShippingAddress": false
+                     *     }
+                     */
+                    "application/json": components["schemas"]["UpdateCustomerRequestDto"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "achAccounts": [
+                         *         {
+                         *           "accountHolderType": "Personal",
+                         *           "accountNumber": "****6789",
+                         *           "accountType": "Checking",
+                         *           "isDefault": false,
+                         *           "paymentMethodId": "a7402e6f-7b52-4884-9214-b68dcd7b80bf",
+                         *           "paymentName": "Business Checking",
+                         *           "routingNumber": "021000021",
+                         *           "taxId": "***-**-6789"
+                         *         }
+                         *       ],
+                         *       "billingAddress": {
+                         *         "addressLine1": "123 Main Street",
+                         *         "addressLine2": "Suite 100",
+                         *         "city": "New York",
+                         *         "countryCode": "US",
+                         *         "postalCode": "10001",
+                         *         "stateCode": "NY"
+                         *       },
+                         *       "cards": [
+                         *         {
+                         *           "cardMask": "************1111",
+                         *           "cardTokenType": null,
+                         *           "cardType": "Visa",
+                         *           "creditDebitType": "Credit",
+                         *           "expirationMonth": 12,
+                         *           "expirationYear": 2026,
+                         *           "isDefault": true,
+                         *           "paymentMethodId": "e5348db9-85cf-4d9d-a27c-88013f8944be",
+                         *           "paymentName": "My Visa Card"
+                         *         },
+                         *         {
+                         *           "cardMask": "************5555",
+                         *           "cardTokenType": null,
+                         *           "cardType": "MasterCard",
+                         *           "creditDebitType": "Debit",
+                         *           "expirationMonth": 6,
+                         *           "expirationYear": 2027,
+                         *           "isDefault": false,
+                         *           "paymentMethodId": "911e5ed6-95db-4ceb-8c49-5dc997ce0b3d",
+                         *           "paymentName": "Personal MasterCard"
+                         *         }
+                         *       ],
+                         *       "companyName": "Acme Corp",
+                         *       "customerId": "61e5435f-7cec-4a7b-8523-64358cac7fac",
+                         *       "email": "john.doe@acme.com",
+                         *       "externalId": "CUST-EXT-12345",
+                         *       "firstName": "John",
+                         *       "hasSmsConsent": true,
+                         *       "lastName": "Doe",
+                         *       "lastTransactionAmount": 150,
+                         *       "lastTransactionDate": "2026-01-01T00:00:00Z",
+                         *       "mobilePhoneNumber": "+14125553845",
+                         *       "numberOfSubscriptions": 2,
+                         *       "shippingAddress": null,
+                         *       "shouldUseBillingAsShippingAddress": true,
+                         *       "transactionsCount": 25,
+                         *       "transactionsVolume": 12500
+                         *     }
+                         */
+                        "application/json": components["schemas"]["GetCustomerResponseDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "One or more fields failed validation rules.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "One or more validation errors occurred.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "V0000",
+                         *       "errors": {
+                         *         "Email": [
+                         *           "'Email' is not a valid email address."
+                         *         ]
+                         *       },
+                         *       "exceptionType": "ValidationException",
+                         *       "resolution": "Review the errors and correct the invalid fields.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 400,
+                         *       "title": "Validation failed"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ValidationExceptionExample"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Forbidden */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "You do not have permission to access this resource.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "You do not have permission to access this resource.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "F0000",
+                         *       "exceptionType": "ForbiddenException",
+                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 403,
+                         *       "title": "Access forbidden"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ForbiddenExceptionExample"];
+                    };
+                };
+                /** @description Not Found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "The requested resource does not exist or has been deleted.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Entity with ID b31fbe9f-eebb-45ce-9cae-92265389f47f does not exist or has been deleted",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": "b31fbe9f-eebb-45ce-9cae-92265389f47f",
+                         *       "errorCode": "N0000",
+                         *       "exceptionType": "NotFoundException",
+                         *       "resolution": "Verify the resource ID is correct or retrieve a list of available resources.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 404,
+                         *       "title": "Resource not found"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["NotFoundExceptionExample"];
+                    };
+                };
+                /** @description Conflict */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "The request conflicts with the current state of the resource.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "The request conflicts with the current state of the resource.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "C0000",
+                         *       "exceptionType": "ConflictException",
+                         *       "resolution": "Refresh the resource state and retry the operation, or use a different idempotency key.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 409,
+                         *       "title": "Resource conflict"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ConflictExceptionExample"];
+                    };
+                };
+                /** @description Too Many Requests */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "Too many requests sent in a short period.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Too many requests sent in a short period.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "R0000",
+                         *       "exceptionType": "RateLimitExceededException",
+                         *       "resolution": "Wait before retrying the request. Check the Retry-After header for more information.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 429,
+                         *       "title": "Rate limit exceeded"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["RateLimitExceededExceptionExample"];
+                    };
+                };
+                /** @description Internal Server Error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "An unexpected error occurred while processing the request",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "An unexpected error occurred while processing the request.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "I0000",
+                         *       "exceptionType": "IntegrationException",
+                         *       "resolution": "Please contact support with the correlation ID if the issue persists",
+                         *       "source": "<Service>",
+                         *       "statusCode": 500,
+                         *       "title": "Internal server error"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["InternalExceptionExample"];
+                    };
+                };
+            };
+        };
         trace?: never;
     };
-    "/v2/pos/transactions": {
+    "/v2/payment-methods": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** List Transactions. Required API Permission: Pos Get Transactions */
+        /**
+         * List payment methods Required API Permission: Get Customer Details
+         * @description Returns the merchant's payment methods. Use the optional `customerId` query parameter
+         *     to filter to a specific customer's PMs. Without it, the response includes orphan PMs
+         *     alongside customer-linked PMs.
+         */
         get: {
             parameters: {
                 query?: {
-                    /** @description Page number for pagination. */
-                    page?: number;
-                    /** @description Number of items per page. */
+                    /** @description Zero-based page index. */
+                    pageIndex?: number;
+                    /** @description Page size */
                     pageSize?: number;
-                    /** @description Sort order direction (true for ascending, false for descending). */
-                    asc?: boolean;
-                    /** @description Field name to order by. */
+                    /** @description Order by field */
                     orderBy?: string;
-                    /** @description Terminal ID to filter by */
-                    terminalId?: string;
+                    /** @description Sort ascending */
+                    asc?: boolean;
+                    /** @description Search string */
+                    search?: string;
+                    /** @description Created date from (ISO 8601) */
+                    createdFrom?: string;
+                    /** @description Created date to (ISO 8601) */
+                    createdTo?: string;
+                    customerId?: string;
                 };
                 header?: never;
                 path?: never;
@@ -1760,32 +1819,48 @@ export interface paths {
                          * @example {
                          *       "items": [
                          *         {
-                         *           "id": "44444444-4444-4444-4444-444444444444",
-                         *           "createdOn": "2026-05-09T16:54:52.39971Z",
-                         *           "terminalId": "33333333-3333-3333-3333-333333333333",
-                         *           "status": "Completed",
-                         *           "transactionId": "66666666-6666-6666-6666-666666666666",
-                         *           "amount": 125.5,
-                         *           "currencyCode": "USD",
-                         *           "targetTransactionId": null,
-                         *           "transactionType": "Sale"
+                         *           "ach": null,
+                         *           "card": {
+                         *             "cardMask": "************1111",
+                         *             "cardTokenType": "Local",
+                         *             "expirationMonth": 12,
+                         *             "expirationYear": 2027
+                         *           },
+                         *           "createdOn": "2026-01-01T00:00:00Z",
+                         *           "customerId": "4f7d41f8-1d45-4cb7-a1e8-788fea6a2b11",
+                         *           "isDefault": true,
+                         *           "name": "My Visa Card",
+                         *           "paymentMethodId": "8a06469f-25da-4763-990d-11a4bbc74ecb",
+                         *           "type": "Card"
                          *         },
                          *         {
-                         *           "id": "55555555-5555-5555-5555-555555555555",
-                         *           "createdOn": "2026-05-09T16:59:52.4010298Z",
-                         *           "terminalId": "33333333-3333-3333-3333-333333333333",
-                         *           "status": "TransactionProcessing",
-                         *           "transactionId": null,
-                         *           "amount": 50,
-                         *           "currencyCode": "USD",
-                         *           "targetTransactionId": null,
-                         *           "transactionType": "Authorization"
+                         *           "ach": {
+                         *             "accountHolderType": "Business",
+                         *             "accountNumber": "****6789",
+                         *             "accountType": "Checking",
+                         *             "companyName": "Acme Corp Inc",
+                         *             "routingNumber": "021000021",
+                         *             "taxId": "***-**-6789"
+                         *           },
+                         *           "card": null,
+                         *           "createdOn": "2026-01-01T00:00:00Z",
+                         *           "customerId": null,
+                         *           "isDefault": false,
+                         *           "name": "Acme Bus Savings",
+                         *           "paymentMethodId": "7ada26ab-308a-4d2b-abb2-f0f69711ea38",
+                         *           "type": "ACH"
                          *         }
                          *       ],
-                         *       "total": 2
+                         *       "pageInfo": {
+                         *         "hasMore": false,
+                         *         "pageIndex": 0,
+                         *         "pageSize": 20,
+                         *         "totalItems": 2,
+                         *         "totalPages": 1
+                         *       }
                          *     }
                          */
-                        "application/json": components["schemas"]["Contracts.Page`1[[Arise.IsvApiBff.Contracts.v2.PosTransactions.Responses.ListPosTransactionsResponseDto, Arise.IsvApiBff.Contracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"];
+                        "application/json": components["schemas"]["PagedResponseDtoOfPaymentMethodResponseDto"];
                     };
                 };
                 /** @description Bad Request */
@@ -1796,33 +1871,155 @@ export interface paths {
                     content: {
                         /**
                          * @example {
+                         *       "cause": "One or more fields failed validation rules.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "One or more validation errors occurred.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "V0000",
                          *       "errors": {
                          *         "Email": [
                          *           "'Email' is not a valid email address."
                          *         ]
                          *       },
-                         *       "details": "One or more validation errors occurred.",
-                         *       "statusCode": 400,
-                         *       "source": "<Service>",
                          *       "exceptionType": "ValidationException",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "entityId": null,
-                         *       "errorCode": "V0000",
-                         *       "title": "Validation failed",
-                         *       "cause": "One or more fields failed validation rules.",
                          *       "resolution": "Review the errors and correct the invalid fields.",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
+                         *       "source": "<Service>",
+                         *       "statusCode": 400,
+                         *       "title": "Validation failed"
                          *     }
                          */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.ValidationExceptionExample"];
+                        "application/json": components["schemas"]["ValidationExceptionExample"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Forbidden */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "You do not have permission to access this resource.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "You do not have permission to access this resource.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "F0000",
+                         *       "exceptionType": "ForbiddenException",
+                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 403,
+                         *       "title": "Access forbidden"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ForbiddenExceptionExample"];
+                    };
+                };
+                /** @description Not Found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "The requested resource does not exist or has been deleted.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Entity with ID b31fbe9f-eebb-45ce-9cae-92265389f47f does not exist or has been deleted",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": "b31fbe9f-eebb-45ce-9cae-92265389f47f",
+                         *       "errorCode": "N0000",
+                         *       "exceptionType": "NotFoundException",
+                         *       "resolution": "Verify the resource ID is correct or retrieve a list of available resources.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 404,
+                         *       "title": "Resource not found"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["NotFoundExceptionExample"];
+                    };
+                };
+                /** @description Too Many Requests */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "Too many requests sent in a short period.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Too many requests sent in a short period.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "R0000",
+                         *       "exceptionType": "RateLimitExceededException",
+                         *       "resolution": "Wait before retrying the request. Check the Retry-After header for more information.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 429,
+                         *       "title": "Rate limit exceeded"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["RateLimitExceededExceptionExample"];
+                    };
+                };
+                /** @description Internal Server Error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "An unexpected error occurred while processing the request",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "An unexpected error occurred while processing the request.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "I0000",
+                         *       "exceptionType": "IntegrationException",
+                         *       "resolution": "Please contact support with the correlation ID if the issue persists",
+                         *       "source": "<Service>",
+                         *       "statusCode": 500,
+                         *       "title": "Internal server error"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["InternalExceptionExample"];
                     };
                 };
             };
         };
         put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v2/payment-methods/ach": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
         /**
-         * Create Transaction. Required API Permission: Pos Start Transaction
-         * @description Initiate a new transaction on the terminal device with predefined information, such as amount, transaction type, etc.
+         * Add an ACH payment method Required API Permission: Manage Customers
+         * @description Tokenizes the bank account and stores it under the merchant. Provide CustomerId in
+         *     the body to link the ACH to a customer; omit it to create an orphan payment method.
+         *     For Business ACH where the orphan caller will not supply ContactInfo on transactions,
+         *     set CompanyName so the legal entity name is available at transaction time.
          */
         post: {
             parameters: {
@@ -1835,18 +2032,1880 @@ export interface paths {
                 content: {
                     /**
                      * @example {
-                     *       "posDeviceId": "POS-DEV-001",
-                     *       "referenceId": "REF-POS-12345",
-                     *       "transactionType": "Sale",
-                     *       "targetTransactionId": null,
-                     *       "amount": 125.5,
-                     *       "pricingType": "Card",
+                     *       "accountHolderType": "Business",
+                     *       "accountNumber": "1234567890",
+                     *       "accountType": "Checking",
+                     *       "companyName": "Acme Corp Inc",
+                     *       "customerId": "3ad6a05a-48b4-4c77-9601-fdad2963b92b",
+                     *       "name": "Business Checking",
+                     *       "routingNumber": "021000021",
+                     *       "taxId": "12-3456789"
+                     *     }
+                     */
+                    "application/json": components["schemas"]["CreateAchPaymentMethodRequestDto"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "paymentMethodId": "83eed29d-849d-4aff-8ff7-02783bfe97d5"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["CreatePaymentMethodResponseDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "One or more fields failed validation rules.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "One or more validation errors occurred.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "V0000",
+                         *       "errors": {
+                         *         "Email": [
+                         *           "'Email' is not a valid email address."
+                         *         ]
+                         *       },
+                         *       "exceptionType": "ValidationException",
+                         *       "resolution": "Review the errors and correct the invalid fields.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 400,
+                         *       "title": "Validation failed"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ValidationExceptionExample"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Forbidden */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "You do not have permission to access this resource.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "You do not have permission to access this resource.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "F0000",
+                         *       "exceptionType": "ForbiddenException",
+                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 403,
+                         *       "title": "Access forbidden"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ForbiddenExceptionExample"];
+                    };
+                };
+                /** @description Not Found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "The requested resource does not exist or has been deleted.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Entity with ID b31fbe9f-eebb-45ce-9cae-92265389f47f does not exist or has been deleted",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": "b31fbe9f-eebb-45ce-9cae-92265389f47f",
+                         *       "errorCode": "N0000",
+                         *       "exceptionType": "NotFoundException",
+                         *       "resolution": "Verify the resource ID is correct or retrieve a list of available resources.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 404,
+                         *       "title": "Resource not found"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["NotFoundExceptionExample"];
+                    };
+                };
+                /** @description Conflict */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "The request conflicts with the current state of the resource.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "The request conflicts with the current state of the resource.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "C0000",
+                         *       "exceptionType": "ConflictException",
+                         *       "resolution": "Refresh the resource state and retry the operation, or use a different idempotency key.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 409,
+                         *       "title": "Resource conflict"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ConflictExceptionExample"];
+                    };
+                };
+                /** @description Too Many Requests */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "Too many requests sent in a short period.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Too many requests sent in a short period.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "R0000",
+                         *       "exceptionType": "RateLimitExceededException",
+                         *       "resolution": "Wait before retrying the request. Check the Retry-After header for more information.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 429,
+                         *       "title": "Rate limit exceeded"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["RateLimitExceededExceptionExample"];
+                    };
+                };
+                /** @description Internal Server Error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "An unexpected error occurred while processing the request",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "An unexpected error occurred while processing the request.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "I0000",
+                         *       "exceptionType": "IntegrationException",
+                         *       "resolution": "Please contact support with the correlation ID if the issue persists",
+                         *       "source": "<Service>",
+                         *       "statusCode": 500,
+                         *       "title": "Internal server error"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["InternalExceptionExample"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v2/payment-methods/cards": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Add a card payment method Required API Permission: Manage Customers
+         * @description Tokenizes the card and stores it under the merchant. Provide CustomerId in the body
+         *     to link the card to a customer; omit it to create an orphan payment method.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    /**
+                     * @example {
+                     *       "cardNumber": "4111111111111111",
+                     *       "customerId": "098290e9-49cd-4613-a885-db61a29f80f7",
+                     *       "expirationMonth": 12,
+                     *       "expirationYear": 2030,
+                     *       "paymentName": "My Visa Card",
+                     *       "securityCode": "123"
+                     *     }
+                     */
+                    "application/json": components["schemas"]["CreateCardPaymentMethodRequestDto"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "paymentMethodId": "83eed29d-849d-4aff-8ff7-02783bfe97d5"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["CreatePaymentMethodResponseDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "One or more fields failed validation rules.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "One or more validation errors occurred.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "V0000",
+                         *       "errors": {
+                         *         "Email": [
+                         *           "'Email' is not a valid email address."
+                         *         ]
+                         *       },
+                         *       "exceptionType": "ValidationException",
+                         *       "resolution": "Review the errors and correct the invalid fields.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 400,
+                         *       "title": "Validation failed"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ValidationExceptionExample"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Forbidden */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "You do not have permission to access this resource.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "You do not have permission to access this resource.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "F0000",
+                         *       "exceptionType": "ForbiddenException",
+                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 403,
+                         *       "title": "Access forbidden"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ForbiddenExceptionExample"];
+                    };
+                };
+                /** @description Not Found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "The requested resource does not exist or has been deleted.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Entity with ID b31fbe9f-eebb-45ce-9cae-92265389f47f does not exist or has been deleted",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": "b31fbe9f-eebb-45ce-9cae-92265389f47f",
+                         *       "errorCode": "N0000",
+                         *       "exceptionType": "NotFoundException",
+                         *       "resolution": "Verify the resource ID is correct or retrieve a list of available resources.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 404,
+                         *       "title": "Resource not found"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["NotFoundExceptionExample"];
+                    };
+                };
+                /** @description Conflict */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "The request conflicts with the current state of the resource.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "The request conflicts with the current state of the resource.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "C0000",
+                         *       "exceptionType": "ConflictException",
+                         *       "resolution": "Refresh the resource state and retry the operation, or use a different idempotency key.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 409,
+                         *       "title": "Resource conflict"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ConflictExceptionExample"];
+                    };
+                };
+                /** @description Too Many Requests */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "Too many requests sent in a short period.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Too many requests sent in a short period.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "R0000",
+                         *       "exceptionType": "RateLimitExceededException",
+                         *       "resolution": "Wait before retrying the request. Check the Retry-After header for more information.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 429,
+                         *       "title": "Rate limit exceeded"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["RateLimitExceededExceptionExample"];
+                    };
+                };
+                /** @description Internal Server Error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "An unexpected error occurred while processing the request",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "An unexpected error occurred while processing the request.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "I0000",
+                         *       "exceptionType": "IntegrationException",
+                         *       "resolution": "Please contact support with the correlation ID if the issue persists",
+                         *       "source": "<Service>",
+                         *       "statusCode": 500,
+                         *       "title": "Internal server error"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["InternalExceptionExample"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v2/payment-methods/{paymentMethodId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get a payment method Required API Permission: Get Customer Details */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description The payment method identifier.
+                     * @example c24e0199-7e8e-49b0-ac09-16aae93af4be
+                     */
+                    paymentMethodId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["PaymentMethodResponseDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "One or more fields failed validation rules.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "One or more validation errors occurred.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "V0000",
+                         *       "errors": {
+                         *         "Email": [
+                         *           "'Email' is not a valid email address."
+                         *         ]
+                         *       },
+                         *       "exceptionType": "ValidationException",
+                         *       "resolution": "Review the errors and correct the invalid fields.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 400,
+                         *       "title": "Validation failed"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ValidationExceptionExample"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Forbidden */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "You do not have permission to access this resource.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "You do not have permission to access this resource.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "F0000",
+                         *       "exceptionType": "ForbiddenException",
+                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 403,
+                         *       "title": "Access forbidden"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ForbiddenExceptionExample"];
+                    };
+                };
+                /** @description Not Found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "The requested resource does not exist or has been deleted.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Entity with ID b31fbe9f-eebb-45ce-9cae-92265389f47f does not exist or has been deleted",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": "b31fbe9f-eebb-45ce-9cae-92265389f47f",
+                         *       "errorCode": "N0000",
+                         *       "exceptionType": "NotFoundException",
+                         *       "resolution": "Verify the resource ID is correct or retrieve a list of available resources.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 404,
+                         *       "title": "Resource not found"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["NotFoundExceptionExample"];
+                    };
+                };
+                /** @description Too Many Requests */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "Too many requests sent in a short period.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Too many requests sent in a short period.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "R0000",
+                         *       "exceptionType": "RateLimitExceededException",
+                         *       "resolution": "Wait before retrying the request. Check the Retry-After header for more information.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 429,
+                         *       "title": "Rate limit exceeded"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["RateLimitExceededExceptionExample"];
+                    };
+                };
+                /** @description Internal Server Error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "An unexpected error occurred while processing the request",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "An unexpected error occurred while processing the request.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "I0000",
+                         *       "exceptionType": "IntegrationException",
+                         *       "resolution": "Please contact support with the correlation ID if the issue persists",
+                         *       "source": "<Service>",
+                         *       "statusCode": 500,
+                         *       "title": "Internal server error"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["InternalExceptionExample"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        /** Delete a payment method Required API Permission: Manage Customers */
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description The payment method identifier to delete.
+                     * @example a6ae6a86-6831-4422-a646-d9442a1b0ec8
+                     */
+                    paymentMethodId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "One or more fields failed validation rules.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "One or more validation errors occurred.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "V0000",
+                         *       "errors": {
+                         *         "Email": [
+                         *           "'Email' is not a valid email address."
+                         *         ]
+                         *       },
+                         *       "exceptionType": "ValidationException",
+                         *       "resolution": "Review the errors and correct the invalid fields.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 400,
+                         *       "title": "Validation failed"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ValidationExceptionExample"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Forbidden */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "You do not have permission to access this resource.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "You do not have permission to access this resource.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "F0000",
+                         *       "exceptionType": "ForbiddenException",
+                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 403,
+                         *       "title": "Access forbidden"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ForbiddenExceptionExample"];
+                    };
+                };
+                /** @description Not Found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "The requested resource does not exist or has been deleted.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Entity with ID b31fbe9f-eebb-45ce-9cae-92265389f47f does not exist or has been deleted",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": "b31fbe9f-eebb-45ce-9cae-92265389f47f",
+                         *       "errorCode": "N0000",
+                         *       "exceptionType": "NotFoundException",
+                         *       "resolution": "Verify the resource ID is correct or retrieve a list of available resources.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 404,
+                         *       "title": "Resource not found"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["NotFoundExceptionExample"];
+                    };
+                };
+                /** @description Conflict */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "The request conflicts with the current state of the resource.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "The request conflicts with the current state of the resource.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "C0000",
+                         *       "exceptionType": "ConflictException",
+                         *       "resolution": "Refresh the resource state and retry the operation, or use a different idempotency key.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 409,
+                         *       "title": "Resource conflict"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ConflictExceptionExample"];
+                    };
+                };
+                /** @description Too Many Requests */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "Too many requests sent in a short period.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Too many requests sent in a short period.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "R0000",
+                         *       "exceptionType": "RateLimitExceededException",
+                         *       "resolution": "Wait before retrying the request. Check the Retry-After header for more information.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 429,
+                         *       "title": "Rate limit exceeded"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["RateLimitExceededExceptionExample"];
+                    };
+                };
+                /** @description Internal Server Error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "An unexpected error occurred while processing the request",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "An unexpected error occurred while processing the request.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "I0000",
+                         *       "exceptionType": "IntegrationException",
+                         *       "resolution": "Please contact support with the correlation ID if the issue persists",
+                         *       "source": "<Service>",
+                         *       "statusCode": 500,
+                         *       "title": "Internal server error"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["InternalExceptionExample"];
+                    };
+                };
+            };
+        };
+        options?: never;
+        head?: never;
+        /**
+         * Update a payment method Required API Permission: Manage Customers
+         * @description Partial update (JSON Merge Patch, RFC 7396): send only the fields you want to change; an
+         *     omitted field is left unchanged and an explicit `null` clears the field. Renames the
+         *     payment method. The PM is identified by `paymentMethodId` within the merchant; the
+         *     operation works the same for orphan and customer-linked PMs. Returns the full updated
+         *     payment method.
+         */
+        patch: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description The payment method identifier.
+                     * @example c857af4c-ced9-4b79-b39b-13c077711d7e
+                     */
+                    paymentMethodId: string;
+                };
+                cookie?: never;
+            };
+            /** @description The payment method fields to update. */
+            requestBody?: {
+                content: {
+                    /**
+                     * @example {
+                     *       "paymentName": "My Updated Card"
+                     *     }
+                     */
+                    "application/json": components["schemas"]["UpdatePaymentMethodRequestDto"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["PaymentMethodResponseDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "One or more fields failed validation rules.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "One or more validation errors occurred.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "V0000",
+                         *       "errors": {
+                         *         "Email": [
+                         *           "'Email' is not a valid email address."
+                         *         ]
+                         *       },
+                         *       "exceptionType": "ValidationException",
+                         *       "resolution": "Review the errors and correct the invalid fields.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 400,
+                         *       "title": "Validation failed"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ValidationExceptionExample"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Forbidden */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "You do not have permission to access this resource.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "You do not have permission to access this resource.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "F0000",
+                         *       "exceptionType": "ForbiddenException",
+                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 403,
+                         *       "title": "Access forbidden"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ForbiddenExceptionExample"];
+                    };
+                };
+                /** @description Not Found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "The requested resource does not exist or has been deleted.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Entity with ID b31fbe9f-eebb-45ce-9cae-92265389f47f does not exist or has been deleted",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": "b31fbe9f-eebb-45ce-9cae-92265389f47f",
+                         *       "errorCode": "N0000",
+                         *       "exceptionType": "NotFoundException",
+                         *       "resolution": "Verify the resource ID is correct or retrieve a list of available resources.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 404,
+                         *       "title": "Resource not found"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["NotFoundExceptionExample"];
+                    };
+                };
+                /** @description Conflict */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "The request conflicts with the current state of the resource.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "The request conflicts with the current state of the resource.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "C0000",
+                         *       "exceptionType": "ConflictException",
+                         *       "resolution": "Refresh the resource state and retry the operation, or use a different idempotency key.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 409,
+                         *       "title": "Resource conflict"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ConflictExceptionExample"];
+                    };
+                };
+                /** @description Too Many Requests */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "Too many requests sent in a short period.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Too many requests sent in a short period.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "R0000",
+                         *       "exceptionType": "RateLimitExceededException",
+                         *       "resolution": "Wait before retrying the request. Check the Retry-After header for more information.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 429,
+                         *       "title": "Rate limit exceeded"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["RateLimitExceededExceptionExample"];
+                    };
+                };
+                /** @description Internal Server Error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "An unexpected error occurred while processing the request",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "An unexpected error occurred while processing the request.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "I0000",
+                         *       "exceptionType": "IntegrationException",
+                         *       "resolution": "Please contact support with the correlation ID if the issue persists",
+                         *       "source": "<Service>",
+                         *       "statusCode": 500,
+                         *       "title": "Internal server error"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["InternalExceptionExample"];
+                    };
+                };
+            };
+        };
+        trace?: never;
+    };
+    "/v2/payment-methods/{paymentMethodId}/set-default": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Set a payment method as default Required API Permission: Manage Customers
+         * @description Only customer-linked payment methods can be made default; CustomerId is therefore
+         *     required. Orphan PMs (no linked customer) have no concept of default and cannot
+         *     reach this endpoint without a customer scope.
+         */
+        post: {
+            parameters: {
+                query: {
+                    /**
+                     * @description The customer who owns the payment method.
+                     * @example 647da78e-783d-4a7a-be5c-117ad3b10d5c
+                     */
+                    customerId: string;
+                };
+                header?: never;
+                path: {
+                    /**
+                     * @description The payment method identifier to set as default.
+                     * @example 1a4f15c9-f39c-49f1-aad5-04e0e72804ad
+                     */
+                    paymentMethodId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "One or more fields failed validation rules.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "One or more validation errors occurred.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "V0000",
+                         *       "errors": {
+                         *         "Email": [
+                         *           "'Email' is not a valid email address."
+                         *         ]
+                         *       },
+                         *       "exceptionType": "ValidationException",
+                         *       "resolution": "Review the errors and correct the invalid fields.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 400,
+                         *       "title": "Validation failed"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ValidationExceptionExample"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Payment Required */
+                402: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "The payment was declined by the payment processor.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "The payment was declined by the processor.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "P0000",
+                         *       "exceptionType": "PaymentFailedException",
+                         *       "resolution": "Verify payment details, check available funds, or try a different payment method.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 402,
+                         *       "title": "Payment failed"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["PaymentFailedExceptionExample"];
+                    };
+                };
+                /** @description Forbidden */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "You do not have permission to access this resource.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "You do not have permission to access this resource.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "F0000",
+                         *       "exceptionType": "ForbiddenException",
+                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 403,
+                         *       "title": "Access forbidden"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ForbiddenExceptionExample"];
+                    };
+                };
+                /** @description Not Found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "The requested resource does not exist or has been deleted.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Entity with ID b31fbe9f-eebb-45ce-9cae-92265389f47f does not exist or has been deleted",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": "b31fbe9f-eebb-45ce-9cae-92265389f47f",
+                         *       "errorCode": "N0000",
+                         *       "exceptionType": "NotFoundException",
+                         *       "resolution": "Verify the resource ID is correct or retrieve a list of available resources.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 404,
+                         *       "title": "Resource not found"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["NotFoundExceptionExample"];
+                    };
+                };
+                /** @description Conflict */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "The request conflicts with the current state of the resource.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "The request conflicts with the current state of the resource.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "C0000",
+                         *       "exceptionType": "ConflictException",
+                         *       "resolution": "Refresh the resource state and retry the operation, or use a different idempotency key.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 409,
+                         *       "title": "Resource conflict"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ConflictExceptionExample"];
+                    };
+                };
+                /** @description Too Many Requests */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "Too many requests sent in a short period.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Too many requests sent in a short period.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "R0000",
+                         *       "exceptionType": "RateLimitExceededException",
+                         *       "resolution": "Wait before retrying the request. Check the Retry-After header for more information.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 429,
+                         *       "title": "Rate limit exceeded"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["RateLimitExceededExceptionExample"];
+                    };
+                };
+                /** @description Internal Server Error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "An unexpected error occurred while processing the request",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "An unexpected error occurred while processing the request.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "I0000",
+                         *       "exceptionType": "IntegrationException",
+                         *       "resolution": "Please contact support with the correlation ID if the issue persists",
+                         *       "source": "<Service>",
+                         *       "statusCode": 500,
+                         *       "title": "Internal server error"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["InternalExceptionExample"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v2/payment-sessions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Creates a new payment session. Required API Permission: Hosted Web Components */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            /** @description Payment session creation request. */
+            requestBody?: {
+                content: {
+                    "application/json": components["schemas"]["CreatePaymentSessionRequestDto"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["CreatePaymentSessionResponseDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "One or more fields failed validation rules.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "One or more validation errors occurred.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "V0000",
+                         *       "errors": {
+                         *         "Email": [
+                         *           "'Email' is not a valid email address."
+                         *         ]
+                         *       },
+                         *       "exceptionType": "ValidationException",
+                         *       "resolution": "Review the errors and correct the invalid fields.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 400,
+                         *       "title": "Validation failed"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ValidationExceptionExample"];
+                    };
+                };
+                /** @description Internal Server Error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "An unexpected error occurred while processing the request",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "An unexpected error occurred while processing the request.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "I0000",
+                         *       "exceptionType": "IntegrationException",
+                         *       "resolution": "Please contact support with the correlation ID if the issue persists",
+                         *       "source": "<Service>",
+                         *       "statusCode": 500,
+                         *       "title": "Internal server error"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["InternalExceptionExample"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v2/payment-sessions/{paymentSessionId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get payment session details by Id. Required API Permission: Hosted Web Components
+         * @description Returns the details of a payment session, including its current status.
+         *     The `mode` field is returned as a string enum value (e.g. `"Payment"`).
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /** @description Unique identifier of the payment session. */
+                    paymentSessionId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GetPaymentSessionResponseDto"];
+                    };
+                };
+                /** @description Not Found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "The requested resource does not exist or has been deleted.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Entity with ID b31fbe9f-eebb-45ce-9cae-92265389f47f does not exist or has been deleted",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": "b31fbe9f-eebb-45ce-9cae-92265389f47f",
+                         *       "errorCode": "N0000",
+                         *       "exceptionType": "NotFoundException",
+                         *       "resolution": "Verify the resource ID is correct or retrieve a list of available resources.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 404,
+                         *       "title": "Resource not found"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["NotFoundExceptionExample"];
+                    };
+                };
+                /** @description Internal Server Error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "An unexpected error occurred while processing the request",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "An unexpected error occurred while processing the request.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "I0000",
+                         *       "exceptionType": "IntegrationException",
+                         *       "resolution": "Please contact support with the correlation ID if the issue persists",
+                         *       "source": "<Service>",
+                         *       "statusCode": 500,
+                         *       "title": "Internal server error"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["InternalExceptionExample"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v2/payment-sessions/{paymentSessionId}/cancel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Cancels a payment session. Required API Permission: Hosted Web Components */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /** @description The unique identifier of the payment session. */
+                    paymentSessionId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Payment session cancelled successfully */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Not Found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "The requested resource does not exist or has been deleted.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Entity with ID b31fbe9f-eebb-45ce-9cae-92265389f47f does not exist or has been deleted",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": "b31fbe9f-eebb-45ce-9cae-92265389f47f",
+                         *       "errorCode": "N0000",
+                         *       "exceptionType": "NotFoundException",
+                         *       "resolution": "Verify the resource ID is correct or retrieve a list of available resources.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 404,
+                         *       "title": "Resource not found"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["NotFoundExceptionExample"];
+                    };
+                };
+                /** @description Internal Server Error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "An unexpected error occurred while processing the request",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "An unexpected error occurred while processing the request.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "I0000",
+                         *       "exceptionType": "IntegrationException",
+                         *       "resolution": "Please contact support with the correlation ID if the issue persists",
+                         *       "source": "<Service>",
+                         *       "statusCode": 500,
+                         *       "title": "Internal server error"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["InternalExceptionExample"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v2/ping": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Ping. Required API Permission: General Ping
+         * @description Health check endpoint. Returns 200 OK when the service is reachable. No response body.
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Service is available */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "One or more fields failed validation rules.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "One or more validation errors occurred.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "V0000",
+                         *       "errors": {
+                         *         "Email": [
+                         *           "'Email' is not a valid email address."
+                         *         ]
+                         *       },
+                         *       "exceptionType": "ValidationException",
+                         *       "resolution": "Review the errors and correct the invalid fields.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 400,
+                         *       "title": "Validation failed"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ValidationExceptionExample"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Forbidden */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "You do not have permission to access this resource.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "You do not have permission to access this resource.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "F0000",
+                         *       "exceptionType": "ForbiddenException",
+                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 403,
+                         *       "title": "Access forbidden"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ForbiddenExceptionExample"];
+                    };
+                };
+                /** @description Too Many Requests */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "Too many requests sent in a short period.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Too many requests sent in a short period.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "R0000",
+                         *       "exceptionType": "RateLimitExceededException",
+                         *       "resolution": "Wait before retrying the request. Check the Retry-After header for more information.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 429,
+                         *       "title": "Rate limit exceeded"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["RateLimitExceededExceptionExample"];
+                    };
+                };
+                /** @description Internal Server Error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "An unexpected error occurred while processing the request",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "An unexpected error occurred while processing the request.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "I0000",
+                         *       "exceptionType": "IntegrationException",
+                         *       "resolution": "Please contact support with the correlation ID if the issue persists",
+                         *       "source": "<Service>",
+                         *       "statusCode": 500,
+                         *       "title": "Internal server error"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["InternalExceptionExample"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v2/pos/transactions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Transactions. Required API Permission: Pos Get Transactions
+         * @description Returns a paginated list of reduced POS transaction objects — `linkedTransaction` is intentionally
+         *     omitted and available via Get Transaction. Supports filtering by `terminalId`,
+         *     `posTransactionStatus`, and a `fromDate`/`toDate` creation-date range, and sorting by
+         *     `createdOn` (default) or `posTransactionStatus`.
+         */
+        get: {
+            parameters: {
+                query?: {
+                    /** @description Zero-based page index. */
+                    pageIndex?: number;
+                    /** @description Number of items per page. Minimum 1, maximum 100. */
+                    pageSize?: number;
+                    /**
+                     * @description Field to sort by. Options: `createdOn` (default), `posTransactionStatus`.
+                     * @example createdOn
+                     */
+                    sortBy?: string;
+                    /**
+                     * @description Sort direction: `asc` or `desc` (default).
+                     * @example desc
+                     */
+                    sortOrder?: string;
+                    /**
+                     * @description Terminal ID to filter by
+                     * @example 57dbdbc6-fef4-44b8-816a-4372c063f1ec
+                     */
+                    terminalId?: string;
+                    /**
+                     * @description Only return transactions created on or after this date/time (inclusive). ISO 8601 (UTC).
+                     * @example 2026-01-01T00:00:00Z
+                     */
+                    fromDate?: string;
+                    /**
+                     * @description Only return transactions created on or before this date/time (inclusive). ISO 8601 (UTC).
+                     * @example 2026-01-01T00:00:00Z
+                     */
+                    toDate?: string;
+                    /**
+                     * @description POS transaction status to filter by: InProgress, Completed, Cancelled, or Failed.
+                     * @example Completed
+                     */
+                    posTransactionStatus?: components["schemas"]["AggregatedPosTransactionStatus"];
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "items": [
+                         *         {
+                         *           "baseAmount": 110,
+                         *           "captureMethod": "Auto",
+                         *           "createdOn": "2026-01-01T00:00:00Z",
+                         *           "currencyCode": "USD",
+                         *           "customerId": null,
+                         *           "extraAmounts": {
+                         *             "tipAmount": 15.5,
+                         *             "tipRate": null
+                         *           },
+                         *           "initiationChannel": "Cloud",
+                         *           "merchantId": "746ba4dd-b1b4-47c3-a034-72aa55007e86",
+                         *           "modifiedOn": "2026-01-01T00:00:00Z",
+                         *           "paymentProcessorId": "451e4f53-9d81-48d8-a7c4-8167595adffa",
+                         *           "posDeviceId": "POS-DEVICE-001",
+                         *           "posTransactionId": "cdf3b72b-6bb5-4707-8963-1f73456323d8",
+                         *           "posTransactionStatus": "Completed",
+                         *           "processedAmount": 125.5,
+                         *           "referenceId": "REF-POS-12345",
+                         *           "terminalId": "bcd3a843-9f21-4a71-a019-e1b336b65496",
+                         *           "transactionId": "1782bc6c-efb0-416d-8e62-627401707177"
+                         *         },
+                         *         {
+                         *           "baseAmount": 50,
+                         *           "captureMethod": "Manual",
+                         *           "createdOn": "2026-01-01T00:00:00Z",
+                         *           "currencyCode": "USD",
+                         *           "customerId": null,
+                         *           "extraAmounts": null,
+                         *           "initiationChannel": "Cloud",
+                         *           "merchantId": "746ba4dd-b1b4-47c3-a034-72aa55007e86",
+                         *           "modifiedOn": "2026-01-01T00:00:00Z",
+                         *           "paymentProcessorId": "451e4f53-9d81-48d8-a7c4-8167595adffa",
+                         *           "posDeviceId": "POS-DEVICE-001",
+                         *           "posTransactionId": "18090b35-0758-4a5b-81ae-927d4496cd53",
+                         *           "posTransactionStatus": "InProgress",
+                         *           "processedAmount": null,
+                         *           "referenceId": null,
+                         *           "terminalId": "bff9c356-fb17-4ed8-89ad-d980c92e391e",
+                         *           "transactionId": null
+                         *         }
+                         *       ],
+                         *       "pageInfo": {
+                         *         "hasMore": false,
+                         *         "pageIndex": 0,
+                         *         "pageSize": 20,
+                         *         "totalItems": 2,
+                         *         "totalPages": 1
+                         *       }
+                         *     }
+                         */
+                        "application/json": components["schemas"]["PagedResponseDtoOfPosTransactionSummaryResponseDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "One or more fields failed validation rules.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "One or more validation errors occurred.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "V0000",
+                         *       "errors": {
+                         *         "Email": [
+                         *           "'Email' is not a valid email address."
+                         *         ]
+                         *       },
+                         *       "exceptionType": "ValidationException",
+                         *       "resolution": "Review the errors and correct the invalid fields.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 400,
+                         *       "title": "Validation failed"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ValidationExceptionExample"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Forbidden */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "You do not have permission to access this resource.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "You do not have permission to access this resource.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "F0000",
+                         *       "exceptionType": "ForbiddenException",
+                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 403,
+                         *       "title": "Access forbidden"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ForbiddenExceptionExample"];
+                    };
+                };
+                /** @description Too Many Requests */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "Too many requests sent in a short period.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Too many requests sent in a short period.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "R0000",
+                         *       "exceptionType": "RateLimitExceededException",
+                         *       "resolution": "Wait before retrying the request. Check the Retry-After header for more information.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 429,
+                         *       "title": "Rate limit exceeded"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["RateLimitExceededExceptionExample"];
+                    };
+                };
+                /** @description Internal Server Error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "An unexpected error occurred while processing the request",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "An unexpected error occurred while processing the request.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "I0000",
+                         *       "exceptionType": "IntegrationException",
+                         *       "resolution": "Please contact support with the correlation ID if the issue persists",
+                         *       "source": "<Service>",
+                         *       "statusCode": 500,
+                         *       "title": "Internal server error"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["InternalExceptionExample"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        /**
+         * Create Transaction. Required API Permission: Pos Start Transaction
+         * @description Initiates a new Card Present payment transaction on a Semi-Integrated terminal, with predefined
+         *     information such as amount and capture method. The terminal flow is asynchronous — poll
+         *     GET /pos/transactions/{posTransactionId} until `posTransactionStatus` reaches a terminal state
+         *     (Completed, Failed, or Cancelled). A POS transaction is a payment intent: when it is Completed,
+         *     check `linkedTransaction` for the payment outcome (which may be a decline).
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    /**
+                     * @example {
+                     *       "baseAmount": 125.5,
+                     *       "captureMethod": "Auto",
                      *       "currencyCode": "USD",
-                     *       "paymentProcessorId": "11111111-1111-1111-1111-111111111111",
-                     *       "terminalId": "22222222-2222-2222-2222-222222222222",
-                     *       "shouldWaitForAcceptanceByTerminal": true,
-                     *       "readingMethod": "Reading",
-                     *       "shouldRequestPaymentMethodStorageConsent": false
+                     *       "customerId": "9f2b1c4d-7e3a-4f8b-90c1-2d3e4f5a6b7c",
+                     *       "extraAmounts": {
+                     *         "tipAmount": 5,
+                     *         "tipRate": null
+                     *       },
+                     *       "initiationChannel": "Cloud",
+                     *       "paymentProcessorId": "2e8c8c3e-e034-42db-8169-1b7999a49cd0",
+                     *       "posDeviceId": "POS-DEV-001",
+                     *       "pricingType": "Card",
+                     *       "readingMethod": "Regular",
+                     *       "referenceId": "REF-POS-12345",
+                     *       "requestPaymentMethodStorageConsent": false,
+                     *       "terminalId": "83a2baf4-2c5a-4326-acd9-65f26e47ac1e",
+                     *       "waitForAcceptanceByTerminal": true
                      *     }
                      */
                     "application/json": components["schemas"]["CreatePosTransactionRequestDto"];
@@ -1861,11 +3920,30 @@ export interface paths {
                     content: {
                         /**
                          * @example {
-                         *       "posTransactionId": "44444444-4444-4444-4444-444444444444",
-                         *       "status": "TransactionProcessing"
+                         *       "baseAmount": 125.5,
+                         *       "captureMethod": "Auto",
+                         *       "createdOn": "2026-01-01T00:00:00Z",
+                         *       "currencyCode": "USD",
+                         *       "customerId": "9f2b1c4d-7e3a-4f8b-90c1-2d3e4f5a6b7c",
+                         *       "extraAmounts": {
+                         *         "tipAmount": 5,
+                         *         "tipRate": null
+                         *       },
+                         *       "initiationChannel": "Cloud",
+                         *       "linkedTransaction": null,
+                         *       "merchantId": "746ba4dd-b1b4-47c3-a034-72aa55007e86",
+                         *       "modifiedOn": "2026-01-01T00:00:00Z",
+                         *       "paymentProcessorId": "2e8c8c3e-e034-42db-8169-1b7999a49cd0",
+                         *       "posDeviceId": "POS-DEV-001",
+                         *       "posTransactionId": "51efbd85-3e2b-459c-87d0-34f4c046a21f",
+                         *       "posTransactionStatus": "InProgress",
+                         *       "processedAmount": null,
+                         *       "referenceId": "REF-POS-12345",
+                         *       "terminalId": "83a2baf4-2c5a-4326-acd9-65f26e47ac1e",
+                         *       "transactionId": null
                          *     }
                          */
-                        "application/json": components["schemas"]["CreatePosTransactionResponseDto"];
+                        "application/json": components["schemas"]["PosTransactionResponseDto"];
                     };
                 };
                 /** @description Bad Request */
@@ -1876,25 +3954,176 @@ export interface paths {
                     content: {
                         /**
                          * @example {
+                         *       "cause": "One or more fields failed validation rules.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "One or more validation errors occurred.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "V0000",
                          *       "errors": {
                          *         "Email": [
                          *           "'Email' is not a valid email address."
                          *         ]
                          *       },
-                         *       "details": "One or more validation errors occurred.",
-                         *       "statusCode": 400,
-                         *       "source": "<Service>",
                          *       "exceptionType": "ValidationException",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "entityId": null,
-                         *       "errorCode": "V0000",
-                         *       "title": "Validation failed",
-                         *       "cause": "One or more fields failed validation rules.",
                          *       "resolution": "Review the errors and correct the invalid fields.",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
+                         *       "source": "<Service>",
+                         *       "statusCode": 400,
+                         *       "title": "Validation failed"
                          *     }
                          */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.ValidationExceptionExample"];
+                        "application/json": components["schemas"]["ValidationExceptionExample"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Payment Required */
+                402: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "The payment was declined by the payment processor.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "The payment was declined by the processor.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "P0000",
+                         *       "exceptionType": "PaymentFailedException",
+                         *       "resolution": "Verify payment details, check available funds, or try a different payment method.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 402,
+                         *       "title": "Payment failed"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["PaymentFailedExceptionExample"];
+                    };
+                };
+                /** @description Forbidden */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "You do not have permission to access this resource.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "You do not have permission to access this resource.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "F0000",
+                         *       "exceptionType": "ForbiddenException",
+                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 403,
+                         *       "title": "Access forbidden"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ForbiddenExceptionExample"];
+                    };
+                };
+                /** @description Not Found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "The requested resource does not exist or has been deleted.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Entity with ID b31fbe9f-eebb-45ce-9cae-92265389f47f does not exist or has been deleted",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": "b31fbe9f-eebb-45ce-9cae-92265389f47f",
+                         *       "errorCode": "N0000",
+                         *       "exceptionType": "NotFoundException",
+                         *       "resolution": "Verify the resource ID is correct or retrieve a list of available resources.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 404,
+                         *       "title": "Resource not found"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["NotFoundExceptionExample"];
+                    };
+                };
+                /** @description Conflict */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "The request conflicts with the current state of the resource.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "The request conflicts with the current state of the resource.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "C0000",
+                         *       "exceptionType": "ConflictException",
+                         *       "resolution": "Refresh the resource state and retry the operation, or use a different idempotency key.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 409,
+                         *       "title": "Resource conflict"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ConflictExceptionExample"];
+                    };
+                };
+                /** @description Too Many Requests */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "Too many requests sent in a short period.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Too many requests sent in a short period.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "R0000",
+                         *       "exceptionType": "RateLimitExceededException",
+                         *       "resolution": "Wait before retrying the request. Check the Retry-After header for more information.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 429,
+                         *       "title": "Rate limit exceeded"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["RateLimitExceededExceptionExample"];
+                    };
+                };
+                /** @description Internal Server Error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "An unexpected error occurred while processing the request",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "An unexpected error occurred while processing the request.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "I0000",
+                         *       "exceptionType": "IntegrationException",
+                         *       "resolution": "Please contact support with the correlation ID if the issue persists",
+                         *       "source": "<Service>",
+                         *       "statusCode": 500,
+                         *       "title": "Internal server error"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["InternalExceptionExample"];
                     };
                 };
             };
@@ -1905,29 +4134,303 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/v2/pos/transactions/{id}": {
+    "/v2/pos/transactions/reversal": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** Get Transaction. Required API Permission: Pos Get Transaction Details */
+        get?: never;
+        put?: never;
+        /**
+         * Create a Reversal from POS. Required API Permission: Pos Start Transaction
+         * @description Initiates a Card Present reversal. With `originalTransactionId` the backend picks the
+         *     execution path: a void when still available, or a referenced refund executed in the cloud for
+         *     credit cards — both without a terminal flow, returning `posTransactionStatus` already
+         *     `Completed` — while debit-card refunds start a refund flow on the terminal, requiring the
+         *     customer to present their card. Without `originalTransactionId`, an unreferenced refund
+         *     flow is initiated on the terminal. For terminal flows, poll
+         *     GET /pos/transactions/{posTransactionId} until `posTransactionStatus` reaches a terminal state.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    /**
+                     * @example {
+                     *       "currencyCode": "USD",
+                     *       "customerId": "9f2b1c4d-7e3a-4f8b-90c1-2d3e4f5a6b7c",
+                     *       "initiationChannel": "Cloud",
+                     *       "originalTransactionId": "d4e39f93-a128-45f4-9b27-140042a5efa5",
+                     *       "paymentProcessorId": "2e8c8c3e-e034-42db-8169-1b7999a49cd0",
+                     *       "posDeviceId": "POS-DEV-001",
+                     *       "readingMethod": "Regular",
+                     *       "referenceId": "REF-POS-REVERSAL-001",
+                     *       "reversalAmount": 50,
+                     *       "terminalId": "83a2baf4-2c5a-4326-acd9-65f26e47ac1e",
+                     *       "waitForAcceptanceByTerminal": true
+                     *     }
+                     */
+                    "application/json": components["schemas"]["CreatePosReversalRequestDto"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "baseAmount": 50,
+                         *       "captureMethod": null,
+                         *       "createdOn": "2026-01-01T00:00:00Z",
+                         *       "currencyCode": "USD",
+                         *       "customerId": null,
+                         *       "extraAmounts": null,
+                         *       "initiationChannel": "Cloud",
+                         *       "linkedTransaction": null,
+                         *       "merchantId": "746ba4dd-b1b4-47c3-a034-72aa55007e86",
+                         *       "modifiedOn": "2026-01-01T00:00:00Z",
+                         *       "paymentProcessorId": "2e8c8c3e-e034-42db-8169-1b7999a49cd0",
+                         *       "posDeviceId": "POS-DEV-001",
+                         *       "posTransactionId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                         *       "posTransactionStatus": "InProgress",
+                         *       "processedAmount": null,
+                         *       "referenceId": "REF-POS-REVERSAL-001",
+                         *       "terminalId": "83a2baf4-2c5a-4326-acd9-65f26e47ac1e",
+                         *       "transactionId": null
+                         *     }
+                         */
+                        "application/json": components["schemas"]["PosTransactionResponseDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "One or more fields failed validation rules.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "One or more validation errors occurred.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "V0000",
+                         *       "errors": {
+                         *         "Email": [
+                         *           "'Email' is not a valid email address."
+                         *         ]
+                         *       },
+                         *       "exceptionType": "ValidationException",
+                         *       "resolution": "Review the errors and correct the invalid fields.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 400,
+                         *       "title": "Validation failed"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ValidationExceptionExample"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Payment Required */
+                402: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "The payment was declined by the payment processor.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "The payment was declined by the processor.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "P0000",
+                         *       "exceptionType": "PaymentFailedException",
+                         *       "resolution": "Verify payment details, check available funds, or try a different payment method.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 402,
+                         *       "title": "Payment failed"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["PaymentFailedExceptionExample"];
+                    };
+                };
+                /** @description Forbidden */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "You do not have permission to access this resource.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "You do not have permission to access this resource.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "F0000",
+                         *       "exceptionType": "ForbiddenException",
+                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 403,
+                         *       "title": "Access forbidden"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ForbiddenExceptionExample"];
+                    };
+                };
+                /** @description Not Found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "The requested resource does not exist or has been deleted.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Entity with ID b31fbe9f-eebb-45ce-9cae-92265389f47f does not exist or has been deleted",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": "b31fbe9f-eebb-45ce-9cae-92265389f47f",
+                         *       "errorCode": "N0000",
+                         *       "exceptionType": "NotFoundException",
+                         *       "resolution": "Verify the resource ID is correct or retrieve a list of available resources.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 404,
+                         *       "title": "Resource not found"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["NotFoundExceptionExample"];
+                    };
+                };
+                /** @description Conflict */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "The request conflicts with the current state of the resource.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "The request conflicts with the current state of the resource.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "C0000",
+                         *       "exceptionType": "ConflictException",
+                         *       "resolution": "Refresh the resource state and retry the operation, or use a different idempotency key.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 409,
+                         *       "title": "Resource conflict"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ConflictExceptionExample"];
+                    };
+                };
+                /** @description Too Many Requests */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "Too many requests sent in a short period.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Too many requests sent in a short period.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "R0000",
+                         *       "exceptionType": "RateLimitExceededException",
+                         *       "resolution": "Wait before retrying the request. Check the Retry-After header for more information.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 429,
+                         *       "title": "Rate limit exceeded"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["RateLimitExceededExceptionExample"];
+                    };
+                };
+                /** @description Internal Server Error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "An unexpected error occurred while processing the request",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "An unexpected error occurred while processing the request.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "I0000",
+                         *       "exceptionType": "IntegrationException",
+                         *       "resolution": "Please contact support with the correlation ID if the issue persists",
+                         *       "source": "<Service>",
+                         *       "statusCode": 500,
+                         *       "title": "Internal server error"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["InternalExceptionExample"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v2/pos/transactions/{posTransactionId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Transaction. Required API Permission: Pos Get Transaction Details
+         * @description Always returns the full POS transaction object. `transactionId` and `linkedTransaction`
+         *     are null until `posTransactionStatus` is Completed; then `linkedTransaction` carries the
+         *     complete payment transaction record so no separate call to GET /transactions/{transactionId} is needed.
+         */
         get: {
             parameters: {
                 query?: {
                     /**
-                     * @description Wait for transition to one of completed statuses or timeout happening.
-                     *     If true - HTTP response will wait till transaction completion/failing/cancelling or timeout.
-                     *     If false - HTTP response will be returned immediately.
-                     *     Default value - false
+                     * @description Long-poll for the transaction to reach a completed status (success, failure, or cancellation) before responding.
+                     *     If `true`, the response is held until completion or timeout.
+                     *     If `false` (default), the response returns immediately and the caller polls GET /pos/transactions/{posTransactionId} for updates.
+                     * @example false
                      */
                     waitForTransactionProcessing?: boolean;
                 };
                 header?: never;
                 path: {
-                    /** @description ID of POS transaction */
-                    id: string;
+                    /**
+                     * @description The POS transaction identifier.
+                     * @example 361c152f-72fa-4654-84f1-a664584ce3de
+                     */
+                    posTransactionId: string;
                 };
                 cookie?: never;
             };
@@ -1941,22 +4444,55 @@ export interface paths {
                     content: {
                         /**
                          * @example {
-                         *       "id": "44444444-4444-4444-4444-444444444444",
-                         *       "createdOn": "2026-05-09T16:59:52.4210694Z",
-                         *       "merchantId": "11111111-1111-1111-1111-111111111111",
-                         *       "terminalId": "33333333-3333-3333-3333-333333333333",
-                         *       "paymentProcessorId": "55555555-5555-5555-5555-555555555555",
-                         *       "posDeviceId": "POS-DEVICE-001",
-                         *       "referenceId": "REF-12345",
-                         *       "status": "Completed",
-                         *       "transactionId": "66666666-6666-6666-6666-666666666666",
-                         *       "amount": 125.5,
+                         *       "baseAmount": 125.5,
+                         *       "captureMethod": "Auto",
+                         *       "createdOn": "2026-01-01T00:00:00Z",
                          *       "currencyCode": "USD",
-                         *       "targetTransactionId": null,
-                         *       "transactionType": "Sale"
+                         *       "customerId": "9f2b1c4d-7e3a-4f8b-90c1-2d3e4f5a6b7c",
+                         *       "extraAmounts": {
+                         *         "tipAmount": 5,
+                         *         "tipRate": null
+                         *       },
+                         *       "initiationChannel": "Cloud",
+                         *       "linkedTransaction": {
+                         *         "achDetails": null,
+                         *         "addressVerificationServiceResponse": null,
+                         *         "amountBreakdown": null,
+                         *         "batchId": null,
+                         *         "cardDetails": null,
+                         *         "cardTokenType": null,
+                         *         "currencyCode": "USD",
+                         *         "customerId": null,
+                         *         "declineDetails": null,
+                         *         "merchantId": "00000000-0000-0000-0000-000000000000",
+                         *         "originalTransactionId": null,
+                         *         "paymentMethodType": "Card",
+                         *         "paymentProcessorId": null,
+                         *         "pricingType": null,
+                         *         "processedAmount": 130.5,
+                         *         "processorDetails": null,
+                         *         "referenceId": "REF-12345",
+                         *         "refundDetails": null,
+                         *         "source": null,
+                         *         "transactionDateTime": "2026-01-01T00:00:00Z",
+                         *         "transactionEvents": null,
+                         *         "transactionId": "7a62ba78-c4e2-4317-bc4e-c90a9d169107",
+                         *         "transactionStatus": "Captured",
+                         *         "transactionType": "Authorization"
+                         *       },
+                         *       "merchantId": "746ba4dd-b1b4-47c3-a034-72aa55007e86",
+                         *       "modifiedOn": "2026-01-01T00:00:00Z",
+                         *       "paymentProcessorId": "451e4f53-9d81-48d8-a7c4-8167595adffa",
+                         *       "posDeviceId": "POS-DEVICE-001",
+                         *       "posTransactionId": "51efbd85-3e2b-459c-87d0-34f4c046a21f",
+                         *       "posTransactionStatus": "Completed",
+                         *       "processedAmount": 130.5,
+                         *       "referenceId": "REF-12345",
+                         *       "terminalId": "a84af02c-6de3-40ac-abda-0d8db96dec7b",
+                         *       "transactionId": "7a62ba78-c4e2-4317-bc4e-c90a9d169107"
                          *     }
                          */
-                        "application/json": components["schemas"]["GetPosTransactionResponseDto"];
+                        "application/json": components["schemas"]["PosTransactionResponseDto"];
                     };
                 };
                 /** @description Bad Request */
@@ -1967,25 +4503,56 @@ export interface paths {
                     content: {
                         /**
                          * @example {
+                         *       "cause": "One or more fields failed validation rules.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "One or more validation errors occurred.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "V0000",
                          *       "errors": {
                          *         "Email": [
                          *           "'Email' is not a valid email address."
                          *         ]
                          *       },
-                         *       "details": "One or more validation errors occurred.",
-                         *       "statusCode": 400,
-                         *       "source": "<Service>",
                          *       "exceptionType": "ValidationException",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "entityId": null,
-                         *       "errorCode": "V0000",
-                         *       "title": "Validation failed",
-                         *       "cause": "One or more fields failed validation rules.",
                          *       "resolution": "Review the errors and correct the invalid fields.",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
+                         *       "source": "<Service>",
+                         *       "statusCode": 400,
+                         *       "title": "Validation failed"
                          *     }
                          */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.ValidationExceptionExample"];
+                        "application/json": components["schemas"]["ValidationExceptionExample"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Forbidden */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "You do not have permission to access this resource.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "You do not have permission to access this resource.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "F0000",
+                         *       "exceptionType": "ForbiddenException",
+                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 403,
+                         *       "title": "Access forbidden"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ForbiddenExceptionExample"];
                     };
                 };
                 /** @description Not Found */
@@ -1996,20 +4563,68 @@ export interface paths {
                     content: {
                         /**
                          * @example {
-                         *       "details": "Entity with ID b31fbe9f-eebb-45ce-9cae-92265389f47f does not exist or has been deleted",
-                         *       "statusCode": 404,
-                         *       "source": "<Service>",
-                         *       "exceptionType": "NotFoundException",
+                         *       "cause": "The requested resource does not exist or has been deleted.",
                          *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Entity with ID b31fbe9f-eebb-45ce-9cae-92265389f47f does not exist or has been deleted",
+                         *       "documentationUrl": "https://developer.flute.com/",
                          *       "entityId": "b31fbe9f-eebb-45ce-9cae-92265389f47f",
                          *       "errorCode": "N0000",
-                         *       "title": "Resource not found",
-                         *       "cause": "The requested resource does not exist or has been deleted.",
+                         *       "exceptionType": "NotFoundException",
                          *       "resolution": "Verify the resource ID is correct or retrieve a list of available resources.",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
+                         *       "source": "<Service>",
+                         *       "statusCode": 404,
+                         *       "title": "Resource not found"
                          *     }
                          */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.NotFoundExceptionExample"];
+                        "application/json": components["schemas"]["NotFoundExceptionExample"];
+                    };
+                };
+                /** @description Too Many Requests */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "Too many requests sent in a short period.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Too many requests sent in a short period.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "R0000",
+                         *       "exceptionType": "RateLimitExceededException",
+                         *       "resolution": "Wait before retrying the request. Check the Retry-After header for more information.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 429,
+                         *       "title": "Rate limit exceeded"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["RateLimitExceededExceptionExample"];
+                    };
+                };
+                /** @description Internal Server Error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "An unexpected error occurred while processing the request",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "An unexpected error occurred while processing the request.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "I0000",
+                         *       "exceptionType": "IntegrationException",
+                         *       "resolution": "Please contact support with the correlation ID if the issue persists",
+                         *       "source": "<Service>",
+                         *       "statusCode": 500,
+                         *       "title": "Internal server error"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["InternalExceptionExample"];
                     };
                 };
             };
@@ -2022,7 +4637,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/v2/pos/transactions/{id}/cancel": {
+    "/v2/pos/transactions/{posTransactionId}/cancel": {
         parameters: {
             query?: never;
             header?: never;
@@ -2031,14 +4646,22 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Cancel Transaction. Required API Permission: Pos Cancel Transaction */
+        /**
+         * Cancel Transaction. Required API Permission: Pos Cancel Transaction
+         * @description Sends a cancellation signal to abort an in-progress POS transaction. Can only be called while the
+         *     transaction is in a cancellable state — typically before the customer has presented their card.
+         *     Returns the full POS transaction object.
+         */
         post: {
             parameters: {
                 query?: never;
                 header?: never;
                 path: {
-                    /** @description ID of POS transaction */
-                    id: string;
+                    /**
+                     * @description The POS transaction identifier to cancel.
+                     * @example bc037464-05f0-4cc6-b1d9-66d44636a1a1
+                     */
+                    posTransactionId: string;
                 };
                 cookie?: never;
             };
@@ -2052,11 +4675,27 @@ export interface paths {
                     content: {
                         /**
                          * @example {
-                         *       "posTransactionId": "44444444-4444-4444-4444-444444444444",
-                         *       "status": "TransactionProcessing"
+                         *       "baseAmount": 125.5,
+                         *       "captureMethod": "Auto",
+                         *       "createdOn": "2026-01-01T00:00:00Z",
+                         *       "currencyCode": "USD",
+                         *       "customerId": "9f2b1c4d-7e3a-4f8b-90c1-2d3e4f5a6b7c",
+                         *       "extraAmounts": null,
+                         *       "initiationChannel": "Cloud",
+                         *       "linkedTransaction": null,
+                         *       "merchantId": "746ba4dd-b1b4-47c3-a034-72aa55007e86",
+                         *       "modifiedOn": "2026-01-01T00:00:00Z",
+                         *       "paymentProcessorId": "2e8c8c3e-e034-42db-8169-1b7999a49cd0",
+                         *       "posDeviceId": "POS-DEV-001",
+                         *       "posTransactionId": "51efbd85-3e2b-459c-87d0-34f4c046a21f",
+                         *       "posTransactionStatus": "Cancelled",
+                         *       "processedAmount": null,
+                         *       "referenceId": "REF-POS-12345",
+                         *       "terminalId": "83a2baf4-2c5a-4326-acd9-65f26e47ac1e",
+                         *       "transactionId": null
                          *     }
                          */
-                        "application/json": components["schemas"]["CreatePosTransactionResponseDto"];
+                        "application/json": components["schemas"]["PosTransactionResponseDto"];
                     };
                 };
                 /** @description Bad Request */
@@ -2067,25 +4706,80 @@ export interface paths {
                     content: {
                         /**
                          * @example {
+                         *       "cause": "One or more fields failed validation rules.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "One or more validation errors occurred.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "V0000",
                          *       "errors": {
                          *         "Email": [
                          *           "'Email' is not a valid email address."
                          *         ]
                          *       },
-                         *       "details": "One or more validation errors occurred.",
-                         *       "statusCode": 400,
-                         *       "source": "<Service>",
                          *       "exceptionType": "ValidationException",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "entityId": null,
-                         *       "errorCode": "V0000",
-                         *       "title": "Validation failed",
-                         *       "cause": "One or more fields failed validation rules.",
                          *       "resolution": "Review the errors and correct the invalid fields.",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
+                         *       "source": "<Service>",
+                         *       "statusCode": 400,
+                         *       "title": "Validation failed"
                          *     }
                          */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.ValidationExceptionExample"];
+                        "application/json": components["schemas"]["ValidationExceptionExample"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Payment Required */
+                402: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "The payment was declined by the payment processor.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "The payment was declined by the processor.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "P0000",
+                         *       "exceptionType": "PaymentFailedException",
+                         *       "resolution": "Verify payment details, check available funds, or try a different payment method.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 402,
+                         *       "title": "Payment failed"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["PaymentFailedExceptionExample"];
+                    };
+                };
+                /** @description Forbidden */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "You do not have permission to access this resource.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "You do not have permission to access this resource.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "F0000",
+                         *       "exceptionType": "ForbiddenException",
+                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 403,
+                         *       "title": "Access forbidden"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ForbiddenExceptionExample"];
                     };
                 };
                 /** @description Not Found */
@@ -2096,20 +4790,92 @@ export interface paths {
                     content: {
                         /**
                          * @example {
-                         *       "details": "Entity with ID b31fbe9f-eebb-45ce-9cae-92265389f47f does not exist or has been deleted",
-                         *       "statusCode": 404,
-                         *       "source": "<Service>",
-                         *       "exceptionType": "NotFoundException",
+                         *       "cause": "The requested resource does not exist or has been deleted.",
                          *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Entity with ID b31fbe9f-eebb-45ce-9cae-92265389f47f does not exist or has been deleted",
+                         *       "documentationUrl": "https://developer.flute.com/",
                          *       "entityId": "b31fbe9f-eebb-45ce-9cae-92265389f47f",
                          *       "errorCode": "N0000",
-                         *       "title": "Resource not found",
-                         *       "cause": "The requested resource does not exist or has been deleted.",
+                         *       "exceptionType": "NotFoundException",
                          *       "resolution": "Verify the resource ID is correct or retrieve a list of available resources.",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
+                         *       "source": "<Service>",
+                         *       "statusCode": 404,
+                         *       "title": "Resource not found"
                          *     }
                          */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.NotFoundExceptionExample"];
+                        "application/json": components["schemas"]["NotFoundExceptionExample"];
+                    };
+                };
+                /** @description Conflict */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "The request conflicts with the current state of the resource.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "The request conflicts with the current state of the resource.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "C0000",
+                         *       "exceptionType": "ConflictException",
+                         *       "resolution": "Refresh the resource state and retry the operation, or use a different idempotency key.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 409,
+                         *       "title": "Resource conflict"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ConflictExceptionExample"];
+                    };
+                };
+                /** @description Too Many Requests */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "Too many requests sent in a short period.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Too many requests sent in a short period.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "R0000",
+                         *       "exceptionType": "RateLimitExceededException",
+                         *       "resolution": "Wait before retrying the request. Check the Retry-After header for more information.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 429,
+                         *       "title": "Rate limit exceeded"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["RateLimitExceededExceptionExample"];
+                    };
+                };
+                /** @description Internal Server Error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "An unexpected error occurred while processing the request",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "An unexpected error occurred while processing the request.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "I0000",
+                         *       "exceptionType": "IntegrationException",
+                         *       "resolution": "Please contact support with the correlation ID if the issue persists",
+                         *       "source": "<Service>",
+                         *       "statusCode": 500,
+                         *       "title": "Internal server error"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["InternalExceptionExample"];
                     };
                 };
             };
@@ -2139,17 +4905,20 @@ export interface paths {
                 query?: never;
                 header?: never;
                 path: {
-                    /** @description ID of POS transaction */
+                    /**
+                     * @description The POS transaction identifier whose receipt should be printed.
+                     * @example 6b486f55-e922-4a34-90c0-c78c75055eb1
+                     */
                     posTransactionId: string;
                 };
                 cookie?: never;
             };
-            /** @description Print request payload must include required terminalId */
+            /** @description Print request payload; `terminalId` is required. */
             requestBody?: {
                 content: {
                     /**
                      * @example {
-                     *       "terminalId": "33333333-3333-3333-3333-333333333333"
+                     *       "terminalId": "5ddd62a7-bb28-41b1-bc50-179e98dce577"
                      *     }
                      */
                     "application/json": components["schemas"]["PrintTransactionReceiptRequestDto"];
@@ -2171,25 +4940,56 @@ export interface paths {
                     content: {
                         /**
                          * @example {
+                         *       "cause": "One or more fields failed validation rules.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "One or more validation errors occurred.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "V0000",
                          *       "errors": {
                          *         "Email": [
                          *           "'Email' is not a valid email address."
                          *         ]
                          *       },
-                         *       "details": "One or more validation errors occurred.",
-                         *       "statusCode": 400,
-                         *       "source": "<Service>",
                          *       "exceptionType": "ValidationException",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "entityId": null,
-                         *       "errorCode": "V0000",
-                         *       "title": "Validation failed",
-                         *       "cause": "One or more fields failed validation rules.",
                          *       "resolution": "Review the errors and correct the invalid fields.",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
+                         *       "source": "<Service>",
+                         *       "statusCode": 400,
+                         *       "title": "Validation failed"
                          *     }
                          */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.ValidationExceptionExample"];
+                        "application/json": components["schemas"]["ValidationExceptionExample"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Forbidden */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "You do not have permission to access this resource.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "You do not have permission to access this resource.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "F0000",
+                         *       "exceptionType": "ForbiddenException",
+                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 403,
+                         *       "title": "Access forbidden"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ForbiddenExceptionExample"];
                     };
                 };
                 /** @description Not Found */
@@ -2200,24 +5000,266 @@ export interface paths {
                     content: {
                         /**
                          * @example {
-                         *       "details": "Entity with ID b31fbe9f-eebb-45ce-9cae-92265389f47f does not exist or has been deleted",
-                         *       "statusCode": 404,
-                         *       "source": "<Service>",
-                         *       "exceptionType": "NotFoundException",
+                         *       "cause": "The requested resource does not exist or has been deleted.",
                          *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Entity with ID b31fbe9f-eebb-45ce-9cae-92265389f47f does not exist or has been deleted",
+                         *       "documentationUrl": "https://developer.flute.com/",
                          *       "entityId": "b31fbe9f-eebb-45ce-9cae-92265389f47f",
                          *       "errorCode": "N0000",
-                         *       "title": "Resource not found",
-                         *       "cause": "The requested resource does not exist or has been deleted.",
+                         *       "exceptionType": "NotFoundException",
                          *       "resolution": "Verify the resource ID is correct or retrieve a list of available resources.",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
+                         *       "source": "<Service>",
+                         *       "statusCode": 404,
+                         *       "title": "Resource not found"
                          *     }
                          */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.NotFoundExceptionExample"];
+                        "application/json": components["schemas"]["NotFoundExceptionExample"];
+                    };
+                };
+                /** @description Conflict */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "The request conflicts with the current state of the resource.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "The request conflicts with the current state of the resource.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "C0000",
+                         *       "exceptionType": "ConflictException",
+                         *       "resolution": "Refresh the resource state and retry the operation, or use a different idempotency key.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 409,
+                         *       "title": "Resource conflict"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ConflictExceptionExample"];
+                    };
+                };
+                /** @description Too Many Requests */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "Too many requests sent in a short period.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Too many requests sent in a short period.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "R0000",
+                         *       "exceptionType": "RateLimitExceededException",
+                         *       "resolution": "Wait before retrying the request. Check the Retry-After header for more information.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 429,
+                         *       "title": "Rate limit exceeded"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["RateLimitExceededExceptionExample"];
+                    };
+                };
+                /** @description Internal Server Error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "An unexpected error occurred while processing the request",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "An unexpected error occurred while processing the request.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "I0000",
+                         *       "exceptionType": "IntegrationException",
+                         *       "resolution": "Please contact support with the correlation ID if the issue persists",
+                         *       "source": "<Service>",
+                         *       "statusCode": 500,
+                         *       "title": "Internal server error"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["InternalExceptionExample"];
                     };
                 };
             };
         };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v2/settings/contact-information": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get contact information Required API Permission: General Configurations
+         * @description The "Contact Information" endpoint allows ISV applications to retrieve the merchant's contact information.
+         *     By accessing this endpoint, developers can obtain a list of contact information records for the merchant,
+         *     including address, phone, etc. This information can be integrated with other endpoints of the application,
+         *     such as the invoice creation functionality.
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "contactInfos": [
+                         *         {
+                         *           "addressLine1": "123 Main St",
+                         *           "addressLine2": "Suite 100",
+                         *           "addressName": "Main Office",
+                         *           "city": "New York",
+                         *           "contactInfoId": "8d638f27-1a16-4f1b-92fe-0ea16d4a6461",
+                         *           "countryCode": "US",
+                         *           "email": "contact@company.com",
+                         *           "isDefaultAddress": true,
+                         *           "isMainAddress": true,
+                         *           "mobilePhoneNumber": "+12125550100",
+                         *           "postalCode": "10001",
+                         *           "stateCode": "NY"
+                         *         }
+                         *       ]
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ContactInfoResponseDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "One or more fields failed validation rules.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "One or more validation errors occurred.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "V0000",
+                         *       "errors": {
+                         *         "Email": [
+                         *           "'Email' is not a valid email address."
+                         *         ]
+                         *       },
+                         *       "exceptionType": "ValidationException",
+                         *       "resolution": "Review the errors and correct the invalid fields.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 400,
+                         *       "title": "Validation failed"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ValidationExceptionExample"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Forbidden */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "You do not have permission to access this resource.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "You do not have permission to access this resource.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "F0000",
+                         *       "exceptionType": "ForbiddenException",
+                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 403,
+                         *       "title": "Access forbidden"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ForbiddenExceptionExample"];
+                    };
+                };
+                /** @description Too Many Requests */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "Too many requests sent in a short period.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Too many requests sent in a short period.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "R0000",
+                         *       "exceptionType": "RateLimitExceededException",
+                         *       "resolution": "Wait before retrying the request. Check the Retry-After header for more information.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 429,
+                         *       "title": "Rate limit exceeded"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["RateLimitExceededExceptionExample"];
+                    };
+                };
+                /** @description Internal Server Error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "An unexpected error occurred while processing the request",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "An unexpected error occurred while processing the request.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "I0000",
+                         *       "exceptionType": "IntegrationException",
+                         *       "resolution": "Please contact support with the correlation ID if the issue persists",
+                         *       "source": "<Service>",
+                         *       "statusCode": 500,
+                         *       "title": "Internal server error"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["InternalExceptionExample"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -2249,23 +5291,33 @@ export interface paths {
                     content: {
                         /**
                          * @example {
-                         *       "zeroCostProcessingOption": "None",
-                         *       "defaultTipsOptions": [
-                         *         10,
-                         *         15,
-                         *         20
-                         *       ],
-                         *       "defaultSurchargeRate": 1.5,
-                         *       "defaultCashDiscountRate": 2,
-                         *       "defaultDualPricingRate": 1.8,
-                         *       "availableCurrencies": [
-                         *         "USD"
-                         *       ],
+                         *       "addressVerificationServiceOptions": {
+                         *         "isEnabled": true,
+                         *         "profile": "Strict"
+                         *       },
                          *       "availableCardTypes": [
                          *         "Visa",
                          *         "MasterCard",
                          *         "AmericanExpress",
                          *         "Discover"
+                         *       ],
+                         *       "availableCurrencies": [
+                         *         "USD"
+                         *       ],
+                         *       "availablePaymentProcessors": [
+                         *         {
+                         *           "isDefault": true,
+                         *           "paymentProcessorId": "ecd7c87b-7165-4a67-a067-24c9c9e1bbf4",
+                         *           "processorName": "TSYS",
+                         *           "settlementBatchTimeSlots": [
+                         *             {
+                         *               "hours": 2,
+                         *               "minutes": 10,
+                         *               "timezoneName": "America/New_York"
+                         *             }
+                         *           ],
+                         *           "type": "Tsys"
+                         *         }
                          *       ],
                          *       "availableTransactionTypes": [
                          *         "Sale",
@@ -2273,33 +5325,23 @@ export interface paths {
                          *         "Refund",
                          *         "Void"
                          *       ],
-                         *       "isTipsEnabled": true,
-                         *       "availablePaymentProcessors": [
-                         *         {
-                         *           "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
-                         *           "name": "TSYS",
-                         *           "isDefault": true,
-                         *           "type": "Tsys",
-                         *           "settlementBatchTimeSlots": [
-                         *             {
-                         *               "hours": 2,
-                         *               "minutes": 10,
-                         *               "timezoneName": "America/New_York"
-                         *             }
-                         *           ]
-                         *         }
-                         *       ],
-                         *       "avsOptions": {
-                         *         "isEnabled": true,
-                         *         "profile": "Strict"
-                         *       },
-                         *       "isCustomerCardSavingByTerminalEnabled": true,
                          *       "companyName": "Test Company",
+                         *       "currency": "USD",
+                         *       "defaultCashDiscountRate": 2,
+                         *       "defaultDualPricingRate": 1.8,
+                         *       "defaultSurchargeRate": 1.5,
+                         *       "defaultTipsOptions": [
+                         *         10,
+                         *         15,
+                         *         20
+                         *       ],
+                         *       "isCustomerCardSavingByTerminalEnabled": true,
+                         *       "isTipsEnabled": true,
+                         *       "maxTransactionAmount": 10000,
                          *       "mccCode": "5411",
                          *       "mccCodeDescription": "Grocery Stores, Supermarkets",
-                         *       "currency": "USD",
-                         *       "maxTransactionAmount": 10000,
-                         *       "ttpIosTerminalProfileId": "ios-terminal-profile-id"
+                         *       "ttpIosTerminalProfileId": "ios-terminal-profile-id",
+                         *       "zeroCostProcessingOption": "None"
                          *     }
                          */
                         "application/json": components["schemas"]["PaymentConfigurationResponseDto"];
@@ -2313,26 +5355,33 @@ export interface paths {
                     content: {
                         /**
                          * @example {
+                         *       "cause": "One or more fields failed validation rules.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "One or more validation errors occurred.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "V0000",
                          *       "errors": {
                          *         "Email": [
                          *           "'Email' is not a valid email address."
                          *         ]
                          *       },
-                         *       "details": "One or more validation errors occurred.",
-                         *       "statusCode": 400,
-                         *       "source": "<Service>",
                          *       "exceptionType": "ValidationException",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "entityId": null,
-                         *       "errorCode": "V0000",
-                         *       "title": "Validation failed",
-                         *       "cause": "One or more fields failed validation rules.",
                          *       "resolution": "Review the errors and correct the invalid fields.",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
+                         *       "source": "<Service>",
+                         *       "statusCode": 400,
+                         *       "title": "Validation failed"
                          *     }
                          */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.ValidationExceptionExample"];
+                        "application/json": components["schemas"]["ValidationExceptionExample"];
                     };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
                 };
                 /** @description Forbidden */
                 403: {
@@ -2342,20 +5391,44 @@ export interface paths {
                     content: {
                         /**
                          * @example {
-                         *       "details": "You do not have permission to access this resource.",
-                         *       "statusCode": 403,
-                         *       "source": "<Service>",
-                         *       "exceptionType": "ForbiddenException",
+                         *       "cause": "You do not have permission to access this resource.",
                          *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "You do not have permission to access this resource.",
+                         *       "documentationUrl": "https://developer.flute.com/",
                          *       "entityId": null,
                          *       "errorCode": "F0000",
-                         *       "title": "Access forbidden",
-                         *       "cause": "You do not have permission to access this resource.",
+                         *       "exceptionType": "ForbiddenException",
                          *       "resolution": "Verify your credentials and permissions or contact your administrator.",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
+                         *       "source": "<Service>",
+                         *       "statusCode": 403,
+                         *       "title": "Access forbidden"
                          *     }
                          */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.ForbiddenExceptionExample"];
+                        "application/json": components["schemas"]["ForbiddenExceptionExample"];
+                    };
+                };
+                /** @description Too Many Requests */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "Too many requests sent in a short period.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Too many requests sent in a short period.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "R0000",
+                         *       "exceptionType": "RateLimitExceededException",
+                         *       "resolution": "Wait before retrying the request. Check the Retry-After header for more information.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 429,
+                         *       "title": "Rate limit exceeded"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["RateLimitExceededExceptionExample"];
                     };
                 };
                 /** @description Internal Server Error */
@@ -2366,159 +5439,20 @@ export interface paths {
                     content: {
                         /**
                          * @example {
-                         *       "details": "An unexpected error occurred while processing the request.",
-                         *       "statusCode": 500,
-                         *       "source": "<Service>",
-                         *       "exceptionType": "IntegrationException",
+                         *       "cause": "An unexpected error occurred while processing the request",
                          *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "An unexpected error occurred while processing the request.",
+                         *       "documentationUrl": "https://developer.flute.com/",
                          *       "entityId": null,
                          *       "errorCode": "I0000",
-                         *       "title": "Internal server error",
-                         *       "cause": "An unexpected error occurred while processing the request",
-                         *       "resolution": "Please contact support with the correlation ID if the issue persists",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
-                         *     }
-                         */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.InternalExceptionExample"];
-                    };
-                };
-            };
-        };
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v2/settings/contact-info": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get contact info Required API Permission: General Configurations
-         * @description The "Contact Info" endpoint allows ISV applications to retrieve the merchant's contact information.
-         *     By accessing this endpoint, developers can obtain a list of contact info records for the merchant,
-         *     including address, phone, etc. This information can be integrated with other endpoints of the application,
-         *     such as the invoice creation functionality.
-         */
-        get: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        /**
-                         * @example {
-                         *       "contactInfos": [
-                         *         {
-                         *           "id": "b2c3d4e5-f6a7-8901-bcde-f12345678901",
-                         *           "addressName": "Main Office",
-                         *           "email": "contact@company.com",
-                         *           "mobileNumber": "212-555-0100",
-                         *           "isMainAddress": true,
-                         *           "isDefaultAddress": true,
-                         *           "city": "New York",
-                         *           "countryCode": "US",
-                         *           "line1": "123 Main St",
-                         *           "line2": "Suite 100",
-                         *           "postalCode": "10001",
-                         *           "stateCode": "NY"
-                         *         }
-                         *       ]
-                         *     }
-                         */
-                        "application/json": components["schemas"]["ContactInfoResponseDto"];
-                    };
-                };
-                /** @description Bad Request */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        /**
-                         * @example {
-                         *       "errors": {
-                         *         "Email": [
-                         *           "'Email' is not a valid email address."
-                         *         ]
-                         *       },
-                         *       "details": "One or more validation errors occurred.",
-                         *       "statusCode": 400,
-                         *       "source": "<Service>",
-                         *       "exceptionType": "ValidationException",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "entityId": null,
-                         *       "errorCode": "V0000",
-                         *       "title": "Validation failed",
-                         *       "cause": "One or more fields failed validation rules.",
-                         *       "resolution": "Review the errors and correct the invalid fields.",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
-                         *     }
-                         */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.ValidationExceptionExample"];
-                    };
-                };
-                /** @description Forbidden */
-                403: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        /**
-                         * @example {
-                         *       "details": "You do not have permission to access this resource.",
-                         *       "statusCode": 403,
-                         *       "source": "<Service>",
-                         *       "exceptionType": "ForbiddenException",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "entityId": null,
-                         *       "errorCode": "F0000",
-                         *       "title": "Access forbidden",
-                         *       "cause": "You do not have permission to access this resource.",
-                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
-                         *     }
-                         */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.ForbiddenExceptionExample"];
-                    };
-                };
-                /** @description Internal Server Error */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        /**
-                         * @example {
-                         *       "details": "An unexpected error occurred while processing the request.",
-                         *       "statusCode": 500,
-                         *       "source": "<Service>",
                          *       "exceptionType": "IntegrationException",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "entityId": null,
-                         *       "errorCode": "I0000",
-                         *       "title": "Internal server error",
-                         *       "cause": "An unexpected error occurred while processing the request",
                          *       "resolution": "Please contact support with the correlation ID if the issue persists",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
+                         *       "source": "<Service>",
+                         *       "statusCode": 500,
+                         *       "title": "Internal server error"
                          *     }
                          */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.InternalExceptionExample"];
+                        "application/json": components["schemas"]["InternalExceptionExample"];
                     };
                 };
             };
@@ -2556,21 +5490,20 @@ export interface paths {
                     content: {
                         /**
                          * @example {
-                         *       "l2Settings": {
+                         *       "level2Settings": {
                          *         "taxRate": 8.5
                          *       },
-                         *       "l3Settings": {
+                         *       "level3Settings": {
+                         *         "dutyChargeRate": 2.5,
                          *         "product": {
-                         *           "name": "Office Supplies",
                          *           "code": "OFF-001",
-                         *           "unitPrice": 25,
-                         *           "measurementUnit": "pcs",
-                         *           "quantity": 10,
                          *           "discountPercentage": 5,
-                         *           "description": "Standard office supplies"
+                         *           "measurementUnit": "pcs",
+                         *           "productName": "Office Supplies",
+                         *           "quantity": 10,
+                         *           "unitPrice": 25
                          *         },
-                         *         "shippingCharge": 5,
-                         *         "dutyChargeRate": 2.5
+                         *         "shippingChargeRate": 5
                          *       }
                          *     }
                          */
@@ -2585,25 +5518,80 @@ export interface paths {
                     content: {
                         /**
                          * @example {
+                         *       "cause": "One or more fields failed validation rules.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "One or more validation errors occurred.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "V0000",
                          *       "errors": {
                          *         "Email": [
                          *           "'Email' is not a valid email address."
                          *         ]
                          *       },
-                         *       "details": "One or more validation errors occurred.",
-                         *       "statusCode": 400,
-                         *       "source": "<Service>",
                          *       "exceptionType": "ValidationException",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "entityId": null,
-                         *       "errorCode": "V0000",
-                         *       "title": "Validation failed",
-                         *       "cause": "One or more fields failed validation rules.",
                          *       "resolution": "Review the errors and correct the invalid fields.",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
+                         *       "source": "<Service>",
+                         *       "statusCode": 400,
+                         *       "title": "Validation failed"
                          *     }
                          */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.ValidationExceptionExample"];
+                        "application/json": components["schemas"]["ValidationExceptionExample"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Forbidden */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "You do not have permission to access this resource.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "You do not have permission to access this resource.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "F0000",
+                         *       "exceptionType": "ForbiddenException",
+                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 403,
+                         *       "title": "Access forbidden"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ForbiddenExceptionExample"];
+                    };
+                };
+                /** @description Too Many Requests */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "Too many requests sent in a short period.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Too many requests sent in a short period.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "R0000",
+                         *       "exceptionType": "RateLimitExceededException",
+                         *       "resolution": "Wait before retrying the request. Check the Retry-After header for more information.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 429,
+                         *       "title": "Rate limit exceeded"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["RateLimitExceededExceptionExample"];
                     };
                 };
                 /** @description Internal Server Error */
@@ -2614,26 +5602,37 @@ export interface paths {
                     content: {
                         /**
                          * @example {
-                         *       "details": "An unexpected error occurred while processing the request.",
-                         *       "statusCode": 500,
-                         *       "source": "<Service>",
-                         *       "exceptionType": "IntegrationException",
+                         *       "cause": "An unexpected error occurred while processing the request",
                          *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "An unexpected error occurred while processing the request.",
+                         *       "documentationUrl": "https://developer.flute.com/",
                          *       "entityId": null,
                          *       "errorCode": "I0000",
-                         *       "title": "Internal server error",
-                         *       "cause": "An unexpected error occurred while processing the request",
+                         *       "exceptionType": "IntegrationException",
                          *       "resolution": "Please contact support with the correlation ID if the issue persists",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
+                         *       "source": "<Service>",
+                         *       "statusCode": 500,
+                         *       "title": "Internal server error"
                          *     }
                          */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.InternalExceptionExample"];
+                        "application/json": components["schemas"]["InternalExceptionExample"];
                     };
                 };
             };
         };
-        /** Update L2/L3 Autofill Settings Required API Permission: General Configurations */
-        put: {
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Update L2/L3 Autofill Settings Required API Permission: General Configurations
+         * @description Partial update (JSON Merge Patch, RFC 7396): send only the settings you want to change.
+         *     An omitted field is left unchanged; an explicit `null` clears a clearable field
+         *     (`level2Settings` and its `taxRate` are not clearable); nested L2/L3/product groups merge
+         *     recursively. Returns the full updated autofill settings.
+         */
+        patch: {
             parameters: {
                 query?: never;
                 header?: never;
@@ -2644,21 +5643,20 @@ export interface paths {
                 content: {
                     /**
                      * @example {
-                     *       "l2Settings": {
+                     *       "level2Settings": {
                      *         "taxRate": 8.5
                      *       },
-                     *       "l3Settings": {
+                     *       "level3Settings": {
+                     *         "dutyChargeRate": 2.5,
                      *         "product": {
-                     *           "name": "Office Supplies",
                      *           "code": "OFF-001",
-                     *           "unitPrice": 25,
-                     *           "measurementUnit": "pcs",
-                     *           "quantity": 10,
                      *           "discountPercentage": 5,
-                     *           "description": "Standard office supplies"
+                     *           "measurementUnit": "pcs",
+                     *           "productName": "Office Supplies",
+                     *           "quantity": 10,
+                     *           "unitPrice": 25
                      *         },
-                     *         "shippingCharge": 5,
-                     *         "dutyChargeRate": 2.5
+                     *         "shippingChargeRate": 5
                      *       }
                      *     }
                      */
@@ -2671,142 +5669,64 @@ export interface paths {
                     headers: {
                         [name: string]: unknown;
                     };
+                    content: {
+                        /**
+                         * @example {
+                         *       "level2Settings": {
+                         *         "taxRate": 8.5
+                         *       },
+                         *       "level3Settings": {
+                         *         "dutyChargeRate": 2.5,
+                         *         "product": {
+                         *           "code": "OFF-001",
+                         *           "discountPercentage": 5,
+                         *           "measurementUnit": "pcs",
+                         *           "productName": "Office Supplies",
+                         *           "quantity": 10,
+                         *           "unitPrice": 25
+                         *         },
+                         *         "shippingChargeRate": 5
+                         *       }
+                         *     }
+                         */
+                        "application/json": components["schemas"]["TransactionAutofillResponseDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "One or more fields failed validation rules.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "One or more validation errors occurred.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "V0000",
+                         *       "errors": {
+                         *         "Email": [
+                         *           "'Email' is not a valid email address."
+                         *         ]
+                         *       },
+                         *       "exceptionType": "ValidationException",
+                         *       "resolution": "Review the errors and correct the invalid fields.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 400,
+                         *       "title": "Validation failed"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ValidationExceptionExample"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
                     content?: never;
-                };
-                /** @description Bad Request */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        /**
-                         * @example {
-                         *       "errors": {
-                         *         "Email": [
-                         *           "'Email' is not a valid email address."
-                         *         ]
-                         *       },
-                         *       "details": "One or more validation errors occurred.",
-                         *       "statusCode": 400,
-                         *       "source": "<Service>",
-                         *       "exceptionType": "ValidationException",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "entityId": null,
-                         *       "errorCode": "V0000",
-                         *       "title": "Validation failed",
-                         *       "cause": "One or more fields failed validation rules.",
-                         *       "resolution": "Review the errors and correct the invalid fields.",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
-                         *     }
-                         */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.ValidationExceptionExample"];
-                    };
-                };
-                /** @description Internal Server Error */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        /**
-                         * @example {
-                         *       "details": "An unexpected error occurred while processing the request.",
-                         *       "statusCode": 500,
-                         *       "source": "<Service>",
-                         *       "exceptionType": "IntegrationException",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "entityId": null,
-                         *       "errorCode": "I0000",
-                         *       "title": "Internal server error",
-                         *       "cause": "An unexpected error occurred while processing the request",
-                         *       "resolution": "Please contact support with the correlation ID if the issue persists",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
-                         *     }
-                         */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.InternalExceptionExample"];
-                    };
-                };
-            };
-        };
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v2/settlements/settle": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Settle transactions Required API Permission: Submit Batch For Settlement */
-        post: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody?: {
-                content: {
-                    /**
-                     * @example {
-                     *       "paymentProcessorId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
-                     *     }
-                     */
-                    "application/json": components["schemas"]["SettleTransactionsRequestDto"];
-                };
-            };
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        /**
-                         * @example {
-                         *       "status": "Approve",
-                         *       "message": "Batch closed successfully",
-                         *       "processorResponseCode": "00"
-                         *     }
-                         */
-                        "application/json": components["schemas"]["SettleTransactionsResponseDto"];
-                    };
-                };
-                /** @description Bad Request */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        /**
-                         * @example {
-                         *       "errors": {
-                         *         "Email": [
-                         *           "'Email' is not a valid email address."
-                         *         ]
-                         *       },
-                         *       "details": "One or more validation errors occurred.",
-                         *       "statusCode": 400,
-                         *       "source": "<Service>",
-                         *       "exceptionType": "ValidationException",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "entityId": null,
-                         *       "errorCode": "V0000",
-                         *       "title": "Validation failed",
-                         *       "cause": "One or more fields failed validation rules.",
-                         *       "resolution": "Review the errors and correct the invalid fields.",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
-                         *     }
-                         */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.ValidationExceptionExample"];
-                    };
                 };
                 /** @description Forbidden */
                 403: {
@@ -2816,20 +5736,20 @@ export interface paths {
                     content: {
                         /**
                          * @example {
-                         *       "details": "You do not have permission to access this resource.",
-                         *       "statusCode": 403,
-                         *       "source": "<Service>",
-                         *       "exceptionType": "ForbiddenException",
+                         *       "cause": "You do not have permission to access this resource.",
                          *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "You do not have permission to access this resource.",
+                         *       "documentationUrl": "https://developer.flute.com/",
                          *       "entityId": null,
                          *       "errorCode": "F0000",
-                         *       "title": "Access forbidden",
-                         *       "cause": "You do not have permission to access this resource.",
+                         *       "exceptionType": "ForbiddenException",
                          *       "resolution": "Verify your credentials and permissions or contact your administrator.",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
+                         *       "source": "<Service>",
+                         *       "statusCode": 403,
+                         *       "title": "Access forbidden"
                          *     }
                          */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.ForbiddenExceptionExample"];
+                        "application/json": components["schemas"]["ForbiddenExceptionExample"];
                     };
                 };
                 /** @description Not Found */
@@ -2840,20 +5760,68 @@ export interface paths {
                     content: {
                         /**
                          * @example {
-                         *       "details": "Entity with ID b31fbe9f-eebb-45ce-9cae-92265389f47f does not exist or has been deleted",
-                         *       "statusCode": 404,
-                         *       "source": "<Service>",
-                         *       "exceptionType": "NotFoundException",
+                         *       "cause": "The requested resource does not exist or has been deleted.",
                          *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Entity with ID b31fbe9f-eebb-45ce-9cae-92265389f47f does not exist or has been deleted",
+                         *       "documentationUrl": "https://developer.flute.com/",
                          *       "entityId": "b31fbe9f-eebb-45ce-9cae-92265389f47f",
                          *       "errorCode": "N0000",
-                         *       "title": "Resource not found",
-                         *       "cause": "The requested resource does not exist or has been deleted.",
+                         *       "exceptionType": "NotFoundException",
                          *       "resolution": "Verify the resource ID is correct or retrieve a list of available resources.",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
+                         *       "source": "<Service>",
+                         *       "statusCode": 404,
+                         *       "title": "Resource not found"
                          *     }
                          */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.NotFoundExceptionExample"];
+                        "application/json": components["schemas"]["NotFoundExceptionExample"];
+                    };
+                };
+                /** @description Conflict */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "The request conflicts with the current state of the resource.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "The request conflicts with the current state of the resource.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "C0000",
+                         *       "exceptionType": "ConflictException",
+                         *       "resolution": "Refresh the resource state and retry the operation, or use a different idempotency key.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 409,
+                         *       "title": "Resource conflict"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ConflictExceptionExample"];
+                    };
+                };
+                /** @description Too Many Requests */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "Too many requests sent in a short period.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Too many requests sent in a short period.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "R0000",
+                         *       "exceptionType": "RateLimitExceededException",
+                         *       "resolution": "Wait before retrying the request. Check the Retry-After header for more information.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 429,
+                         *       "title": "Rate limit exceeded"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["RateLimitExceededExceptionExample"];
                     };
                 };
                 /** @description Internal Server Error */
@@ -2864,28 +5832,24 @@ export interface paths {
                     content: {
                         /**
                          * @example {
-                         *       "details": "An unexpected error occurred while processing the request.",
-                         *       "statusCode": 500,
-                         *       "source": "<Service>",
-                         *       "exceptionType": "IntegrationException",
+                         *       "cause": "An unexpected error occurred while processing the request",
                          *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "An unexpected error occurred while processing the request.",
+                         *       "documentationUrl": "https://developer.flute.com/",
                          *       "entityId": null,
                          *       "errorCode": "I0000",
-                         *       "title": "Internal server error",
-                         *       "cause": "An unexpected error occurred while processing the request",
+                         *       "exceptionType": "IntegrationException",
                          *       "resolution": "Please contact support with the correlation ID if the issue persists",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
+                         *       "source": "<Service>",
+                         *       "statusCode": 500,
+                         *       "title": "Internal server error"
                          *     }
                          */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.InternalExceptionExample"];
+                        "application/json": components["schemas"]["InternalExceptionExample"];
                     };
                 };
             };
         };
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
         trace?: never;
     };
     "/v2/settlements/batches": {
@@ -2899,8 +5863,8 @@ export interface paths {
         get: {
             parameters: {
                 query?: {
-                    /** @description Page number (1-based) */
-                    page?: number;
+                    /** @description Zero-based page index. */
+                    pageIndex?: number;
                     /** @description Number of items per page */
                     pageSize?: number;
                     /** @description Field name to order results by */
@@ -2934,22 +5898,28 @@ export interface paths {
                          * @example {
                          *       "items": [
                          *         {
-                         *           "id": "b2c3d4e5-f6a7-8901-bcde-f12345678901",
-                         *           "paymentProcessorId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
-                         *           "paymentProcessorName": "TSYS",
+                         *           "batchDateTime": "2026-01-01T00:00:00Z",
+                         *           "batchId": "21c75430-a316-456f-9126-365760dca33a",
                          *           "externalBatchId": "BATCH-001",
-                         *           "batchDateTime": "2026-03-23T12:00:00Z",
-                         *           "transactionCount": 15,
                          *           "netAmount": 1250,
+                         *           "paymentProcessorId": "1092a854-1708-4e0c-8d86-1b8fe34b37ec",
+                         *           "paymentProcessorName": "TSYS",
                          *           "refundsAmount": 50,
                          *           "salesAmount": 1300,
-                         *           "status": "Settled"
+                         *           "status": "Settled",
+                         *           "transactionCount": 15
                          *         }
                          *       ],
-                         *       "total": 1
+                         *       "pageInfo": {
+                         *         "hasMore": false,
+                         *         "pageIndex": 0,
+                         *         "pageSize": 20,
+                         *         "totalItems": 1,
+                         *         "totalPages": 1
+                         *       }
                          *     }
                          */
-                        "application/json": components["schemas"]["Contracts.Page`1[[Arise.IsvApiBff.Contracts.v2.Settlements.Responses.ListBatchesResponseDto, Arise.IsvApiBff.Contracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"];
+                        "application/json": components["schemas"]["PagedResponseDtoOfListBatchesResponseDto"];
                     };
                 };
                 /** @description Bad Request */
@@ -2960,26 +5930,33 @@ export interface paths {
                     content: {
                         /**
                          * @example {
+                         *       "cause": "One or more fields failed validation rules.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "One or more validation errors occurred.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "V0000",
                          *       "errors": {
                          *         "Email": [
                          *           "'Email' is not a valid email address."
                          *         ]
                          *       },
-                         *       "details": "One or more validation errors occurred.",
-                         *       "statusCode": 400,
-                         *       "source": "<Service>",
                          *       "exceptionType": "ValidationException",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "entityId": null,
-                         *       "errorCode": "V0000",
-                         *       "title": "Validation failed",
-                         *       "cause": "One or more fields failed validation rules.",
                          *       "resolution": "Review the errors and correct the invalid fields.",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
+                         *       "source": "<Service>",
+                         *       "statusCode": 400,
+                         *       "title": "Validation failed"
                          *     }
                          */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.ValidationExceptionExample"];
+                        "application/json": components["schemas"]["ValidationExceptionExample"];
                     };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
                 };
                 /** @description Forbidden */
                 403: {
@@ -2989,20 +5966,44 @@ export interface paths {
                     content: {
                         /**
                          * @example {
-                         *       "details": "You do not have permission to access this resource.",
-                         *       "statusCode": 403,
-                         *       "source": "<Service>",
-                         *       "exceptionType": "ForbiddenException",
+                         *       "cause": "You do not have permission to access this resource.",
                          *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "You do not have permission to access this resource.",
+                         *       "documentationUrl": "https://developer.flute.com/",
                          *       "entityId": null,
                          *       "errorCode": "F0000",
-                         *       "title": "Access forbidden",
-                         *       "cause": "You do not have permission to access this resource.",
+                         *       "exceptionType": "ForbiddenException",
                          *       "resolution": "Verify your credentials and permissions or contact your administrator.",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
+                         *       "source": "<Service>",
+                         *       "statusCode": 403,
+                         *       "title": "Access forbidden"
                          *     }
                          */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.ForbiddenExceptionExample"];
+                        "application/json": components["schemas"]["ForbiddenExceptionExample"];
+                    };
+                };
+                /** @description Too Many Requests */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "Too many requests sent in a short period.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Too many requests sent in a short period.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "R0000",
+                         *       "exceptionType": "RateLimitExceededException",
+                         *       "resolution": "Wait before retrying the request. Check the Retry-After header for more information.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 429,
+                         *       "title": "Rate limit exceeded"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["RateLimitExceededExceptionExample"];
                     };
                 };
                 /** @description Internal Server Error */
@@ -3013,26 +6014,258 @@ export interface paths {
                     content: {
                         /**
                          * @example {
-                         *       "details": "An unexpected error occurred while processing the request.",
-                         *       "statusCode": 500,
-                         *       "source": "<Service>",
-                         *       "exceptionType": "IntegrationException",
+                         *       "cause": "An unexpected error occurred while processing the request",
                          *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "An unexpected error occurred while processing the request.",
+                         *       "documentationUrl": "https://developer.flute.com/",
                          *       "entityId": null,
                          *       "errorCode": "I0000",
-                         *       "title": "Internal server error",
-                         *       "cause": "An unexpected error occurred while processing the request",
+                         *       "exceptionType": "IntegrationException",
                          *       "resolution": "Please contact support with the correlation ID if the issue persists",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
+                         *       "source": "<Service>",
+                         *       "statusCode": 500,
+                         *       "title": "Internal server error"
                          *     }
                          */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.InternalExceptionExample"];
+                        "application/json": components["schemas"]["InternalExceptionExample"];
                     };
                 };
             };
         };
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v2/settlements/settle": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Settle transactions Required API Permission: Submit Batch For Settlement */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    /**
+                     * @example {
+                     *       "paymentProcessorId": "e8b93550-4dd9-4f1a-9254-ac5de0686cee"
+                     *     }
+                     */
+                    "application/json": components["schemas"]["SettleTransactionsRequestDto"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "message": "Batch closed successfully",
+                         *       "processorResponseCode": "00",
+                         *       "status": "Approve"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["SettleTransactionsResponseDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "One or more fields failed validation rules.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "One or more validation errors occurred.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "V0000",
+                         *       "errors": {
+                         *         "Email": [
+                         *           "'Email' is not a valid email address."
+                         *         ]
+                         *       },
+                         *       "exceptionType": "ValidationException",
+                         *       "resolution": "Review the errors and correct the invalid fields.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 400,
+                         *       "title": "Validation failed"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ValidationExceptionExample"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Payment Required */
+                402: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "The payment was declined by the payment processor.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "The payment was declined by the processor.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "P0000",
+                         *       "exceptionType": "PaymentFailedException",
+                         *       "resolution": "Verify payment details, check available funds, or try a different payment method.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 402,
+                         *       "title": "Payment failed"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["PaymentFailedExceptionExample"];
+                    };
+                };
+                /** @description Forbidden */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "You do not have permission to access this resource.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "You do not have permission to access this resource.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "F0000",
+                         *       "exceptionType": "ForbiddenException",
+                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 403,
+                         *       "title": "Access forbidden"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ForbiddenExceptionExample"];
+                    };
+                };
+                /** @description Not Found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "The requested resource does not exist or has been deleted.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Entity with ID b31fbe9f-eebb-45ce-9cae-92265389f47f does not exist or has been deleted",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": "b31fbe9f-eebb-45ce-9cae-92265389f47f",
+                         *       "errorCode": "N0000",
+                         *       "exceptionType": "NotFoundException",
+                         *       "resolution": "Verify the resource ID is correct or retrieve a list of available resources.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 404,
+                         *       "title": "Resource not found"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["NotFoundExceptionExample"];
+                    };
+                };
+                /** @description Conflict */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "The request conflicts with the current state of the resource.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "The request conflicts with the current state of the resource.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "C0000",
+                         *       "exceptionType": "ConflictException",
+                         *       "resolution": "Refresh the resource state and retry the operation, or use a different idempotency key.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 409,
+                         *       "title": "Resource conflict"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ConflictExceptionExample"];
+                    };
+                };
+                /** @description Too Many Requests */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "Too many requests sent in a short period.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Too many requests sent in a short period.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "R0000",
+                         *       "exceptionType": "RateLimitExceededException",
+                         *       "resolution": "Wait before retrying the request. Check the Retry-After header for more information.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 429,
+                         *       "title": "Rate limit exceeded"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["RateLimitExceededExceptionExample"];
+                    };
+                };
+                /** @description Internal Server Error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "An unexpected error occurred while processing the request",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "An unexpected error occurred while processing the request.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "I0000",
+                         *       "exceptionType": "IntegrationException",
+                         *       "resolution": "Please contact support with the correlation ID if the issue persists",
+                         *       "source": "<Service>",
+                         *       "statusCode": 500,
+                         *       "title": "Internal server error"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["InternalExceptionExample"];
+                    };
+                };
+            };
+        };
         delete?: never;
         options?: never;
         head?: never;
@@ -3046,24 +6279,59 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** List Terminals Required API Permission: Get Terminal List */
+        /**
+         * List Terminals Required API Permission: Get Terminal List
+         * @description Returns a paginated list of terminals assigned to the authenticated merchant. Only active
+         *     terminals are returned — terminals in pre-activation states (pending shipment, shipping) or
+         *     deactivated terminals are excluded. Supports filtering by `terminalStatus`,
+         *     `terminalMode`, `connectionStatus`, and `serialNumber`, free-text search across
+         *     serial number, terminal model, terminal manufacturer, terminal ID, and merchant company name,
+         *     and sorting by `serialNumber` (default), `terminalModel`, `terminalManufacturer`,
+         *     or `merchantCompanyName`.
+         */
         get: {
             parameters: {
                 query?: {
-                    /** @description Page number */
-                    page?: number;
-                    /** @description Page size */
+                    /** @description Zero-based page index. */
+                    pageIndex?: number;
+                    /** @description Number of items per page. Minimum 1, maximum 100. */
                     pageSize?: number;
-                    /** @description Order by field */
-                    orderBy?: string;
-                    /** @description Sort ascending */
-                    asc?: boolean;
-                    /** @description Search string */
-                    search?: string;
-                    /** @description Filter by delivery status */
-                    deliveryStatus?: components["schemas"]["TerminalDeliveryStatus"];
-                    /** @description Filter by terminal serial number */
+                    /**
+                     * @description Field to sort by. Options: `serialNumber` (default), `terminalModel`,
+                     *     `terminalManufacturer`, `merchantCompanyName`.
+                     * @example serialNumber
+                     */
+                    sortBy?: string;
+                    /**
+                     * @description Sort direction: `asc` (default) or `desc`.
+                     * @example asc
+                     */
+                    sortOrder?: string;
+                    /**
+                     * @description Terminal status to filter by: Ready, Busy, or Offline.
+                     * @example Ready
+                     */
+                    terminalStatus?: components["schemas"]["TerminalPosStatus"];
+                    /**
+                     * @description Terminal mode to filter by: Standalone or SemiIntegrated.
+                     * @example SemiIntegrated
+                     */
+                    terminalMode?: components["schemas"]["TerminalMode"];
+                    /**
+                     * @description Connection status to filter by: Online or Offline.
+                     * @example Online
+                     */
+                    connectionStatus?: components["schemas"]["TerminalConnectionStatus"];
+                    /**
+                     * @description Serial number to filter by (exact match).
+                     * @example SN100001
+                     */
                     serialNumber?: string;
+                    /**
+                     * @description Free-text search across serial number, terminal model, terminal manufacturer,
+                     *     terminal ID, and merchant company name.
+                     */
+                    search?: string;
                 };
                 header?: never;
                 path?: never;
@@ -3081,34 +6349,52 @@ export interface paths {
                          * @example {
                          *       "items": [
                          *         {
-                         *           "id": "11111111-1111-1111-1111-111111111111",
-                         *           "merchantId": "33333333-3333-3333-3333-333333333333",
-                         *           "merchantCompanyName": "Test Merchant",
-                         *           "serialNumber": "SN100001",
-                         *           "terminalManufacturer": "Sunmi",
-                         *           "terminalModel": "SunmiP2",
-                         *           "deliveryStatus": "Active",
-                         *           "terminalMode": "SemiIntegrated",
                          *           "connectionStatus": "Online",
-                         *           "lastSeenTimestamp": "2026-05-09T17:04:52.5015533Z"
+                         *           "lastSeenOn": "2026-01-01T00:00:00Z",
+                         *           "merchantCompanyName": "Test Merchant",
+                         *           "merchantId": "fffcecc3-2e15-4e93-8144-5353785cec3b",
+                         *           "serialNumber": "SN100001",
+                         *           "terminalId": "0b61c6b6-e633-4c3d-91ae-9810ff42ccdc",
+                         *           "terminalManufacturer": "Sunmi",
+                         *           "terminalMode": "SemiIntegrated",
+                         *           "terminalModel": "SunmiP2",
+                         *           "terminalStatus": "Ready"
                          *         },
                          *         {
-                         *           "id": "22222222-2222-2222-2222-222222222222",
-                         *           "merchantId": "33333333-3333-3333-3333-333333333333",
+                         *           "connectionStatus": "Online",
+                         *           "lastSeenOn": "2026-01-01T00:00:00Z",
                          *           "merchantCompanyName": "Test Merchant",
+                         *           "merchantId": "fffcecc3-2e15-4e93-8144-5353785cec3b",
                          *           "serialNumber": "SN100002",
+                         *           "terminalId": "4f9d1305-f305-4c4e-904e-09a14d865670",
                          *           "terminalManufacturer": "Sunmi",
-                         *           "terminalModel": "SunmiP2LiteSe",
-                         *           "deliveryStatus": "Active",
                          *           "terminalMode": "SemiIntegrated",
+                         *           "terminalModel": "SunmiP2LiteSe",
+                         *           "terminalStatus": "Busy"
+                         *         },
+                         *         {
                          *           "connectionStatus": "Offline",
-                         *           "lastSeenTimestamp": "2026-05-09T15:04:52.5015552Z"
+                         *           "lastSeenOn": "2026-01-01T00:00:00Z",
+                         *           "merchantCompanyName": "Test Merchant",
+                         *           "merchantId": "fffcecc3-2e15-4e93-8144-5353785cec3b",
+                         *           "serialNumber": "SN100003",
+                         *           "terminalId": "90d084d6-55b8-4fb8-b658-861534d07f9a",
+                         *           "terminalManufacturer": "Sunmi",
+                         *           "terminalMode": "SemiIntegrated",
+                         *           "terminalModel": "SunmiP2LiteSe",
+                         *           "terminalStatus": "Offline"
                          *         }
                          *       ],
-                         *       "total": 2
+                         *       "pageInfo": {
+                         *         "hasMore": false,
+                         *         "pageIndex": 0,
+                         *         "pageSize": 20,
+                         *         "totalItems": 3,
+                         *         "totalPages": 1
+                         *       }
                          *     }
                          */
-                        "application/json": components["schemas"]["Contracts.Page`1[[Arise.IsvApiBff.Contracts.v2.Terminals.Responses.ListTerminalsResponseDto, Arise.IsvApiBff.Contracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"];
+                        "application/json": components["schemas"]["PagedResponseDtoOfListTerminalsResponseDto"];
                     };
                 };
                 /** @description Bad Request */
@@ -3119,25 +6405,80 @@ export interface paths {
                     content: {
                         /**
                          * @example {
+                         *       "cause": "One or more fields failed validation rules.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "One or more validation errors occurred.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "V0000",
                          *       "errors": {
                          *         "Email": [
                          *           "'Email' is not a valid email address."
                          *         ]
                          *       },
-                         *       "details": "One or more validation errors occurred.",
-                         *       "statusCode": 400,
-                         *       "source": "<Service>",
                          *       "exceptionType": "ValidationException",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "entityId": null,
-                         *       "errorCode": "V0000",
-                         *       "title": "Validation failed",
-                         *       "cause": "One or more fields failed validation rules.",
                          *       "resolution": "Review the errors and correct the invalid fields.",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
+                         *       "source": "<Service>",
+                         *       "statusCode": 400,
+                         *       "title": "Validation failed"
                          *     }
                          */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.ValidationExceptionExample"];
+                        "application/json": components["schemas"]["ValidationExceptionExample"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Forbidden */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "You do not have permission to access this resource.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "You do not have permission to access this resource.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "F0000",
+                         *       "exceptionType": "ForbiddenException",
+                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 403,
+                         *       "title": "Access forbidden"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ForbiddenExceptionExample"];
+                    };
+                };
+                /** @description Too Many Requests */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "Too many requests sent in a short period.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Too many requests sent in a short period.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "R0000",
+                         *       "exceptionType": "RateLimitExceededException",
+                         *       "resolution": "Wait before retrying the request. Check the Retry-After header for more information.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 429,
+                         *       "title": "Rate limit exceeded"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["RateLimitExceededExceptionExample"];
                     };
                 };
                 /** @description Internal Server Error */
@@ -3148,20 +6489,20 @@ export interface paths {
                     content: {
                         /**
                          * @example {
-                         *       "details": "An unexpected error occurred while processing the request.",
-                         *       "statusCode": 500,
-                         *       "source": "<Service>",
-                         *       "exceptionType": "IntegrationException",
+                         *       "cause": "An unexpected error occurred while processing the request",
                          *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "An unexpected error occurred while processing the request.",
+                         *       "documentationUrl": "https://developer.flute.com/",
                          *       "entityId": null,
                          *       "errorCode": "I0000",
-                         *       "title": "Internal server error",
-                         *       "cause": "An unexpected error occurred while processing the request",
+                         *       "exceptionType": "IntegrationException",
                          *       "resolution": "Please contact support with the correlation ID if the issue persists",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
+                         *       "source": "<Service>",
+                         *       "statusCode": 500,
+                         *       "title": "Internal server error"
                          *     }
                          */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.InternalExceptionExample"];
+                        "application/json": components["schemas"]["InternalExceptionExample"];
                     };
                 };
             };
@@ -3174,7 +6515,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/v2/terminals/{id}/status": {
+    "/v2/terminals/{terminalId}/status": {
         parameters: {
             query?: never;
             header?: never;
@@ -3183,16 +6524,23 @@ export interface paths {
         };
         /**
          * Get Terminal Status Required API Permission: Get Terminal Information
-         * @description Retrieve the current status and details of a terminal device.
-         *     This endpoint provides the latest available information about a terminal, updated in near real-time.
-         *     Depending on the terminal's internet connectivity and operational status, the response may include limited terminal data.
+         * @description Returns the current operational status of a specific terminal, including connection and
+         *     network state, hardware info and software version. Designed to be called before initiating
+         *     a POS transaction: `terminalStatus` must be `Ready` (not `Busy` or
+         *     `Offline`) for the terminal to accept a payment. `batteryLevel` and
+         *     `printerStatus` can be used to warn merchants of low battery or printer issues before
+         *     starting a transaction.
          */
         get: {
             parameters: {
                 query?: never;
                 header?: never;
                 path: {
-                    id: string;
+                    /**
+                     * @description The terminal identifier.
+                     * @example ad307589-17b9-4f8a-9489-6b4c48f0c40d
+                     */
+                    terminalId: string;
                 };
                 cookie?: never;
             };
@@ -3206,30 +6554,18 @@ export interface paths {
                     content: {
                         /**
                          * @example {
-                         *       "terminalId": "11111111-1111-1111-1111-111111111111",
-                         *       "timestamp": "2026-05-09T17:04:52.5061117Z",
-                         *       "terminalPosStatus": "Active",
+                         *       "batteryLevel": 90,
                          *       "connectionStatus": "Online",
                          *       "connectionType": "WiFi",
-                         *       "wifiConnectionStrength": 85,
-                         *       "mobileConnectionStrength": 0,
-                         *       "lastSeenTimestamp": "2026-05-09T17:04:52.506114Z",
                          *       "debitPinKey": "Injected",
-                         *       "availabilityStatus": "Ready",
-                         *       "ariseTerminalVersion": "1.0.0",
-                         *       "batteryLevel": 90,
+                         *       "lastSeenOn": "2026-01-01T00:00:00Z",
+                         *       "merchantId": "fffcecc3-2e15-4e93-8144-5353785cec3b",
+                         *       "mobileConnectionStrength": 0,
                          *       "printerStatus": "Normal",
-                         *       "deviceSoftwareDetails": {
-                         *         "operatingSystem": "Android 12",
-                         *         "androidBaseServiceVersion": "1.2.3",
-                         *         "sunmiTrustedManagementVersion": "2.0.1",
-                         *         "sunmiCloudConnectionVersion": "1.5.0",
-                         *         "sunmiPayHardwareServiceVersion": "3.1.0",
-                         *         "posStewardAppVersion": "1.0.0",
-                         *         "remoteAssistanceAppVersion": "1.2.0",
-                         *         "sunmiFutureXAppVersion": "2.1.0",
-                         *         "sunmiRomVersion": "4.0.0"
-                         *       }
+                         *       "terminalAppVersion": "1.0.0",
+                         *       "terminalId": "03a88aa0-14ef-4334-8b7a-13356fec8202",
+                         *       "terminalStatus": "Ready",
+                         *       "wifiConnectionStrength": 85
                          *     }
                          */
                         "application/json": components["schemas"]["GetTerminalStatusResponseDto"];
@@ -3243,25 +6579,56 @@ export interface paths {
                     content: {
                         /**
                          * @example {
+                         *       "cause": "One or more fields failed validation rules.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "One or more validation errors occurred.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "V0000",
                          *       "errors": {
                          *         "Email": [
                          *           "'Email' is not a valid email address."
                          *         ]
                          *       },
-                         *       "details": "One or more validation errors occurred.",
-                         *       "statusCode": 400,
-                         *       "source": "<Service>",
                          *       "exceptionType": "ValidationException",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "entityId": null,
-                         *       "errorCode": "V0000",
-                         *       "title": "Validation failed",
-                         *       "cause": "One or more fields failed validation rules.",
                          *       "resolution": "Review the errors and correct the invalid fields.",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
+                         *       "source": "<Service>",
+                         *       "statusCode": 400,
+                         *       "title": "Validation failed"
                          *     }
                          */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.ValidationExceptionExample"];
+                        "application/json": components["schemas"]["ValidationExceptionExample"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Forbidden */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "You do not have permission to access this resource.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "You do not have permission to access this resource.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "F0000",
+                         *       "exceptionType": "ForbiddenException",
+                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 403,
+                         *       "title": "Access forbidden"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ForbiddenExceptionExample"];
                     };
                 };
                 /** @description Not Found */
@@ -3272,20 +6639,44 @@ export interface paths {
                     content: {
                         /**
                          * @example {
-                         *       "details": "Entity with ID b31fbe9f-eebb-45ce-9cae-92265389f47f does not exist or has been deleted",
-                         *       "statusCode": 404,
-                         *       "source": "<Service>",
-                         *       "exceptionType": "NotFoundException",
+                         *       "cause": "The requested resource does not exist or has been deleted.",
                          *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Entity with ID b31fbe9f-eebb-45ce-9cae-92265389f47f does not exist or has been deleted",
+                         *       "documentationUrl": "https://developer.flute.com/",
                          *       "entityId": "b31fbe9f-eebb-45ce-9cae-92265389f47f",
                          *       "errorCode": "N0000",
-                         *       "title": "Resource not found",
-                         *       "cause": "The requested resource does not exist or has been deleted.",
+                         *       "exceptionType": "NotFoundException",
                          *       "resolution": "Verify the resource ID is correct or retrieve a list of available resources.",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
+                         *       "source": "<Service>",
+                         *       "statusCode": 404,
+                         *       "title": "Resource not found"
                          *     }
                          */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.NotFoundExceptionExample"];
+                        "application/json": components["schemas"]["NotFoundExceptionExample"];
+                    };
+                };
+                /** @description Too Many Requests */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "Too many requests sent in a short period.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Too many requests sent in a short period.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "R0000",
+                         *       "exceptionType": "RateLimitExceededException",
+                         *       "resolution": "Wait before retrying the request. Check the Retry-After header for more information.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 429,
+                         *       "title": "Rate limit exceeded"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["RateLimitExceededExceptionExample"];
                     };
                 };
                 /** @description Internal Server Error */
@@ -3296,20 +6687,20 @@ export interface paths {
                     content: {
                         /**
                          * @example {
-                         *       "details": "An unexpected error occurred while processing the request.",
-                         *       "statusCode": 500,
-                         *       "source": "<Service>",
-                         *       "exceptionType": "IntegrationException",
+                         *       "cause": "An unexpected error occurred while processing the request",
                          *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "An unexpected error occurred while processing the request.",
+                         *       "documentationUrl": "https://developer.flute.com/",
                          *       "entityId": null,
                          *       "errorCode": "I0000",
-                         *       "title": "Internal server error",
-                         *       "cause": "An unexpected error occurred while processing the request",
+                         *       "exceptionType": "IntegrationException",
                          *       "resolution": "Please contact support with the correlation ID if the issue persists",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
+                         *       "source": "<Service>",
+                         *       "statusCode": 500,
+                         *       "title": "Internal server error"
                          *     }
                          */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.InternalExceptionExample"];
+                        "application/json": components["schemas"]["InternalExceptionExample"];
                     };
                 };
             };
@@ -3333,8 +6724,75 @@ export interface paths {
         get: {
             parameters: {
                 query?: {
-                    page?: number;
+                    /** @description Zero-based page index. */
+                    pageIndex?: number;
+                    /** @description Number of items per page. Between 1 and 100. */
                     pageSize?: number;
+                    /**
+                     * @description Filter by transaction source. Options: Portal, ApiKey, Terminal, Invoice, QuickPayment,
+                     *     WebComponent, Subscription, MobileApp, TapToPay.
+                     * @example ApiKey
+                     */
+                    sourceType?: components["schemas"]["IdentityType"];
+                    /** @description Filter by the source identifier (e.g. the API key, invoice, or subscription id that created the transaction). */
+                    sourceId?: string;
+                    /**
+                     * @description Filter by settlement batch id (UUID). Pass the literal value `null`
+                     *     (`batchId=null`) to return transactions not yet settled into a batch;
+                     *     omit the parameter to not filter by batch.
+                     * @example 0b7aa955-6b52-4dcb-b0d8-7c3d82f27b62
+                     */
+                    batchId?: string;
+                    /**
+                     * @description Filter transactions created on or after this date (inclusive, whole-day granularity).
+                     * @example 2025-01-01
+                     */
+                    fromDate?: string;
+                    /**
+                     * @description Filter transactions created on or before this date (inclusive, whole-day granularity).
+                     * @example 2025-12-31
+                     */
+                    toDate?: string;
+                    /**
+                     * @description Filter by aggregated transaction status (e.g. Authorized, Captured, Settled, Refunded, Declined).
+                     * @example Captured
+                     */
+                    transactionStatus?: components["schemas"]["AggregatedTransactionStatus"];
+                    /**
+                     * @description Filter by payment method type. Options: Card, ACH, Cash.
+                     * @example Card
+                     */
+                    paymentMethodType?: components["schemas"]["PaymentMethodType"];
+                    /** @description Filter by customer id. */
+                    customerId?: string;
+                    /**
+                     * @description Filter by minimum processed amount (inclusive).
+                     * @example 10
+                     */
+                    minAmount?: number;
+                    /**
+                     * @description Filter by maximum processed amount (inclusive).
+                     * @example 500
+                     */
+                    maxAmount?: number;
+                    /**
+                     * @description Filter by ISV reference identifier (exact match).
+                     * @example REF-EXT-12345
+                     */
+                    referenceId?: string;
+                    /**
+                     * @description Field to sort the results by. Options: `transactionDateTime`, `processedAmount`,
+                     *     `transactionStatus`, `maskedCardNumber`, `cardTokenType`, `transactionId`,
+                     *     `paymentMethodType`, `customerName`, `customerCompanyName`, `merchantCompanyName`.
+                     *     When omitted, results come back newest first.
+                     * @example transactionDateTime
+                     */
+                    sortBy?: string;
+                    /**
+                     * @description Sort direction: `asc` or `desc`. Applies to Arise.IsvApiBff.Contracts.v2.Transaction.Requests.GetTransactionsPageRequestDto.SortBy; defaults to `asc`.
+                     * @example asc
+                     */
+                    sortOrder?: string;
                 };
                 header?: never;
                 path?: never;
@@ -3352,88 +6810,108 @@ export interface paths {
                          * @example {
                          *       "items": [
                          *         {
-                         *           "transactionId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
-                         *           "transactionDateTime": "2025-06-15T14:30:00Z",
-                         *           "status": "Captured",
-                         *           "paymentMethodType": "Card",
-                         *           "referenceId": "REF-001",
-                         *           "processedAmount": 115.5,
-                         *           "currencyCode": "USD",
+                         *           "achDetails": null,
                          *           "amountBreakdown": {
                          *             "baseAmount": 100,
-                         *             "tipAmount": 10,
+                         *             "discountAmount": 0,
+                         *             "discountRate": 0,
                          *             "surchargeAmount": 5.5,
-                         *             "discountAmount": 0
+                         *             "surchargeRate": 0,
+                         *             "tipAmount": 10,
+                         *             "tipRate": 10
                          *           },
-                         *           "avsResponse": {
-                         *             "action": "Allow",
-                         *             "responseCode": "Y",
-                         *             "description": "Address and ZIP code match"
-                         *           },
+                         *           "batchId": null,
                          *           "cardDetails": {
+                         *             "cardBrand": "Visa",
+                         *             "cardDataSource": null,
+                         *             "cardProcessedAsType": null,
+                         *             "cardType": "Credit",
+                         *             "cardholderVerificationMethod": null,
                          *             "maskedCardNumber": "411111******1111",
-                         *             "cardType": "Visa",
-                         *             "creditDebitType": "Credit"
+                         *             "paymentMethodId": null
                          *           },
-                         *           "achDetails": null,
-                         *           "transactionEvents": [
-                         *             {
-                         *               "type": "Sale",
-                         *               "status": "Approved",
-                         *               "amount": 115.5,
-                         *               "dateTime": "2025-06-15T14:30:00Z",
-                         *               "processorResponse": {
-                         *                 "processorName": "TSYS",
-                         *                 "responseCode": "00",
-                         *                 "responseMessage": "APPROVAL",
-                         *                 "responseDefinition": "Approved"
-                         *               }
-                         *             }
-                         *           ]
+                         *           "cardTokenType": null,
+                         *           "currencyCode": "USD",
+                         *           "customerId": null,
+                         *           "merchantId": "746ba4dd-b1b4-47c3-a034-72aa55007e86",
+                         *           "paymentMethodType": "Card",
+                         *           "paymentProcessorId": "36e0e61e-3614-4c68-a919-1bffc8bdb7b6",
+                         *           "pricingType": null,
+                         *           "processedAmount": 115.5,
+                         *           "processorDetails": {
+                         *             "authCode": "VTLMC1",
+                         *             "mid": "932129304958123",
+                         *             "rrn": "59d5df1aa58d4de3969175eeece571c1",
+                         *             "tid": "6095275263"
+                         *           },
+                         *           "referenceId": "REF-001",
+                         *           "source": {
+                         *             "sourceId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                         *             "sourceName": "API Key for ecommerce app",
+                         *             "sourceType": "ApiKey"
+                         *           },
+                         *           "transactionDateTime": "2026-01-01T00:00:00Z",
+                         *           "transactionId": "3a2257af-e059-4718-b1c6-ee60bd83816e",
+                         *           "transactionStatus": "Captured",
+                         *           "transactionType": "Sale"
                          *         },
                          *         {
-                         *           "transactionId": "b2c3d4e5-f6a7-8901-bcde-f12345678901",
-                         *           "transactionDateTime": "2025-06-15T10:00:00Z",
-                         *           "status": "Captured",
-                         *           "paymentMethodType": "ElectronicCheck",
-                         *           "referenceId": "REF-002",
-                         *           "processedAmount": 200,
-                         *           "currencyCode": "USD",
-                         *           "amountBreakdown": {
-                         *             "baseAmount": 200,
-                         *             "tipAmount": 0,
-                         *             "surchargeAmount": 0,
-                         *             "discountAmount": 0
-                         *           },
-                         *           "avsResponse": null,
-                         *           "cardDetails": null,
                          *           "achDetails": {
-                         *             "maskedAccountNumber": "****6789",
-                         *             "maskedRoutingNumber": "****0001",
                          *             "accountHolderType": "Personal",
+                         *             "accountRoutingNumber": "****0001",
                          *             "accountType": "Checking",
+                         *             "isSameDayProcessing": false,
+                         *             "maskedAccountNumber": "****6789",
+                         *             "paymentMethodId": null,
                          *             "secCode": "Web"
                          *           },
-                         *           "transactionEvents": [
-                         *             {
-                         *               "type": "Sale",
-                         *               "status": "Approved",
-                         *               "amount": 200,
-                         *               "dateTime": "2025-06-15T10:00:00Z",
-                         *               "processorResponse": {
-                         *                 "processorName": "ACH",
-                         *                 "responseCode": "1",
-                         *                 "responseMessage": "Approved",
-                         *                 "responseDefinition": null
-                         *               }
-                         *             }
-                         *           ]
+                         *           "amountBreakdown": {
+                         *             "baseAmount": 200,
+                         *             "discountAmount": 0,
+                         *             "discountRate": 0,
+                         *             "surchargeAmount": 0,
+                         *             "surchargeRate": 0,
+                         *             "tipAmount": 0,
+                         *             "tipRate": 0
+                         *           },
+                         *           "batchId": "8f14e45f-ceea-467e-9a3c-1c4b1a3d0f21",
+                         *           "cardDetails": null,
+                         *           "cardTokenType": null,
+                         *           "currencyCode": "USD",
+                         *           "customerId": null,
+                         *           "merchantId": "746ba4dd-b1b4-47c3-a034-72aa55007e86",
+                         *           "paymentMethodType": "ACH",
+                         *           "paymentProcessorId": "36e0e61e-3614-4c68-a919-1bffc8bdb7b6",
+                         *           "pricingType": null,
+                         *           "processedAmount": 200,
+                         *           "processorDetails": {
+                         *             "authCode": null,
+                         *             "mid": "ACH-MID-002",
+                         *             "rrn": null,
+                         *             "tid": "ACH-TID-002"
+                         *           },
+                         *           "referenceId": "REF-002",
+                         *           "source": {
+                         *             "sourceId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                         *             "sourceName": "API Key for ecommerce app",
+                         *             "sourceType": "ApiKey"
+                         *           },
+                         *           "transactionDateTime": "2026-01-01T00:00:00Z",
+                         *           "transactionId": "53c558a4-b01a-4a43-a8c1-1c9820250958",
+                         *           "transactionStatus": "Captured",
+                         *           "transactionType": "Sale"
                          *         }
                          *       ],
-                         *       "total": 2
+                         *       "pageInfo": {
+                         *         "hasMore": false,
+                         *         "pageIndex": 0,
+                         *         "pageSize": 20,
+                         *         "totalItems": 2,
+                         *         "totalPages": 1
+                         *       }
                          *     }
                          */
-                        "application/json": components["schemas"]["Contracts.Page`1[[Arise.IsvApiBff.Contracts.v2.Transaction.Responses.GetTransactionResponseDto, Arise.IsvApiBff.Contracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"];
+                        "application/json": components["schemas"]["PagedResponseDtoOfTransactionSummaryResponseDto"];
                     };
                 };
                 /** @description Bad Request */
@@ -3444,26 +6922,33 @@ export interface paths {
                     content: {
                         /**
                          * @example {
+                         *       "cause": "One or more fields failed validation rules.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "One or more validation errors occurred.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "V0000",
                          *       "errors": {
                          *         "Email": [
                          *           "'Email' is not a valid email address."
                          *         ]
                          *       },
-                         *       "details": "One or more validation errors occurred.",
-                         *       "statusCode": 400,
-                         *       "source": "<Service>",
                          *       "exceptionType": "ValidationException",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "entityId": null,
-                         *       "errorCode": "V0000",
-                         *       "title": "Validation failed",
-                         *       "cause": "One or more fields failed validation rules.",
                          *       "resolution": "Review the errors and correct the invalid fields.",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
+                         *       "source": "<Service>",
+                         *       "statusCode": 400,
+                         *       "title": "Validation failed"
                          *     }
                          */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.ValidationExceptionExample"];
+                        "application/json": components["schemas"]["ValidationExceptionExample"];
                     };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
                 };
                 /** @description Forbidden */
                 403: {
@@ -3473,20 +6958,44 @@ export interface paths {
                     content: {
                         /**
                          * @example {
-                         *       "details": "You do not have permission to access this resource.",
-                         *       "statusCode": 403,
-                         *       "source": "<Service>",
-                         *       "exceptionType": "ForbiddenException",
+                         *       "cause": "You do not have permission to access this resource.",
                          *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "You do not have permission to access this resource.",
+                         *       "documentationUrl": "https://developer.flute.com/",
                          *       "entityId": null,
                          *       "errorCode": "F0000",
-                         *       "title": "Access forbidden",
-                         *       "cause": "You do not have permission to access this resource.",
+                         *       "exceptionType": "ForbiddenException",
                          *       "resolution": "Verify your credentials and permissions or contact your administrator.",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
+                         *       "source": "<Service>",
+                         *       "statusCode": 403,
+                         *       "title": "Access forbidden"
                          *     }
                          */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.ForbiddenExceptionExample"];
+                        "application/json": components["schemas"]["ForbiddenExceptionExample"];
+                    };
+                };
+                /** @description Too Many Requests */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "Too many requests sent in a short period.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Too many requests sent in a short period.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "R0000",
+                         *       "exceptionType": "RateLimitExceededException",
+                         *       "resolution": "Wait before retrying the request. Check the Retry-After header for more information.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 429,
+                         *       "title": "Rate limit exceeded"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["RateLimitExceededExceptionExample"];
                     };
                 };
                 /** @description Internal Server Error */
@@ -3497,20 +7006,20 @@ export interface paths {
                     content: {
                         /**
                          * @example {
-                         *       "details": "An unexpected error occurred while processing the request.",
-                         *       "statusCode": 500,
-                         *       "source": "<Service>",
-                         *       "exceptionType": "IntegrationException",
+                         *       "cause": "An unexpected error occurred while processing the request",
                          *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "An unexpected error occurred while processing the request.",
+                         *       "documentationUrl": "https://developer.flute.com/",
                          *       "entityId": null,
                          *       "errorCode": "I0000",
-                         *       "title": "Internal server error",
-                         *       "cause": "An unexpected error occurred while processing the request",
+                         *       "exceptionType": "IntegrationException",
                          *       "resolution": "Please contact support with the correlation ID if the issue persists",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
+                         *       "source": "<Service>",
+                         *       "statusCode": 500,
+                         *       "title": "Internal server error"
                          *     }
                          */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.InternalExceptionExample"];
+                        "application/json": components["schemas"]["InternalExceptionExample"];
                     };
                 };
             };
@@ -3537,143 +7046,6 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/json": components["schemas"]["TransactionResponseDto"];
-                    };
-                };
-                /** @description Bad Request */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        /**
-                         * @example {
-                         *       "errors": {
-                         *         "Email": [
-                         *           "'Email' is not a valid email address."
-                         *         ]
-                         *       },
-                         *       "details": "One or more validation errors occurred.",
-                         *       "statusCode": 400,
-                         *       "source": "<Service>",
-                         *       "exceptionType": "ValidationException",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "entityId": null,
-                         *       "errorCode": "V0000",
-                         *       "title": "Validation failed",
-                         *       "cause": "One or more fields failed validation rules.",
-                         *       "resolution": "Review the errors and correct the invalid fields.",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
-                         *     }
-                         */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.ValidationExceptionExample"];
-                    };
-                };
-                /** @description Forbidden */
-                403: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        /**
-                         * @example {
-                         *       "details": "You do not have permission to access this resource.",
-                         *       "statusCode": 403,
-                         *       "source": "<Service>",
-                         *       "exceptionType": "ForbiddenException",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "entityId": null,
-                         *       "errorCode": "F0000",
-                         *       "title": "Access forbidden",
-                         *       "cause": "You do not have permission to access this resource.",
-                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
-                         *     }
-                         */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.ForbiddenExceptionExample"];
-                    };
-                };
-                /** @description Not Found */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        /**
-                         * @example {
-                         *       "details": "Entity with ID b31fbe9f-eebb-45ce-9cae-92265389f47f does not exist or has been deleted",
-                         *       "statusCode": 404,
-                         *       "source": "<Service>",
-                         *       "exceptionType": "NotFoundException",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "entityId": "b31fbe9f-eebb-45ce-9cae-92265389f47f",
-                         *       "errorCode": "N0000",
-                         *       "title": "Resource not found",
-                         *       "cause": "The requested resource does not exist or has been deleted.",
-                         *       "resolution": "Verify the resource ID is correct or retrieve a list of available resources.",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
-                         *     }
-                         */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.NotFoundExceptionExample"];
-                    };
-                };
-                /** @description Internal Server Error */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        /**
-                         * @example {
-                         *       "details": "An unexpected error occurred while processing the request.",
-                         *       "statusCode": 500,
-                         *       "source": "<Service>",
-                         *       "exceptionType": "IntegrationException",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "entityId": null,
-                         *       "errorCode": "I0000",
-                         *       "title": "Internal server error",
-                         *       "cause": "An unexpected error occurred while processing the request",
-                         *       "resolution": "Please contact support with the correlation ID if the issue persists",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
-                         *     }
-                         */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.InternalExceptionExample"];
-                    };
-                };
-            };
-        };
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v2/transactions/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get transaction details by ID Required API Permission: Get Transaction Details */
-        get: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    id: string;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
                         "application/json": components["schemas"]["GetTransactionResponseDto"];
                     };
                 };
@@ -3685,25 +7057,56 @@ export interface paths {
                     content: {
                         /**
                          * @example {
+                         *       "cause": "One or more fields failed validation rules.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "One or more validation errors occurred.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "V0000",
                          *       "errors": {
                          *         "Email": [
                          *           "'Email' is not a valid email address."
                          *         ]
                          *       },
-                         *       "details": "One or more validation errors occurred.",
-                         *       "statusCode": 400,
-                         *       "source": "<Service>",
                          *       "exceptionType": "ValidationException",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "entityId": null,
-                         *       "errorCode": "V0000",
-                         *       "title": "Validation failed",
-                         *       "cause": "One or more fields failed validation rules.",
                          *       "resolution": "Review the errors and correct the invalid fields.",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
+                         *       "source": "<Service>",
+                         *       "statusCode": 400,
+                         *       "title": "Validation failed"
                          *     }
                          */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.ValidationExceptionExample"];
+                        "application/json": components["schemas"]["ValidationExceptionExample"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Payment Required */
+                402: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "The payment was declined by the payment processor.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "The payment was declined by the processor.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "P0000",
+                         *       "exceptionType": "PaymentFailedException",
+                         *       "resolution": "Verify payment details, check available funds, or try a different payment method.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 402,
+                         *       "title": "Payment failed"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["PaymentFailedExceptionExample"];
                     };
                 };
                 /** @description Forbidden */
@@ -3714,20 +7117,20 @@ export interface paths {
                     content: {
                         /**
                          * @example {
-                         *       "details": "You do not have permission to access this resource.",
-                         *       "statusCode": 403,
-                         *       "source": "<Service>",
-                         *       "exceptionType": "ForbiddenException",
+                         *       "cause": "You do not have permission to access this resource.",
                          *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "You do not have permission to access this resource.",
+                         *       "documentationUrl": "https://developer.flute.com/",
                          *       "entityId": null,
                          *       "errorCode": "F0000",
-                         *       "title": "Access forbidden",
-                         *       "cause": "You do not have permission to access this resource.",
+                         *       "exceptionType": "ForbiddenException",
                          *       "resolution": "Verify your credentials and permissions or contact your administrator.",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
+                         *       "source": "<Service>",
+                         *       "statusCode": 403,
+                         *       "title": "Access forbidden"
                          *     }
                          */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.ForbiddenExceptionExample"];
+                        "application/json": components["schemas"]["ForbiddenExceptionExample"];
                     };
                 };
                 /** @description Not Found */
@@ -3738,20 +7141,68 @@ export interface paths {
                     content: {
                         /**
                          * @example {
-                         *       "details": "Entity with ID b31fbe9f-eebb-45ce-9cae-92265389f47f does not exist or has been deleted",
-                         *       "statusCode": 404,
-                         *       "source": "<Service>",
-                         *       "exceptionType": "NotFoundException",
+                         *       "cause": "The requested resource does not exist or has been deleted.",
                          *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Entity with ID b31fbe9f-eebb-45ce-9cae-92265389f47f does not exist or has been deleted",
+                         *       "documentationUrl": "https://developer.flute.com/",
                          *       "entityId": "b31fbe9f-eebb-45ce-9cae-92265389f47f",
                          *       "errorCode": "N0000",
-                         *       "title": "Resource not found",
-                         *       "cause": "The requested resource does not exist or has been deleted.",
+                         *       "exceptionType": "NotFoundException",
                          *       "resolution": "Verify the resource ID is correct or retrieve a list of available resources.",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
+                         *       "source": "<Service>",
+                         *       "statusCode": 404,
+                         *       "title": "Resource not found"
                          *     }
                          */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.NotFoundExceptionExample"];
+                        "application/json": components["schemas"]["NotFoundExceptionExample"];
+                    };
+                };
+                /** @description Conflict */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "The request conflicts with the current state of the resource.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "The request conflicts with the current state of the resource.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "C0000",
+                         *       "exceptionType": "ConflictException",
+                         *       "resolution": "Refresh the resource state and retry the operation, or use a different idempotency key.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 409,
+                         *       "title": "Resource conflict"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ConflictExceptionExample"];
+                    };
+                };
+                /** @description Too Many Requests */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "Too many requests sent in a short period.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Too many requests sent in a short period.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "R0000",
+                         *       "exceptionType": "RateLimitExceededException",
+                         *       "resolution": "Wait before retrying the request. Check the Retry-After header for more information.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 429,
+                         *       "title": "Rate limit exceeded"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["RateLimitExceededExceptionExample"];
                     };
                 };
                 /** @description Internal Server Error */
@@ -3762,33 +7213,31 @@ export interface paths {
                     content: {
                         /**
                          * @example {
-                         *       "details": "An unexpected error occurred while processing the request.",
-                         *       "statusCode": 500,
-                         *       "source": "<Service>",
-                         *       "exceptionType": "IntegrationException",
+                         *       "cause": "An unexpected error occurred while processing the request",
                          *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "An unexpected error occurred while processing the request.",
+                         *       "documentationUrl": "https://developer.flute.com/",
                          *       "entityId": null,
                          *       "errorCode": "I0000",
-                         *       "title": "Internal server error",
-                         *       "cause": "An unexpected error occurred while processing the request",
+                         *       "exceptionType": "IntegrationException",
                          *       "resolution": "Please contact support with the correlation ID if the issue persists",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
+                         *       "source": "<Service>",
+                         *       "statusCode": 500,
+                         *       "title": "Internal server error"
                          *     }
                          */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.InternalExceptionExample"];
+                        "application/json": components["schemas"]["InternalExceptionExample"];
                     };
                 };
             };
         };
-        put?: never;
-        post?: never;
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/v2/transactions/{transactionId}/capture": {
+    "/v2/transactions/calculate-amount": {
         parameters: {
             query?: never;
             header?: never;
@@ -3797,24 +7246,34 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Endpoint for transaction capture. Transaction Id is taken from the route. Body is optional: omit or send empty for full capture, or include Amount for partial capture. Required API Permission: Ecommerce Capture */
+        /**
+         * Calculate transaction amount Required API Permission: Calculate Transaction Amount
+         * @description Determines the final amount to be charged considering applicable discounts, tips,
+         *     and any Zero Cost Processing (ZCP) mode enabled for the merchant account
+         *     (Dual Pricing, Cash Discount, or Credit Card Surcharge).
+         */
         post: {
             parameters: {
                 query?: never;
                 header?: never;
-                path: {
-                    transactionId: string;
-                };
+                path?: never;
                 cookie?: never;
             };
             requestBody?: {
                 content: {
                     /**
                      * @example {
-                     *       "amount": 50
+                     *       "baseAmount": 100,
+                     *       "currencyCode": "USD",
+                     *       "discountAmount": 5,
+                     *       "discountRate": 5,
+                     *       "pricingType": "Card",
+                     *       "surchargeRate": 2.5,
+                     *       "tipAmount": 15,
+                     *       "tipRate": 0
                      *     }
                      */
-                    "application/json": components["schemas"]["CaptureRequestDto"];
+                    "application/json": components["schemas"]["CalculateAmountRequestDto"];
                 };
             };
             responses: {
@@ -3826,166 +7285,52 @@ export interface paths {
                     content: {
                         /**
                          * @example {
-                         *       "transactionId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
-                         *       "transactionStatus": "Approved",
-                         *       "processedAmount": 100,
-                         *       "currencyCode": "USD",
-                         *       "amountDetails": {
+                         *       "ach": {
                          *         "baseAmount": 100,
-                         *         "tipAmount": 0,
+                         *         "discountAmount": 5,
+                         *         "discountRate": 5,
                          *         "surchargeAmount": 0,
-                         *         "discountAmount": 0
+                         *         "surchargeRate": 0,
+                         *         "tipAmount": 15,
+                         *         "tipRate": 0,
+                         *         "totalAmount": 110
                          *       },
-                         *       "processorResponse": {
-                         *         "processorName": "TSYS",
-                         *         "responseCode": "00",
-                         *         "responseMessage": "Approved",
-                         *         "responseDefinition": "Approved and completed"
+                         *       "cash": {
+                         *         "baseAmount": 100,
+                         *         "discountAmount": 5,
+                         *         "discountRate": 5,
+                         *         "surchargeAmount": 0,
+                         *         "surchargeRate": 0,
+                         *         "tipAmount": 15,
+                         *         "tipRate": 0,
+                         *         "totalAmount": 110
                          *       },
-                         *       "responseDetails": null,
-                         *       "avsResponse": null,
-                         *       "receipt": null
-                         *     }
-                         */
-                        "application/json": components["schemas"]["TransactionResponseDto"];
-                    };
-                };
-                /** @description Bad Request */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        /**
-                         * @example {
-                         *       "errors": {
-                         *         "Email": [
-                         *           "'Email' is not a valid email address."
-                         *         ]
+                         *       "creditCard": {
+                         *         "baseAmount": 100,
+                         *         "discountAmount": 5,
+                         *         "discountRate": 5,
+                         *         "surchargeAmount": 2.5,
+                         *         "surchargeRate": 2.5,
+                         *         "tipAmount": 15,
+                         *         "tipRate": 0,
+                         *         "totalAmount": 112.5
                          *       },
-                         *       "details": "One or more validation errors occurred.",
-                         *       "statusCode": 400,
-                         *       "source": "<Service>",
-                         *       "exceptionType": "ValidationException",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "entityId": null,
-                         *       "errorCode": "V0000",
-                         *       "title": "Validation failed",
-                         *       "cause": "One or more fields failed validation rules.",
-                         *       "resolution": "Review the errors and correct the invalid fields.",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
-                         *     }
-                         */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.ValidationExceptionExample"];
-                    };
-                };
-                /** @description Not Found */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        /**
-                         * @example {
-                         *       "details": "Entity with ID b31fbe9f-eebb-45ce-9cae-92265389f47f does not exist or has been deleted",
-                         *       "statusCode": 404,
-                         *       "source": "<Service>",
-                         *       "exceptionType": "NotFoundException",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "entityId": "b31fbe9f-eebb-45ce-9cae-92265389f47f",
-                         *       "errorCode": "N0000",
-                         *       "title": "Resource not found",
-                         *       "cause": "The requested resource does not exist or has been deleted.",
-                         *       "resolution": "Verify the resource ID is correct or retrieve a list of available resources.",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
-                         *     }
-                         */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.NotFoundExceptionExample"];
-                    };
-                };
-                /** @description Internal Server Error */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        /**
-                         * @example {
-                         *       "details": "An unexpected error occurred while processing the request.",
-                         *       "statusCode": 500,
-                         *       "source": "<Service>",
-                         *       "exceptionType": "IntegrationException",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "entityId": null,
-                         *       "errorCode": "I0000",
-                         *       "title": "Internal server error",
-                         *       "cause": "An unexpected error occurred while processing the request",
-                         *       "resolution": "Please contact support with the correlation ID if the issue persists",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
-                         *     }
-                         */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.InternalExceptionExample"];
-                    };
-                };
-            };
-        };
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v2/transactions/{transactionId}/reversal": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Reverse a transaction (void or refund). Payment method (card vs ACH) is auto-detected. */
-        post: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    transactionId: string;
-                };
-                cookie?: never;
-            };
-            requestBody?: {
-                content: {
-                    /**
-                     * @example {
-                     *       "amount": 25
-                     *     }
-                     */
-                    "application/json": components["schemas"]["ReversalRequestDto"];
-                };
-            };
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        /**
-                         * @example {
-                         *       "transactionId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
-                         *       "transactionStatus": "Approved",
-                         *       "processedAmount": 25,
                          *       "currencyCode": "USD",
-                         *       "processorResponse": {
-                         *         "processorName": "TSYS",
-                         *         "responseCode": "00",
-                         *         "responseMessage": "Approved",
-                         *         "responseDefinition": "Approved and completed"
-                         *       }
+                         *       "debitCard": {
+                         *         "baseAmount": 100,
+                         *         "discountAmount": 5,
+                         *         "discountRate": 5,
+                         *         "surchargeAmount": 0,
+                         *         "surchargeRate": 0,
+                         *         "tipAmount": 15,
+                         *         "tipRate": 0,
+                         *         "totalAmount": 110
+                         *       },
+                         *       "pricingType": "Card",
+                         *       "zeroCostProcessingOption": "Surcharge"
                          *     }
                          */
-                        "application/json": components["schemas"]["ReversalOperationResponseDto"];
+                        "application/json": components["schemas"]["CalculateAmountResponseDto"];
                     };
                 };
                 /** @description Bad Request */
@@ -3996,26 +7341,33 @@ export interface paths {
                     content: {
                         /**
                          * @example {
+                         *       "cause": "One or more fields failed validation rules.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "One or more validation errors occurred.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "V0000",
                          *       "errors": {
                          *         "Email": [
                          *           "'Email' is not a valid email address."
                          *         ]
                          *       },
-                         *       "details": "One or more validation errors occurred.",
-                         *       "statusCode": 400,
-                         *       "source": "<Service>",
                          *       "exceptionType": "ValidationException",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "entityId": null,
-                         *       "errorCode": "V0000",
-                         *       "title": "Validation failed",
-                         *       "cause": "One or more fields failed validation rules.",
                          *       "resolution": "Review the errors and correct the invalid fields.",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
+                         *       "source": "<Service>",
+                         *       "statusCode": 400,
+                         *       "title": "Validation failed"
                          *     }
                          */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.ValidationExceptionExample"];
+                        "application/json": components["schemas"]["ValidationExceptionExample"];
                     };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
                 };
                 /** @description Forbidden */
                 403: {
@@ -4025,44 +7377,44 @@ export interface paths {
                     content: {
                         /**
                          * @example {
-                         *       "details": "You do not have permission to access this resource.",
-                         *       "statusCode": 403,
-                         *       "source": "<Service>",
-                         *       "exceptionType": "ForbiddenException",
+                         *       "cause": "You do not have permission to access this resource.",
                          *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "You do not have permission to access this resource.",
+                         *       "documentationUrl": "https://developer.flute.com/",
                          *       "entityId": null,
                          *       "errorCode": "F0000",
-                         *       "title": "Access forbidden",
-                         *       "cause": "You do not have permission to access this resource.",
+                         *       "exceptionType": "ForbiddenException",
                          *       "resolution": "Verify your credentials and permissions or contact your administrator.",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
+                         *       "source": "<Service>",
+                         *       "statusCode": 403,
+                         *       "title": "Access forbidden"
                          *     }
                          */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.ForbiddenExceptionExample"];
+                        "application/json": components["schemas"]["ForbiddenExceptionExample"];
                     };
                 };
-                /** @description Not Found */
-                404: {
+                /** @description Too Many Requests */
+                429: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
                         /**
                          * @example {
-                         *       "details": "Entity with ID b31fbe9f-eebb-45ce-9cae-92265389f47f does not exist or has been deleted",
-                         *       "statusCode": 404,
-                         *       "source": "<Service>",
-                         *       "exceptionType": "NotFoundException",
+                         *       "cause": "Too many requests sent in a short period.",
                          *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "entityId": "b31fbe9f-eebb-45ce-9cae-92265389f47f",
-                         *       "errorCode": "N0000",
-                         *       "title": "Resource not found",
-                         *       "cause": "The requested resource does not exist or has been deleted.",
-                         *       "resolution": "Verify the resource ID is correct or retrieve a list of available resources.",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
+                         *       "details": "Too many requests sent in a short period.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "R0000",
+                         *       "exceptionType": "RateLimitExceededException",
+                         *       "resolution": "Wait before retrying the request. Check the Retry-After header for more information.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 429,
+                         *       "title": "Rate limit exceeded"
                          *     }
                          */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.NotFoundExceptionExample"];
+                        "application/json": components["schemas"]["RateLimitExceededExceptionExample"];
                     };
                 };
                 /** @description Internal Server Error */
@@ -4073,20 +7425,20 @@ export interface paths {
                     content: {
                         /**
                          * @example {
-                         *       "details": "An unexpected error occurred while processing the request.",
-                         *       "statusCode": 500,
-                         *       "source": "<Service>",
-                         *       "exceptionType": "IntegrationException",
+                         *       "cause": "An unexpected error occurred while processing the request",
                          *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "An unexpected error occurred while processing the request.",
+                         *       "documentationUrl": "https://developer.flute.com/",
                          *       "entityId": null,
                          *       "errorCode": "I0000",
-                         *       "title": "Internal server error",
-                         *       "cause": "An unexpected error occurred while processing the request",
+                         *       "exceptionType": "IntegrationException",
                          *       "resolution": "Please contact support with the correlation ID if the issue persists",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
+                         *       "source": "<Service>",
+                         *       "statusCode": 500,
+                         *       "title": "Internal server error"
                          *     }
                          */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.InternalExceptionExample"];
+                        "application/json": components["schemas"]["InternalExceptionExample"];
                     };
                 };
             };
@@ -4116,28 +7468,6 @@ export interface paths {
             };
             requestBody?: {
                 content: {
-                    /**
-                     * @example {
-                     *       "paymentProcessorId": "b2c3d4e5-f6a7-8901-bcde-f12345678901",
-                     *       "baseAmount": 100,
-                     *       "currencyCode": "USD",
-                     *       "referenceId": "ext-ref-123",
-                     *       "billingAddress": null,
-                     *       "shippingAddress": null,
-                     *       "contactInfo": null,
-                     *       "creditDetails": {
-                     *         "cardData": {
-                     *           "paymentMethodDetails": {
-                     *             "cardNumber": "4111111111111111",
-                     *             "securityCode": "123",
-                     *             "expirationMonth": 12,
-                     *             "expirationYear": 2027
-                     *           }
-                     *         },
-                     *         "achData": null
-                     *       }
-                     *     }
-                     */
                     "application/json": components["schemas"]["CreditRequestDto"];
                 };
             };
@@ -4148,21 +7478,7 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        /**
-                         * @example {
-                         *       "transactionId": "c3d4e5f6-a7b8-9012-cdef-123456789012",
-                         *       "transactionStatus": "Approved",
-                         *       "processedAmount": 100,
-                         *       "currencyCode": "USD",
-                         *       "processorResponse": {
-                         *         "processorName": "TSYS",
-                         *         "responseCode": "00",
-                         *         "responseMessage": "Approved",
-                         *         "responseDefinition": "Approved and completed"
-                         *       }
-                         *     }
-                         */
-                        "application/json": components["schemas"]["ReversalOperationResponseDto"];
+                        "application/json": components["schemas"]["GetTransactionResponseDto"];
                     };
                 };
                 /** @description Bad Request */
@@ -4173,25 +7489,56 @@ export interface paths {
                     content: {
                         /**
                          * @example {
+                         *       "cause": "One or more fields failed validation rules.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "One or more validation errors occurred.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "V0000",
                          *       "errors": {
                          *         "Email": [
                          *           "'Email' is not a valid email address."
                          *         ]
                          *       },
-                         *       "details": "One or more validation errors occurred.",
-                         *       "statusCode": 400,
-                         *       "source": "<Service>",
                          *       "exceptionType": "ValidationException",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "entityId": null,
-                         *       "errorCode": "V0000",
-                         *       "title": "Validation failed",
-                         *       "cause": "One or more fields failed validation rules.",
                          *       "resolution": "Review the errors and correct the invalid fields.",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
+                         *       "source": "<Service>",
+                         *       "statusCode": 400,
+                         *       "title": "Validation failed"
                          *     }
                          */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.ValidationExceptionExample"];
+                        "application/json": components["schemas"]["ValidationExceptionExample"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Payment Required */
+                402: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "The payment was declined by the payment processor.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "The payment was declined by the processor.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "P0000",
+                         *       "exceptionType": "PaymentFailedException",
+                         *       "resolution": "Verify payment details, check available funds, or try a different payment method.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 402,
+                         *       "title": "Payment failed"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["PaymentFailedExceptionExample"];
                     };
                 };
                 /** @description Forbidden */
@@ -4202,20 +7549,20 @@ export interface paths {
                     content: {
                         /**
                          * @example {
-                         *       "details": "You do not have permission to access this resource.",
-                         *       "statusCode": 403,
-                         *       "source": "<Service>",
-                         *       "exceptionType": "ForbiddenException",
+                         *       "cause": "You do not have permission to access this resource.",
                          *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "You do not have permission to access this resource.",
+                         *       "documentationUrl": "https://developer.flute.com/",
                          *       "entityId": null,
                          *       "errorCode": "F0000",
-                         *       "title": "Access forbidden",
-                         *       "cause": "You do not have permission to access this resource.",
+                         *       "exceptionType": "ForbiddenException",
                          *       "resolution": "Verify your credentials and permissions or contact your administrator.",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
+                         *       "source": "<Service>",
+                         *       "statusCode": 403,
+                         *       "title": "Access forbidden"
                          *     }
                          */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.ForbiddenExceptionExample"];
+                        "application/json": components["schemas"]["ForbiddenExceptionExample"];
                     };
                 };
                 /** @description Not Found */
@@ -4226,20 +7573,68 @@ export interface paths {
                     content: {
                         /**
                          * @example {
-                         *       "details": "Entity with ID b31fbe9f-eebb-45ce-9cae-92265389f47f does not exist or has been deleted",
-                         *       "statusCode": 404,
-                         *       "source": "<Service>",
-                         *       "exceptionType": "NotFoundException",
+                         *       "cause": "The requested resource does not exist or has been deleted.",
                          *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Entity with ID b31fbe9f-eebb-45ce-9cae-92265389f47f does not exist or has been deleted",
+                         *       "documentationUrl": "https://developer.flute.com/",
                          *       "entityId": "b31fbe9f-eebb-45ce-9cae-92265389f47f",
                          *       "errorCode": "N0000",
-                         *       "title": "Resource not found",
-                         *       "cause": "The requested resource does not exist or has been deleted.",
+                         *       "exceptionType": "NotFoundException",
                          *       "resolution": "Verify the resource ID is correct or retrieve a list of available resources.",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
+                         *       "source": "<Service>",
+                         *       "statusCode": 404,
+                         *       "title": "Resource not found"
                          *     }
                          */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.NotFoundExceptionExample"];
+                        "application/json": components["schemas"]["NotFoundExceptionExample"];
+                    };
+                };
+                /** @description Conflict */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "The request conflicts with the current state of the resource.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "The request conflicts with the current state of the resource.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "C0000",
+                         *       "exceptionType": "ConflictException",
+                         *       "resolution": "Refresh the resource state and retry the operation, or use a different idempotency key.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 409,
+                         *       "title": "Resource conflict"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ConflictExceptionExample"];
+                    };
+                };
+                /** @description Too Many Requests */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "Too many requests sent in a short period.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Too many requests sent in a short period.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "R0000",
+                         *       "exceptionType": "RateLimitExceededException",
+                         *       "resolution": "Wait before retrying the request. Check the Retry-After header for more information.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 429,
+                         *       "title": "Rate limit exceeded"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["RateLimitExceededExceptionExample"];
                     };
                 };
                 /** @description Internal Server Error */
@@ -4250,20 +7645,20 @@ export interface paths {
                     content: {
                         /**
                          * @example {
-                         *       "details": "An unexpected error occurred while processing the request.",
-                         *       "statusCode": 500,
-                         *       "source": "<Service>",
-                         *       "exceptionType": "IntegrationException",
+                         *       "cause": "An unexpected error occurred while processing the request",
                          *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "An unexpected error occurred while processing the request.",
+                         *       "documentationUrl": "https://developer.flute.com/",
                          *       "entityId": null,
                          *       "errorCode": "I0000",
-                         *       "title": "Internal server error",
-                         *       "cause": "An unexpected error occurred while processing the request",
+                         *       "exceptionType": "IntegrationException",
                          *       "resolution": "Please contact support with the correlation ID if the issue persists",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
+                         *       "source": "<Service>",
+                         *       "statusCode": 500,
+                         *       "title": "Internal server error"
                          *     }
                          */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.InternalExceptionExample"];
+                        "application/json": components["schemas"]["InternalExceptionExample"];
                     };
                 };
             };
@@ -4274,7 +7669,1297 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/v2/transactions/tip-adjustment": {
+    "/v2/transactions/{transactionId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get transaction details by ID Required API Permission: Get Transaction Details */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description The transaction identifier.
+                     * @example 3c25d7e4-dfe0-4ede-a3f0-fb280cac281c
+                     */
+                    transactionId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GetTransactionResponseDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "One or more fields failed validation rules.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "One or more validation errors occurred.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "V0000",
+                         *       "errors": {
+                         *         "Email": [
+                         *           "'Email' is not a valid email address."
+                         *         ]
+                         *       },
+                         *       "exceptionType": "ValidationException",
+                         *       "resolution": "Review the errors and correct the invalid fields.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 400,
+                         *       "title": "Validation failed"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ValidationExceptionExample"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Forbidden */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "You do not have permission to access this resource.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "You do not have permission to access this resource.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "F0000",
+                         *       "exceptionType": "ForbiddenException",
+                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 403,
+                         *       "title": "Access forbidden"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ForbiddenExceptionExample"];
+                    };
+                };
+                /** @description Not Found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "The requested resource does not exist or has been deleted.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Entity with ID b31fbe9f-eebb-45ce-9cae-92265389f47f does not exist or has been deleted",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": "b31fbe9f-eebb-45ce-9cae-92265389f47f",
+                         *       "errorCode": "N0000",
+                         *       "exceptionType": "NotFoundException",
+                         *       "resolution": "Verify the resource ID is correct or retrieve a list of available resources.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 404,
+                         *       "title": "Resource not found"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["NotFoundExceptionExample"];
+                    };
+                };
+                /** @description Too Many Requests */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "Too many requests sent in a short period.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Too many requests sent in a short period.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "R0000",
+                         *       "exceptionType": "RateLimitExceededException",
+                         *       "resolution": "Wait before retrying the request. Check the Retry-After header for more information.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 429,
+                         *       "title": "Rate limit exceeded"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["RateLimitExceededExceptionExample"];
+                    };
+                };
+                /** @description Internal Server Error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "An unexpected error occurred while processing the request",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "An unexpected error occurred while processing the request.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "I0000",
+                         *       "exceptionType": "IntegrationException",
+                         *       "resolution": "Please contact support with the correlation ID if the issue persists",
+                         *       "source": "<Service>",
+                         *       "statusCode": 500,
+                         *       "title": "Internal server error"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["InternalExceptionExample"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v2/transactions/{transactionId}/ach-hold": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Hold an ACH transaction. Required API Permission: Ach Hold */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description The ACH transaction identifier to hold.
+                     * @example e6988448-6f04-4965-b56a-f72f6d6bffe9
+                     */
+                    transactionId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GetTransactionResponseDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "One or more fields failed validation rules.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "One or more validation errors occurred.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "V0000",
+                         *       "errors": {
+                         *         "Email": [
+                         *           "'Email' is not a valid email address."
+                         *         ]
+                         *       },
+                         *       "exceptionType": "ValidationException",
+                         *       "resolution": "Review the errors and correct the invalid fields.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 400,
+                         *       "title": "Validation failed"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ValidationExceptionExample"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Payment Required */
+                402: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "The payment was declined by the payment processor.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "The payment was declined by the processor.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "P0000",
+                         *       "exceptionType": "PaymentFailedException",
+                         *       "resolution": "Verify payment details, check available funds, or try a different payment method.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 402,
+                         *       "title": "Payment failed"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["PaymentFailedExceptionExample"];
+                    };
+                };
+                /** @description Forbidden */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "You do not have permission to access this resource.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "You do not have permission to access this resource.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "F0000",
+                         *       "exceptionType": "ForbiddenException",
+                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 403,
+                         *       "title": "Access forbidden"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ForbiddenExceptionExample"];
+                    };
+                };
+                /** @description Not Found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "The requested resource does not exist or has been deleted.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Entity with ID b31fbe9f-eebb-45ce-9cae-92265389f47f does not exist or has been deleted",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": "b31fbe9f-eebb-45ce-9cae-92265389f47f",
+                         *       "errorCode": "N0000",
+                         *       "exceptionType": "NotFoundException",
+                         *       "resolution": "Verify the resource ID is correct or retrieve a list of available resources.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 404,
+                         *       "title": "Resource not found"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["NotFoundExceptionExample"];
+                    };
+                };
+                /** @description Conflict */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "The request conflicts with the current state of the resource.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "The request conflicts with the current state of the resource.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "C0000",
+                         *       "exceptionType": "ConflictException",
+                         *       "resolution": "Refresh the resource state and retry the operation, or use a different idempotency key.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 409,
+                         *       "title": "Resource conflict"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ConflictExceptionExample"];
+                    };
+                };
+                /** @description Too Many Requests */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "Too many requests sent in a short period.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Too many requests sent in a short period.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "R0000",
+                         *       "exceptionType": "RateLimitExceededException",
+                         *       "resolution": "Wait before retrying the request. Check the Retry-After header for more information.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 429,
+                         *       "title": "Rate limit exceeded"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["RateLimitExceededExceptionExample"];
+                    };
+                };
+                /** @description Internal Server Error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "An unexpected error occurred while processing the request",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "An unexpected error occurred while processing the request.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "I0000",
+                         *       "exceptionType": "IntegrationException",
+                         *       "resolution": "Please contact support with the correlation ID if the issue persists",
+                         *       "source": "<Service>",
+                         *       "statusCode": 500,
+                         *       "title": "Internal server error"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["InternalExceptionExample"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v2/transactions/{transactionId}/ach-release": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Release the hold on an ACH transaction. Required API Permission: Ach Unhold */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description The ACH transaction identifier to release.
+                     * @example e6988448-6f04-4965-b56a-f72f6d6bffe9
+                     */
+                    transactionId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GetTransactionResponseDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "One or more fields failed validation rules.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "One or more validation errors occurred.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "V0000",
+                         *       "errors": {
+                         *         "Email": [
+                         *           "'Email' is not a valid email address."
+                         *         ]
+                         *       },
+                         *       "exceptionType": "ValidationException",
+                         *       "resolution": "Review the errors and correct the invalid fields.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 400,
+                         *       "title": "Validation failed"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ValidationExceptionExample"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Payment Required */
+                402: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "The payment was declined by the payment processor.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "The payment was declined by the processor.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "P0000",
+                         *       "exceptionType": "PaymentFailedException",
+                         *       "resolution": "Verify payment details, check available funds, or try a different payment method.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 402,
+                         *       "title": "Payment failed"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["PaymentFailedExceptionExample"];
+                    };
+                };
+                /** @description Forbidden */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "You do not have permission to access this resource.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "You do not have permission to access this resource.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "F0000",
+                         *       "exceptionType": "ForbiddenException",
+                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 403,
+                         *       "title": "Access forbidden"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ForbiddenExceptionExample"];
+                    };
+                };
+                /** @description Not Found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "The requested resource does not exist or has been deleted.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Entity with ID b31fbe9f-eebb-45ce-9cae-92265389f47f does not exist or has been deleted",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": "b31fbe9f-eebb-45ce-9cae-92265389f47f",
+                         *       "errorCode": "N0000",
+                         *       "exceptionType": "NotFoundException",
+                         *       "resolution": "Verify the resource ID is correct or retrieve a list of available resources.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 404,
+                         *       "title": "Resource not found"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["NotFoundExceptionExample"];
+                    };
+                };
+                /** @description Conflict */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "The request conflicts with the current state of the resource.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "The request conflicts with the current state of the resource.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "C0000",
+                         *       "exceptionType": "ConflictException",
+                         *       "resolution": "Refresh the resource state and retry the operation, or use a different idempotency key.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 409,
+                         *       "title": "Resource conflict"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ConflictExceptionExample"];
+                    };
+                };
+                /** @description Too Many Requests */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "Too many requests sent in a short period.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Too many requests sent in a short period.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "R0000",
+                         *       "exceptionType": "RateLimitExceededException",
+                         *       "resolution": "Wait before retrying the request. Check the Retry-After header for more information.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 429,
+                         *       "title": "Rate limit exceeded"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["RateLimitExceededExceptionExample"];
+                    };
+                };
+                /** @description Internal Server Error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "An unexpected error occurred while processing the request",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "An unexpected error occurred while processing the request.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "I0000",
+                         *       "exceptionType": "IntegrationException",
+                         *       "resolution": "Please contact support with the correlation ID if the issue persists",
+                         *       "source": "<Service>",
+                         *       "statusCode": 500,
+                         *       "title": "Internal server error"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["InternalExceptionExample"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v2/transactions/{transactionId}/capture": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Endpoint for transaction capture. Transaction Id is taken from the route. Body is optional: omit or send empty for full capture, or include CaptureAmount for partial capture. Required API Permission: Ecommerce Capture */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description The transaction identifier of the previously authorised transaction to capture.
+                     * @example 487471b7-0149-44ed-840b-97d920e06829
+                     */
+                    transactionId: string;
+                };
+                cookie?: never;
+            };
+            /** @description Optional capture body. Omit / send empty for full capture, or include `CaptureAmount` for partial capture. */
+            requestBody?: {
+                content: {
+                    /**
+                     * @example {
+                     *       "captureAmount": 50
+                     *     }
+                     */
+                    "application/json": components["schemas"]["CaptureRequestDto"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GetTransactionResponseDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "One or more fields failed validation rules.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "One or more validation errors occurred.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "V0000",
+                         *       "errors": {
+                         *         "Email": [
+                         *           "'Email' is not a valid email address."
+                         *         ]
+                         *       },
+                         *       "exceptionType": "ValidationException",
+                         *       "resolution": "Review the errors and correct the invalid fields.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 400,
+                         *       "title": "Validation failed"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ValidationExceptionExample"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Payment Required */
+                402: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "The payment was declined by the payment processor.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "The payment was declined by the processor.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "P0000",
+                         *       "exceptionType": "PaymentFailedException",
+                         *       "resolution": "Verify payment details, check available funds, or try a different payment method.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 402,
+                         *       "title": "Payment failed"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["PaymentFailedExceptionExample"];
+                    };
+                };
+                /** @description Forbidden */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "You do not have permission to access this resource.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "You do not have permission to access this resource.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "F0000",
+                         *       "exceptionType": "ForbiddenException",
+                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 403,
+                         *       "title": "Access forbidden"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ForbiddenExceptionExample"];
+                    };
+                };
+                /** @description Not Found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "The requested resource does not exist or has been deleted.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Entity with ID b31fbe9f-eebb-45ce-9cae-92265389f47f does not exist or has been deleted",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": "b31fbe9f-eebb-45ce-9cae-92265389f47f",
+                         *       "errorCode": "N0000",
+                         *       "exceptionType": "NotFoundException",
+                         *       "resolution": "Verify the resource ID is correct or retrieve a list of available resources.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 404,
+                         *       "title": "Resource not found"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["NotFoundExceptionExample"];
+                    };
+                };
+                /** @description Conflict */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "The request conflicts with the current state of the resource.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "The request conflicts with the current state of the resource.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "C0000",
+                         *       "exceptionType": "ConflictException",
+                         *       "resolution": "Refresh the resource state and retry the operation, or use a different idempotency key.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 409,
+                         *       "title": "Resource conflict"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ConflictExceptionExample"];
+                    };
+                };
+                /** @description Too Many Requests */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "Too many requests sent in a short period.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Too many requests sent in a short period.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "R0000",
+                         *       "exceptionType": "RateLimitExceededException",
+                         *       "resolution": "Wait before retrying the request. Check the Retry-After header for more information.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 429,
+                         *       "title": "Rate limit exceeded"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["RateLimitExceededExceptionExample"];
+                    };
+                };
+                /** @description Internal Server Error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "An unexpected error occurred while processing the request",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "An unexpected error occurred while processing the request.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "I0000",
+                         *       "exceptionType": "IntegrationException",
+                         *       "resolution": "Please contact support with the correlation ID if the issue persists",
+                         *       "source": "<Service>",
+                         *       "statusCode": 500,
+                         *       "title": "Internal server error"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["InternalExceptionExample"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v2/transactions/{transactionId}/reversal": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Reverse a transaction (void or refund). Payment method (card vs ACH) is auto-detected. */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description The transaction identifier to reverse.
+                     * @example d4e39f93-a128-45f4-9b27-140042a5efa5
+                     */
+                    transactionId: string;
+                };
+                cookie?: never;
+            };
+            /** @description Reversal options including optional `ReversalAmount` for a partial refund. */
+            requestBody?: {
+                content: {
+                    /**
+                     * @example {
+                     *       "reversalAmount": 25
+                     *     }
+                     */
+                    "application/json": components["schemas"]["ReversalRequestDto"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GetTransactionResponseDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "One or more fields failed validation rules.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "One or more validation errors occurred.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "V0000",
+                         *       "errors": {
+                         *         "Email": [
+                         *           "'Email' is not a valid email address."
+                         *         ]
+                         *       },
+                         *       "exceptionType": "ValidationException",
+                         *       "resolution": "Review the errors and correct the invalid fields.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 400,
+                         *       "title": "Validation failed"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ValidationExceptionExample"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Payment Required */
+                402: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "The payment was declined by the payment processor.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "The payment was declined by the processor.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "P0000",
+                         *       "exceptionType": "PaymentFailedException",
+                         *       "resolution": "Verify payment details, check available funds, or try a different payment method.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 402,
+                         *       "title": "Payment failed"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["PaymentFailedExceptionExample"];
+                    };
+                };
+                /** @description Forbidden */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "You do not have permission to access this resource.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "You do not have permission to access this resource.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "F0000",
+                         *       "exceptionType": "ForbiddenException",
+                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 403,
+                         *       "title": "Access forbidden"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ForbiddenExceptionExample"];
+                    };
+                };
+                /** @description Not Found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "The requested resource does not exist or has been deleted.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Entity with ID b31fbe9f-eebb-45ce-9cae-92265389f47f does not exist or has been deleted",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": "b31fbe9f-eebb-45ce-9cae-92265389f47f",
+                         *       "errorCode": "N0000",
+                         *       "exceptionType": "NotFoundException",
+                         *       "resolution": "Verify the resource ID is correct or retrieve a list of available resources.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 404,
+                         *       "title": "Resource not found"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["NotFoundExceptionExample"];
+                    };
+                };
+                /** @description Conflict */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "The request conflicts with the current state of the resource.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "The request conflicts with the current state of the resource.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "C0000",
+                         *       "exceptionType": "ConflictException",
+                         *       "resolution": "Refresh the resource state and retry the operation, or use a different idempotency key.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 409,
+                         *       "title": "Resource conflict"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ConflictExceptionExample"];
+                    };
+                };
+                /** @description Too Many Requests */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "Too many requests sent in a short period.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Too many requests sent in a short period.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "R0000",
+                         *       "exceptionType": "RateLimitExceededException",
+                         *       "resolution": "Wait before retrying the request. Check the Retry-After header for more information.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 429,
+                         *       "title": "Rate limit exceeded"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["RateLimitExceededExceptionExample"];
+                    };
+                };
+                /** @description Internal Server Error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "An unexpected error occurred while processing the request",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "An unexpected error occurred while processing the request.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "I0000",
+                         *       "exceptionType": "IntegrationException",
+                         *       "resolution": "Please contact support with the correlation ID if the issue persists",
+                         *       "source": "<Service>",
+                         *       "statusCode": 500,
+                         *       "title": "Internal server error"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["InternalExceptionExample"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v2/transactions/{transactionId}/share-receipt": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Share transaction receipt by SMS Required API Permission: Send Receipt By Sms */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description The transaction identifier to send a receipt for.
+                     * @example e6d064c0-b2a5-4cb3-bc57-8135123ed791
+                     */
+                    transactionId: string;
+                };
+                cookie?: never;
+            };
+            /** @description Recipient mobile number for the SMS receipt. */
+            requestBody?: {
+                content: {
+                    /**
+                     * @example {
+                     *       "hasCustomerConsent": true,
+                     *       "recipient": "+15551234567",
+                     *       "shareBy": "Sms"
+                     *     }
+                     */
+                    "application/json": components["schemas"]["SendReceiptRequestDto"];
+                };
+            };
+            responses: {
+                /** @description Receipt sent successfully */
+                204: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "One or more fields failed validation rules.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "One or more validation errors occurred.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "V0000",
+                         *       "errors": {
+                         *         "Email": [
+                         *           "'Email' is not a valid email address."
+                         *         ]
+                         *       },
+                         *       "exceptionType": "ValidationException",
+                         *       "resolution": "Review the errors and correct the invalid fields.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 400,
+                         *       "title": "Validation failed"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ValidationExceptionExample"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Forbidden */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "You do not have permission to access this resource.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "You do not have permission to access this resource.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "F0000",
+                         *       "exceptionType": "ForbiddenException",
+                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 403,
+                         *       "title": "Access forbidden"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ForbiddenExceptionExample"];
+                    };
+                };
+                /** @description Not Found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "The requested resource does not exist or has been deleted.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Entity with ID b31fbe9f-eebb-45ce-9cae-92265389f47f does not exist or has been deleted",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": "b31fbe9f-eebb-45ce-9cae-92265389f47f",
+                         *       "errorCode": "N0000",
+                         *       "exceptionType": "NotFoundException",
+                         *       "resolution": "Verify the resource ID is correct or retrieve a list of available resources.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 404,
+                         *       "title": "Resource not found"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["NotFoundExceptionExample"];
+                    };
+                };
+                /** @description Conflict */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "The request conflicts with the current state of the resource.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "The request conflicts with the current state of the resource.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "C0000",
+                         *       "exceptionType": "ConflictException",
+                         *       "resolution": "Refresh the resource state and retry the operation, or use a different idempotency key.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 409,
+                         *       "title": "Resource conflict"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ConflictExceptionExample"];
+                    };
+                };
+                /** @description Too Many Requests */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "Too many requests sent in a short period.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Too many requests sent in a short period.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "R0000",
+                         *       "exceptionType": "RateLimitExceededException",
+                         *       "resolution": "Wait before retrying the request. Check the Retry-After header for more information.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 429,
+                         *       "title": "Rate limit exceeded"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["RateLimitExceededExceptionExample"];
+                    };
+                };
+                /** @description Internal Server Error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "An unexpected error occurred while processing the request",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "An unexpected error occurred while processing the request.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "I0000",
+                         *       "exceptionType": "IntegrationException",
+                         *       "resolution": "Please contact support with the correlation ID if the issue persists",
+                         *       "source": "<Service>",
+                         *       "statusCode": 500,
+                         *       "title": "Internal server error"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["InternalExceptionExample"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v2/transactions/{transactionId}/tip-adjustment": {
         parameters: {
             query?: never;
             header?: never;
@@ -4288,15 +8973,22 @@ export interface paths {
             parameters: {
                 query?: never;
                 header?: never;
-                path?: never;
+                path: {
+                    /**
+                     * @description The transaction identifier to adjust the tip on.
+                     * @example 4645fa64-436f-4e61-979c-66c376a596f4
+                     */
+                    transactionId: string;
+                };
                 cookie?: never;
             };
+            /** @description Tip adjustment body containing the new tip amount. */
             requestBody?: {
                 content: {
                     /**
                      * @example {
-                     *       "transactionId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
-                     *       "tipAmount": 5
+                     *       "tipAmount": 5,
+                     *       "tipRate": null
                      *     }
                      */
                     "application/json": components["schemas"]["TipAdjustmentRequestDto"];
@@ -4309,30 +9001,7 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        /**
-                         * @example {
-                         *       "transactionId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
-                         *       "transactionStatus": "Approved",
-                         *       "processedAmount": 105,
-                         *       "currencyCode": "USD",
-                         *       "amountDetails": {
-                         *         "baseAmount": 100,
-                         *         "tipAmount": 5,
-                         *         "surchargeAmount": 0,
-                         *         "discountAmount": 0
-                         *       },
-                         *       "processorResponse": {
-                         *         "processorName": "TSYS",
-                         *         "responseCode": "00",
-                         *         "responseMessage": "Approved",
-                         *         "responseDefinition": "Approved and completed"
-                         *       },
-                         *       "responseDetails": null,
-                         *       "avsResponse": null,
-                         *       "receipt": null
-                         *     }
-                         */
-                        "application/json": components["schemas"]["TransactionResponseDto"];
+                        "application/json": components["schemas"]["GetTransactionResponseDto"];
                     };
                 };
                 /** @description Bad Request */
@@ -4343,25 +9012,56 @@ export interface paths {
                     content: {
                         /**
                          * @example {
+                         *       "cause": "One or more fields failed validation rules.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "One or more validation errors occurred.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "V0000",
                          *       "errors": {
                          *         "Email": [
                          *           "'Email' is not a valid email address."
                          *         ]
                          *       },
-                         *       "details": "One or more validation errors occurred.",
-                         *       "statusCode": 400,
-                         *       "source": "<Service>",
                          *       "exceptionType": "ValidationException",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "entityId": null,
-                         *       "errorCode": "V0000",
-                         *       "title": "Validation failed",
-                         *       "cause": "One or more fields failed validation rules.",
                          *       "resolution": "Review the errors and correct the invalid fields.",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
+                         *       "source": "<Service>",
+                         *       "statusCode": 400,
+                         *       "title": "Validation failed"
                          *     }
                          */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.ValidationExceptionExample"];
+                        "application/json": components["schemas"]["ValidationExceptionExample"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Payment Required */
+                402: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "The payment was declined by the payment processor.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "The payment was declined by the processor.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "P0000",
+                         *       "exceptionType": "PaymentFailedException",
+                         *       "resolution": "Verify payment details, check available funds, or try a different payment method.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 402,
+                         *       "title": "Payment failed"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["PaymentFailedExceptionExample"];
                     };
                 };
                 /** @description Forbidden */
@@ -4372,20 +9072,20 @@ export interface paths {
                     content: {
                         /**
                          * @example {
-                         *       "details": "You do not have permission to access this resource.",
-                         *       "statusCode": 403,
-                         *       "source": "<Service>",
-                         *       "exceptionType": "ForbiddenException",
+                         *       "cause": "You do not have permission to access this resource.",
                          *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "You do not have permission to access this resource.",
+                         *       "documentationUrl": "https://developer.flute.com/",
                          *       "entityId": null,
                          *       "errorCode": "F0000",
-                         *       "title": "Access forbidden",
-                         *       "cause": "You do not have permission to access this resource.",
+                         *       "exceptionType": "ForbiddenException",
                          *       "resolution": "Verify your credentials and permissions or contact your administrator.",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
+                         *       "source": "<Service>",
+                         *       "statusCode": 403,
+                         *       "title": "Access forbidden"
                          *     }
                          */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.ForbiddenExceptionExample"];
+                        "application/json": components["schemas"]["ForbiddenExceptionExample"];
                     };
                 };
                 /** @description Not Found */
@@ -4396,20 +9096,68 @@ export interface paths {
                     content: {
                         /**
                          * @example {
-                         *       "details": "Entity with ID b31fbe9f-eebb-45ce-9cae-92265389f47f does not exist or has been deleted",
-                         *       "statusCode": 404,
-                         *       "source": "<Service>",
-                         *       "exceptionType": "NotFoundException",
+                         *       "cause": "The requested resource does not exist or has been deleted.",
                          *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Entity with ID b31fbe9f-eebb-45ce-9cae-92265389f47f does not exist or has been deleted",
+                         *       "documentationUrl": "https://developer.flute.com/",
                          *       "entityId": "b31fbe9f-eebb-45ce-9cae-92265389f47f",
                          *       "errorCode": "N0000",
-                         *       "title": "Resource not found",
-                         *       "cause": "The requested resource does not exist or has been deleted.",
+                         *       "exceptionType": "NotFoundException",
                          *       "resolution": "Verify the resource ID is correct or retrieve a list of available resources.",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
+                         *       "source": "<Service>",
+                         *       "statusCode": 404,
+                         *       "title": "Resource not found"
                          *     }
                          */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.NotFoundExceptionExample"];
+                        "application/json": components["schemas"]["NotFoundExceptionExample"];
+                    };
+                };
+                /** @description Conflict */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "The request conflicts with the current state of the resource.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "The request conflicts with the current state of the resource.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "C0000",
+                         *       "exceptionType": "ConflictException",
+                         *       "resolution": "Refresh the resource state and retry the operation, or use a different idempotency key.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 409,
+                         *       "title": "Resource conflict"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ConflictExceptionExample"];
+                    };
+                };
+                /** @description Too Many Requests */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "Too many requests sent in a short period.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Too many requests sent in a short period.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "R0000",
+                         *       "exceptionType": "RateLimitExceededException",
+                         *       "resolution": "Wait before retrying the request. Check the Retry-After header for more information.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 429,
+                         *       "title": "Rate limit exceeded"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["RateLimitExceededExceptionExample"];
                     };
                 };
                 /** @description Internal Server Error */
@@ -4420,20 +9168,20 @@ export interface paths {
                     content: {
                         /**
                          * @example {
-                         *       "details": "An unexpected error occurred while processing the request.",
-                         *       "statusCode": 500,
-                         *       "source": "<Service>",
-                         *       "exceptionType": "IntegrationException",
+                         *       "cause": "An unexpected error occurred while processing the request",
                          *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "An unexpected error occurred while processing the request.",
+                         *       "documentationUrl": "https://developer.flute.com/",
                          *       "entityId": null,
                          *       "errorCode": "I0000",
-                         *       "title": "Internal server error",
-                         *       "cause": "An unexpected error occurred while processing the request",
+                         *       "exceptionType": "IntegrationException",
                          *       "resolution": "Please contact support with the correlation ID if the issue persists",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
+                         *       "source": "<Service>",
+                         *       "statusCode": 500,
+                         *       "title": "Internal server error"
                          *     }
                          */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.InternalExceptionExample"];
+                        "application/json": components["schemas"]["InternalExceptionExample"];
                     };
                 };
             };
@@ -4444,358 +9192,39 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/v2/transactions/hold": {
+    "/v2/webhooks/delivery-logs": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        get?: never;
-        put?: never;
-        /** Hold Required API Permission: Ach Hold */
-        post: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody?: {
-                content: {
-                    /**
-                     * @example {
-                     *       "transactionId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
-                     *     }
-                     */
-                    "application/json": components["schemas"]["HoldActionRequestDto"];
-                };
-            };
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        /**
-                         * @example {
-                         *       "transactionId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
-                         *       "type": "Hold",
-                         *       "transactionStatus": "Approved",
-                         *       "processorResponse": {
-                         *         "processorName": "ACH",
-                         *         "responseCode": "00",
-                         *         "responseMessage": "Approved",
-                         *         "responseDefinition": "Transaction hold applied successfully"
-                         *       }
-                         *     }
-                         */
-                        "application/json": components["schemas"]["HoldActionResponseDto"];
-                    };
-                };
-                /** @description Bad Request */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        /**
-                         * @example {
-                         *       "errors": {
-                         *         "Email": [
-                         *           "'Email' is not a valid email address."
-                         *         ]
-                         *       },
-                         *       "details": "One or more validation errors occurred.",
-                         *       "statusCode": 400,
-                         *       "source": "<Service>",
-                         *       "exceptionType": "ValidationException",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "entityId": null,
-                         *       "errorCode": "V0000",
-                         *       "title": "Validation failed",
-                         *       "cause": "One or more fields failed validation rules.",
-                         *       "resolution": "Review the errors and correct the invalid fields.",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
-                         *     }
-                         */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.ValidationExceptionExample"];
-                    };
-                };
-                /** @description Forbidden */
-                403: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        /**
-                         * @example {
-                         *       "details": "You do not have permission to access this resource.",
-                         *       "statusCode": 403,
-                         *       "source": "<Service>",
-                         *       "exceptionType": "ForbiddenException",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "entityId": null,
-                         *       "errorCode": "F0000",
-                         *       "title": "Access forbidden",
-                         *       "cause": "You do not have permission to access this resource.",
-                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
-                         *     }
-                         */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.ForbiddenExceptionExample"];
-                    };
-                };
-                /** @description Not Found */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        /**
-                         * @example {
-                         *       "details": "Entity with ID b31fbe9f-eebb-45ce-9cae-92265389f47f does not exist or has been deleted",
-                         *       "statusCode": 404,
-                         *       "source": "<Service>",
-                         *       "exceptionType": "NotFoundException",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "entityId": "b31fbe9f-eebb-45ce-9cae-92265389f47f",
-                         *       "errorCode": "N0000",
-                         *       "title": "Resource not found",
-                         *       "cause": "The requested resource does not exist or has been deleted.",
-                         *       "resolution": "Verify the resource ID is correct or retrieve a list of available resources.",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
-                         *     }
-                         */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.NotFoundExceptionExample"];
-                    };
-                };
-                /** @description Internal Server Error */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        /**
-                         * @example {
-                         *       "details": "An unexpected error occurred while processing the request.",
-                         *       "statusCode": 500,
-                         *       "source": "<Service>",
-                         *       "exceptionType": "IntegrationException",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "entityId": null,
-                         *       "errorCode": "I0000",
-                         *       "title": "Internal server error",
-                         *       "cause": "An unexpected error occurred while processing the request",
-                         *       "resolution": "Please contact support with the correlation ID if the issue persists",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
-                         *     }
-                         */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.InternalExceptionExample"];
-                    };
-                };
-            };
-        };
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v2/transactions/release-hold": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Release Hold Required API Permission: Ach Unhold */
-        post: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody?: {
-                content: {
-                    /**
-                     * @example {
-                     *       "transactionId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
-                     *     }
-                     */
-                    "application/json": components["schemas"]["HoldActionRequestDto"];
-                };
-            };
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        /**
-                         * @example {
-                         *       "transactionId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
-                         *       "type": "UnHold",
-                         *       "transactionStatus": "Approved",
-                         *       "processorResponse": {
-                         *         "processorName": "ACH",
-                         *         "responseCode": "00",
-                         *         "responseMessage": "Approved",
-                         *         "responseDefinition": "Transaction hold released successfully"
-                         *       }
-                         *     }
-                         */
-                        "application/json": components["schemas"]["HoldActionResponseDto"];
-                    };
-                };
-                /** @description Bad Request */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        /**
-                         * @example {
-                         *       "errors": {
-                         *         "Email": [
-                         *           "'Email' is not a valid email address."
-                         *         ]
-                         *       },
-                         *       "details": "One or more validation errors occurred.",
-                         *       "statusCode": 400,
-                         *       "source": "<Service>",
-                         *       "exceptionType": "ValidationException",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "entityId": null,
-                         *       "errorCode": "V0000",
-                         *       "title": "Validation failed",
-                         *       "cause": "One or more fields failed validation rules.",
-                         *       "resolution": "Review the errors and correct the invalid fields.",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
-                         *     }
-                         */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.ValidationExceptionExample"];
-                    };
-                };
-                /** @description Forbidden */
-                403: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        /**
-                         * @example {
-                         *       "details": "You do not have permission to access this resource.",
-                         *       "statusCode": 403,
-                         *       "source": "<Service>",
-                         *       "exceptionType": "ForbiddenException",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "entityId": null,
-                         *       "errorCode": "F0000",
-                         *       "title": "Access forbidden",
-                         *       "cause": "You do not have permission to access this resource.",
-                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
-                         *     }
-                         */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.ForbiddenExceptionExample"];
-                    };
-                };
-                /** @description Not Found */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        /**
-                         * @example {
-                         *       "details": "Entity with ID b31fbe9f-eebb-45ce-9cae-92265389f47f does not exist or has been deleted",
-                         *       "statusCode": 404,
-                         *       "source": "<Service>",
-                         *       "exceptionType": "NotFoundException",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "entityId": "b31fbe9f-eebb-45ce-9cae-92265389f47f",
-                         *       "errorCode": "N0000",
-                         *       "title": "Resource not found",
-                         *       "cause": "The requested resource does not exist or has been deleted.",
-                         *       "resolution": "Verify the resource ID is correct or retrieve a list of available resources.",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
-                         *     }
-                         */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.NotFoundExceptionExample"];
-                    };
-                };
-                /** @description Internal Server Error */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        /**
-                         * @example {
-                         *       "details": "An unexpected error occurred while processing the request.",
-                         *       "statusCode": 500,
-                         *       "source": "<Service>",
-                         *       "exceptionType": "IntegrationException",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "entityId": null,
-                         *       "errorCode": "I0000",
-                         *       "title": "Internal server error",
-                         *       "cause": "An unexpected error occurred while processing the request",
-                         *       "resolution": "Please contact support with the correlation ID if the issue persists",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
-                         *     }
-                         */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.InternalExceptionExample"];
-                    };
-                };
-            };
-        };
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v2/transactions/calculate-amount": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Calculate transaction amount Required API Permission: Calculate Transaction Amount
-         * @description Determines the final amount to be charged considering applicable discounts, tips,
-         *     and any Zero Cost Processing (ZCP) mode enabled for the merchant account
-         *     (Dual Pricing, Cash Discount, or Credit Card Surcharge).
-         */
+        /** List webhook delivery logs for the authenticated account. Required API Permission: Webhooks */
         get: {
             parameters: {
                 query?: {
-                    /** @description Transaction base amount */
-                    baseAmount?: number;
-                    /**
-                     * @description ISO 4217 currency code (e.g., "USD", "EUR", "GBP").
-                     *     Default: "USD" if not specified.
-                     *     See: https://en.wikipedia.org/wiki/ISO_4217
-                     */
-                    currencyCode?: string;
-                    /** @description Pricing type for dual pricing merchants: Card or Cash. */
-                    pricingType?: components["schemas"]["PricingType"];
-                    /** @description Percentage-off / discount rate (e.g., 0.10 for 10%) */
-                    discountRate?: number;
-                    /** @description Credit Card Surcharge rate override. Leave null to use the merchant account default. */
-                    surchargeRate?: number;
-                    /** @description Absolute tip amount to add */
-                    tipAmount?: number;
-                    /** @description Tip rate to apply (e.g., 0.15 for 15%) */
-                    tipRate?: number;
+                    /** @description Zero-based page index. */
+                    pageIndex?: number;
+                    /** @description Number of items per page. */
+                    pageSize?: number;
+                    /** @description Filter by webhook endpoint identifier. */
+                    endpointId?: string;
+                    /** @description Filter by event type. */
+                    eventType?: components["schemas"]["WebhookEventType"];
+                    /** @description Filter by delivery status. */
+                    deliveryLogStatus?: components["schemas"]["WebhookDeliveryLogStatus"];
+                    /** @description Filter by HTTP response status code. */
+                    endpointHTTPResponseCode?: number;
+                    /** @description Filter logs from this date (inclusive). */
+                    fromDate?: string;
+                    /** @description Filter logs until this date (inclusive). */
+                    toDate?: string;
+                    /** @description Free-text search. */
+                    search?: string;
+                    /** @description Sort field: createdOn, deliveryLogStatus, eventType, endpointId, endpointHTTPResponseCode. Default createdOn. */
+                    sortBy?: string;
+                    /** @description Sort direction: Asc or Desc. Default Desc. */
+                    sortOrder?: string;
                 };
                 header?: never;
                 path?: never;
@@ -4811,44 +9240,46 @@ export interface paths {
                     content: {
                         /**
                          * @example {
-                         *       "currencyCode": "USD",
-                         *       "zeroCostProcessingOption": "Surcharge",
-                         *       "pricingType": "Card",
-                         *       "cash": {
-                         *         "baseAmount": 100,
-                         *         "discountAmount": 5,
-                         *         "surchargeAmount": 0,
-                         *         "tipAmount": 15,
-                         *         "taxAmount": 0,
-                         *         "totalAmount": 110
-                         *       },
-                         *       "creditCard": {
-                         *         "baseAmount": 100,
-                         *         "discountAmount": 5,
-                         *         "surchargeAmount": 3.5,
-                         *         "tipAmount": 15,
-                         *         "taxAmount": 0,
-                         *         "totalAmount": 113.5
-                         *       },
-                         *       "debitCard": {
-                         *         "baseAmount": 100,
-                         *         "discountAmount": 5,
-                         *         "surchargeAmount": 0,
-                         *         "tipAmount": 15,
-                         *         "taxAmount": 0,
-                         *         "totalAmount": 110
-                         *       },
-                         *       "ach": {
-                         *         "baseAmount": 100,
-                         *         "discountAmount": 5,
-                         *         "surchargeAmount": 0,
-                         *         "tipAmount": 15,
-                         *         "taxAmount": 0,
-                         *         "totalAmount": 110
+                         *       "items": [
+                         *         {
+                         *           "attemptNumber": 1,
+                         *           "createdOn": "2026-01-01T00:00:00Z",
+                         *           "deliveryLogId": "5b6f74e4-4773-498e-acd5-a3308f4570ae",
+                         *           "deliveryLogStatus": "Success",
+                         *           "endpointHTTPResponseCode": 200,
+                         *           "endpointId": "b5b55a50-6617-4ea9-8622-f80258a9da1a",
+                         *           "endpointName": "Production webhook",
+                         *           "endpointUrl": "https://example.com/webhooks/arise",
+                         *           "errorMessage": null,
+                         *           "eventId": "f49c5969-9181-4c33-be28-20511ddc1b5f",
+                         *           "eventType": "transaction.card.captured",
+                         *           "roundTripDurationMs": 142
+                         *         },
+                         *         {
+                         *           "attemptNumber": 3,
+                         *           "createdOn": "2026-01-01T00:00:00Z",
+                         *           "deliveryLogId": "9d8188e5-9f4f-4f8b-bbfd-a5ab5eaad7f6",
+                         *           "deliveryLogStatus": "Failure",
+                         *           "endpointHTTPResponseCode": 503,
+                         *           "endpointId": "03c6a6ea-7c5b-46cb-a858-161f9fd3fb80",
+                         *           "endpointName": "Production webhook",
+                         *           "endpointUrl": "https://example.com/webhooks/arise",
+                         *           "errorMessage": "Service Unavailable",
+                         *           "eventId": "96eb1bf2-2f19-48fe-b842-3f6c1fc5fcfb",
+                         *           "eventType": "settlement.batch.completed",
+                         *           "roundTripDurationMs": 5012
+                         *         }
+                         *       ],
+                         *       "pageInfo": {
+                         *         "hasMore": false,
+                         *         "pageIndex": 0,
+                         *         "pageSize": 20,
+                         *         "totalItems": 2,
+                         *         "totalPages": 1
                          *       }
                          *     }
                          */
-                        "application/json": components["schemas"]["CalculateAmountResponseDto"];
+                        "application/json": components["schemas"]["PagedResponseDtoOfWebhookDeliveryLogIsvSummaryDto"];
                     };
                 };
                 /** @description Bad Request */
@@ -4859,26 +9290,33 @@ export interface paths {
                     content: {
                         /**
                          * @example {
+                         *       "cause": "One or more fields failed validation rules.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "One or more validation errors occurred.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "V0000",
                          *       "errors": {
                          *         "Email": [
                          *           "'Email' is not a valid email address."
                          *         ]
                          *       },
-                         *       "details": "One or more validation errors occurred.",
-                         *       "statusCode": 400,
-                         *       "source": "<Service>",
                          *       "exceptionType": "ValidationException",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "entityId": null,
-                         *       "errorCode": "V0000",
-                         *       "title": "Validation failed",
-                         *       "cause": "One or more fields failed validation rules.",
                          *       "resolution": "Review the errors and correct the invalid fields.",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
+                         *       "source": "<Service>",
+                         *       "statusCode": 400,
+                         *       "title": "Validation failed"
                          *     }
                          */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.ValidationExceptionExample"];
+                        "application/json": components["schemas"]["ValidationExceptionExample"];
                     };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
                 };
                 /** @description Forbidden */
                 403: {
@@ -4888,20 +9326,44 @@ export interface paths {
                     content: {
                         /**
                          * @example {
-                         *       "details": "You do not have permission to access this resource.",
-                         *       "statusCode": 403,
-                         *       "source": "<Service>",
-                         *       "exceptionType": "ForbiddenException",
+                         *       "cause": "You do not have permission to access this resource.",
                          *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "You do not have permission to access this resource.",
+                         *       "documentationUrl": "https://developer.flute.com/",
                          *       "entityId": null,
                          *       "errorCode": "F0000",
-                         *       "title": "Access forbidden",
-                         *       "cause": "You do not have permission to access this resource.",
+                         *       "exceptionType": "ForbiddenException",
                          *       "resolution": "Verify your credentials and permissions or contact your administrator.",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
+                         *       "source": "<Service>",
+                         *       "statusCode": 403,
+                         *       "title": "Access forbidden"
                          *     }
                          */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.ForbiddenExceptionExample"];
+                        "application/json": components["schemas"]["ForbiddenExceptionExample"];
+                    };
+                };
+                /** @description Too Many Requests */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "Too many requests sent in a short period.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Too many requests sent in a short period.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "R0000",
+                         *       "exceptionType": "RateLimitExceededException",
+                         *       "resolution": "Wait before retrying the request. Check the Retry-After header for more information.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 429,
+                         *       "title": "Rate limit exceeded"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["RateLimitExceededExceptionExample"];
                     };
                 };
                 /** @description Internal Server Error */
@@ -4912,20 +9374,20 @@ export interface paths {
                     content: {
                         /**
                          * @example {
-                         *       "details": "An unexpected error occurred while processing the request.",
-                         *       "statusCode": 500,
-                         *       "source": "<Service>",
-                         *       "exceptionType": "IntegrationException",
+                         *       "cause": "An unexpected error occurred while processing the request",
                          *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "An unexpected error occurred while processing the request.",
+                         *       "documentationUrl": "https://developer.flute.com/",
                          *       "entityId": null,
                          *       "errorCode": "I0000",
-                         *       "title": "Internal server error",
-                         *       "cause": "An unexpected error occurred while processing the request",
+                         *       "exceptionType": "IntegrationException",
                          *       "resolution": "Please contact support with the correlation ID if the issue persists",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
+                         *       "source": "<Service>",
+                         *       "statusCode": 500,
+                         *       "title": "Internal server error"
                          *     }
                          */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.InternalExceptionExample"];
+                        "application/json": components["schemas"]["InternalExceptionExample"];
                     };
                 };
             };
@@ -4938,43 +9400,47 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/v2/transactions/{id}/send-receipt": {
+    "/v2/webhooks/delivery-logs/export": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        get?: never;
-        put?: never;
-        /** Send transaction receipt by SMS Required API Permission: Send Receipt By Sms */
-        post: {
+        /** Export webhook delivery logs as CSV or JSON. Required API Permission: Webhooks */
+        get: {
             parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    id: string;
+                query?: {
+                    /** @description Filter by webhook endpoint identifier. */
+                    endpointId?: string;
+                    /** @description Filter by event type. */
+                    eventType?: components["schemas"]["WebhookEventType"];
+                    /** @description Filter by delivery status. */
+                    deliveryLogStatus?: components["schemas"]["WebhookDeliveryLogStatus"];
+                    /** @description Filter by HTTP response status code. */
+                    endpointHTTPResponseCode?: number;
+                    /** @description Filter logs from this date (inclusive). */
+                    fromDate?: string;
+                    /** @description Filter logs until this date (inclusive). */
+                    toDate?: string;
+                    /** @description Export file format. */
+                    format?: components["schemas"]["WebhookDeliveryLogExportFormat"];
                 };
+                header?: never;
+                path?: never;
                 cookie?: never;
             };
-            requestBody?: {
-                content: {
-                    /**
-                     * @example {
-                     *       "mobileNumber": "+15551234567",
-                     *       "customerConsent": true
-                     *     }
-                     */
-                    "application/json": components["schemas"]["SendReceiptRequestDto"];
-                };
-            };
+            requestBody?: never;
             responses: {
-                /** @description Receipt sent successfully */
+                /** @description OK */
                 200: {
                     headers: {
                         [name: string]: unknown;
                     };
-                    content?: never;
+                    content: {
+                        "application/json": string;
+                        "text/csv": string;
+                    };
                 };
                 /** @description Bad Request */
                 400: {
@@ -4984,26 +9450,33 @@ export interface paths {
                     content: {
                         /**
                          * @example {
+                         *       "cause": "One or more fields failed validation rules.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "One or more validation errors occurred.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "V0000",
                          *       "errors": {
                          *         "Email": [
                          *           "'Email' is not a valid email address."
                          *         ]
                          *       },
-                         *       "details": "One or more validation errors occurred.",
-                         *       "statusCode": 400,
-                         *       "source": "<Service>",
                          *       "exceptionType": "ValidationException",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "entityId": null,
-                         *       "errorCode": "V0000",
-                         *       "title": "Validation failed",
-                         *       "cause": "One or more fields failed validation rules.",
                          *       "resolution": "Review the errors and correct the invalid fields.",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
+                         *       "source": "<Service>",
+                         *       "statusCode": 400,
+                         *       "title": "Validation failed"
                          *     }
                          */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.ValidationExceptionExample"];
+                        "application/json": components["schemas"]["ValidationExceptionExample"];
                     };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
                 };
                 /** @description Forbidden */
                 403: {
@@ -5013,44 +9486,44 @@ export interface paths {
                     content: {
                         /**
                          * @example {
-                         *       "details": "You do not have permission to access this resource.",
-                         *       "statusCode": 403,
-                         *       "source": "<Service>",
-                         *       "exceptionType": "ForbiddenException",
+                         *       "cause": "You do not have permission to access this resource.",
                          *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "You do not have permission to access this resource.",
+                         *       "documentationUrl": "https://developer.flute.com/",
                          *       "entityId": null,
                          *       "errorCode": "F0000",
-                         *       "title": "Access forbidden",
-                         *       "cause": "You do not have permission to access this resource.",
+                         *       "exceptionType": "ForbiddenException",
                          *       "resolution": "Verify your credentials and permissions or contact your administrator.",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
+                         *       "source": "<Service>",
+                         *       "statusCode": 403,
+                         *       "title": "Access forbidden"
                          *     }
                          */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.ForbiddenExceptionExample"];
+                        "application/json": components["schemas"]["ForbiddenExceptionExample"];
                     };
                 };
-                /** @description Not Found */
-                404: {
+                /** @description Too Many Requests */
+                429: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
                         /**
                          * @example {
-                         *       "details": "Entity with ID b31fbe9f-eebb-45ce-9cae-92265389f47f does not exist or has been deleted",
-                         *       "statusCode": 404,
-                         *       "source": "<Service>",
-                         *       "exceptionType": "NotFoundException",
+                         *       "cause": "Too many requests sent in a short period.",
                          *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "entityId": "b31fbe9f-eebb-45ce-9cae-92265389f47f",
-                         *       "errorCode": "N0000",
-                         *       "title": "Resource not found",
-                         *       "cause": "The requested resource does not exist or has been deleted.",
-                         *       "resolution": "Verify the resource ID is correct or retrieve a list of available resources.",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
+                         *       "details": "Too many requests sent in a short period.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "R0000",
+                         *       "exceptionType": "RateLimitExceededException",
+                         *       "resolution": "Wait before retrying the request. Check the Retry-After header for more information.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 429,
+                         *       "title": "Rate limit exceeded"
                          *     }
                          */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.NotFoundExceptionExample"];
+                        "application/json": components["schemas"]["RateLimitExceededExceptionExample"];
                     };
                 };
                 /** @description Internal Server Error */
@@ -5061,20 +9534,452 @@ export interface paths {
                     content: {
                         /**
                          * @example {
-                         *       "details": "An unexpected error occurred while processing the request.",
-                         *       "statusCode": 500,
-                         *       "source": "<Service>",
-                         *       "exceptionType": "IntegrationException",
+                         *       "cause": "An unexpected error occurred while processing the request",
                          *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "An unexpected error occurred while processing the request.",
+                         *       "documentationUrl": "https://developer.flute.com/",
                          *       "entityId": null,
                          *       "errorCode": "I0000",
-                         *       "title": "Internal server error",
-                         *       "cause": "An unexpected error occurred while processing the request",
+                         *       "exceptionType": "IntegrationException",
                          *       "resolution": "Please contact support with the correlation ID if the issue persists",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
+                         *       "source": "<Service>",
+                         *       "statusCode": 500,
+                         *       "title": "Internal server error"
                          *     }
                          */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.InternalExceptionExample"];
+                        "application/json": components["schemas"]["InternalExceptionExample"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v2/webhooks/delivery-logs/{deliveryLogId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get full request and response detail for a single delivery attempt. Required API Permission: Webhooks */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description The webhook delivery log identifier.
+                     * @example 30d1d958-cf5a-446c-be96-5a78b2220c19
+                     */
+                    deliveryLogId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "attemptNumber": 3,
+                         *       "createdOn": "2026-01-01T00:00:00Z",
+                         *       "deliveryLogId": "98602c85-294d-4215-8e02-78c4458106d6",
+                         *       "deliveryLogStatus": "Failure",
+                         *       "endpointHTTPResponseCode": 503,
+                         *       "endpointId": "fa48084e-ed38-46e3-b761-774b76d06de1",
+                         *       "endpointName": "Production webhook",
+                         *       "endpointUrl": "https://example.com/webhooks/arise",
+                         *       "errorMessage": "Service Unavailable",
+                         *       "eventId": "399f9d7d-0714-453c-9b6d-dda836e1d8e6",
+                         *       "eventType": "settlement.batch.completed",
+                         *       "nextRetryAt": "2026-01-01T00:00:00Z",
+                         *       "requestBody": "{\"id\":\"8b7f1c87-c1da-48f7-82d1-426ae0960c53\",\"type\":\"settlement.batch.completed\",\"createdAt\":\"2026-05-05T13:10:00Z\",\"data\":{\"batchId\":\"617f9259-8900-4134-b035-c53dd5d9675e\",\"settledAmount\":12500.00}}",
+                         *       "requestHeaders": {
+                         *         "Content-Type": "application/json",
+                         *         "X-Flute-Event-Id": "0e991cfc-28cf-4558-8874-bf2bbee8a406",
+                         *         "X-Flute-Event-Type": "settlement.batch.completed",
+                         *         "X-Flute-Signature": "t=1746450622,v1=5257a869e7ecebeda32affa6c66e8fb5e5e64a50b9b3e8bbf9c1a8d8f5e9d0a1"
+                         *       },
+                         *       "responseBody": "Service Unavailable",
+                         *       "responseHeaders": {
+                         *         "Content-Type": "text/plain",
+                         *         "Server": "nginx"
+                         *       },
+                         *       "roundTripDurationMs": 5012
+                         *     }
+                         */
+                        "application/json": components["schemas"]["WebhookDeliveryLogIsvDetailDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "One or more fields failed validation rules.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "One or more validation errors occurred.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "V0000",
+                         *       "errors": {
+                         *         "Email": [
+                         *           "'Email' is not a valid email address."
+                         *         ]
+                         *       },
+                         *       "exceptionType": "ValidationException",
+                         *       "resolution": "Review the errors and correct the invalid fields.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 400,
+                         *       "title": "Validation failed"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ValidationExceptionExample"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Forbidden */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "You do not have permission to access this resource.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "You do not have permission to access this resource.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "F0000",
+                         *       "exceptionType": "ForbiddenException",
+                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 403,
+                         *       "title": "Access forbidden"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ForbiddenExceptionExample"];
+                    };
+                };
+                /** @description Not Found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "The requested resource does not exist or has been deleted.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Entity with ID b31fbe9f-eebb-45ce-9cae-92265389f47f does not exist or has been deleted",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": "b31fbe9f-eebb-45ce-9cae-92265389f47f",
+                         *       "errorCode": "N0000",
+                         *       "exceptionType": "NotFoundException",
+                         *       "resolution": "Verify the resource ID is correct or retrieve a list of available resources.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 404,
+                         *       "title": "Resource not found"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["NotFoundExceptionExample"];
+                    };
+                };
+                /** @description Too Many Requests */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "Too many requests sent in a short period.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Too many requests sent in a short period.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "R0000",
+                         *       "exceptionType": "RateLimitExceededException",
+                         *       "resolution": "Wait before retrying the request. Check the Retry-After header for more information.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 429,
+                         *       "title": "Rate limit exceeded"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["RateLimitExceededExceptionExample"];
+                    };
+                };
+                /** @description Internal Server Error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "An unexpected error occurred while processing the request",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "An unexpected error occurred while processing the request.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "I0000",
+                         *       "exceptionType": "IntegrationException",
+                         *       "resolution": "Please contact support with the correlation ID if the issue persists",
+                         *       "source": "<Service>",
+                         *       "statusCode": 500,
+                         *       "title": "Internal server error"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["InternalExceptionExample"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v2/webhooks/delivery-logs/{deliveryLogId}/retry": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Manually retry a failed webhook delivery. Single-shot — no automatic retry chain. Required API Permission: Webhooks */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description The webhook delivery log identifier whose delivery attempt should be retried.
+                     * @example 472573cd-bceb-4995-9f4f-ba0f443a12ca
+                     */
+                    deliveryLogId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "attemptNumber": 3,
+                         *       "createdOn": "2026-01-01T00:00:00Z",
+                         *       "deliveryLogId": "98602c85-294d-4215-8e02-78c4458106d6",
+                         *       "deliveryLogStatus": "Failure",
+                         *       "endpointHTTPResponseCode": 503,
+                         *       "endpointId": "fa48084e-ed38-46e3-b761-774b76d06de1",
+                         *       "endpointName": "Production webhook",
+                         *       "endpointUrl": "https://example.com/webhooks/arise",
+                         *       "errorMessage": "Service Unavailable",
+                         *       "eventId": "399f9d7d-0714-453c-9b6d-dda836e1d8e6",
+                         *       "eventType": "settlement.batch.completed",
+                         *       "nextRetryAt": "2026-01-01T00:00:00Z",
+                         *       "requestBody": "{\"id\":\"8b7f1c87-c1da-48f7-82d1-426ae0960c53\",\"type\":\"settlement.batch.completed\",\"createdAt\":\"2026-05-05T13:10:00Z\",\"data\":{\"batchId\":\"617f9259-8900-4134-b035-c53dd5d9675e\",\"settledAmount\":12500.00}}",
+                         *       "requestHeaders": {
+                         *         "Content-Type": "application/json",
+                         *         "X-Flute-Event-Id": "0e991cfc-28cf-4558-8874-bf2bbee8a406",
+                         *         "X-Flute-Event-Type": "settlement.batch.completed",
+                         *         "X-Flute-Signature": "t=1746450622,v1=5257a869e7ecebeda32affa6c66e8fb5e5e64a50b9b3e8bbf9c1a8d8f5e9d0a1"
+                         *       },
+                         *       "responseBody": "Service Unavailable",
+                         *       "responseHeaders": {
+                         *         "Content-Type": "text/plain",
+                         *         "Server": "nginx"
+                         *       },
+                         *       "roundTripDurationMs": 5012
+                         *     }
+                         */
+                        "application/json": components["schemas"]["WebhookDeliveryLogIsvDetailDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "One or more fields failed validation rules.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "One or more validation errors occurred.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "V0000",
+                         *       "errors": {
+                         *         "Email": [
+                         *           "'Email' is not a valid email address."
+                         *         ]
+                         *       },
+                         *       "exceptionType": "ValidationException",
+                         *       "resolution": "Review the errors and correct the invalid fields.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 400,
+                         *       "title": "Validation failed"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ValidationExceptionExample"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Forbidden */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "You do not have permission to access this resource.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "You do not have permission to access this resource.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "F0000",
+                         *       "exceptionType": "ForbiddenException",
+                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 403,
+                         *       "title": "Access forbidden"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ForbiddenExceptionExample"];
+                    };
+                };
+                /** @description Not Found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "The requested resource does not exist or has been deleted.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Entity with ID b31fbe9f-eebb-45ce-9cae-92265389f47f does not exist or has been deleted",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": "b31fbe9f-eebb-45ce-9cae-92265389f47f",
+                         *       "errorCode": "N0000",
+                         *       "exceptionType": "NotFoundException",
+                         *       "resolution": "Verify the resource ID is correct or retrieve a list of available resources.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 404,
+                         *       "title": "Resource not found"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["NotFoundExceptionExample"];
+                    };
+                };
+                /** @description Conflict */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "The request conflicts with the current state of the resource.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "The request conflicts with the current state of the resource.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "C0000",
+                         *       "exceptionType": "ConflictException",
+                         *       "resolution": "Refresh the resource state and retry the operation, or use a different idempotency key.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 409,
+                         *       "title": "Resource conflict"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ConflictExceptionExample"];
+                    };
+                };
+                /** @description Too Many Requests */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "Too many requests sent in a short period.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Too many requests sent in a short period.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "R0000",
+                         *       "exceptionType": "RateLimitExceededException",
+                         *       "resolution": "Wait before retrying the request. Check the Retry-After header for more information.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 429,
+                         *       "title": "Rate limit exceeded"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["RateLimitExceededExceptionExample"];
+                    };
+                };
+                /** @description Internal Server Error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "An unexpected error occurred while processing the request",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "An unexpected error occurred while processing the request.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "I0000",
+                         *       "exceptionType": "IntegrationException",
+                         *       "resolution": "Please contact support with the correlation ID if the issue persists",
+                         *       "source": "<Service>",
+                         *       "statusCode": 500,
+                         *       "title": "Internal server error"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["InternalExceptionExample"];
                     };
                 };
             };
@@ -5096,10 +10001,22 @@ export interface paths {
         get: {
             parameters: {
                 query?: {
-                    /** @description Optional case-insensitive substring filter on the webhook name. If not provided, name is not filtered. */
-                    name?: string;
-                    /** @description Optional case-insensitive substring filter on the endpoint URL. If not provided, the URL is not filtered. */
-                    endpointUrl?: string;
+                    /** @description Zero-based page index. */
+                    pageIndex?: number;
+                    /** @description Items per page (1–100). */
+                    pageSize?: number;
+                    /** @description Filter by endpoint status. */
+                    endpointStatus?: components["schemas"]["WebhookEndpointStatus"];
+                    /** @description Free-text match against endpoint name and URL. */
+                    search?: string;
+                    /** @description Filter by createdOn from this date (inclusive, ISO 8601). */
+                    fromDate?: string;
+                    /** @description Filter by createdOn until this date (inclusive, ISO 8601). */
+                    toDate?: string;
+                    /** @description Sort field: createdOn or endpointName. Default createdOn. */
+                    sortBy?: string;
+                    /** @description Sort direction: Asc or Desc. Default Desc. */
+                    sortOrder?: string;
                 };
                 header?: never;
                 path?: never;
@@ -5113,7 +10030,117 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/json": components["schemas"]["ListWebhookEndpointsIsvResponseDto"];
+                        /**
+                         * @example {
+                         *       "items": [
+                         *         {
+                         *           "createdOn": "2026-01-01T00:00:00Z",
+                         *           "endpointId": "633649fc-9d16-4d1b-98ec-73a3282427fc",
+                         *           "endpointName": "Production webhook",
+                         *           "endpointStatus": "Active",
+                         *           "endpointUrl": "https://example.com/webhooks/arise",
+                         *           "eventTypes": [
+                         *             "transaction.card.captured",
+                         *             "transaction.card.refunded",
+                         *             "settlement.batch.completed"
+                         *           ],
+                         *           "modifiedOn": "2026-01-01T00:00:00Z"
+                         *         }
+                         *       ],
+                         *       "pageInfo": {
+                         *         "hasMore": false,
+                         *         "pageIndex": 0,
+                         *         "pageSize": 20,
+                         *         "totalItems": 1,
+                         *         "totalPages": 1
+                         *       }
+                         *     }
+                         */
+                        "application/json": components["schemas"]["PagedResponseDtoOfGetWebhookEndpointIsvResponseDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "One or more fields failed validation rules.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "One or more validation errors occurred.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "V0000",
+                         *       "errors": {
+                         *         "Email": [
+                         *           "'Email' is not a valid email address."
+                         *         ]
+                         *       },
+                         *       "exceptionType": "ValidationException",
+                         *       "resolution": "Review the errors and correct the invalid fields.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 400,
+                         *       "title": "Validation failed"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ValidationExceptionExample"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Forbidden */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "You do not have permission to access this resource.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "You do not have permission to access this resource.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "F0000",
+                         *       "exceptionType": "ForbiddenException",
+                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 403,
+                         *       "title": "Access forbidden"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ForbiddenExceptionExample"];
+                    };
+                };
+                /** @description Too Many Requests */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "Too many requests sent in a short period.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Too many requests sent in a short period.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "R0000",
+                         *       "exceptionType": "RateLimitExceededException",
+                         *       "resolution": "Wait before retrying the request. Check the Retry-After header for more information.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 429,
+                         *       "title": "Rate limit exceeded"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["RateLimitExceededExceptionExample"];
                     };
                 };
                 /** @description Internal Server Error */
@@ -5124,20 +10151,20 @@ export interface paths {
                     content: {
                         /**
                          * @example {
-                         *       "details": "An unexpected error occurred while processing the request.",
-                         *       "statusCode": 500,
-                         *       "source": "<Service>",
-                         *       "exceptionType": "IntegrationException",
+                         *       "cause": "An unexpected error occurred while processing the request",
                          *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "An unexpected error occurred while processing the request.",
+                         *       "documentationUrl": "https://developer.flute.com/",
                          *       "entityId": null,
                          *       "errorCode": "I0000",
-                         *       "title": "Internal server error",
-                         *       "cause": "An unexpected error occurred while processing the request",
+                         *       "exceptionType": "IntegrationException",
                          *       "resolution": "Please contact support with the correlation ID if the issue persists",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
+                         *       "source": "<Service>",
+                         *       "statusCode": 500,
+                         *       "title": "Internal server error"
                          *     }
                          */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.InternalExceptionExample"];
+                        "application/json": components["schemas"]["InternalExceptionExample"];
                     };
                 };
             };
@@ -5154,6 +10181,17 @@ export interface paths {
             /** @description Webhook endpoint configuration */
             requestBody?: {
                 content: {
+                    /**
+                     * @example {
+                     *       "endpointName": "Production webhook",
+                     *       "endpointUrl": "https://example.com/webhooks/arise",
+                     *       "eventTypes": [
+                     *         "transaction.card.captured",
+                     *         "transaction.card.refunded",
+                     *         "settlement.batch.completed"
+                     *       ]
+                     *     }
+                     */
                     "application/json": components["schemas"]["CreateWebhookEndpointIsvRequestDto"];
                 };
             };
@@ -5164,6 +10202,21 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
+                        /**
+                         * @example {
+                         *       "createdOn": "2026-01-01T00:00:00Z",
+                         *       "endpointId": "1e3fd30d-5fc2-4a69-9ea6-d0dcf05ab5ce",
+                         *       "endpointName": "Production webhook",
+                         *       "endpointStatus": "Active",
+                         *       "endpointUrl": "https://example.com/webhooks/arise",
+                         *       "eventTypes": [
+                         *         "transaction.card.captured",
+                         *         "transaction.card.refunded",
+                         *         "settlement.batch.completed"
+                         *       ],
+                         *       "hmacSecret": "7b3e9a1f4c8d2056e1a9b7c3f5d80426a9c1e3b5d7f9024680ace13579bdf024"
+                         *     }
+                         */
                         "application/json": components["schemas"]["CreateWebhookEndpointIsvResponseDto"];
                     };
                 };
@@ -5175,25 +10228,56 @@ export interface paths {
                     content: {
                         /**
                          * @example {
+                         *       "cause": "One or more fields failed validation rules.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "One or more validation errors occurred.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "V0000",
                          *       "errors": {
                          *         "Email": [
                          *           "'Email' is not a valid email address."
                          *         ]
                          *       },
-                         *       "details": "One or more validation errors occurred.",
-                         *       "statusCode": 400,
-                         *       "source": "<Service>",
                          *       "exceptionType": "ValidationException",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "entityId": null,
-                         *       "errorCode": "V0000",
-                         *       "title": "Validation failed",
-                         *       "cause": "One or more fields failed validation rules.",
                          *       "resolution": "Review the errors and correct the invalid fields.",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
+                         *       "source": "<Service>",
+                         *       "statusCode": 400,
+                         *       "title": "Validation failed"
                          *     }
                          */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.ValidationExceptionExample"];
+                        "application/json": components["schemas"]["ValidationExceptionExample"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Forbidden */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "You do not have permission to access this resource.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "You do not have permission to access this resource.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "F0000",
+                         *       "exceptionType": "ForbiddenException",
+                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 403,
+                         *       "title": "Access forbidden"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ForbiddenExceptionExample"];
                     };
                 };
                 /** @description Not Found */
@@ -5204,20 +10288,68 @@ export interface paths {
                     content: {
                         /**
                          * @example {
-                         *       "details": "Entity with ID b31fbe9f-eebb-45ce-9cae-92265389f47f does not exist or has been deleted",
-                         *       "statusCode": 404,
-                         *       "source": "<Service>",
-                         *       "exceptionType": "NotFoundException",
+                         *       "cause": "The requested resource does not exist or has been deleted.",
                          *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Entity with ID b31fbe9f-eebb-45ce-9cae-92265389f47f does not exist or has been deleted",
+                         *       "documentationUrl": "https://developer.flute.com/",
                          *       "entityId": "b31fbe9f-eebb-45ce-9cae-92265389f47f",
                          *       "errorCode": "N0000",
-                         *       "title": "Resource not found",
-                         *       "cause": "The requested resource does not exist or has been deleted.",
+                         *       "exceptionType": "NotFoundException",
                          *       "resolution": "Verify the resource ID is correct or retrieve a list of available resources.",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
+                         *       "source": "<Service>",
+                         *       "statusCode": 404,
+                         *       "title": "Resource not found"
                          *     }
                          */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.NotFoundExceptionExample"];
+                        "application/json": components["schemas"]["NotFoundExceptionExample"];
+                    };
+                };
+                /** @description Conflict */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "The request conflicts with the current state of the resource.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "The request conflicts with the current state of the resource.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "C0000",
+                         *       "exceptionType": "ConflictException",
+                         *       "resolution": "Refresh the resource state and retry the operation, or use a different idempotency key.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 409,
+                         *       "title": "Resource conflict"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ConflictExceptionExample"];
+                    };
+                };
+                /** @description Too Many Requests */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "Too many requests sent in a short period.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Too many requests sent in a short period.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "R0000",
+                         *       "exceptionType": "RateLimitExceededException",
+                         *       "resolution": "Wait before retrying the request. Check the Retry-After header for more information.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 429,
+                         *       "title": "Rate limit exceeded"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["RateLimitExceededExceptionExample"];
                     };
                 };
                 /** @description Internal Server Error */
@@ -5228,20 +10360,20 @@ export interface paths {
                     content: {
                         /**
                          * @example {
-                         *       "details": "An unexpected error occurred while processing the request.",
-                         *       "statusCode": 500,
-                         *       "source": "<Service>",
-                         *       "exceptionType": "IntegrationException",
+                         *       "cause": "An unexpected error occurred while processing the request",
                          *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "An unexpected error occurred while processing the request.",
+                         *       "documentationUrl": "https://developer.flute.com/",
                          *       "entityId": null,
                          *       "errorCode": "I0000",
-                         *       "title": "Internal server error",
-                         *       "cause": "An unexpected error occurred while processing the request",
+                         *       "exceptionType": "IntegrationException",
                          *       "resolution": "Please contact support with the correlation ID if the issue persists",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
+                         *       "source": "<Service>",
+                         *       "statusCode": 500,
+                         *       "title": "Internal server error"
                          *     }
                          */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.InternalExceptionExample"];
+                        "application/json": components["schemas"]["InternalExceptionExample"];
                     };
                 };
             };
@@ -5252,7 +10384,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/v2/webhooks/endpoints/{id}": {
+    "/v2/webhooks/endpoints/{endpointId}": {
         parameters: {
             query?: never;
             header?: never;
@@ -5265,7 +10397,11 @@ export interface paths {
                 query?: never;
                 header?: never;
                 path: {
-                    id: string;
+                    /**
+                     * @description The webhook endpoint identifier.
+                     * @example 8d77acd8-7f4f-4b33-8a31-387967bcc600
+                     */
+                    endpointId: string;
                 };
                 cookie?: never;
             };
@@ -5277,6 +10413,21 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
+                        /**
+                         * @example {
+                         *       "createdOn": "2026-01-01T00:00:00Z",
+                         *       "endpointId": "279a18e1-a514-4e14-ae11-13ebd326b6d7",
+                         *       "endpointName": "Production webhook",
+                         *       "endpointStatus": "Active",
+                         *       "endpointUrl": "https://example.com/webhooks/arise",
+                         *       "eventTypes": [
+                         *         "transaction.card.captured",
+                         *         "transaction.card.refunded",
+                         *         "settlement.batch.completed"
+                         *       ],
+                         *       "modifiedOn": "2026-01-01T00:00:00Z"
+                         *     }
+                         */
                         "application/json": components["schemas"]["GetWebhookEndpointIsvResponseDto"];
                     };
                 };
@@ -5288,25 +10439,56 @@ export interface paths {
                     content: {
                         /**
                          * @example {
+                         *       "cause": "One or more fields failed validation rules.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "One or more validation errors occurred.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "V0000",
                          *       "errors": {
                          *         "Email": [
                          *           "'Email' is not a valid email address."
                          *         ]
                          *       },
-                         *       "details": "One or more validation errors occurred.",
-                         *       "statusCode": 400,
-                         *       "source": "<Service>",
                          *       "exceptionType": "ValidationException",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "entityId": null,
-                         *       "errorCode": "V0000",
-                         *       "title": "Validation failed",
-                         *       "cause": "One or more fields failed validation rules.",
                          *       "resolution": "Review the errors and correct the invalid fields.",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
+                         *       "source": "<Service>",
+                         *       "statusCode": 400,
+                         *       "title": "Validation failed"
                          *     }
                          */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.ValidationExceptionExample"];
+                        "application/json": components["schemas"]["ValidationExceptionExample"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Forbidden */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "You do not have permission to access this resource.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "You do not have permission to access this resource.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "F0000",
+                         *       "exceptionType": "ForbiddenException",
+                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 403,
+                         *       "title": "Access forbidden"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ForbiddenExceptionExample"];
                     };
                 };
                 /** @description Not Found */
@@ -5317,20 +10499,44 @@ export interface paths {
                     content: {
                         /**
                          * @example {
-                         *       "details": "Entity with ID b31fbe9f-eebb-45ce-9cae-92265389f47f does not exist or has been deleted",
-                         *       "statusCode": 404,
-                         *       "source": "<Service>",
-                         *       "exceptionType": "NotFoundException",
+                         *       "cause": "The requested resource does not exist or has been deleted.",
                          *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Entity with ID b31fbe9f-eebb-45ce-9cae-92265389f47f does not exist or has been deleted",
+                         *       "documentationUrl": "https://developer.flute.com/",
                          *       "entityId": "b31fbe9f-eebb-45ce-9cae-92265389f47f",
                          *       "errorCode": "N0000",
-                         *       "title": "Resource not found",
-                         *       "cause": "The requested resource does not exist or has been deleted.",
+                         *       "exceptionType": "NotFoundException",
                          *       "resolution": "Verify the resource ID is correct or retrieve a list of available resources.",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
+                         *       "source": "<Service>",
+                         *       "statusCode": 404,
+                         *       "title": "Resource not found"
                          *     }
                          */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.NotFoundExceptionExample"];
+                        "application/json": components["schemas"]["NotFoundExceptionExample"];
+                    };
+                };
+                /** @description Too Many Requests */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "Too many requests sent in a short period.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Too many requests sent in a short period.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "R0000",
+                         *       "exceptionType": "RateLimitExceededException",
+                         *       "resolution": "Wait before retrying the request. Check the Retry-After header for more information.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 429,
+                         *       "title": "Rate limit exceeded"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["RateLimitExceededExceptionExample"];
                     };
                 };
                 /** @description Internal Server Error */
@@ -5341,128 +10547,25 @@ export interface paths {
                     content: {
                         /**
                          * @example {
-                         *       "details": "An unexpected error occurred while processing the request.",
-                         *       "statusCode": 500,
-                         *       "source": "<Service>",
-                         *       "exceptionType": "IntegrationException",
+                         *       "cause": "An unexpected error occurred while processing the request",
                          *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "An unexpected error occurred while processing the request.",
+                         *       "documentationUrl": "https://developer.flute.com/",
                          *       "entityId": null,
                          *       "errorCode": "I0000",
-                         *       "title": "Internal server error",
-                         *       "cause": "An unexpected error occurred while processing the request",
+                         *       "exceptionType": "IntegrationException",
                          *       "resolution": "Please contact support with the correlation ID if the issue persists",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
+                         *       "source": "<Service>",
+                         *       "statusCode": 500,
+                         *       "title": "Internal server error"
                          *     }
                          */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.InternalExceptionExample"];
+                        "application/json": components["schemas"]["InternalExceptionExample"];
                     };
                 };
             };
         };
-        /** Update a webhook endpoint. Required API Permission: Webhooks */
-        put: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    id: string;
-                };
-                cookie?: never;
-            };
-            requestBody?: {
-                content: {
-                    "application/json": components["schemas"]["UpdateWebhookEndpointIsvRequestDto"];
-                };
-            };
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["GetWebhookEndpointIsvResponseDto"];
-                    };
-                };
-                /** @description Bad Request */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        /**
-                         * @example {
-                         *       "errors": {
-                         *         "Email": [
-                         *           "'Email' is not a valid email address."
-                         *         ]
-                         *       },
-                         *       "details": "One or more validation errors occurred.",
-                         *       "statusCode": 400,
-                         *       "source": "<Service>",
-                         *       "exceptionType": "ValidationException",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "entityId": null,
-                         *       "errorCode": "V0000",
-                         *       "title": "Validation failed",
-                         *       "cause": "One or more fields failed validation rules.",
-                         *       "resolution": "Review the errors and correct the invalid fields.",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
-                         *     }
-                         */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.ValidationExceptionExample"];
-                    };
-                };
-                /** @description Not Found */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        /**
-                         * @example {
-                         *       "details": "Entity with ID b31fbe9f-eebb-45ce-9cae-92265389f47f does not exist or has been deleted",
-                         *       "statusCode": 404,
-                         *       "source": "<Service>",
-                         *       "exceptionType": "NotFoundException",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "entityId": "b31fbe9f-eebb-45ce-9cae-92265389f47f",
-                         *       "errorCode": "N0000",
-                         *       "title": "Resource not found",
-                         *       "cause": "The requested resource does not exist or has been deleted.",
-                         *       "resolution": "Verify the resource ID is correct or retrieve a list of available resources.",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
-                         *     }
-                         */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.NotFoundExceptionExample"];
-                    };
-                };
-                /** @description Internal Server Error */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        /**
-                         * @example {
-                         *       "details": "An unexpected error occurred while processing the request.",
-                         *       "statusCode": 500,
-                         *       "source": "<Service>",
-                         *       "exceptionType": "IntegrationException",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "entityId": null,
-                         *       "errorCode": "I0000",
-                         *       "title": "Internal server error",
-                         *       "cause": "An unexpected error occurred while processing the request",
-                         *       "resolution": "Please contact support with the correlation ID if the issue persists",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
-                         *     }
-                         */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.InternalExceptionExample"];
-                    };
-                };
-            };
-        };
+        put?: never;
         post?: never;
         /** Delete a webhook endpoint. Required API Permission: Webhooks */
         delete: {
@@ -5470,7 +10573,11 @@ export interface paths {
                 query?: never;
                 header?: never;
                 path: {
-                    id: string;
+                    /**
+                     * @description The webhook endpoint identifier to remove.
+                     * @example e8570526-3b2c-4776-ad1c-1303ccb5bc2d
+                     */
+                    endpointId: string;
                 };
                 cookie?: never;
             };
@@ -5483,6 +10590,66 @@ export interface paths {
                     };
                     content?: never;
                 };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "One or more fields failed validation rules.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "One or more validation errors occurred.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "V0000",
+                         *       "errors": {
+                         *         "Email": [
+                         *           "'Email' is not a valid email address."
+                         *         ]
+                         *       },
+                         *       "exceptionType": "ValidationException",
+                         *       "resolution": "Review the errors and correct the invalid fields.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 400,
+                         *       "title": "Validation failed"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ValidationExceptionExample"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Forbidden */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "You do not have permission to access this resource.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "You do not have permission to access this resource.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "F0000",
+                         *       "exceptionType": "ForbiddenException",
+                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 403,
+                         *       "title": "Access forbidden"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ForbiddenExceptionExample"];
+                    };
+                };
                 /** @description Not Found */
                 404: {
                     headers: {
@@ -5491,20 +10658,68 @@ export interface paths {
                     content: {
                         /**
                          * @example {
-                         *       "details": "Entity with ID b31fbe9f-eebb-45ce-9cae-92265389f47f does not exist or has been deleted",
-                         *       "statusCode": 404,
-                         *       "source": "<Service>",
-                         *       "exceptionType": "NotFoundException",
+                         *       "cause": "The requested resource does not exist or has been deleted.",
                          *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Entity with ID b31fbe9f-eebb-45ce-9cae-92265389f47f does not exist or has been deleted",
+                         *       "documentationUrl": "https://developer.flute.com/",
                          *       "entityId": "b31fbe9f-eebb-45ce-9cae-92265389f47f",
                          *       "errorCode": "N0000",
-                         *       "title": "Resource not found",
-                         *       "cause": "The requested resource does not exist or has been deleted.",
+                         *       "exceptionType": "NotFoundException",
                          *       "resolution": "Verify the resource ID is correct or retrieve a list of available resources.",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
+                         *       "source": "<Service>",
+                         *       "statusCode": 404,
+                         *       "title": "Resource not found"
                          *     }
                          */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.NotFoundExceptionExample"];
+                        "application/json": components["schemas"]["NotFoundExceptionExample"];
+                    };
+                };
+                /** @description Conflict */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "The request conflicts with the current state of the resource.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "The request conflicts with the current state of the resource.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "C0000",
+                         *       "exceptionType": "ConflictException",
+                         *       "resolution": "Refresh the resource state and retry the operation, or use a different idempotency key.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 409,
+                         *       "title": "Resource conflict"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ConflictExceptionExample"];
+                    };
+                };
+                /** @description Too Many Requests */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "Too many requests sent in a short period.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Too many requests sent in a short period.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "R0000",
+                         *       "exceptionType": "RateLimitExceededException",
+                         *       "resolution": "Wait before retrying the request. Check the Retry-After header for more information.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 429,
+                         *       "title": "Rate limit exceeded"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["RateLimitExceededExceptionExample"];
                     };
                 };
                 /** @description Internal Server Error */
@@ -5515,30 +10730,250 @@ export interface paths {
                     content: {
                         /**
                          * @example {
-                         *       "details": "An unexpected error occurred while processing the request.",
-                         *       "statusCode": 500,
-                         *       "source": "<Service>",
-                         *       "exceptionType": "IntegrationException",
+                         *       "cause": "An unexpected error occurred while processing the request",
                          *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "An unexpected error occurred while processing the request.",
+                         *       "documentationUrl": "https://developer.flute.com/",
                          *       "entityId": null,
                          *       "errorCode": "I0000",
-                         *       "title": "Internal server error",
-                         *       "cause": "An unexpected error occurred while processing the request",
+                         *       "exceptionType": "IntegrationException",
                          *       "resolution": "Please contact support with the correlation ID if the issue persists",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
+                         *       "source": "<Service>",
+                         *       "statusCode": 500,
+                         *       "title": "Internal server error"
                          *     }
                          */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.InternalExceptionExample"];
+                        "application/json": components["schemas"]["InternalExceptionExample"];
                     };
                 };
             };
         };
         options?: never;
         head?: never;
-        patch?: never;
+        /**
+         * Update a webhook endpoint. Required API Permission: Webhooks
+         * @description Partial update (JSON Merge Patch, RFC 7396): send only the fields you want to change
+         *     (URL, name, status, subscribed event types). An omitted field is left unchanged; an
+         *     explicit `null` is rejected for these fields (none of them is clearable); the event-type
+         *     list is replaced wholesale when present.
+         */
+        patch: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description The webhook endpoint identifier.
+                     * @example 0a5624f6-4c44-4497-83a6-af4f1220adf6
+                     */
+                    endpointId: string;
+                };
+                cookie?: never;
+            };
+            /** @description Webhook endpoint fields to update (URL, name, subscribed event types, enabled flag). */
+            requestBody?: {
+                content: {
+                    /**
+                     * @example {
+                     *       "endpointName": "Production webhook",
+                     *       "endpointStatus": "Active",
+                     *       "endpointUrl": "https://example.com/webhooks/arise",
+                     *       "eventTypes": [
+                     *         "transaction.card.captured",
+                     *         "transaction.card.refunded",
+                     *         "settlement.batch.completed"
+                     *       ]
+                     *     }
+                     */
+                    "application/json": components["schemas"]["UpdateWebhookEndpointIsvRequestDto"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "createdOn": "2026-01-01T00:00:00Z",
+                         *       "endpointId": "279a18e1-a514-4e14-ae11-13ebd326b6d7",
+                         *       "endpointName": "Production webhook",
+                         *       "endpointStatus": "Active",
+                         *       "endpointUrl": "https://example.com/webhooks/arise",
+                         *       "eventTypes": [
+                         *         "transaction.card.captured",
+                         *         "transaction.card.refunded",
+                         *         "settlement.batch.completed"
+                         *       ],
+                         *       "modifiedOn": "2026-01-01T00:00:00Z"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["GetWebhookEndpointIsvResponseDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "One or more fields failed validation rules.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "One or more validation errors occurred.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "V0000",
+                         *       "errors": {
+                         *         "Email": [
+                         *           "'Email' is not a valid email address."
+                         *         ]
+                         *       },
+                         *       "exceptionType": "ValidationException",
+                         *       "resolution": "Review the errors and correct the invalid fields.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 400,
+                         *       "title": "Validation failed"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ValidationExceptionExample"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Forbidden */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "You do not have permission to access this resource.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "You do not have permission to access this resource.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "F0000",
+                         *       "exceptionType": "ForbiddenException",
+                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 403,
+                         *       "title": "Access forbidden"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ForbiddenExceptionExample"];
+                    };
+                };
+                /** @description Not Found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "The requested resource does not exist or has been deleted.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Entity with ID b31fbe9f-eebb-45ce-9cae-92265389f47f does not exist or has been deleted",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": "b31fbe9f-eebb-45ce-9cae-92265389f47f",
+                         *       "errorCode": "N0000",
+                         *       "exceptionType": "NotFoundException",
+                         *       "resolution": "Verify the resource ID is correct or retrieve a list of available resources.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 404,
+                         *       "title": "Resource not found"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["NotFoundExceptionExample"];
+                    };
+                };
+                /** @description Conflict */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "The request conflicts with the current state of the resource.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "The request conflicts with the current state of the resource.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "C0000",
+                         *       "exceptionType": "ConflictException",
+                         *       "resolution": "Refresh the resource state and retry the operation, or use a different idempotency key.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 409,
+                         *       "title": "Resource conflict"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ConflictExceptionExample"];
+                    };
+                };
+                /** @description Too Many Requests */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "Too many requests sent in a short period.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Too many requests sent in a short period.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "R0000",
+                         *       "exceptionType": "RateLimitExceededException",
+                         *       "resolution": "Wait before retrying the request. Check the Retry-After header for more information.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 429,
+                         *       "title": "Rate limit exceeded"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["RateLimitExceededExceptionExample"];
+                    };
+                };
+                /** @description Internal Server Error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "An unexpected error occurred while processing the request",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "An unexpected error occurred while processing the request.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "I0000",
+                         *       "exceptionType": "IntegrationException",
+                         *       "resolution": "Please contact support with the correlation ID if the issue persists",
+                         *       "source": "<Service>",
+                         *       "statusCode": 500,
+                         *       "title": "Internal server error"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["InternalExceptionExample"];
+                    };
+                };
+            };
+        };
         trace?: never;
     };
-    "/v2/webhooks/endpoints/{id}/ping": {
+    "/v2/webhooks/endpoints/{endpointId}/ping": {
         parameters: {
             query?: never;
             header?: never;
@@ -5553,7 +10988,11 @@ export interface paths {
                 query?: never;
                 header?: never;
                 path: {
-                    id: string;
+                    /**
+                     * @description The webhook endpoint identifier to ping.
+                     * @example c94e10ae-378e-4124-9b35-ecdfb9085a62
+                     */
+                    endpointId: string;
                 };
                 cookie?: never;
             };
@@ -5565,7 +11004,75 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
+                        /**
+                         * @example {
+                         *       "endpointHTTPResponseCode": 200,
+                         *       "errorMessage": null,
+                         *       "isDelivered": true,
+                         *       "roundTripDurationMs": 142
+                         *     }
+                         */
                         "application/json": components["schemas"]["PingWebhookIsvResponseDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "One or more fields failed validation rules.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "One or more validation errors occurred.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "V0000",
+                         *       "errors": {
+                         *         "Email": [
+                         *           "'Email' is not a valid email address."
+                         *         ]
+                         *       },
+                         *       "exceptionType": "ValidationException",
+                         *       "resolution": "Review the errors and correct the invalid fields.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 400,
+                         *       "title": "Validation failed"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ValidationExceptionExample"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Forbidden */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "You do not have permission to access this resource.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "You do not have permission to access this resource.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "F0000",
+                         *       "exceptionType": "ForbiddenException",
+                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 403,
+                         *       "title": "Access forbidden"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ForbiddenExceptionExample"];
                     };
                 };
                 /** @description Not Found */
@@ -5576,20 +11083,68 @@ export interface paths {
                     content: {
                         /**
                          * @example {
-                         *       "details": "Entity with ID b31fbe9f-eebb-45ce-9cae-92265389f47f does not exist or has been deleted",
-                         *       "statusCode": 404,
-                         *       "source": "<Service>",
-                         *       "exceptionType": "NotFoundException",
+                         *       "cause": "The requested resource does not exist or has been deleted.",
                          *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Entity with ID b31fbe9f-eebb-45ce-9cae-92265389f47f does not exist or has been deleted",
+                         *       "documentationUrl": "https://developer.flute.com/",
                          *       "entityId": "b31fbe9f-eebb-45ce-9cae-92265389f47f",
                          *       "errorCode": "N0000",
-                         *       "title": "Resource not found",
-                         *       "cause": "The requested resource does not exist or has been deleted.",
+                         *       "exceptionType": "NotFoundException",
                          *       "resolution": "Verify the resource ID is correct or retrieve a list of available resources.",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
+                         *       "source": "<Service>",
+                         *       "statusCode": 404,
+                         *       "title": "Resource not found"
                          *     }
                          */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.NotFoundExceptionExample"];
+                        "application/json": components["schemas"]["NotFoundExceptionExample"];
+                    };
+                };
+                /** @description Conflict */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "The request conflicts with the current state of the resource.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "The request conflicts with the current state of the resource.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "C0000",
+                         *       "exceptionType": "ConflictException",
+                         *       "resolution": "Refresh the resource state and retry the operation, or use a different idempotency key.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 409,
+                         *       "title": "Resource conflict"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ConflictExceptionExample"];
+                    };
+                };
+                /** @description Too Many Requests */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "Too many requests sent in a short period.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Too many requests sent in a short period.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "R0000",
+                         *       "exceptionType": "RateLimitExceededException",
+                         *       "resolution": "Wait before retrying the request. Check the Retry-After header for more information.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 429,
+                         *       "title": "Rate limit exceeded"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["RateLimitExceededExceptionExample"];
                     };
                 };
                 /** @description Internal Server Error */
@@ -5600,20 +11155,20 @@ export interface paths {
                     content: {
                         /**
                          * @example {
-                         *       "details": "An unexpected error occurred while processing the request.",
-                         *       "statusCode": 500,
-                         *       "source": "<Service>",
-                         *       "exceptionType": "IntegrationException",
+                         *       "cause": "An unexpected error occurred while processing the request",
                          *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "An unexpected error occurred while processing the request.",
+                         *       "documentationUrl": "https://developer.flute.com/",
                          *       "entityId": null,
                          *       "errorCode": "I0000",
-                         *       "title": "Internal server error",
-                         *       "cause": "An unexpected error occurred while processing the request",
+                         *       "exceptionType": "IntegrationException",
                          *       "resolution": "Please contact support with the correlation ID if the issue persists",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
+                         *       "source": "<Service>",
+                         *       "statusCode": 500,
+                         *       "title": "Internal server error"
                          *     }
                          */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.InternalExceptionExample"];
+                        "application/json": components["schemas"]["InternalExceptionExample"];
                     };
                 };
             };
@@ -5647,79 +11202,35 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
+                        /**
+                         * @example {
+                         *       "items": [
+                         *         {
+                         *           "description": "Batch settlement has been processed and settled",
+                         *           "eventType": "settlement.batch.completed",
+                         *           "group": "Settlement"
+                         *         },
+                         *         {
+                         *           "description": "Card payment authorization approved",
+                         *           "eventType": "transaction.card.authorized",
+                         *           "group": "Card Transactions"
+                         *         },
+                         *         {
+                         *           "description": "Authorized card payment captured",
+                         *           "eventType": "transaction.card.captured",
+                         *           "group": "Card Transactions"
+                         *         },
+                         *         {
+                         *           "description": "Card payment refunded to cardholder",
+                         *           "eventType": "transaction.card.refunded",
+                         *           "group": "Card Transactions"
+                         *         }
+                         *       ]
+                         *     }
+                         */
                         "application/json": components["schemas"]["ListWebhookEventTypesIsvResponseDto"];
                     };
                 };
-                /** @description Internal Server Error */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        /**
-                         * @example {
-                         *       "details": "An unexpected error occurred while processing the request.",
-                         *       "statusCode": 500,
-                         *       "source": "<Service>",
-                         *       "exceptionType": "IntegrationException",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "entityId": null,
-                         *       "errorCode": "I0000",
-                         *       "title": "Internal server error",
-                         *       "cause": "An unexpected error occurred while processing the request",
-                         *       "resolution": "Please contact support with the correlation ID if the issue persists",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
-                         *     }
-                         */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.InternalExceptionExample"];
-                    };
-                };
-            };
-        };
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v2/webhooks/delivery-logs": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** List webhook delivery logs for the authenticated account. Required API Permission: Webhooks */
-        get: {
-            parameters: {
-                query?: {
-                    page?: number;
-                    pageSize?: number;
-                    webhookId?: string;
-                    eventType?: components["schemas"]["WebhookEventType"];
-                    status?: components["schemas"]["WebhookDeliveryLogStatus"];
-                    httpStatus?: number;
-                    fromDate?: string;
-                    toDate?: string;
-                    search?: string;
-                };
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["Contracts.Page`1[[Arise.IsvApiBff.Contracts.v2.Webhooks.DeliveryLogs.WebhookDeliveryLogIsvSummaryDto, Arise.IsvApiBff.Contracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"];
-                    };
-                };
                 /** @description Bad Request */
                 400: {
                     headers: {
@@ -5728,25 +11239,80 @@ export interface paths {
                     content: {
                         /**
                          * @example {
+                         *       "cause": "One or more fields failed validation rules.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "One or more validation errors occurred.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "V0000",
                          *       "errors": {
                          *         "Email": [
                          *           "'Email' is not a valid email address."
                          *         ]
                          *       },
-                         *       "details": "One or more validation errors occurred.",
-                         *       "statusCode": 400,
-                         *       "source": "<Service>",
                          *       "exceptionType": "ValidationException",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "entityId": null,
-                         *       "errorCode": "V0000",
-                         *       "title": "Validation failed",
-                         *       "cause": "One or more fields failed validation rules.",
                          *       "resolution": "Review the errors and correct the invalid fields.",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
+                         *       "source": "<Service>",
+                         *       "statusCode": 400,
+                         *       "title": "Validation failed"
                          *     }
                          */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.ValidationExceptionExample"];
+                        "application/json": components["schemas"]["ValidationExceptionExample"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Forbidden */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "You do not have permission to access this resource.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "You do not have permission to access this resource.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "F0000",
+                         *       "exceptionType": "ForbiddenException",
+                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 403,
+                         *       "title": "Access forbidden"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ForbiddenExceptionExample"];
+                    };
+                };
+                /** @description Too Many Requests */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "Too many requests sent in a short period.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Too many requests sent in a short period.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "R0000",
+                         *       "exceptionType": "RateLimitExceededException",
+                         *       "resolution": "Wait before retrying the request. Check the Retry-After header for more information.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 429,
+                         *       "title": "Rate limit exceeded"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["RateLimitExceededExceptionExample"];
                     };
                 };
                 /** @description Internal Server Error */
@@ -5757,329 +11323,26 @@ export interface paths {
                     content: {
                         /**
                          * @example {
-                         *       "details": "An unexpected error occurred while processing the request.",
-                         *       "statusCode": 500,
-                         *       "source": "<Service>",
-                         *       "exceptionType": "IntegrationException",
+                         *       "cause": "An unexpected error occurred while processing the request",
                          *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "An unexpected error occurred while processing the request.",
+                         *       "documentationUrl": "https://developer.flute.com/",
                          *       "entityId": null,
                          *       "errorCode": "I0000",
-                         *       "title": "Internal server error",
-                         *       "cause": "An unexpected error occurred while processing the request",
+                         *       "exceptionType": "IntegrationException",
                          *       "resolution": "Please contact support with the correlation ID if the issue persists",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
+                         *       "source": "<Service>",
+                         *       "statusCode": 500,
+                         *       "title": "Internal server error"
                          *     }
                          */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.InternalExceptionExample"];
+                        "application/json": components["schemas"]["InternalExceptionExample"];
                     };
                 };
             };
         };
         put?: never;
         post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v2/webhooks/delivery-logs/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get full request and response detail for a single delivery attempt. Required API Permission: Webhooks */
-        get: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    id: string;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["WebhookDeliveryLogIsvDetailDto"];
-                    };
-                };
-                /** @description Not Found */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        /**
-                         * @example {
-                         *       "details": "Entity with ID b31fbe9f-eebb-45ce-9cae-92265389f47f does not exist or has been deleted",
-                         *       "statusCode": 404,
-                         *       "source": "<Service>",
-                         *       "exceptionType": "NotFoundException",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "entityId": "b31fbe9f-eebb-45ce-9cae-92265389f47f",
-                         *       "errorCode": "N0000",
-                         *       "title": "Resource not found",
-                         *       "cause": "The requested resource does not exist or has been deleted.",
-                         *       "resolution": "Verify the resource ID is correct or retrieve a list of available resources.",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
-                         *     }
-                         */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.NotFoundExceptionExample"];
-                    };
-                };
-                /** @description Internal Server Error */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        /**
-                         * @example {
-                         *       "details": "An unexpected error occurred while processing the request.",
-                         *       "statusCode": 500,
-                         *       "source": "<Service>",
-                         *       "exceptionType": "IntegrationException",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "entityId": null,
-                         *       "errorCode": "I0000",
-                         *       "title": "Internal server error",
-                         *       "cause": "An unexpected error occurred while processing the request",
-                         *       "resolution": "Please contact support with the correlation ID if the issue persists",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
-                         *     }
-                         */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.InternalExceptionExample"];
-                    };
-                };
-            };
-        };
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v2/webhooks/delivery-logs/export": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Export webhook delivery logs as CSV or JSON. Required API Permission: Webhooks */
-        get: {
-            parameters: {
-                query?: {
-                    webhookId?: string;
-                    eventType?: components["schemas"]["WebhookEventType"];
-                    status?: components["schemas"]["WebhookDeliveryLogStatus"];
-                    httpStatus?: number;
-                    fromDate?: string;
-                    toDate?: string;
-                    format?: components["schemas"]["WebhookDeliveryLogExportFormat"];
-                };
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "text/csv": string;
-                        "application/json": string;
-                    };
-                };
-                /** @description Bad Request */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        /** @example Swashbuckle.AspNetCore.Filters.MvcOutputFormatter+FormatterNotFoundException: OutputFormatter not found for 'text/csv' for example of RiseOsV2.AspNet.Swagger.Examples.ValidationExceptionExample. */
-                        "text/csv": components["schemas"]["AspNet.Swagger.Examples.ValidationExceptionExample"];
-                        /**
-                         * @example {
-                         *       "errors": {
-                         *         "Email": [
-                         *           "'Email' is not a valid email address."
-                         *         ]
-                         *       },
-                         *       "details": "One or more validation errors occurred.",
-                         *       "statusCode": 400,
-                         *       "source": "<Service>",
-                         *       "exceptionType": "ValidationException",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "entityId": null,
-                         *       "errorCode": "V0000",
-                         *       "title": "Validation failed",
-                         *       "cause": "One or more fields failed validation rules.",
-                         *       "resolution": "Review the errors and correct the invalid fields.",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
-                         *     }
-                         */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.ValidationExceptionExample"];
-                    };
-                };
-                /** @description Internal Server Error */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        /** @example Swashbuckle.AspNetCore.Filters.MvcOutputFormatter+FormatterNotFoundException: OutputFormatter not found for 'text/csv' for example of RiseOsV2.AspNet.Swagger.Examples.InternalExceptionExample. */
-                        "text/csv": components["schemas"]["AspNet.Swagger.Examples.InternalExceptionExample"];
-                        /**
-                         * @example {
-                         *       "details": "An unexpected error occurred while processing the request.",
-                         *       "statusCode": 500,
-                         *       "source": "<Service>",
-                         *       "exceptionType": "IntegrationException",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "entityId": null,
-                         *       "errorCode": "I0000",
-                         *       "title": "Internal server error",
-                         *       "cause": "An unexpected error occurred while processing the request",
-                         *       "resolution": "Please contact support with the correlation ID if the issue persists",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
-                         *     }
-                         */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.InternalExceptionExample"];
-                    };
-                };
-            };
-        };
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v2/webhooks/delivery-logs/{id}/retry": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Manually retry a failed webhook delivery. Single-shot — no automatic retry chain. Required API Permission: Webhooks */
-        post: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    id: string;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["RetryWebhookDeliveryIsvResponseDto"];
-                    };
-                };
-                /** @description Bad Request */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        /**
-                         * @example {
-                         *       "errors": {
-                         *         "Email": [
-                         *           "'Email' is not a valid email address."
-                         *         ]
-                         *       },
-                         *       "details": "One or more validation errors occurred.",
-                         *       "statusCode": 400,
-                         *       "source": "<Service>",
-                         *       "exceptionType": "ValidationException",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "entityId": null,
-                         *       "errorCode": "V0000",
-                         *       "title": "Validation failed",
-                         *       "cause": "One or more fields failed validation rules.",
-                         *       "resolution": "Review the errors and correct the invalid fields.",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
-                         *     }
-                         */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.ValidationExceptionExample"];
-                    };
-                };
-                /** @description Not Found */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        /**
-                         * @example {
-                         *       "details": "Entity with ID b31fbe9f-eebb-45ce-9cae-92265389f47f does not exist or has been deleted",
-                         *       "statusCode": 404,
-                         *       "source": "<Service>",
-                         *       "exceptionType": "NotFoundException",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "entityId": "b31fbe9f-eebb-45ce-9cae-92265389f47f",
-                         *       "errorCode": "N0000",
-                         *       "title": "Resource not found",
-                         *       "cause": "The requested resource does not exist or has been deleted.",
-                         *       "resolution": "Verify the resource ID is correct or retrieve a list of available resources.",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
-                         *     }
-                         */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.NotFoundExceptionExample"];
-                    };
-                };
-                /** @description Internal Server Error */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        /**
-                         * @example {
-                         *       "details": "An unexpected error occurred while processing the request.",
-                         *       "statusCode": 500,
-                         *       "source": "<Service>",
-                         *       "exceptionType": "IntegrationException",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "entityId": null,
-                         *       "errorCode": "I0000",
-                         *       "title": "Internal server error",
-                         *       "cause": "An unexpected error occurred while processing the request",
-                         *       "resolution": "Please contact support with the correlation ID if the issue persists",
-                         *       "documentationUrl": "https://developer.risewithaurora.com/"
-                         *     }
-                         */
-                        "application/json": components["schemas"]["AspNet.Swagger.Examples.InternalExceptionExample"];
-                    };
-                };
-            };
-        };
         delete?: never;
         options?: never;
         head?: never;
@@ -6094,56 +11357,51 @@ export interface components {
         AccountHolderType: "Business" | "Personal";
         /** @enum {string} */
         AccountType: "Checking" | "Savings";
-        AchAccountDto: {
-            /**
-             * Format: uuid
-             * @description Payment method Id
-             */
-            id?: string;
-            /** @description Payment method name */
-            name?: string | null;
-            /** @description Is payment method default */
-            isDefault?: boolean;
-            /** @description Account number (masked) */
-            accountNumber?: string | null;
-            /** @description Routing number */
-            routingNumber?: string | null;
-            accountType?: components["schemas"]["AccountType"];
-            accountHolderType?: components["schemas"]["AccountHolderType"];
-            /** @description Tax ID */
-            taxId?: string | null;
-        };
         AchDataDto: {
-            /**
-             * Format: uuid
-             * @description Payment method ID
-             */
-            paymentMethodId?: string | null;
-            paymentMethodDetails?: components["schemas"]["PaymentMethodAchDetailsDto"];
-            secCode?: components["schemas"]["AchSECCode"];
             /**
              * @description Enable same-day ACH processing for faster settlement.
              *     Optional - defaults to standard ACH processing if not specified.
              */
-            isFasterProcessing?: boolean | null;
-            /** @description IP Address - in IPv4 or IPv6 format - of the enduser (customer, operator, or application) that is responsible for submitting the transaction. This is required for audit and fraud-detection purposes. */
+            isSameDayProcessing?: boolean | null;
+            paymentMethodDetails?: components["schemas"]["PaymentMethodAchDetailsDto"];
+            /**
+             * Format: uuid
+             * @description ID of a previously-saved ACH account to charge. <b>Mutually exclusive with `PaymentMethodDetails` —
+             *     provide exactly one.</b> When set, the parent request's `BillingAddress` and
+             *     `ContactInfo` are optional (the stored payment method carries this data).
+             * @example da0e1299-b25f-416b-8f9a-47ad3b804149
+             */
+            paymentMethodId?: string | null;
+            /**
+             * @description IP Address - in IPv4 or IPv6 format - of the enduser (customer, operator, or application) that is responsible for submitting the transaction. This is required for audit and fraud-detection purposes.
+             * @example 192.168.1.1
+             */
             requesterIpAddress: string;
+            secCode?: components["schemas"]["AchSECCode"];
         };
-        AchDetails: {
-            /** @description ACH account number */
-            accountNumber?: string | null;
-            /** @description ACH routing number */
-            routingNumber?: string | null;
-            accountType?: components["schemas"]["AccountType"];
-            accountHolderType?: components["schemas"]["AccountHolderType"];
-            /** @description ACH tax Id */
-            taxId?: string | null;
-        };
+        /** @description ACH account details exposed on transaction responses (masked / non-sensitive fields only). */
         AchDetailsDto: {
-            maskedAccountNumber?: string | null;
-            maskedRoutingNumber?: string | null;
             accountHolderType?: components["schemas"]["AccountHolderType"];
+            /**
+             * @description Masked ACH routing number.
+             * @example *****0021
+             */
+            accountRoutingNumber?: string | null;
             accountType?: components["schemas"]["AccountType"];
+            /** @description Whether the ACH transaction is processed same-day (the inverse of the standard delivery window). */
+            isSameDayProcessing?: boolean | null;
+            /**
+             * @description Masked ACH account number.
+             * @example ************7890
+             */
+            maskedAccountNumber?: string | null;
+            /**
+             * Format: uuid
+             * @description Identifier of the stored payment method, when the transaction used one.
+             */
+            paymentMethodId?: string | null;
+            /** @description IP address of the party that initiated the ACH transaction. Detail-only; omitted from list payloads. */
+            requesterIpAddress?: string | null;
             secCode?: components["schemas"]["AchSECCode"];
         };
         /** @enum {string} */
@@ -6151,37 +11409,47 @@ export interface components {
         /**
          * @description Address information.
          *     Uses ISO format strings for country and state.
+         *     ACH transactions apply stricter rules than card transactions — see the per-field notes.
          */
         AddressDto: {
             /**
-             * @description City name.
-             *     Alphanumeric and Special Character | Min Length=6 Max Length=128.
+             * @description Address line 1. At most 70 characters for ACH transactions.
+             * @example 123 Main Street
              */
-            city?: string | null;
-            /** @description Country code in ISO 3166-1 alpha-2 format (e.g., "US", "CA", "GB"). */
-            countryCode?: string | null;
-            /**
-             * @description Address line 1.
-             *     Alphanumeric and Special Character | Min Length=6 Max Length=128.
-             */
-            line1?: string | null;
+            addressLine1?: string | null;
             /**
              * @description Address line 2.
-             *     Alphanumeric and Special Character | Min Length=6 Max Length=128.
+             * @example Suite 400
              */
-            line2?: string | null;
+            addressLine2?: string | null;
             /**
-             * @description Postal/ZIP code.
-             *     Alphanumeric and Special Character | Min Length=2 Max Length=15.
+             * @description City name. Required for ACH transactions; at most 70 characters.
+             * @example New York
+             */
+            city?: string | null;
+            /**
+             * @description Country code in ISO 3166-1 alpha-2 format (e.g., "US", "CA").
+             *     For ACH transactions, required and must be "US", "CA" or "PR".
+             * @example US
+             */
+            countryCode?: string | null;
+            /**
+             * @description Postal/ZIP code. For card transactions: between 5 and 12 characters.
+             *     For ACH transactions: a US ZIP code in ##### or #####-#### format.
+             * @example 10001
              */
             postalCode?: string | null;
             /**
-             * @description ISO 3166-2 subdivision code.
+             * @description ISO 3166-2 subdivision code; must belong to Arise.IsvApiBff.Contracts.v2.Common.AddressDto.CountryCode.
              *     For US states, the USPS two-letter abbreviation is used (e.g., "NY", "CA", "TX").
+             *     Required for US ACH addresses.
              *     See: https://en.wikipedia.org/wiki/ISO_3166-2:US
+             * @example NY
              */
             stateCode?: string | null;
         };
+        /** @enum {string} */
+        AggregatedPosTransactionStatus: "InProgress" | "Completed" | "Cancelled" | "Failed";
         /** @enum {string} */
         AggregatedTransactionStatus: "Authorized" | "Captured" | "Voided" | "Refunded" | "Verified" | "Settled" | "PartiallyAuthorized" | "Informational" | "Scheduled" | "Cancelled" | "ChargedBack" | "InProgress" | "Cleared" | "Held" | "HeldByProcessor" | "Pending" | "Declined" | "Failed";
         /** @description Amount breakdown details */
@@ -6189,151 +11457,230 @@ export interface components {
             /**
              * Format: double
              * @description Base transaction amount before adjustments
+             * @example 100
              */
             baseAmount?: number;
             /**
              * Format: double
-             * @description Tip amount
+             * @description Discount amount applied
+             * @example 1
              */
-            tipAmount?: number;
+            discountAmount?: number;
+            /**
+             * Format: double
+             * @description Percentage-off discount rate applied, as a percent of the base (e.g. 10 = 10%).
+             *     Reflects the percentage-off portion only; does not include cash-discount (ZCP) amounts.
+             * @example 10
+             */
+            discountRate?: number;
             /**
              * Format: double
              * @description Surcharge amount applied
+             * @example 2.5
              */
             surchargeAmount?: number;
             /**
              * Format: double
-             * @description Discount amount applied
+             * @description Surcharge rate applied, as a percent of the base (e.g. 3 = 3%).
+             * @example 3
              */
-            discountAmount?: number;
-        };
-        ApiKeyDto: {
+            surchargeRate?: number;
             /**
-             * Format: uuid
-             * @description Client identifier
+             * Format: double
+             * @description Tip amount
+             * @example 5
              */
-            clientId?: string;
+            tipAmount?: number;
             /**
-             * Format: uuid
-             * @description Merchant identifier
+             * Format: double
+             * @description Tip rate applied, as a percent of the base (e.g. 18 = 18%). Derived from the amount when a
+             *     fixed tip amount was supplied; preserved as sent when a tip rate was supplied.
+             * @example 18
              */
-            merchantId?: string;
-            /** @description Display name for the API key */
-            name?: string | null;
+            tipRate?: number;
         };
-        "AspNet.Swagger.Examples.ForbiddenExceptionExample": {
-            details?: string | null;
-            /** Format: int32 */
-            statusCode?: number | null;
-            source?: string | null;
-            exceptionType?: string | null;
-            correlationId?: string | null;
-            entityId?: string | null;
-            errorCode?: string | null;
-            title?: string | null;
-            cause?: string | null;
-            resolution?: string | null;
-            documentationUrl?: string | null;
-        };
-        "AspNet.Swagger.Examples.InternalExceptionExample": {
-            details?: string | null;
-            /** Format: int32 */
-            statusCode?: number | null;
-            source?: string | null;
-            exceptionType?: string | null;
-            correlationId?: string | null;
-            entityId?: string | null;
-            errorCode?: string | null;
-            title?: string | null;
-            cause?: string | null;
-            resolution?: string | null;
-            documentationUrl?: string | null;
-        };
-        "AspNet.Swagger.Examples.NotFoundExceptionExample": {
-            details?: string | null;
-            /** Format: int32 */
-            statusCode?: number | null;
-            source?: string | null;
-            exceptionType?: string | null;
-            correlationId?: string | null;
-            entityId?: string | null;
-            errorCode?: string | null;
-            title?: string | null;
-            cause?: string | null;
-            resolution?: string | null;
-            documentationUrl?: string | null;
-        };
-        "AspNet.Swagger.Examples.ValidationExceptionExample": {
-            details?: string | null;
-            /** Format: int32 */
-            statusCode?: number | null;
-            source?: string | null;
-            exceptionType?: string | null;
-            correlationId?: string | null;
-            entityId?: string | null;
-            errorCode?: string | null;
-            title?: string | null;
-            cause?: string | null;
-            resolution?: string | null;
-            documentationUrl?: string | null;
-            errors?: {
-                [key: string]: string[] | null;
-            } | null;
+        /** @description Transaction amount information. */
+        AmountDto: {
+            /** Format: double */
+            baseAmount?: number;
+            /** Format: double */
+            cashDiscountAmount?: number;
+            /** Format: double */
+            cashDiscountRate?: number;
+            /** Format: double */
+            percentageOffAmount?: number;
+            /** Format: double */
+            percentageOffRate?: number;
+            /** Format: double */
+            surchargeAmount?: number;
+            /** Format: double */
+            surchargeRate?: number;
+            /** Format: double */
+            taxAmount?: number;
+            /** Format: double */
+            taxRate?: number;
+            /** Format: double */
+            tipAmount?: number;
+            /** Format: double */
+            tipRate?: number;
+            /** Format: double */
+            totalAmount?: number;
         };
         /** @enum {string} */
         AvsActions: "Allow" | "Deny";
+        /**
+         * @description <p>Possible values:</p>
+         *     <ul>
+         *     <li><b>1 - Allow</b>: </li>
+         *     <li><b>2 - Deny</b>: </li>
+         *     </ul>
+         * @enum {string}
+         */
+        AvsActionsDto: "Allow" | "Deny";
+        /**
+         * @description <p>Possible values:</p>
+         *     <ul>
+         *     <li><b>1 - NoMatch</b>: </li>
+         *     <li><b>2 - PartialMatch</b>: </li>
+         *     <li><b>3 - Incompatible</b>: </li>
+         *     <li><b>4 - Unavailable</b>: </li>
+         *     <li><b>5 - ValidGroup</b>: </li>
+         *     </ul>
+         * @enum {string}
+         */
+        AvsCodeGroupTypeDto: "NoMatch" | "PartialMatch" | "Incompatible" | "Unavailable" | "ValidGroup";
         /** @enum {string} */
         AvsMerchantProfile: "Strict" | "Moderate" | "Tolerant";
-        AvsOptionsDto: {
-            /** @description Whether AVS is enabled */
-            isEnabled?: boolean;
-            profile?: components["schemas"]["AvsMerchantProfile"];
+        /** @description Address Verification Service response. */
+        AvsResponseDto: {
+            action?: string | null;
+            actionId?: components["schemas"]["AvsActionsDto"];
+            codeDescription?: string | null;
+            group?: string | null;
+            groupId?: components["schemas"]["AvsCodeGroupTypeDto"];
+            responseCode?: string | null;
+            result?: string | null;
+            resultId?: components["schemas"]["AvsResponseResultDto"];
         };
-        /** @description Calculated transaction amounts for different payment methods. */
-        CalculateAmountResponseDto: {
+        /**
+         * @description <p>Possible values:</p>
+         *     <ul>
+         *     <li><b>1 - Passed</b>: </li>
+         *     <li><b>2 - Failed</b>: </li>
+         *     </ul>
+         * @enum {string}
+         */
+        AvsResponseResultDto: "Passed" | "Failed";
+        /** @description Request to calculate the final transaction amount considering discounts, tips, and ZCP settings. */
+        CalculateAmountRequestDto: {
             /**
-             * @description ISO 4217 currency code (e.g., "USD", "EUR", "GBP").
+             * Format: double
+             * @description Transaction base amount
+             */
+            baseAmount?: number;
+            /**
+             * @description ISO 4217 currency code. Currently only "USD" is supported.
              *     Default: "USD" if not specified.
              *     See: https://en.wikipedia.org/wiki/ISO_4217
              */
             currencyCode?: string | null;
-            zeroCostProcessingOption?: components["schemas"]["ZeroCostProcessingOptionDto"];
+            /**
+             * Format: double
+             * @description Discount as a fixed amount. Converted to a rate against Arise.IsvApiBff.Contracts.v2.Transaction.Requests.CalculateAmountRequestDto.BaseAmount before
+             *     calculation. When both Arise.IsvApiBff.Contracts.v2.Transaction.Requests.CalculateAmountRequestDto.DiscountAmount and Arise.IsvApiBff.Contracts.v2.Transaction.Requests.CalculateAmountRequestDto.DiscountRate are supplied,
+             *     Arise.IsvApiBff.Contracts.v2.Transaction.Requests.CalculateAmountRequestDto.DiscountRate takes precedence.
+             * @example 5
+             */
+            discountAmount?: number | null;
+            /**
+             * Format: double
+             * @description Percentage-off / discount rate. Encoded as raw percentage — e.g. 10 represents 10%.
+             * @example 10
+             */
+            discountRate?: number | null;
             pricingType?: components["schemas"]["PricingType"];
+            /**
+             * Format: double
+             * @description Credit Card Surcharge rate override. Encoded as raw percentage — e.g. 2.5 represents 2.5%.
+             *     Leave null to use the merchant account default.
+             * @example 2.5
+             */
+            surchargeRate?: number | null;
+            /**
+             * Format: double
+             * @description Absolute tip amount to add
+             */
+            tipAmount?: number | null;
+            /**
+             * Format: double
+             * @description Tip rate to apply. Encoded as raw percentage — e.g. 15 represents 15%.
+             * @example 15
+             */
+            tipRate?: number | null;
+        };
+        /** @description Calculated transaction amounts for different payment methods. */
+        CalculateAmountResponseDto: {
+            ach?: components["schemas"]["CalculatedAmountDto"];
             cash?: components["schemas"]["CalculatedAmountDto"];
             creditCard?: components["schemas"]["CalculatedAmountDto"];
+            /**
+             * @description ISO 4217 currency code of the calculated amounts. Currently always "USD".
+             *     See: https://en.wikipedia.org/wiki/ISO_4217
+             * @example USD
+             */
+            currencyCode?: string | null;
             debitCard?: components["schemas"]["CalculatedAmountDto"];
-            ach?: components["schemas"]["CalculatedAmountDto"];
+            pricingType?: components["schemas"]["PricingType"];
+            zeroCostProcessingOption?: components["schemas"]["ZeroCostProcessingOptionDto"];
         };
         /** @description Amount breakdown for a specific payment method */
         CalculatedAmountDto: {
             /**
              * Format: double
              * @description Base transaction amount before adjustments
+             * @example 100
              */
             baseAmount?: number;
             /**
              * Format: double
-             * @description Discount amount applied
+             * @description Discount amount applied (percentage-off + cash discount).
+             * @example 1
              */
             discountAmount?: number;
             /**
              * Format: double
+             * @description Discount rate applied, as a raw percentage.
+             * @example 5
+             */
+            discountRate?: number;
+            /**
+             * Format: double
              * @description Surcharge amount applied
+             * @example 2.5
              */
             surchargeAmount?: number;
             /**
              * Format: double
+             * @description Surcharge rate applied, as a raw percentage.
+             * @example 2.5
+             */
+            surchargeRate?: number;
+            /**
+             * Format: double
              * @description Tip amount
+             * @example 5
              */
             tipAmount?: number;
             /**
              * Format: double
-             * @description Tax amount
+             * @description Tip rate applied, as a raw percentage.
+             * @example 15
              */
-            taxAmount?: number;
+            tipRate?: number;
             /**
              * Format: double
              * @description Final total amount
+             * @example 115
              */
             totalAmount?: number;
         };
@@ -6348,229 +11695,489 @@ export interface components {
         CaptureMethod: "Auto" | "Manual";
         /**
          * @description Capture request.
-         *     Omit amount or send empty body for full capture; set Amount for partial capture.
+         *     Omit the amount or send an empty body for full capture; set CaptureAmount for partial capture.
          */
         CaptureRequestDto: {
             /**
              * Format: double
              * @description Amount to capture. When null or omitted, the full authorized amount is captured.
              *     For partial capture, must be greater than 0 and not exceed the remaining authorized amount.
+             * @example 99.99
              */
-            amount?: number | null;
+            captureAmount?: number | null;
         };
         CardDataDto: {
             captureMethod?: components["schemas"]["CaptureMethod"];
+            paymentMethodDetails?: components["schemas"]["PaymentMethodCardDetailsDto"];
             /**
              * Format: uuid
-             * @description Payment method ID
+             * @description ID of a previously-saved card to charge. <b>Mutually exclusive with `PaymentMethodDetails` —
+             *     provide exactly one.</b> When set, the parent request's `BillingAddress` and
+             *     `ContactInfo` are optional (the stored payment method carries this data).
+             * @example e397e367-bc4a-4b69-bd78-32e3e12327c2
              */
             paymentMethodId?: string | null;
-            paymentMethodDetails?: components["schemas"]["PaymentMethodCardDetailsDto"];
-        };
-        CardDetails: {
-            /** @description Masked card number */
-            cardMask?: string | null;
-            /**
-             * Format: int32
-             * @description Card expiration month
-             */
-            expirationMonth?: number;
-            /**
-             * Format: int32
-             * @description Card expiration year
-             */
-            expirationYear?: number;
-            cardTokenType?: components["schemas"]["TokenType"];
-        };
-        CardDto: {
-            /**
-             * Format: uuid
-             * @description Payment method Id
-             */
-            id?: string;
-            /** @description Payment method name */
-            name?: string | null;
-            /** @description Is payment method default */
-            isDefault?: boolean;
-            /** @description Masked card number */
-            cardMask?: string | null;
-            /**
-             * Format: int32
-             * @description Expiration month
-             */
-            expirationMonth?: number;
-            /**
-             * Format: int32
-             * @description Expiration year
-             */
-            expirationYear?: number;
-            cardTokenType?: components["schemas"]["TokenType"];
-            cardType?: components["schemas"]["CardType"];
-            creditDebitType?: components["schemas"]["CreditDebitType"];
         };
         /** @enum {string} */
+        CardDataSource: "Internet" | "Swipe" | "NFC" | "EMV" | "EMVContactless" | "FallbackSwipe" | "Manual";
+        /**
+         * @description <p>Possible values:</p>
+         *     <ul>
+         *     <li><b>1 - Internet</b>: Virtual Terminal, ISV API</li>
+         *     <li><b>2 - Swipe</b>: Track1, Track2</li>
+         *     <li><b>3 - NFC</b>: EMV Tags, Track2</li>
+         *     <li><b>4 - EMV</b>: EMV Tags</li>
+         *     <li><b>5 - EMVContactless</b>: EMV Tags</li>
+         *     <li><b>6 - FallbackSwipe</b>: Track 2</li>
+         *     <li><b>7 - Manual</b>: Card present keyed transaction.</li>
+         *     </ul>
+         * @enum {string}
+         */
+        CardDataSourceDto: "Internet" | "Swipe" | "NFC" | "EMV" | "EMVContactless" | "FallbackSwipe" | "Manual";
+        /** @enum {string} */
         CardType: "Unknown" | "Visa" | "MasterCard" | "AmericanExpress" | "DinersClub" | "Discover" | "JCB";
+        /** @enum {string} */
+        CardholderAuthenticationMethod: "NotAuthenticated" | "PIN" | "ElectronicSignatureAnalysis" | "ManualSignature" | "ManualOther" | "Unknown" | "SystematicOther" | "ETicketEnvAmex" | "OfflinePin";
+        /**
+         * @description <p>Possible values:</p>
+         *     <ul>
+         *     <li><b>0 - NotAuthenticated</b>: </li>
+         *     <li><b>1 - PIN</b>: </li>
+         *     <li><b>2 - ElectronicSignatureAnalysis</b>: </li>
+         *     <li><b>3 - ManualSignature</b>: </li>
+         *     <li><b>4 - ManualOther</b>: </li>
+         *     <li><b>5 - Unknown</b>: </li>
+         *     <li><b>6 - SystematicOther</b>: </li>
+         *     <li><b>7 - ETicketEnvAmex</b>: </li>
+         *     <li><b>8 - OfflinePin</b>: </li>
+         *     </ul>
+         * @enum {string}
+         */
+        CardholderAuthenticationMethodDto: "NotAuthenticated" | "PIN" | "ElectronicSignatureAnalysis" | "ManualSignature" | "ManualOther" | "Unknown" | "SystematicOther" | "ETicketEnvAmex" | "OfflinePin";
+        ConflictExceptionExample: {
+            cause?: string | null;
+            correlationId?: string | null;
+            details?: string | null;
+            documentationUrl?: string | null;
+            entityId?: string | null;
+            errorCode?: string | null;
+            exceptionType?: string | null;
+            resolution?: string | null;
+            source?: string | null;
+            /** Format: int32 */
+            statusCode?: number | null;
+            title?: string | null;
+        };
         /** @description Contact information. */
         ContactInfoDto: {
-            /** @description The first name of the customer. */
-            firstName?: string | null;
-            /** @description The last name of the customer. */
-            lastName?: string | null;
             /** @description The name of the cardholder's company. */
             companyName?: string | null;
-            /** @description The email address of the customer. */
+            /**
+             * @description The email address of the customer.
+             * @example jane.doe@example.com
+             */
             email?: string | null;
-            /** @description The customer's mobile phone number. */
-            mobileNumber?: string | null;
+            /** @description The first name of the customer. */
+            firstName?: string | null;
             /** @description Whether SMS notifications are enabled for the customer. */
             hasSmsConsent?: boolean | null;
+            /** @description The last name of the customer. */
+            lastName?: string | null;
+            /**
+             * @description The customer's mobile phone number.
+             * @example +14125553845
+             */
+            mobilePhoneNumber?: string | null;
         };
         /** @description Merchant contact information */
         ContactInfoResponseDto: {
             /** @description Contact information entries */
-            contactInfos?: components["schemas"]["MerchantContactInfoDto"][] | null;
+            contactInfos?: components["schemas"]["ContactInfoResponseDtoMerchantContactInfoDto"][] | null;
         };
-        "Contracts.Page`1[[Arise.IsvApiBff.Contracts.v2.Customers.PaymentMethods.Responses.GetCustomerPaymentMethodsResponseDto, Arise.IsvApiBff.Contracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]": {
-            items?: components["schemas"]["GetCustomerPaymentMethodsResponseDto"][] | null;
-            /** Format: int32 */
-            total?: number;
+        /** @description Single contact information record */
+        ContactInfoResponseDtoMerchantContactInfoDto: {
+            /**
+             * @description Address line 1. At most 70 characters for ACH transactions.
+             * @example 123 Main Street
+             */
+            addressLine1?: string | null;
+            /**
+             * @description Address line 2.
+             * @example Suite 400
+             */
+            addressLine2?: string | null;
+            /**
+             * @description Name or label of the address
+             * @example Main office
+             */
+            addressName?: string | null;
+            /**
+             * @description City name. Required for ACH transactions; at most 70 characters.
+             * @example New York
+             */
+            city?: string | null;
+            /**
+             * Format: uuid
+             * @description Unique identifier of the contact information record
+             * @example 91e0278b-02e8-4963-8710-fe3dfca39d51
+             */
+            contactInfoId?: string;
+            /**
+             * @description Country code in ISO 3166-1 alpha-2 format (e.g., "US", "CA").
+             *     For ACH transactions, required and must be "US", "CA" or "PR".
+             * @example US
+             */
+            countryCode?: string | null;
+            /**
+             * @description Email address
+             * @example jane.doe@example.com
+             */
+            email?: string | null;
+            /** @description Whether this is the default address */
+            isDefaultAddress?: boolean;
+            /** @description Whether this is the main address */
+            isMainAddress?: boolean;
+            /**
+             * @description Business phone number
+             * @example +14125553845
+             */
+            mobilePhoneNumber?: string | null;
+            /**
+             * @description Postal/ZIP code. For card transactions: between 5 and 12 characters.
+             *     For ACH transactions: a US ZIP code in ##### or #####-#### format.
+             * @example 10001
+             */
+            postalCode?: string | null;
+            /**
+             * @description ISO 3166-2 subdivision code; must belong to Arise.IsvApiBff.Contracts.v2.Common.AddressDto.CountryCode.
+             *     For US states, the USPS two-letter abbreviation is used (e.g., "NY", "CA", "TX").
+             *     Required for US ACH addresses.
+             *     See: https://en.wikipedia.org/wiki/ISO_3166-2:US
+             * @example NY
+             */
+            stateCode?: string | null;
         };
-        "Contracts.Page`1[[Arise.IsvApiBff.Contracts.v2.Customers.Responses.ListCustomersResponseDto, Arise.IsvApiBff.Contracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]": {
-            items?: components["schemas"]["ListCustomersResponseDto"][] | null;
-            /** Format: int32 */
-            total?: number;
-        };
-        "Contracts.Page`1[[Arise.IsvApiBff.Contracts.v2.PosTransactions.Responses.ListPosTransactionsResponseDto, Arise.IsvApiBff.Contracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]": {
-            items?: components["schemas"]["ListPosTransactionsResponseDto"][] | null;
-            /** Format: int32 */
-            total?: number;
-        };
-        "Contracts.Page`1[[Arise.IsvApiBff.Contracts.v2.Settlements.Responses.ListBatchesResponseDto, Arise.IsvApiBff.Contracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]": {
-            items?: components["schemas"]["ListBatchesResponseDto"][] | null;
-            /** Format: int32 */
-            total?: number;
-        };
-        "Contracts.Page`1[[Arise.IsvApiBff.Contracts.v2.Terminals.Responses.ListTerminalsResponseDto, Arise.IsvApiBff.Contracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]": {
-            items?: components["schemas"]["ListTerminalsResponseDto"][] | null;
-            /** Format: int32 */
-            total?: number;
-        };
-        "Contracts.Page`1[[Arise.IsvApiBff.Contracts.v2.Transaction.Responses.GetTransactionResponseDto, Arise.IsvApiBff.Contracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]": {
-            items?: components["schemas"]["GetTransactionResponseDto"][] | null;
-            /** Format: int32 */
-            total?: number;
-        };
-        "Contracts.Page`1[[Arise.IsvApiBff.Contracts.v2.Webhooks.DeliveryLogs.WebhookDeliveryLogIsvSummaryDto, Arise.IsvApiBff.Contracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]": {
-            items?: components["schemas"]["WebhookDeliveryLogIsvSummaryDto"][] | null;
-            /** Format: int32 */
-            total?: number;
+        CreateAchPaymentMethodRequestDto: {
+            accountHolderType?: components["schemas"]["AccountHolderType"];
+            /**
+             * @description Account number
+             * @example 1234567890
+             */
+            accountNumber?: string | null;
+            accountType?: components["schemas"]["AccountType"];
+            /**
+             * @description Legal entity name. Required for orphan Business ACH transactions when the request
+             *     does not supply it on the transaction's ContactInfo.
+             * @example Acme Corp Inc
+             */
+            companyName?: string | null;
+            /**
+             * Format: uuid
+             * @description The customer to link this payment method to. Omit to create an orphan payment
+             *     method that belongs to the merchant only.
+             * @example 8fa8e727-73c6-436e-b56f-6f55aabf3b1c
+             */
+            customerId?: string | null;
+            /**
+             * @description A friendly name for the payment method shown in the UI.
+             * @example Business Checking
+             */
+            name?: string | null;
+            /**
+             * @description Routing number
+             * @example 021000021
+             */
+            routingNumber?: string | null;
+            /**
+             * @description Tax ID
+             * @example 12-3456789
+             */
+            taxId?: string | null;
         };
         CreateApiKeyRequestDto: {
             /**
+             * @description Display name for the API key
+             * @example Production integration key
+             */
+            apiKeyName: string;
+            /**
              * Format: uuid
              * @description Merchant identifier
+             * @example 5611f824-48ef-4255-978d-91ce13953bbd
              */
             merchantId: string;
-            /** @description Display name for the API key */
-            name: string;
         };
         CreateApiKeyResponseDto: {
             /**
              * Format: uuid
              * @description Client identifier
+             * @example 919c19ac-09cf-40c1-b093-413b9cabde43
              */
             clientId?: string;
-            /** @description Client secret (only shown once during creation) */
+            /**
+             * @description Client secret (only shown once during creation). GUID-formatted string.
+             * @example bcaa0840-2872-44ea-9122-552a804a054a
+             */
             clientSecret?: string | null;
         };
-        CreateCustomerPaymentMethodRequestDto: {
-            card?: components["schemas"]["CustomerPaymentMethodCardDto"];
-            ach?: components["schemas"]["CustomerPaymentMethodAchDto"];
+        CreateCardPaymentMethodRequestDto: {
+            /**
+             * @description The 13-19 digit card number (PAN) used for the transaction.
+             * @example 4111111111111111
+             */
+            cardNumber?: string | null;
+            /**
+             * Format: uuid
+             * @description The customer to link this payment method to. Omit to create an orphan payment
+             *     method that belongs to the merchant only.
+             * @example 7ea38505-f0b3-41eb-a2ef-96161d7e7443
+             */
+            customerId?: string | null;
+            /**
+             * Format: int32
+             * @description The expiration month of the card (2-digit format: 01-12)
+             * @example 12
+             */
+            expirationMonth?: number | null;
+            /**
+             * Format: int32
+             * @description The expiration year of the card (4-digit format: YYYY)
+             * @example 2030
+             */
+            expirationYear?: number | null;
+            /**
+             * @description A friendly name for the payment method shown in the UI.
+             * @example My Visa Card
+             */
+            paymentName?: string | null;
+            /**
+             * @description The three or four digit security code on the card.
+             * @example 123
+             */
+            securityCode?: string | null;
         };
         CreateCustomerRequestDto: {
-            /** @description First name */
-            firstName?: string | null;
-            /** @description Last name */
-            lastName?: string | null;
+            billingAddress?: components["schemas"]["AddressDto"];
             /** @description Company name */
             companyName?: string | null;
-            /** @description Email address */
+            /**
+             * @description Email address
+             * @example jane.doe@example.com
+             */
             email?: string | null;
-            /** @description The customer's mobile phone number. */
-            mobileNumber?: string | null;
+            /** @description First name. */
+            firstName: string;
             /** @description Whether SMS notifications are enabled for the customer. */
             hasSmsConsent?: boolean | null;
-            /** @description Use billing address as shipping address */
-            shouldUseBillingAsShippingAddress?: boolean;
-            billingAddress?: components["schemas"]["AddressDto"];
-            shippingAddress?: components["schemas"]["AddressDto"];
-            /** @description Payment methods (cards) */
-            paymentMethodsCards?: components["schemas"]["CustomerPaymentMethodCardDto"][] | null;
+            /** @description Last name. */
+            lastName: string;
+            /**
+             * @description The customer's mobile phone number.
+             * @example +14125553845
+             */
+            mobilePhoneNumber?: string | null;
             /** @description Payment methods (ACH accounts) */
             paymentMethodsAchAccounts?: components["schemas"]["CustomerPaymentMethodAchDto"][] | null;
+            /** @description Payment methods (cards) */
+            paymentMethodsCards?: components["schemas"]["CustomerPaymentMethodCardDto"][] | null;
+            shippingAddress?: components["schemas"]["AddressDto"];
+            /** @description Use billing address as shipping address */
+            shouldUseBillingAsShippingAddress?: boolean;
         };
         CreateCustomerResponseDto: {
             /**
              * Format: uuid
              * @description Customer ID
+             * @example 4ffde452-716e-4619-9c8c-9b462158d011
              */
             customerId?: string;
         };
         CreatePaymentMethodResponseDto: {
             /**
              * Format: uuid
-             * @description Payment method ID
+             * @description Payment method Id
+             * @example ce81372a-3b32-4564-af1d-6e4d33129978
              */
             paymentMethodId?: string;
         };
-        CreatePosTransactionRequestDto: {
-            /** @description External POS Device ID | Mandatory | MaxLength=36 */
-            posDeviceId?: string | null;
-            /** @description External Transaction Reference ID | Optional | MaxLength=36 */
-            referenceId?: string | null;
-            transactionType?: components["schemas"]["TransactionType"];
-            /**
-             * Format: uuid
-             * @description Transaction Id for Void, Capture, Refund | Conditional
-             */
-            targetTransactionId?: string | null;
+        /** @description Request DTO for creating a payment session (v2). */
+        CreatePaymentSessionRequestDto: {
+            /** @description Message shown to the payer after the session completes. */
+            afterCompletionMessage?: string | null;
             /**
              * Format: double
-             * @description Transaction amount | Conditional
-             *
-             *     Required when ```TransactionType``` is:
-             *
-             *     <b>Authorization</b>
-             *     <b>Sale</b>
-             *     <b>Capture</b>
-             *     <b>Refund</b>
-             *     <b>RefundWORef</b>
-             *     <b>TipAdjustment</b>
+             * @description Amount should be greater than 0. Required for payment sessions. For vault-only sessions, set to 0.
+             *     Null creates a flexible-amount session where the amount is set at checkout.
              */
             amount?: number | null;
-            pricingType?: components["schemas"]["PricingType"];
+            customerHandling?: components["schemas"]["CustomerHandling"];
             /**
-             * @description ISO 4217 currency code (e.g., "USD", "EUR", "GBP").
+             * Format: uuid
+             * @description Customer ID to associate the vault entry with.
+             */
+            customerId?: string | null;
+            /**
+             * Format: date-time
+             * @description Optional expiration date/time for the session (UTC). Must be in the future.
+             */
+            expiresAt?: string | null;
+            /** @description Arbitrary key-value pairs stored with the session and returned on GET. */
+            metadata?: {
+                [key: string]: string | null;
+            } | null;
+            mode?: components["schemas"]["SessionMode"];
+            /** @description Display name shown on the checkout page. */
+            pageName?: string | null;
+            /** @description Restricts which payment methods are shown at checkout. Accepted values: "card", "ach". */
+            paymentMethodTypes?: string[] | null;
+            /** @description Additional notes shown to the payer on the checkout page. */
+            paymentNotes?: string | null;
+            /** @description Optional reference ID provided by the ISV. */
+            referenceId?: string | null;
+            /** @description URL to redirect the payer to after a successful payment. */
+            returnUrl?: string | null;
+            /**
+             * @description When true, bypasses AVS (address verification) in the payment gateway. Defaults to false.
+             *     Only meaningful for Payment and PaymentAndSave modes.
+             */
+            skipAddressVerification?: boolean | null;
+            /**
+             * Format: double
+             * @description Optional tip amount to be charged on top of the base amount.
+             */
+            tipAmount?: number | null;
+        };
+        /** @description Response DTO for creating a payment session (v2). */
+        CreatePaymentSessionResponseDto: {
+            /**
+             * Format: uuid
+             * @description The unique identifier of the created payment session.
+             */
+            id?: string;
+        };
+        /**
+         * @description Request to create a reversal from POS. With `originalTransactionId` the backend picks the
+         *     execution path: a void when still available, a referenced refund in the cloud for credit cards
+         *     (both without a terminal flow), or a refund flow on the terminal for debit cards (the customer
+         *     presents the card). Without it, an unreferenced refund flow is initiated on the terminal.
+         */
+        CreatePosReversalRequestDto: {
+            /**
+             * @description ISO 4217 currency code (e.g., "USD", "EUR", "GBP") | Conditional — mandatory for
+             *     unreferenced refunds.
              *
-             *     Required when ```TransactionType``` is:
-             *
-             *     <b>Authorization</b>
-             *     <b>Sale</b>
-             *     <b>Capture</b>
-             *     <b>Refund</b>
-             *     <b>RefundWORef</b>
-             *     <b>TipAdjustment</b>
              *     See: https://en.wikipedia.org/wiki/ISO_4217
+             * @example USD
              */
             currencyCode?: string | null;
             /**
              * Format: uuid
+             * @description Optional ARISE Customer ID to associate with the transaction.
+             * @example 9f2b1c4d-7e3a-4f8b-90c1-2d3e4f5a6b7c
+             */
+            customerId?: string | null;
+            initiationChannel?: components["schemas"]["PosInitiationChannel"];
+            /**
+             * Format: uuid
+             * @description The transaction to reverse | Optional. When omitted, an unreferenced refund is initiated
+             *     on the terminal.
+             * @example d4e39f93-a128-45f4-9b27-140042a5efa5
+             */
+            originalTransactionId?: string | null;
+            /**
+             * Format: uuid
              * @description Set the Payment Processor ID to be used in the transaction. If not provided, it will use the merchant's default processor.
+             * @example b4c68dbb-48cd-4ace-a013-d2822653bbf4
              */
             paymentProcessorId?: string | null;
             /**
+             * @description External POS Device ID | Mandatory | MaxLength=36
+             * @example POS-DEV-001
+             */
+            posDeviceId?: string | null;
+            readingMethod?: components["schemas"]["PosReadingMethod"];
+            /**
+             * @description External Transaction Reference ID | Mandatory | MaxLength=36
+             * @example REF-POS-REVERSAL-001
+             */
+            referenceId?: string | null;
+            /**
+             * Format: double
+             * @description Amount to reverse | Conditional — mandatory for unreferenced refunds (no
+             *     `originalTransactionId`); caps a partial refund for referenced reversals.
+             *     Ignored when the reversal resolves to a void (voids reverse the full amount).
+             * @example 50
+             */
+            reversalAmount?: number | null;
+            /**
+             * Format: uuid
+             * @description Terminal ID related to the terminal that handles the refund flow. Terminal must be in the
+             *     semi-integrated mode; Cloud-channel refund flows additionally require it to be available
+             *     (online and ready).
+             * @example 0dfac966-9dbd-4608-a65f-d6a4c961dd35
+             */
+            terminalId?: string;
+            /**
+             * @description Set the response mode to short or long polling for terminal refund flows.
+             *
+             *
+             *     If ```true``` (long polling): HTTP response will be provided once the terminal accepts/declines to initiate the refund or a timeout happens (terminal does not respond).
+             *
+             *
+             *     If ```false``` (short polling): HTTP response will be returned immediately, while the terminal is still receiving the refund request.
+             *
+             *
+             *     Reversals that resolve to a void or a credit-card refund complete in the cloud and respond synchronously regardless of this flag.
+             */
+            waitForAcceptanceByTerminal?: boolean;
+        };
+        CreatePosTransactionRequestDto: {
+            /**
+             * Format: double
+             * @description Base transaction amount (subtotal, before tip) | Mandatory
+             * @example 99.99
+             */
+            baseAmount?: number | null;
+            captureMethod?: components["schemas"]["CaptureMethod"];
+            /**
+             * @description ISO 4217 currency code (e.g., "USD", "EUR", "GBP") | Mandatory
+             *
+             *     See: https://en.wikipedia.org/wiki/ISO_4217
+             * @example USD
+             */
+            currencyCode?: string | null;
+            /**
+             * Format: uuid
+             * @description Optional ARISE Customer ID to associate with the transaction.
+             * @example 9f2b1c4d-7e3a-4f8b-90c1-2d3e4f5a6b7c
+             */
+            customerId?: string | null;
+            extraAmounts?: components["schemas"]["PosExtraAmountsDto"];
+            initiationChannel?: components["schemas"]["PosInitiationChannel"];
+            /**
+             * Format: uuid
+             * @description Set the Payment Processor ID to be used in the transaction. If not provided, it will use the merchant's default processor.
+             * @example b4c68dbb-48cd-4ace-a013-d2822653bbf4
+             */
+            paymentProcessorId?: string | null;
+            /**
+             * @description External POS Device ID | Mandatory | MaxLength=36
+             * @example POS-DEVICE-001
+             */
+            posDeviceId?: string | null;
+            pricingType?: components["schemas"]["PricingType"];
+            readingMethod?: components["schemas"]["PosReadingMethod"];
+            /**
+             * @description External Transaction Reference ID | Optional | MaxLength=36
+             * @example REF-EXT-12345
+             */
+            referenceId?: string | null;
+            /** @description Set to true to show popup about saving customer payment method information on the terminal */
+            requestPaymentMethodStorageConsent?: boolean;
+            /**
              * Format: uuid
              * @description Terminal ID related to the terminal that will initiate and handle the transaction. Terminal must be in the semi-integrated mode and available (online and ready)
+             * @example 0dfac966-9dbd-4608-a65f-d6a4c961dd35
              */
             terminalId?: string;
             /**
@@ -6582,86 +12189,92 @@ export interface components {
              *
              *     If ```false``` (short polling): HTTP response will be returned immediately, while the terminal is still receiving the transaction request. Follow-up calls to get the POS Transaction By ID should be done to retrieve the latest information of the transaction initiation and submission.
              */
-            shouldWaitForAcceptanceByTerminal?: boolean;
-            readingMethod?: components["schemas"]["PosTransactionReadingMethod"];
-            /** @description Set to true to show popup about saving customer payment method information on the terminal */
-            shouldRequestPaymentMethodStorageConsent?: boolean;
-        };
-        CreatePosTransactionResponseDto: {
-            /**
-             * Format: uuid
-             * @description ID of POS transaction
-             */
-            posTransactionId?: string;
-            status?: components["schemas"]["PosTransactionStatus"];
+            waitForAcceptanceByTerminal?: boolean;
         };
         CreateTransactionRequestDto: {
             /**
-             * Format: uuid
-             * @description Payment processor ID
-             */
-            paymentProcessorId?: string | null;
-            /**
              * Format: double
              * @description Transaction base amount
+             * @example 100
              */
             baseAmount?: number;
+            billingAddress?: components["schemas"]["AddressDto"];
+            contactInfo?: components["schemas"]["ContactInfoDto"];
             /**
-             * @description ISO 4217 currency code (e.g., "USD", "EUR", "GBP").
+             * @description ISO 4217 currency code. Currently only "USD" is supported.
              *     Default: "USD" if not specified.
              *     See: https://en.wikipedia.org/wiki/ISO_4217
+             * @example USD
              */
             currencyCode?: string | null;
-            /** @description Reference ID for the transaction */
-            referenceId?: string | null;
-            /** @description Indicates if transaction is initiated by customer (CIT) vs merchant (MIT) */
-            customerInitiatedTransaction?: boolean;
-            pricingType?: components["schemas"]["PricingType"];
-            extraAmounts?: components["schemas"]["ExtraAmountsDto"];
-            transactionEnhancedData?: components["schemas"]["TransactionEnhancedDataDto"];
-            billingAddress?: components["schemas"]["AddressDto"];
-            shippingAddress?: components["schemas"]["AddressDto"];
-            contactInfo?: components["schemas"]["ContactInfoDto"];
-            transactionDetails?: components["schemas"]["TransactionDetailsDto"];
             /**
              * Format: uuid
-             * @description Optional device id from mobile app. When provided and the device has a linked user profile, the transaction is attributed to that user.
+             * @description Optional existing customer to associate this transaction with. When provided, the transaction
+             *     is linked to that customer record; the same id is echoed back on the transaction response.
+             * @example 3fa85f64-5717-4562-b3fc-2c963f66afa6
              */
-            deviceId?: string | null;
-            platform?: components["schemas"]["MobilePlatform"];
-            /** @description Version of the mobile app used to process the transaction. */
-            appVersion?: string | null;
-            /** @description Version of the SDK used to process the transaction. */
-            sdkVersion?: string | null;
+            customerId?: string | null;
+            extraAmounts?: components["schemas"]["ExtraAmountsDto"];
+            /** @description Indicates if transaction is initiated by customer (CIT) vs merchant (MIT) */
+            isCustomerInitiatedTransaction?: boolean;
+            /**
+             * Format: uuid
+             * @description Payment processor ID
+             * @example 36e0e61e-3614-4c68-a919-1bffc8bdb7b6
+             */
+            paymentProcessorId?: string | null;
+            pricingType?: components["schemas"]["PricingType"];
+            /**
+             * @description Reference ID for the transaction. At most 100 characters.
+             * @example REF-EXT-12345
+             */
+            referenceId?: string | null;
+            shippingAddress?: components["schemas"]["AddressDto"];
+            transactionDetails?: components["schemas"]["TransactionDetailsDto"];
+            transactionEnhancedData?: components["schemas"]["TransactionEnhancedDataDto"];
         };
         CreateWebhookEndpointIsvRequestDto: {
-            /** @description Display name for the webhook endpoint. */
-            name?: string | null;
-            /** @description HTTPS callback URL to receive webhook events. */
+            /**
+             * @description Display name for the webhook endpoint.
+             * @example Production webhook
+             */
+            endpointName?: string | null;
+            /**
+             * @description HTTPS callback URL to receive webhook events.
+             * @example https://example.com/webhooks
+             */
             endpointUrl?: string | null;
             /** @description Event types to subscribe to. At least one required. */
             eventTypes?: components["schemas"]["WebhookEventType"][] | null;
         };
         CreateWebhookEndpointIsvResponseDto: {
             /**
-             * Format: uuid
-             * @description Unique endpoint identifier.
-             */
-            id?: string;
-            /** @description Display name. */
-            name?: string | null;
-            /** @description HTTPS callback URL. */
-            endpointUrl?: string | null;
-            status?: components["schemas"]["WebhookEndpointStatus"];
-            /** @description HMAC signing secret. Returned only on creation — never shown again. */
-            secret?: string | null;
-            /** @description Subscribed event types. */
-            eventTypes?: components["schemas"]["WebhookEventType"][] | null;
-            /**
              * Format: date-time
              * @description When the endpoint was created.
+             * @example 2026-01-01T00:00:00Z
              */
-            createdAt?: string;
+            createdOn?: string;
+            /**
+             * Format: uuid
+             * @description Unique endpoint identifier.
+             * @example 4718f5ef-33c9-4f64-870e-3b0391698f5e
+             */
+            endpointId?: string;
+            /**
+             * @description Display name.
+             * @example Production webhook
+             */
+            endpointName?: string | null;
+            endpointStatus?: components["schemas"]["WebhookEndpointStatus"];
+            /**
+             * @description HTTPS callback URL.
+             * @example https://example.com/webhooks/arise
+             */
+            endpointUrl?: string | null;
+            /** @description Subscribed event types. */
+            eventTypes?: components["schemas"]["WebhookEventType"][] | null;
+            /** @description HMAC signing secret. Returned only on creation — never shown again. */
+            hmacSecret?: string | null;
         };
         /**
          * @description Card data for credit operations. Requires raw card details since unreferenced credits
@@ -6674,150 +12287,265 @@ export interface components {
         CreditDebitType: "Credit" | "Debit" | "Unknown";
         /** @description Credit payment method details. Exactly one of CardData or AchData must be provided. */
         CreditDetailsDto: {
-            cardData?: components["schemas"]["CreditCardDataDto"];
             achData?: components["schemas"]["AchDataDto"];
+            cardData?: components["schemas"]["CreditCardDataDto"];
         };
         /** @description Request to create an unreferenced credit (card unreferenced refund or ACH credit). */
         CreditRequestDto: {
             /**
+             * Format: double
+             * @description Credit base amount
+             * @example 50
+             */
+            baseAmount?: number;
+            billingAddress?: components["schemas"]["AddressDto"];
+            contactInfo?: components["schemas"]["ContactInfoDto"];
+            creditDetails?: components["schemas"]["CreditDetailsDto"];
+            /**
+             * @description ISO 4217 currency code. Currently only "USD" is supported.
+             *     Default: "USD" if not specified.
+             *     See: https://en.wikipedia.org/wiki/ISO_4217
+             * @example USD
+             */
+            currencyCode?: string | null;
+            /**
+             * Format: uuid
+             * @description Optional existing customer to associate this credit with. When provided, the credit is linked
+             *     to that customer record; the same id is echoed back on the transaction response.
+             * @example 3fa85f64-5717-4562-b3fc-2c963f66afa6
+             */
+            customerId?: string | null;
+            /**
              * Format: uuid
              * @description Payment processor ID
+             * @example 76215e54-a85b-4d42-9553-163fe393cb02
              */
             paymentProcessorId?: string;
             /**
-             * Format: double
-             * @description Credit base amount
+             * @description Reference ID for the credit. <b>Required</b> — a credit has no originating transaction,
+             *     so this is the reconciliation handle. At most 100 characters.
+             * @example REF-EXT-12345
              */
-            baseAmount?: number;
-            /**
-             * @description ISO 4217 currency code (e.g., "USD", "EUR", "GBP").
-             *     Default: "USD" if not specified.
-             *     See: https://en.wikipedia.org/wiki/ISO_4217
-             */
-            currencyCode?: string | null;
-            /** @description Reference ID for the credit */
             referenceId?: string | null;
-            billingAddress?: components["schemas"]["AddressDto"];
             shippingAddress?: components["schemas"]["AddressDto"];
-            contactInfo?: components["schemas"]["ContactInfoDto"];
-            creditDetails?: components["schemas"]["CreditDetailsDto"];
         };
         /** @enum {string} */
         Currency: "USD";
+        /** @enum {string} */
+        CustomerHandling: "CreateCustomer" | "TokenOnly";
         CustomerPaymentMethodAchDto: {
-            /** @description Routing number */
-            routingNumber?: string | null;
-            /** @description Account number */
-            accountNumber?: string | null;
-            /** @description Tax ID */
-            taxId?: string | null;
             accountHolderType?: components["schemas"]["AccountHolderType"];
+            /**
+             * @description Account number
+             * @example 1234567890
+             */
+            accountNumber?: string | null;
             accountType?: components["schemas"]["AccountType"];
-            /** @description Payment method name */
-            name?: string | null;
+            /**
+             * @description Payment method name
+             * @example Primary Checking
+             */
+            paymentName?: string | null;
+            /**
+             * @description Routing number
+             * @example 021000021
+             */
+            routingNumber?: string | null;
+            /**
+             * @description Tax ID
+             * @example 12-3456789
+             */
+            taxId?: string | null;
         };
         CustomerPaymentMethodCardDto: {
-            /** @description The 13-19 digit card number (PAN) used for the transaction. */
+            /**
+             * @description The 13-19 digit card number (PAN) used for the transaction.
+             * @example 4111111111111111
+             */
             cardNumber?: string | null;
-            /** @description The three or four digit security code on the credit card. */
-            securityCode?: string | null;
             /**
              * Format: int32
              * @description The expiration month of the card (2-digit format: 01-12)
+             * @example 12
              */
             expirationMonth?: number | null;
             /**
              * Format: int32
              * @description The expiration year of the card (4-digit format: YYYY)
+             * @example 2030
              */
             expirationYear?: number | null;
-            /** @description Payment method name */
-            name?: string | null;
+            /**
+             * @description Payment method name
+             * @example Personal Visa
+             */
+            paymentName?: string | null;
+            /**
+             * @description The three or four digit security code on the card.
+             * @example 123
+             */
+            securityCode?: string | null;
         };
-        DeviceSoftwareDetailsDto: {
-            /** @description Operating System */
-            operatingSystem?: string | null;
-            /** @description Android Base Service Version */
-            androidBaseServiceVersion?: string | null;
-            /** @description Sunmi Trusted Management Version */
-            sunmiTrustedManagementVersion?: string | null;
-            /** @description Sunmi Cloud Connection Version */
-            sunmiCloudConnectionVersion?: string | null;
-            /** @description Sunmi Pay Hardware Service Version */
-            sunmiPayHardwareServiceVersion?: string | null;
-            /** @description POS Steward app version */
-            posStewardAppVersion?: string | null;
-            /** @description Remote Assistance app version */
-            remoteAssistanceAppVersion?: string | null;
-            /** @description Sunmi FutureX app version */
-            sunmiFutureXAppVersion?: string | null;
-            /** @description Sunmi ROM Version */
-            sunmiRomVersion?: string | null;
+        /** @description Details for a declined or failed transaction. Null when the transaction was approved or is pending. */
+        DeclineDetailsDto: {
+            /**
+             * @description Decline / failure code from the processor or gateway.
+             * @example 41
+             */
+            code?: string | null;
+            /**
+             * @description Human-readable decline / failure message.
+             * @example HOLD-CALL
+             */
+            message?: string | null;
+        };
+        /** @description A single raw EMV tag key/value pair. */
+        EmvRawTagDto: {
+            /** @description EMV tag identifier. */
+            key?: string | null;
+            /** @description EMV tag value. */
+            value?: string | null;
+        };
+        /** @description EMV chip tag data captured for card-present transactions. Null for card-not-present and ACH. */
+        EmvTagsDto: {
+            /** @description Application Cryptogram (tag 9F26). */
+            ac?: string | null;
+            /** @description Application Identifier (tag 4F / 9F06). */
+            aid?: string | null;
+            /** @description Human-readable application label (tag 50). */
+            applicationLabel?: string | null;
+            /** @description Any additional raw EMV tags as key/value pairs. */
+            rawTags?: components["schemas"]["EmvRawTagDto"][] | null;
+            /** @description Transaction Status Information (tag 9B). */
+            tsi?: string | null;
+            /** @description Terminal Verification Results (tag 95). */
+            tvr?: string | null;
         };
         ExtraAmountsDto: {
             /**
              * Format: double
-             * @description The amount of the tips.
+             * @description Discount as a fixed dollar amount. Mutually exclusive with Arise.IsvApiBff.Contracts.v2.Transaction.ExtraAmountsDto.DiscountRate.
+             * @example 1
+             */
+            discountAmount?: number | null;
+            /**
+             * Format: double
+             * @description Discount as a percent of the subtotal (e.g. 10 = 10%). Mutually exclusive with Arise.IsvApiBff.Contracts.v2.Transaction.ExtraAmountsDto.DiscountAmount.
+             * @example 10
+             */
+            discountRate?: number | null;
+            /**
+             * Format: double
+             * @description Credit card surcharge as a percent of the base amount, applied after any discount.
+             *     Encoded as raw percentage — e.g. 2.5 represents 2.5%.
+             * @example 2.5
+             */
+            surchargeRate?: number | null;
+            /**
+             * Format: double
+             * @description Tip as a fixed dollar amount. Mutually exclusive with Arise.IsvApiBff.Contracts.v2.Transaction.ExtraAmountsDto.TipRate.
+             * @example 5
              */
             tipAmount?: number | null;
             /**
              * Format: double
-             * @description The Amount to be discounted.
+             * @description Tip as a percent of the subtotal (e.g. 18 = 18%). Mutually exclusive with Arise.IsvApiBff.Contracts.v2.Transaction.ExtraAmountsDto.TipAmount.
+             * @example 18
              */
-            discountAmount?: number;
-            /**
-             * Format: double
-             * @description The percent of transaction amount to be added to Amount after PercentageOffRate is applied.
-             */
-            surchargeRate?: number | null;
+            tipRate?: number | null;
+        };
+        ForbiddenExceptionExample: {
+            cause?: string | null;
+            correlationId?: string | null;
+            details?: string | null;
+            documentationUrl?: string | null;
+            entityId?: string | null;
+            errorCode?: string | null;
+            exceptionType?: string | null;
+            resolution?: string | null;
+            source?: string | null;
+            /** Format: int32 */
+            statusCode?: number | null;
+            title?: string | null;
         };
         GetApiKeysResponseDto: {
             /** @description List of API keys */
-            apiKeys?: components["schemas"]["ApiKeyDto"][] | null;
+            apiKeys?: components["schemas"]["GetApiKeysResponseDtoApiKeyDto"][] | null;
         };
-        GetCustomerPaymentMethodsResponseDto: {
+        GetApiKeysResponseDtoApiKeyDto: {
+            /**
+             * @description Display name for the API key
+             * @example Production integration key
+             */
+            apiKeyName?: string | null;
             /**
              * Format: uuid
-             * @description Payment method Id
+             * @description Client identifier
+             * @example 5c0f39f6-02a8-4053-9e72-56d9d5947c1c
              */
-            id?: string;
-            /** @description Payment method name */
-            name?: string | null;
-            /** @description Is payment method default */
-            isDefault?: boolean;
-            type?: components["schemas"]["PaymentMethodType"];
-            card?: components["schemas"]["CardDetails"];
-            ach?: components["schemas"]["AchDetails"];
+            clientId?: string;
+            /**
+             * Format: uuid
+             * @description Merchant identifier
+             * @example cf03c41f-d797-447a-b4e8-aadd99f4deb2
+             */
+            merchantId?: string;
         };
         GetCustomerResponseDto: {
+            /** @description Payment methods (ACH accounts) */
+            achAccounts?: components["schemas"]["GetCustomerResponseDtoAchAccountDto"][] | null;
+            billingAddress?: components["schemas"]["AddressDto"];
+            /** @description Payment methods (cards) */
+            cards?: components["schemas"]["GetCustomerResponseDtoCardDto"][] | null;
+            /** @description Company name */
+            companyName?: string | null;
             /**
              * Format: uuid
              * @description Customer ID
+             * @example 1edee500-535c-4210-9ca3-9e86e8f0a3ca
              */
-            id?: string;
-            /** @description External ID */
+            customerId?: string;
+            /**
+             * @description Email address
+             * @example jane.doe@example.com
+             */
+            email?: string | null;
+            /**
+             * @description External ID
+             * @example CUST-EXT-12345
+             */
             externalId?: string | null;
             /** @description First name */
             firstName?: string | null;
-            /** @description Last name */
-            lastName?: string | null;
-            /** @description Company name */
-            companyName?: string | null;
-            /** @description Email address */
-            email?: string | null;
-            /** @description The customer's mobile phone number. */
-            mobileNumber?: string | null;
             /** @description SMS notifications are enabled. */
             hasSmsConsent?: boolean;
-            /** @description Use billing address as shipping */
-            shouldUseBillingAsShippingAddress?: boolean;
-            billingAddress?: components["schemas"]["AddressDto"];
-            shippingAddress?: components["schemas"]["AddressDto"];
+            /** @description Last name */
+            lastName?: string | null;
+            /**
+             * Format: double
+             * @description Last transaction amount
+             * @example 99.99
+             */
+            lastTransactionAmount?: number | null;
             /**
              * Format: date-time
              * @description Last transaction date
+             * @example 2026-01-01T00:00:00Z
              */
             lastTransactionDate?: string | null;
+            /**
+             * @description The customer's mobile phone number.
+             * @example +14125553845
+             */
+            mobilePhoneNumber?: string | null;
+            /**
+             * Format: int32
+             * @description Number of active subscriptions
+             */
+            numberOfSubscriptions?: number;
+            shippingAddress?: components["schemas"]["AddressDto"];
+            /** @description Use billing address as shipping */
+            shouldUseBillingAsShippingAddress?: boolean;
             /**
              * Format: int32
              * @description Transactions count
@@ -6826,499 +12554,1128 @@ export interface components {
             /**
              * Format: double
              * @description Transactions volume
+             * @example 1234.56
              */
             transactionsVolume?: number;
+        };
+        GetCustomerResponseDtoAchAccountDto: {
+            accountHolderType?: components["schemas"]["AccountHolderType"];
             /**
-             * Format: double
-             * @description Last transaction amount
+             * @description Account number (masked)
+             * @example ************7890
              */
-            lastTransactionAmount?: number | null;
+            accountNumber?: string | null;
+            accountType?: components["schemas"]["AccountType"];
+            /** @description Is payment method default */
+            isDefault?: boolean;
+            /**
+             * Format: uuid
+             * @description Payment method Id
+             * @example 39a95e35-6d50-45ec-884b-c2417edf005d
+             */
+            paymentMethodId?: string;
+            /**
+             * @description Payment method name
+             * @example Personal Visa
+             */
+            paymentName?: string | null;
+            /**
+             * @description Routing number
+             * @example 021000021
+             */
+            routingNumber?: string | null;
+            /**
+             * @description Tax ID
+             * @example 12-3456789
+             */
+            taxId?: string | null;
+        };
+        GetCustomerResponseDtoCardDto: {
+            /**
+             * @description Masked card number
+             * @example ************1111
+             */
+            cardMask?: string | null;
+            cardTokenType?: components["schemas"]["TokenType"];
+            cardType?: components["schemas"]["CardType"];
+            creditDebitType?: components["schemas"]["CreditDebitType"];
             /**
              * Format: int32
-             * @description Number of active subscriptions
+             * @description Expiration month
+             * @example 12
              */
-            numberOfSubscriptions?: number;
-            /** @description Payment methods (cards) */
-            cards?: components["schemas"]["CardDto"][] | null;
-            /** @description Payment methods (ACH accounts) */
-            achAccounts?: components["schemas"]["AchAccountDto"][] | null;
-        };
-        GetPosTransactionResponseDto: {
+            expirationMonth?: number;
+            /**
+             * Format: int32
+             * @description Expiration year
+             * @example 2030
+             */
+            expirationYear?: number;
+            /** @description Is payment method default */
+            isDefault?: boolean;
             /**
              * Format: uuid
-             * @description ID of POS transaction
+             * @description Payment method Id
+             * @example 39a95e35-6d50-45ec-884b-c2417edf005d
              */
+            paymentMethodId?: string;
+            /**
+             * @description Payment method name
+             * @example Personal Visa
+             */
+            paymentName?: string | null;
+        };
+        /** @description Response DTO for getting payment session details (v2). */
+        GetPaymentSessionResponseDto: {
+            achAccountLast2?: string | null;
+            achRoutingLast2?: string | null;
+            afterCompletionMessage?: string | null;
+            /** Format: uuid */
+            customerId?: string | null;
+            /** Format: date-time */
+            expiresAt?: string | null;
+            metadata?: {
+                [key: string]: string | null;
+            } | null;
+            mode?: components["schemas"]["SessionMode"];
+            pageName?: string | null;
+            paymentMethodTypes?: string[] | null;
+            paymentNotes?: string | null;
+            referenceId?: string | null;
+            returnUrl?: string | null;
+            skipAddressVerification?: boolean;
+            /**
+             * @description Payment Session Status
+             *     - Created: Payment session was initialized but not yet processed.
+             *     - Cancelled: Payment session was cancelled before completion.
+             *     - Completed: Payment session was completed. Check transaction details to verify if the payment was approved or not.
+             *     - Failed: Payment was attempted but did not succeed. A new session must be created for a new payment tentative.
+             *     - Expired: Payment session expired before being completed.
+             */
+            readonly status?: string | null;
+            statusId?: components["schemas"]["PaymentSessionStatusDto"];
+            /** Format: double */
+            surchargeAmount?: number | null;
+            /** Format: double */
+            tipAmount?: number | null;
+            transactionDetails?: components["schemas"]["GetPaymentSessionTransactionDetailsDto"];
+            /** Format: uuid */
+            vaultedPaymentMethodId?: string | null;
+        };
+        /** @description Contains information about the processed transaction. */
+        GetPaymentSessionTransactionDetailsDto: {
+            amount?: components["schemas"]["AmountDto"];
+            authCode?: string | null;
+            availableOperations?: components["schemas"]["TransactionOperationDto"][] | null;
+            availableStates?: string[] | null;
+            avsResponse?: components["schemas"]["AvsResponseDto"];
+            avsResponseCode?: string | null;
+            cardType?: string | null;
+            createdBy?: string | null;
+            /** Format: int32 */
+            creditDebitTypeId?: number | null;
+            creditDebitTypeType?: string | null;
+            currencyCode?: string | null;
+            /** Format: int32 */
+            currencyId?: number | null;
+            customerCompany?: string | null;
+            customerEmail?: string | null;
+            /** Format: uuid */
+            customerId?: string | null;
+            customerName?: string | null;
+            customerPan?: string | null;
+            customerPhone?: string | null;
+            /** Format: date-time */
+            date?: string | null;
+            histories?: components["schemas"]["GetPaymentSessionTransactionDetailsDtoTransactionHistoryDto"][] | null;
+            /** Format: uuid */
             id?: string;
+            merchant?: string | null;
+            /** Format: uuid */
+            merchantId?: string;
+            mid?: string | null;
+            operationMode?: string | null;
+            paymentMethodName?: string | null;
+            paymentMethodType?: string | null;
+            /** Format: int32 */
+            paymentMethodTypeId?: number;
+            /** Format: uuid */
+            paymentProcessorId?: string;
+            processor?: string | null;
+            /** Format: uuid */
+            processorId?: string;
+            referenceId?: string | null;
+            refunded?: boolean;
+            responseCode?: string | null;
+            responseDescription?: string | null;
+            responseMessage?: string | null;
+            source?: components["schemas"]["TransactionSourceResponseDto"];
+            status?: string | null;
+            /** Format: int32 */
+            statusId?: number;
+            tid?: string | null;
+            transactionReceipt?: components["schemas"]["TransactionReceiptDto"];
+            /** @description Shortened URL to access the transaction receipt. */
+            transactionReceiptShortUrl?: string | null;
+            /** @description Direct link to the transaction receipt. */
+            transactionReceiptUrl?: string | null;
+            type?: string | null;
+            /** Format: int32 */
+            typeId?: number;
+        };
+        GetPaymentSessionTransactionDetailsDtoTransactionHistoryDto: {
+            /** Format: uuid */
+            id?: string;
+            /** Format: double */
+            transactionAmount?: number | null;
+            /** Format: date-time */
+            transactionDateTime?: string;
+            transactionStatus?: string | null;
+            /** Format: int32 */
+            transactionStatusId?: number;
+            transactionType?: string | null;
+            /** Format: int32 */
+            transactionTypeId?: number;
+        };
+        GetTerminalStatusResponseDto: {
+            /**
+             * Format: int32
+             * @description Battery level 0-100
+             * @example 90
+             */
+            batteryLevel?: number;
+            connectionStatus?: components["schemas"]["TerminalConnectionStatus"];
+            connectionType?: components["schemas"]["TerminalConnectionType"];
+            debitPinKey?: components["schemas"]["TerminalDebitPinKey"];
             /**
              * Format: date-time
-             * @description Timestamp of POS transaction creation
+             * @description Last seen online timestamp
+             * @example 2026-01-01T00:00:00Z
              */
-            createdOn?: string;
+            lastSeenOn?: string | null;
             /**
              * Format: uuid
-             * @description ARISE Merchant ID
+             * @description Merchant unique identifier associated with the terminal
+             * @example 296d089a-a575-4275-b28c-d22c95d52db3
+             */
+            merchantId?: string;
+            /**
+             * Format: int32
+             * @description Mobile connection strength 0-100
+             * @example 0
+             */
+            mobileConnectionStrength?: number;
+            printerStatus?: components["schemas"]["TerminalPrinterStatus"];
+            /**
+             * @description Version of the payment application installed on the terminal
+             * @example 1.4.2
+             */
+            terminalAppVersion?: string | null;
+            /**
+             * Format: uuid
+             * @description Terminal unique identifier
+             * @example 0b22b5f0-26d1-472b-84c4-0274641ab116
+             */
+            terminalId?: string;
+            terminalStatus?: components["schemas"]["TerminalPosStatus"];
+            /**
+             * Format: int32
+             * @description WiFi connection strength 0-100
+             * @example 85
+             */
+            wifiConnectionStrength?: number;
+        };
+        /**
+         * @description The canonical transaction resource. This is the authoritative shape returned by
+         *     Get-by-ID and by every action endpoint (create, capture, reversal, credit,
+         *     tip-adjustment, ach-hold, ach-release).
+         */
+        GetTransactionResponseDto: {
+            achDetails?: components["schemas"]["AchDetailsDto"];
+            addressVerificationServiceResponse?: components["schemas"]["TransactionAddressVerificationServiceResponseDto"];
+            amountBreakdown?: components["schemas"]["AmountDetailsDto"];
+            /**
+             * Format: uuid
+             * @description The settlement batch this transaction settles in; null until batched.
+             */
+            batchId?: string | null;
+            cardDetails?: components["schemas"]["TransactionCardDetailsDto"];
+            cardTokenType?: components["schemas"]["TokenType"];
+            /**
+             * @description ISO 4217 currency code. Currently always "USD". See: https://en.wikipedia.org/wiki/ISO_4217
+             * @example USD
+             */
+            currencyCode?: string | null;
+            /**
+             * Format: uuid
+             * @description Customer associated with the transaction, when one is attached.
+             * @example 2d3f4a6b-1c2d-4e5f-8a9b-0c1d2e3f4a5b
+             */
+            customerId?: string | null;
+            declineDetails?: components["schemas"]["DeclineDetailsDto"];
+            /**
+             * Format: uuid
+             * @description The merchant the transaction belongs to.
+             * @example 746ba4dd-b1b4-47c3-a034-72aa55007e86
              */
             merchantId?: string;
             /**
              * Format: uuid
-             * @description ID of terminal that handled the POS Transaction
+             * @description Id of the original transaction that this transaction refunds. Populated only when this
+             *     transaction is a refund of another transaction; null in all other scenarios.
+             * @example 7a1cbb1e-5a3f-4f0a-9f34-1f26f6f4a1c2
              */
-            terminalId?: string;
+            originalTransactionId?: string | null;
+            paymentMethodType?: components["schemas"]["PaymentMethodType"];
             /**
              * Format: uuid
-             * @description Predefined Payment Processor ID
+             * @description Payment processor used for the transaction.
+             * @example 36e0e61e-3614-4c68-a919-1bffc8bdb7b6
              */
             paymentProcessorId?: string | null;
-            /** @description External POS Device ID */
-            posDeviceId?: string | null;
-            /** @description External Reference ID */
-            referenceId?: string | null;
-            status?: components["schemas"]["PosTransactionStatus"];
-            /**
-             * Format: uuid
-             * @description ID of attached transaction. Available after processing.
-             */
-            transactionId?: string | null;
+            pricingType?: components["schemas"]["PricingType"];
             /**
              * Format: double
-             * @description Transaction amount for transaction types that require Amount
+             * @description Amount processed for this transaction.
+             * @example 99.99
              */
-            amount?: number | null;
-            /** @description ISO 4217 currency code (e.g., "USD", "EUR"). See: https://en.wikipedia.org/wiki/ISO_4217 */
-            currencyCode?: string | null;
-            /**
-             * Format: uuid
-             * @description Transaction ID for Void, Capture, Refund operations
-             */
-            targetTransactionId?: string | null;
-            transactionType?: components["schemas"]["TransactionType"];
-        };
-        GetTerminalStatusResponseDto: {
-            /**
-             * Format: uuid
-             * @description Terminal ID
-             */
-            terminalId?: string;
-            /**
-             * Format: date-time
-             * @description Timestamp of the status log
-             */
-            timestamp?: string;
-            terminalPosStatus?: components["schemas"]["TerminalPosStatus"];
-            connectionStatus?: components["schemas"]["TerminalConnectionStatus"];
-            connectionType?: components["schemas"]["TerminalConnectionType"];
-            /**
-             * Format: int32
-             * @description WiFi connection strength 0-100
-             */
-            wifiConnectionStrength?: number;
-            /**
-             * Format: int32
-             * @description Mobile connection strength 0-100
-             */
-            mobileConnectionStrength?: number;
-            /**
-             * Format: date-time
-             * @description Last seen online timestamp
-             */
-            lastSeenTimestamp?: string | null;
-            debitPinKey?: components["schemas"]["TerminalDebitPinKey"];
-            availabilityStatus?: components["schemas"]["TerminalAvailabilityStatus"];
-            /** @description ARISE Terminal version */
-            ariseTerminalVersion?: string | null;
-            /**
-             * Format: int32
-             * @description Battery level 0-100
-             */
-            batteryLevel?: number;
-            printerStatus?: components["schemas"]["TerminalPrinterStatus"];
-            deviceSoftwareDetails?: components["schemas"]["DeviceSoftwareDetailsDto"];
-        };
-        GetTransactionResponseDto: {
-            /** Format: uuid */
-            transactionId?: string;
-            /** Format: date-time */
-            transactionDateTime?: string;
-            status?: components["schemas"]["AggregatedTransactionStatus"];
-            paymentMethodType?: components["schemas"]["PaymentMethodType"];
-            referenceId?: string | null;
-            /** Format: double */
             processedAmount?: number;
-            currencyCode?: string | null;
-            amountBreakdown?: components["schemas"]["AmountDetailsDto"];
-            avsResponse?: components["schemas"]["TransactionAvsResponseDto"];
-            cardDetails?: components["schemas"]["TransactionCardDetailsDto"];
-            achDetails?: components["schemas"]["AchDetailsDto"];
+            processorDetails?: components["schemas"]["ProcessorDetailsDto"];
+            /**
+             * @description Merchant-supplied reference ID for the transaction.
+             * @example REF-EXT-12345
+             */
+            referenceId?: string | null;
+            refundDetails?: components["schemas"]["RefundDetailsDto"];
+            source?: components["schemas"]["TransactionSourceDto"];
+            /**
+             * Format: date-time
+             * @description Transaction date and time
+             * @example 2026-01-01T00:00:00Z
+             */
+            transactionDateTime?: string;
+            /** @description Chronological list of events that occurred for this transaction (e.g. authorize, capture, refund). */
             transactionEvents?: components["schemas"]["TransactionEventDto"][] | null;
+            /**
+             * Format: uuid
+             * @description Transaction ID
+             * @example cdb041da-90c6-4e03-82cf-3fa1178680ee
+             */
+            transactionId?: string;
+            transactionStatus?: components["schemas"]["AggregatedTransactionStatus"];
+            transactionType?: components["schemas"]["TransactionDetailEventType"];
         };
         GetWebhookEndpointIsvResponseDto: {
             /**
+             * Format: date-time
+             * @description When the endpoint was created.
+             * @example 2026-01-01T00:00:00Z
+             */
+            createdOn?: string;
+            /**
              * Format: uuid
              * @description Unique endpoint identifier.
+             * @example 822cac14-62bb-493b-b714-7d40de58c43b
              */
-            id?: string;
-            /** @description Display name. */
-            name?: string | null;
-            /** @description HTTPS callback URL. */
+            endpointId?: string;
+            /**
+             * @description Display name.
+             * @example Production webhook
+             */
+            endpointName?: string | null;
+            endpointStatus?: components["schemas"]["WebhookEndpointStatus"];
+            /**
+             * @description HTTPS callback URL.
+             * @example https://example.com/webhooks
+             */
             endpointUrl?: string | null;
-            status?: components["schemas"]["WebhookEndpointStatus"];
             /** @description Subscribed event types. */
             eventTypes?: components["schemas"]["WebhookEventType"][] | null;
             /**
              * Format: date-time
-             * @description When the endpoint was created.
-             */
-            createdOn?: string;
-            /**
-             * Format: date-time
              * @description When the endpoint was last updated.
+             * @example 2026-01-01T00:00:00Z
              */
             modifiedOn?: string;
         };
-        /** @description Request for ach operations (hold or release hold) */
-        HoldActionRequestDto: {
-            /**
-             * Format: uuid
-             * @description ID of the transaction
-             */
-            transactionId?: string;
+        /** @enum {string} */
+        IdentityType: "Portal" | "ApiKey" | "Terminal" | "Invoice" | "QuickPayment" | "WebComponent" | "Subscription" | "MobileApp" | "TapToPay" | "Checkout" | "PaymentLink";
+        InternalExceptionExample: {
+            cause?: string | null;
+            correlationId?: string | null;
+            details?: string | null;
+            documentationUrl?: string | null;
+            entityId?: string | null;
+            errorCode?: string | null;
+            exceptionType?: string | null;
+            resolution?: string | null;
+            source?: string | null;
+            /** Format: int32 */
+            statusCode?: number | null;
+            title?: string | null;
         };
-        /** @description Response for ACH secondary operations (Hold, Release Hold). */
-        HoldActionResponseDto: {
-            /**
-             * Format: uuid
-             * @description Transaction ID
-             */
-            transactionId?: string;
-            type?: components["schemas"]["TransactionDetailEventType"];
-            transactionStatus?: components["schemas"]["TransactionStatus"];
-            processorResponse?: components["schemas"]["ProcessorResponseDto"];
+        KeyValuePairOfStringAndString: {
+            key?: string | null;
+            value?: string | null;
         };
-        L2SettingsDto: {
+        Level2SettingsDto: {
             /**
              * Format: double
-             * @description Default sale tax rate in percentage. Must be between 0% - 22%.
+             * @description Default sale tax rate. Must be between 0 and 22.
              *     Applicable only for Level 2 AutoFill.
+             *     Encoded as raw percentage — e.g. 8.5 represents 8.5%.
+             * @example 8.5
              */
             taxRate?: number | null;
         };
-        L3SettingsDto: {
+        Level3SettingsDto: {
+            /**
+             * Format: double
+             * @description Indicates the percentage for any import or export duties included in the order.
+             *     Encoded as raw percentage — e.g. 2.5 represents 2.5%.
+             * @example 2.5
+             */
+            dutyChargeRate?: number | null;
             product?: components["schemas"]["ProductDto"];
             /**
              * Format: double
              * @description The percentage for shipping or freight charges applied to a product or transaction.
+             *     Encoded as raw percentage — e.g. 2.5 represents 2.5%.
+             * @example 2.5
              */
-            shippingCharge?: number | null;
-            /**
-             * Format: double
-             * @description Indicates the percentage for any import or export duties included in the order.
-             */
-            dutyChargeRate?: number | null;
+            shippingChargeRate?: number | null;
         };
         /** @description Settlement batch details */
         ListBatchesResponseDto: {
             /**
-             * Format: uuid
-             * @description Unique identifier of the settlement batch
-             */
-            id?: string | null;
-            /**
-             * Format: uuid
-             * @description Payment processor identifier associated with this batch
-             */
-            paymentProcessorId?: string;
-            /** @description Name of the payment processor */
-            paymentProcessorName?: string | null;
-            /** @description External batch identifier from the payment processor */
-            externalBatchId?: string | null;
-            /**
              * Format: date-time
              * @description Date and time when the batch was created or processed
+             * @example 2026-01-01T00:00:00Z
              */
             batchDateTime?: string | null;
             /**
-             * Format: int32
-             * @description Total number of transactions in the batch
+             * Format: uuid
+             * @description Unique identifier of the settlement batch
+             * @example 42df0a13-4bf4-48f8-929c-08a379c0a0d6
              */
-            transactionCount?: number;
+            batchId?: string | null;
+            /**
+             * @description External batch identifier from the payment processor
+             * @example BATCH-EXT-001
+             */
+            externalBatchId?: string | null;
             /**
              * Format: double
              * @description Net amount after all transactions (sales minus refunds)
+             * @example 9500
              */
             netAmount?: number;
             /**
+             * Format: uuid
+             * @description Payment processor identifier associated with this batch
+             * @example e29f84ab-a3f3-4bc9-a04e-4b3e3f58d46b
+             */
+            paymentProcessorId?: string;
+            /**
+             * @description Name of the payment processor
+             * @example TSYS
+             */
+            paymentProcessorName?: string | null;
+            /**
              * Format: double
              * @description Total amount of refunds in the batch
+             * @example 500
              */
             refundsAmount?: number;
             /**
              * Format: double
              * @description Total amount of sales in the batch
+             * @example 10000
              */
             salesAmount?: number;
             status?: components["schemas"]["SettlementBatchStatus"];
+            /**
+             * Format: int32
+             * @description Total number of transactions in the batch
+             */
+            transactionCount?: number;
         };
         ListCustomersResponseDto: {
+            billingAddress?: components["schemas"]["AddressDto"];
+            /** @description Company name */
+            companyName?: string | null;
             /**
              * Format: uuid
              * @description Customer ID
+             * @example 65dd7e1c-8b72-40ca-ba5e-8e318a6da907
              */
-            id?: string;
-            /** @description External ID */
+            customerId?: string;
+            /**
+             * @description Email address
+             * @example jane.doe@example.com
+             */
+            email?: string | null;
+            /**
+             * @description External ID
+             * @example CUST-EXT-001
+             */
             externalId?: string | null;
             /** @description First name */
             firstName?: string | null;
             /** @description Last name */
             lastName?: string | null;
-            /** @description Company name */
-            companyName?: string | null;
-            /** @description Email address */
-            email?: string | null;
-            /** @description The customer's mobile phone number. */
-            mobileNumber?: string | null;
-            billingAddress?: components["schemas"]["AddressDto"];
             /**
              * Format: date-time
              * @description Last transaction date
+             * @example 2026-01-01T00:00:00Z
              */
             lastTransactionDate?: string | null;
+            /**
+             * @description The customer's mobile phone number.
+             * @example +14125553845
+             */
+            mobilePhoneNumber?: string | null;
             /**
              * Format: int32
              * @description Number of payment methods
              */
             paymentMethodsCount?: number;
         };
-        ListPosTransactionsResponseDto: {
-            /**
-             * Format: uuid
-             * @description ID of POS transaction
-             */
-            id?: string;
-            /**
-             * Format: date-time
-             * @description Timestamp of POS transaction creation
-             */
-            createdOn?: string;
-            /**
-             * Format: uuid
-             * @description ID of terminal that handled the POS Transaction
-             */
-            terminalId?: string;
-            status?: components["schemas"]["PosTransactionStatus"];
-            /**
-             * Format: uuid
-             * @description ID of attached transaction. Available after processing.
-             */
-            transactionId?: string | null;
-            /**
-             * Format: double
-             * @description Transaction amount for transaction types that require Amount
-             */
-            amount?: number | null;
-            /** @description ISO 4217 currency code (e.g., "USD", "EUR"). See: https://en.wikipedia.org/wiki/ISO_4217 */
-            currencyCode?: string | null;
-            /**
-             * Format: uuid
-             * @description Transaction ID for Void, Capture, Refund operations
-             */
-            targetTransactionId?: string | null;
-            transactionType?: components["schemas"]["TransactionType"];
-        };
         /** @description Response DTO for a terminal in the list. */
         ListTerminalsResponseDto: {
-            /**
-             * Format: uuid
-             * @description Terminal unique identifier
-             */
-            id?: string;
-            /**
-             * Format: uuid
-             * @description Merchant unique identifier associated with the terminal
-             */
-            merchantId?: string | null;
-            /** @description Company name of the merchant associated with the terminal */
-            merchantCompanyName?: string | null;
-            /** @description Terminal serial number */
-            serialNumber?: string | null;
-            terminalManufacturer?: components["schemas"]["TerminalManufacturer"];
-            terminalModel?: components["schemas"]["TerminalModel"];
-            deliveryStatus?: components["schemas"]["TerminalDeliveryStatus"];
-            terminalMode?: components["schemas"]["TerminalMode"];
             connectionStatus?: components["schemas"]["TerminalConnectionStatus"];
             /**
              * Format: date-time
              * @description Last seen online timestamp
+             * @example 2026-01-01T00:00:00Z
              */
-            lastSeenTimestamp?: string | null;
-        };
-        ListWebhookEndpointsIsvResponseDto: {
-            /** @description List of webhook endpoints. */
-            data?: components["schemas"]["GetWebhookEndpointIsvResponseDto"][] | null;
+            lastSeenOn?: string | null;
+            /** @description Company name of the merchant associated with the terminal */
+            merchantCompanyName?: string | null;
+            /**
+             * Format: uuid
+             * @description Merchant unique identifier associated with the terminal
+             * @example 296d089a-a575-4275-b28c-d22c95d52db3
+             */
+            merchantId?: string | null;
+            /**
+             * @description Terminal serial number
+             * @example SN0123456789
+             */
+            serialNumber?: string | null;
+            /**
+             * Format: uuid
+             * @description Terminal unique identifier
+             * @example b58ca65f-8735-48c6-9123-bf27f97b30ee
+             */
+            terminalId?: string;
+            terminalManufacturer?: components["schemas"]["TerminalManufacturer"];
+            terminalMode?: components["schemas"]["TerminalMode"];
+            terminalModel?: components["schemas"]["TerminalModel"];
+            terminalStatus?: components["schemas"]["TerminalPosStatus"];
         };
         ListWebhookEventTypesIsvResponseDto: {
             /** @description Subscribable webhook event types. System-only events (e.g. ping) are excluded. */
-            data?: components["schemas"]["WebhookEventTypeIsvDto"][] | null;
-        };
-        /** @description Single contact information record */
-        MerchantContactInfoDto: {
-            /**
-             * @description City name.
-             *     Alphanumeric and Special Character | Min Length=6 Max Length=128.
-             */
-            city?: string | null;
-            /** @description Country code in ISO 3166-1 alpha-2 format (e.g., "US", "CA", "GB"). */
-            countryCode?: string | null;
-            /**
-             * @description Address line 1.
-             *     Alphanumeric and Special Character | Min Length=6 Max Length=128.
-             */
-            line1?: string | null;
-            /**
-             * @description Address line 2.
-             *     Alphanumeric and Special Character | Min Length=6 Max Length=128.
-             */
-            line2?: string | null;
-            /**
-             * @description Postal/ZIP code.
-             *     Alphanumeric and Special Character | Min Length=2 Max Length=15.
-             */
-            postalCode?: string | null;
-            /**
-             * @description ISO 3166-2 subdivision code.
-             *     For US states, the USPS two-letter abbreviation is used (e.g., "NY", "CA", "TX").
-             *     See: https://en.wikipedia.org/wiki/ISO_3166-2:US
-             */
-            stateCode?: string | null;
-            /**
-             * Format: uuid
-             * @description Unique identifier of the contact information record
-             */
-            id?: string;
-            /** @description Name or label of the address */
-            addressName?: string | null;
-            /** @description Email address */
-            email?: string | null;
-            /** @description Business phone number */
-            mobileNumber?: string | null;
-            /** @description Whether this is the main address */
-            isMainAddress?: boolean;
-            /** @description Whether this is the default address */
-            isDefaultAddress?: boolean;
+            items?: components["schemas"]["WebhookEventTypeIsvDto"][] | null;
         };
         /** @enum {string} */
         MobilePlatform: "iOS" | "Android";
+        NotFoundExceptionExample: {
+            cause?: string | null;
+            correlationId?: string | null;
+            details?: string | null;
+            documentationUrl?: string | null;
+            entityId?: string | null;
+            errorCode?: string | null;
+            exceptionType?: string | null;
+            resolution?: string | null;
+            source?: string | null;
+            /** Format: int32 */
+            statusCode?: number | null;
+            title?: string | null;
+        };
+        /** @enum {string} */
+        NotificationDeliveryMethod: "None" | "Sms" | "Email";
+        /** @description Pagination metadata describing the current page and the full result set. */
+        PageInfoDto: {
+            /**
+             * @description True when at least one more page exists after the current one.
+             * @example false
+             */
+            hasMore?: boolean;
+            /**
+             * Format: int32
+             * @description Zero-based page index, echoed from the request.
+             * @example 0
+             */
+            pageIndex?: number;
+            /**
+             * Format: int32
+             * @description Number of items per page, echoed from the request.
+             * @example 20
+             */
+            pageSize?: number;
+            /**
+             * Format: int32
+             * @description Total number of items across all pages.
+             * @example 17
+             */
+            totalItems?: number;
+            /**
+             * Format: int32
+             * @description Total number of pages for the current page size.
+             * @example 1
+             */
+            totalPages?: number;
+        };
+        /**
+         * @description Standard paginated response envelope: the requested page of items plus
+         *     the Arise.IsvApiBff.Contracts.v2.Common.PageInfoDto metadata used to drive navigation.
+         */
+        PagedResponseDtoOfGetWebhookEndpointIsvResponseDto: {
+            /** @description The items on the current page. Empty when the requested page is beyond the data. */
+            items?: components["schemas"]["GetWebhookEndpointIsvResponseDto"][] | null;
+            pageInfo?: components["schemas"]["PageInfoDto"];
+        };
+        /**
+         * @description Standard paginated response envelope: the requested page of items plus
+         *     the Arise.IsvApiBff.Contracts.v2.Common.PageInfoDto metadata used to drive navigation.
+         */
+        PagedResponseDtoOfListBatchesResponseDto: {
+            /** @description The items on the current page. Empty when the requested page is beyond the data. */
+            items?: components["schemas"]["ListBatchesResponseDto"][] | null;
+            pageInfo?: components["schemas"]["PageInfoDto"];
+        };
+        /**
+         * @description Standard paginated response envelope: the requested page of items plus
+         *     the Arise.IsvApiBff.Contracts.v2.Common.PageInfoDto metadata used to drive navigation.
+         */
+        PagedResponseDtoOfListCustomersResponseDto: {
+            /** @description The items on the current page. Empty when the requested page is beyond the data. */
+            items?: components["schemas"]["ListCustomersResponseDto"][] | null;
+            pageInfo?: components["schemas"]["PageInfoDto"];
+        };
+        /**
+         * @description Standard paginated response envelope: the requested page of items plus
+         *     the Arise.IsvApiBff.Contracts.v2.Common.PageInfoDto metadata used to drive navigation.
+         */
+        PagedResponseDtoOfListTerminalsResponseDto: {
+            /** @description The items on the current page. Empty when the requested page is beyond the data. */
+            items?: components["schemas"]["ListTerminalsResponseDto"][] | null;
+            pageInfo?: components["schemas"]["PageInfoDto"];
+        };
+        /**
+         * @description Standard paginated response envelope: the requested page of items plus
+         *     the Arise.IsvApiBff.Contracts.v2.Common.PageInfoDto metadata used to drive navigation.
+         */
+        PagedResponseDtoOfPaymentMethodResponseDto: {
+            /** @description The items on the current page. Empty when the requested page is beyond the data. */
+            items?: components["schemas"]["PaymentMethodResponseDto"][] | null;
+            pageInfo?: components["schemas"]["PageInfoDto"];
+        };
+        /**
+         * @description Standard paginated response envelope: the requested page of items plus
+         *     the Arise.IsvApiBff.Contracts.v2.Common.PageInfoDto metadata used to drive navigation.
+         */
+        PagedResponseDtoOfPosTransactionSummaryResponseDto: {
+            /** @description The items on the current page. Empty when the requested page is beyond the data. */
+            items?: components["schemas"]["PosTransactionSummaryResponseDto"][] | null;
+            pageInfo?: components["schemas"]["PageInfoDto"];
+        };
+        /**
+         * @description Standard paginated response envelope: the requested page of items plus
+         *     the Arise.IsvApiBff.Contracts.v2.Common.PageInfoDto metadata used to drive navigation.
+         */
+        PagedResponseDtoOfTransactionSummaryResponseDto: {
+            /** @description The items on the current page. Empty when the requested page is beyond the data. */
+            items?: components["schemas"]["TransactionSummaryResponseDto"][] | null;
+            pageInfo?: components["schemas"]["PageInfoDto"];
+        };
+        /**
+         * @description Standard paginated response envelope: the requested page of items plus
+         *     the Arise.IsvApiBff.Contracts.v2.Common.PageInfoDto metadata used to drive navigation.
+         */
+        PagedResponseDtoOfWebhookDeliveryLogIsvSummaryDto: {
+            /** @description The items on the current page. Empty when the requested page is beyond the data. */
+            items?: components["schemas"]["WebhookDeliveryLogIsvSummaryDto"][] | null;
+            pageInfo?: components["schemas"]["PageInfoDto"];
+        };
         /** @description Payment configuration settings for the merchant */
         PaymentConfigurationResponseDto: {
-            zeroCostProcessingOption?: components["schemas"]["ZeroCostProcessingOption"];
-            /** @description Default tip percentage options */
-            defaultTipsOptions?: number[] | null;
+            addressVerificationServiceOptions?: components["schemas"]["PaymentConfigurationResponseDtoAddressVerificationServiceOptionsDto"];
+            /** @description Available card types */
+            availableCardTypes?: components["schemas"]["CardType"][] | null;
+            /** @description Available currencies */
+            availableCurrencies?: components["schemas"]["Currency"][] | null;
+            /** @description Available payment processors */
+            availablePaymentProcessors?: components["schemas"]["PaymentConfigurationResponseDtoPaymentProcessorDto"][] | null;
+            /** @description Available transaction types */
+            availableTransactionTypes?: components["schemas"]["TransactionType"][] | null;
             /**
-             * Format: double
-             * @description Default surcharge rate
+             * @description Company name
+             * @example Acme Inc.
              */
-            defaultSurchargeRate?: number | null;
+            companyName?: string | null;
+            currency?: components["schemas"]["Currency"];
             /**
              * Format: double
-             * @description Default cash discount rate
+             * @description Default cash discount rate. Encoded as raw percentage — e.g. 2.0 represents 2%.
+             * @example 2
              */
             defaultCashDiscountRate?: number | null;
             /**
              * Format: double
-             * @description Default dual pricing rate
+             * @description Default dual pricing rate. Encoded as raw percentage — e.g. 1.8 represents 1.8%.
+             * @example 1.8
              */
             defaultDualPricingRate?: number | null;
-            /** @description Available currencies */
-            availableCurrencies?: components["schemas"]["Currency"][] | null;
-            /** @description Available card types */
-            availableCardTypes?: components["schemas"]["CardType"][] | null;
-            /** @description Available transaction types */
-            availableTransactionTypes?: components["schemas"]["TransactionType"][] | null;
-            /** @description Whether tips are enabled */
-            isTipsEnabled?: boolean;
-            /** @description Available payment processors */
-            availablePaymentProcessors?: components["schemas"]["PaymentProcessorDto"][] | null;
-            avsOptions?: components["schemas"]["AvsOptionsDto"];
+            /**
+             * Format: double
+             * @description Default surcharge rate. Encoded as raw percentage — e.g. 1.5 represents 1.5%.
+             * @example 1.5
+             */
+            defaultSurchargeRate?: number | null;
+            /** @description Default tip percentage options */
+            defaultTipsOptions?: number[] | null;
             /** @description Whether terminal can save customer card after transaction */
             isCustomerCardSavingByTerminalEnabled?: boolean;
-            /** @description Company name */
-            companyName?: string | null;
-            /** @description Merchant Category Code */
-            mccCode?: string | null;
-            /** @description MCC code description */
-            mccCodeDescription?: string | null;
-            currency?: components["schemas"]["Currency"];
+            /** @description Whether tips are enabled */
+            isTipsEnabled?: boolean;
             /**
              * Format: double
              * @description Maximum transaction amount limit
+             * @example 10000
              */
             maxTransactionAmount?: number | null;
-            /** @description Tap to Pay Terminal Profile Id for iOS devices */
+            /**
+             * @description Merchant Category Code
+             * @example 5411
+             */
+            mccCode?: string | null;
+            /**
+             * @description MCC code description
+             * @example Grocery Stores, Supermarkets
+             */
+            mccCodeDescription?: string | null;
+            /**
+             * @description Tap to Pay Terminal Profile Id for iOS devices
+             * @example ttp-ios-profile-123
+             */
             ttpIosTerminalProfileId?: string | null;
+            zeroCostProcessingOption?: components["schemas"]["ZeroCostProcessingOption"];
+        };
+        PaymentConfigurationResponseDtoAddressVerificationServiceOptionsDto: {
+            /** @description Whether Address Verification Service is enabled */
+            isEnabled?: boolean;
+            profile?: components["schemas"]["AvsMerchantProfile"];
+        };
+        PaymentConfigurationResponseDtoPaymentProcessorDto: {
+            /** @description Whether this is the default payment processor */
+            isDefault?: boolean;
+            /**
+             * Format: uuid
+             * @description Payment processor identifier
+             * @example d529945e-8d10-4cb4-9dc3-718e57f3f14e
+             */
+            paymentProcessorId?: string;
+            /**
+             * @description Payment processor name
+             * @example TSYS
+             */
+            processorName?: string | null;
+            /** @description Settlement batch time slots */
+            settlementBatchTimeSlots?: components["schemas"]["PaymentConfigurationResponseDtoSettlementBatchTimeSlotDto"][] | null;
+            type?: components["schemas"]["PaymentProcessorType"];
+        };
+        PaymentConfigurationResponseDtoSettlementBatchTimeSlotDto: {
+            /**
+             * Format: int32
+             * @description Hours component of the time slot
+             */
+            hours?: number;
+            /**
+             * Format: int32
+             * @description Minutes component of the time slot
+             */
+            minutes?: number;
+            /**
+             * @description Timezone name (e.g. America/New_York)
+             * @example America/New_York
+             */
+            timezoneName?: string | null;
+        };
+        PaymentFailedExceptionExample: {
+            cause?: string | null;
+            correlationId?: string | null;
+            details?: string | null;
+            documentationUrl?: string | null;
+            entityId?: string | null;
+            errorCode?: string | null;
+            exceptionType?: string | null;
+            resolution?: string | null;
+            source?: string | null;
+            /** Format: int32 */
+            statusCode?: number | null;
+            title?: string | null;
         };
         PaymentMethodAchDetailsDto: {
-            /** @description Routing number */
-            routingNumber?: string | null;
-            /** @description Account number */
-            accountNumber?: string | null;
-            /** @description Tax ID */
-            taxId?: string | null;
             accountHolderType?: components["schemas"]["AccountHolderType"];
+            /**
+             * @description Account number
+             * @example 1234567890
+             */
+            accountNumber?: string | null;
             accountType?: components["schemas"]["AccountType"];
+            /**
+             * @description Routing number
+             * @example 021000021
+             */
+            routingNumber?: string | null;
+            /**
+             * @description Tax ID
+             * @example 12-3456789
+             */
+            taxId?: string | null;
         };
         PaymentMethodCardDetailsDto: {
-            /** @description The 13-19 digit card number (PAN) used for the transaction. */
+            /**
+             * @description The 13-19 digit card number (PAN) used for the transaction.
+             * @example 4111111111111111
+             */
             cardNumber?: string | null;
-            /** @description The three or four digit security code on the credit card. */
-            securityCode?: string | null;
             /**
              * Format: int32
              * @description The expiration month of the card (2-digit format: 01-12)
+             * @example 12
              */
             expirationMonth?: number | null;
             /**
              * Format: int32
              * @description The expiration year of the card (4-digit format: YYYY)
+             * @example 2030
              */
             expirationYear?: number | null;
+            /**
+             * @description The three or four digit security code on the card.
+             * @example 123
+             */
+            securityCode?: string | null;
         };
-        /** @enum {string} */
-        PaymentMethodType: "Card" | "ElectronicCheck" | "Cash";
-        PaymentProcessorDto: {
+        PaymentMethodResponseDto: {
+            ach?: components["schemas"]["PaymentMethodResponseDtoAchDetails"];
+            card?: components["schemas"]["PaymentMethodResponseDtoCardDetails"];
+            /**
+             * Format: date-time
+             * @description When the payment method was created
+             * @example 2026-01-01T00:00:00Z
+             */
+            createdOn?: string;
             /**
              * Format: uuid
-             * @description Payment processor identifier
+             * @description Linked customer Id, or null when this payment method is an orphan
+             *     owned by the merchant directly.
+             * @example 44a9341f-1a69-4707-a2f5-acf46ffa31b0
              */
-            id?: string;
-            /** @description Payment processor name */
-            name?: string | null;
-            /** @description Whether this is the default payment processor */
+            customerId?: string | null;
+            /**
+             * @description True when this is the customer's default payment method.
+             *     Always false for orphan payment methods.
+             * @example true
+             */
             isDefault?: boolean;
-            type?: components["schemas"]["PaymentProcessorType"];
-            /** @description Settlement batch time slots */
-            settlementBatchTimeSlots?: components["schemas"]["SettlementBatchTimeSlotDto"][] | null;
+            /**
+             * @description Display name
+             * @example My Visa Card
+             */
+            name?: string | null;
+            /**
+             * Format: uuid
+             * @description Payment method Id
+             * @example c905b13a-dcb1-4148-85e1-a92cad3e0f31
+             */
+            paymentMethodId?: string;
+            type?: components["schemas"]["PaymentMethodType"];
+        };
+        PaymentMethodResponseDtoAchDetails: {
+            accountHolderType?: components["schemas"]["AccountHolderType"];
+            /**
+             * @description ACH account number (masked)
+             * @example ****6789
+             */
+            accountNumber?: string | null;
+            accountType?: components["schemas"]["AccountType"];
+            /**
+             * @description ACH legal-entity name. Set on Business orphan PMs at create time
+             *     so it's available at transaction time when ContactInfo.CompanyName
+             *     is omitted on the request.
+             * @example Acme Corp Inc
+             */
+            companyName?: string | null;
+            /**
+             * @description ACH routing number
+             * @example 021000021
+             */
+            routingNumber?: string | null;
+            /**
+             * @description ACH tax id
+             * @example ***-**-6789
+             */
+            taxId?: string | null;
+        };
+        PaymentMethodResponseDtoCardDetails: {
+            /**
+             * @description Masked card number
+             * @example ************1111
+             */
+            cardMask?: string | null;
+            cardTokenType?: components["schemas"]["TokenType"];
+            /**
+             * Format: int32
+             * @description Card expiration month
+             * @example 12
+             */
+            expirationMonth?: number;
+            /**
+             * Format: int32
+             * @description Card expiration year
+             * @example 2027
+             */
+            expirationYear?: number;
         };
         /** @enum {string} */
+        PaymentMethodType: "Card" | "ACH" | "Cash";
+        /** @enum {string} */
         PaymentProcessorType: "Tsys" | "Ach" | "SandboxCard" | "SandboxAch";
+        /**
+         * @description Payment session status<p>Possible values:</p>
+         *     <ul>
+         *     <li><b>1 - Created</b>: </li>
+         *     <li><b>2 - Cancelled</b>: </li>
+         *     <li><b>3 - Completed</b>: </li>
+         *     <li><b>4 - Failed</b>: </li>
+         *     <li><b>5 - Expired</b>: </li>
+         *     </ul>
+         * @enum {string}
+         */
+        PaymentSessionStatusDto: "Created" | "Cancelled" | "Completed" | "Failed" | "Expired";
         PingWebhookIsvResponseDto: {
-            /** @description Whether the ping was delivered successfully (2xx response). */
-            success?: boolean;
             /**
              * Format: int32
              * @description HTTP status code returned by the endpoint, if available.
+             * @example 200
              */
-            statusCode?: number | null;
+            endpointHTTPResponseCode?: number | null;
+            /**
+             * @description Error message if delivery failed.
+             * @example Connection timed out after 10s
+             */
+            errorMessage?: string | null;
+            /** @description Whether the ping was delivered successfully (2xx response). */
+            isDelivered?: boolean;
             /**
              * Format: int32
              * @description Round-trip duration in milliseconds.
+             * @example 142
              */
-            durationMs?: number;
-            /** @description Error message if delivery failed. */
-            errorMessage?: string | null;
+            roundTripDurationMs?: number;
+        };
+        /**
+         * @description Extra amounts for a POS transaction. For tips, supply <b>either</b>Arise.IsvApiBff.Contracts.v2.PosTransactions.Requests.PosExtraAmountsDto.TipAmount<b>or</b>Arise.IsvApiBff.Contracts.v2.PosTransactions.Requests.PosExtraAmountsDto.TipRate — not both. Tip is allowed only when
+         *     `transactionType` is <b>Authorization</b> or <b>Sale</b>, and requires the
+         *     merchant to have tips enabled and tip-adjustment disabled.
+         */
+        PosExtraAmountsDto: {
+            /**
+             * Format: double
+             * @description Predefined tip amount (fixed dollar) supplied by the ISV.
+             *     Mutually exclusive with Arise.IsvApiBff.Contracts.v2.PosTransactions.Requests.PosExtraAmountsDto.TipRate.
+             * @example 5
+             */
+            tipAmount?: number | null;
+            /**
+             * Format: double
+             * @description Predefined tip rate as a percent of the subtotal (e.g. 18 means 18%).
+             *     Mutually exclusive with Arise.IsvApiBff.Contracts.v2.PosTransactions.Requests.PosExtraAmountsDto.TipAmount.
+             * @example 18
+             */
+            tipRate?: number | null;
         };
         /** @enum {string} */
-        PosTransactionReadingMethod: "Reading" | "KeyedIn";
+        PosInitiationChannel: "Cloud" | "Deeplink";
         /** @enum {string} */
-        PosTransactionStatus: "TerminalConnecting" | "TransactionProcessing" | "DeclinedByProcessor" | "CancelByPos" | "CancelByTerminal" | "Completed" | "Error" | "Inconsistency" | "TerminalOffline" | "TransactionSentToProcessor";
+        PosReadingMethod: "Regular" | "KeyedEntry";
+        /**
+         * @description Full POS transaction object. Returned identically by create, get-by-id, and cancel —
+         *     a POS transaction is a payment intent; the payment outcome lives on Arise.IsvApiBff.Contracts.v2.PosTransactions.Responses.PosTransactionResponseDto.LinkedTransaction.
+         */
+        PosTransactionResponseDto: {
+            /**
+             * Format: double
+             * @description Base transaction amount (subtotal, before tip)
+             * @example 99.99
+             */
+            baseAmount?: number | null;
+            captureMethod?: components["schemas"]["CaptureMethod"];
+            /**
+             * Format: date-time
+             * @description Timestamp of POS transaction creation
+             * @example 2026-01-01T00:00:00Z
+             */
+            createdOn?: string;
+            /**
+             * @description ISO 4217 currency code (e.g., "USD", "EUR"). See: https://en.wikipedia.org/wiki/ISO_4217
+             * @example USD
+             */
+            currencyCode?: string | null;
+            /**
+             * Format: uuid
+             * @description ARISE Customer ID associated with the transaction, if any.
+             * @example 9f2b1c4d-7e3a-4f8b-90c1-2d3e4f5a6b7c
+             */
+            customerId?: string | null;
+            extraAmounts?: components["schemas"]["PosExtraAmountsDto"];
+            initiationChannel?: components["schemas"]["PosInitiationChannel"];
+            linkedTransaction?: components["schemas"]["GetTransactionResponseDto"];
+            /**
+             * Format: uuid
+             * @description ARISE Merchant ID
+             * @example f3d3c21f-3deb-4bd6-a4b4-3081b93d410a
+             */
+            merchantId?: string;
+            /**
+             * Format: date-time
+             * @description Timestamp of the last POS transaction modification
+             * @example 2026-01-01T00:00:00Z
+             */
+            modifiedOn?: string;
+            /**
+             * Format: uuid
+             * @description Predefined Payment Processor ID
+             * @example ce84dc63-ff25-4d7e-ae2f-287641d9cbe1
+             */
+            paymentProcessorId?: string | null;
+            /**
+             * @description External POS Device ID
+             * @example POS-DEVICE-001
+             */
+            posDeviceId?: string | null;
+            /**
+             * Format: uuid
+             * @description ID of POS transaction
+             * @example 201cc2fb-d9bd-4cc6-a254-b913f9a6b358
+             */
+            posTransactionId?: string;
+            posTransactionStatus?: components["schemas"]["AggregatedPosTransactionStatus"];
+            /**
+             * Format: double
+             * @description Processed total actually charged (base + tip + fees). Null until the transaction is processed.
+             * @example 104.99
+             */
+            processedAmount?: number | null;
+            /**
+             * @description External Reference ID
+             * @example REF-EXT-12345
+             */
+            referenceId?: string | null;
+            /**
+             * Format: uuid
+             * @description ID of terminal that handled the POS Transaction
+             * @example 9e617a7e-5a7b-415f-abbb-8df16dd2e64f
+             */
+            terminalId?: string;
+            /**
+             * Format: uuid
+             * @description ID of the attached transaction. Populated only when `posTransactionStatus` is `Completed`.
+             * @example f01339ec-8184-48c7-b58d-0780d6499ef4
+             */
+            transactionId?: string | null;
+        };
+        /**
+         * @description Reduced POS transaction object returned by the list endpoint — sufficient for rendering
+         *     transaction lists and reconciliation views. `linkedTransaction` is intentionally
+         *     omitted; retrieve it via Get POS Transaction by ID.
+         */
+        PosTransactionSummaryResponseDto: {
+            /**
+             * Format: double
+             * @description Base transaction amount (subtotal, before tip)
+             * @example 99.99
+             */
+            baseAmount?: number | null;
+            captureMethod?: components["schemas"]["CaptureMethod"];
+            /**
+             * Format: date-time
+             * @description Timestamp of POS transaction creation
+             * @example 2026-01-01T00:00:00Z
+             */
+            createdOn?: string;
+            /**
+             * @description ISO 4217 currency code (e.g., "USD", "EUR"). See: https://en.wikipedia.org/wiki/ISO_4217
+             * @example USD
+             */
+            currencyCode?: string | null;
+            /**
+             * Format: uuid
+             * @description ARISE Customer ID associated with the transaction, if any.
+             * @example 9f2b1c4d-7e3a-4f8b-90c1-2d3e4f5a6b7c
+             */
+            customerId?: string | null;
+            extraAmounts?: components["schemas"]["PosExtraAmountsDto"];
+            initiationChannel?: components["schemas"]["PosInitiationChannel"];
+            /**
+             * Format: uuid
+             * @description ARISE Merchant ID
+             * @example f3d3c21f-3deb-4bd6-a4b4-3081b93d410a
+             */
+            merchantId?: string;
+            /**
+             * Format: date-time
+             * @description Timestamp of the last POS transaction modification
+             * @example 2026-01-01T00:00:00Z
+             */
+            modifiedOn?: string;
+            /**
+             * Format: uuid
+             * @description Predefined Payment Processor ID
+             * @example ce84dc63-ff25-4d7e-ae2f-287641d9cbe1
+             */
+            paymentProcessorId?: string | null;
+            /**
+             * @description External POS Device ID
+             * @example POS-DEVICE-001
+             */
+            posDeviceId?: string | null;
+            /**
+             * Format: uuid
+             * @description ID of POS transaction
+             * @example 8be0aa51-eae6-4c30-a558-8579f3832f98
+             */
+            posTransactionId?: string;
+            posTransactionStatus?: components["schemas"]["AggregatedPosTransactionStatus"];
+            /**
+             * Format: double
+             * @description Processed total actually charged (base + tip + fees). Null until the transaction is processed.
+             * @example 104.99
+             */
+            processedAmount?: number | null;
+            /**
+             * @description External Reference ID
+             * @example REF-EXT-12345
+             */
+            referenceId?: string | null;
+            /**
+             * Format: uuid
+             * @description ID of terminal that handled the POS Transaction
+             * @example d0fc1606-47ea-464b-a31a-3971c9822d10
+             */
+            terminalId?: string;
+            /**
+             * Format: uuid
+             * @description ID of the attached transaction. Populated only when `posTransactionStatus` is `Completed`.
+             * @example a62fa6a1-8a2a-44f9-983d-c757017d4b66
+             */
+            transactionId?: string | null;
+        };
         /**
          * @description <p>Possible values:</p>
          *     <ul>
@@ -7333,88 +13690,103 @@ export interface components {
              * Format: uuid
              * @description Terminal ID from the terminal that will initiate and handle the transaction receipt print request.
              *     Terminal must be in the semi-integrated mode and available (online and ready).
+             * @example 7909bab1-5d93-4262-977d-e3f6277f58ef
              */
             terminalId?: string;
         };
-        /** @description Payment processor response details */
-        ProcessorResponseDto: {
-            /** @description Processor name (e.g., "TSYS", "ACH") */
-            processorName?: string | null;
-            /** @description Response code from processor (e.g., "00", "051") */
-            responseCode?: string | null;
-            /** @description Response message (e.g., "Approved", "Declined") */
-            responseMessage?: string | null;
-            /** @description Human-readable response definition */
-            responseDefinition?: string | null;
+        /** @description Payment processor identifiers for a transaction. */
+        ProcessorDetailsDto: {
+            /**
+             * @description Authorization code returned by the processor.
+             * @example VTLMC1
+             */
+            authCode?: string | null;
+            /**
+             * @description Merchant identifier (MID) assigned by the processor.
+             * @example 932129304958123
+             */
+            mid?: string | null;
+            /**
+             * @description Retrieval reference number (RRN) returned by the processor.
+             * @example 59d5df1aa58d4de3969175eeece571c1
+             */
+            rrn?: string | null;
+            /**
+             * @description Terminal identifier (TID) assigned by the processor.
+             * @example 6095275263
+             */
+            tid?: string | null;
         };
         ProductDto: {
-            /** @description The name of the product. */
-            name?: string | null;
-            /** @description The merchant assigned unique product identification code. */
+            /**
+             * @description The merchant assigned unique product identification code.
+             * @example SKU-12345
+             */
             code?: string | null;
             /**
              * Format: double
-             * @description The unit price for the product.
+             * @description Product discount percentage. Encoded as raw percentage — e.g. 10 represents 10%.
+             * @example 10
              */
-            unitPrice?: number | null;
-            /** @description The unit of measurement for the product. */
+            discountPercentage?: number | null;
+            /**
+             * @description The unit of measurement for the product.
+             * @example EA
+             */
             measurementUnit?: string | null;
+            /**
+             * @description The name of the product.
+             * @example Widget
+             */
+            productName?: string | null;
             /**
              * Format: double
              * @description Quantity of the product.
+             * @example 1
              */
             quantity?: number | null;
             /**
              * Format: double
-             * @description Product discount percentage.
+             * @description The unit price for the product.
+             * @example 19.99
              */
-            discountPercentage?: number | null;
-            /** @description Product description. */
-            description?: string | null;
+            unitPrice?: number | null;
+        };
+        RateLimitExceededExceptionExample: {
+            cause?: string | null;
+            correlationId?: string | null;
+            details?: string | null;
+            documentationUrl?: string | null;
+            entityId?: string | null;
+            errorCode?: string | null;
+            exceptionType?: string | null;
+            resolution?: string | null;
+            source?: string | null;
+            /** Format: int32 */
+            statusCode?: number | null;
+            title?: string | null;
+        };
+        /**
+         * @description Refund posture for a transaction that can be refunded. Null on transactions that are
+         *     themselves refunds or credits — those cannot be refunded again.
+         */
+        RefundDetailsDto: {
+            /**
+             * Format: double
+             * @description Amount still refundable — authoritative, i.e. captured amount minus Arise.IsvApiBff.Contracts.v2.Transaction.SharedDtos.RefundDetailsDto.RefundedAmount,
+             *     as reported by the gateway.
+             * @example 120
+             */
+            availableRefundAmount?: number;
+            /**
+             * Format: double
+             * @description Total amount already refunded against this transaction.
+             * @example 0
+             */
+            refundedAmount?: number;
         };
         /** @enum {string} */
         ResponseCode: "Approve" | "Decline" | "Error";
-        /** @description Response details for Declined or Failed transactions */
-        ResponseDetailsDto: {
-            /** @description Response code (e.g., "051") */
-            code?: string | null;
-            /** @description Response message (e.g., "Insufficient funds") */
-            message?: string | null;
-            /** @description Source of the response (e.g., "PROCESSOR", "GATEWAY") */
-            source?: string | null;
-        };
-        RetryWebhookDeliveryIsvResponseDto: {
-            /** Format: uuid */
-            webhookEndpointId?: string;
-            /** Format: uuid */
-            eventId?: string;
-            eventType?: components["schemas"]["WebhookEventType"];
-            status?: components["schemas"]["WebhookDeliveryAttemptStatus"];
-            /** Format: int32 */
-            attemptNumber?: number;
-        };
-        /**
-         * @description Shared response for reversal and credit operations.
-         *     Used by POST /v2/transactions/{transactionId}/reversal (card void, card refund, ACH void, ACH refund)
-         *     and POST /v2/transactions/credit (card unreferenced refund, ACH credit).
-         *     Slim DTO focused on the operation result — no AmountDetails breakdown, AvsResponse, or Receipt.
-         */
-        ReversalOperationResponseDto: {
-            /**
-             * Format: uuid
-             * @description Transaction ID
-             */
-            transactionId?: string;
-            transactionStatus?: components["schemas"]["TransactionStatus"];
-            /**
-             * Format: double
-             * @description Processed amount
-             */
-            processedAmount?: number;
-            /** @description ISO 4217 currency code (e.g., "USD") */
-            currencyCode?: string | null;
-            processorResponse?: components["schemas"]["ProcessorResponseDto"];
-        };
         /**
          * @description Request to reverse a transaction. The backend automatically determines
          *     whether to void or refund based on the transaction's settlement status.
@@ -7425,50 +13797,56 @@ export interface components {
              * @description Amount to refund. Optional — for partial card refunds only.
              *     When null or omitted, the full transaction amount is refunded.
              *     Ignored for void operations and ACH refunds.
+             * @example 50
              */
-            amount?: number | null;
+            reversalAmount?: number | null;
         };
         /** @description Request to send a transaction receipt by SMS. */
         SendReceiptRequestDto: {
-            /** @description Recipient mobile phone number. */
-            mobileNumber: string;
             /** @description Whether the customer has consented to receive the SMS */
-            customerConsent: boolean;
+            hasCustomerConsent: boolean;
+            /**
+             * @description Receipt destination. Currently SMS-only, so this is the recipient's mobile phone number
+             *     in E.164 format; the generalized name allows other channels (e.g. email) later.
+             * @example +14125553845
+             */
+            recipient: string;
+            shareBy: components["schemas"]["NotificationDeliveryMethod"];
         };
+        /** @enum {string} */
+        SessionMode: "Payment" | "SaveMethod" | "PaymentAndSave";
         /** @description Request to settle (close) a batch of transactions for a given payment processor */
         SettleTransactionsRequestDto: {
             /**
              * Format: uuid
              * @description The payment processor ID to settle transactions for
+             * @example 70f07e54-ad9d-417c-9ab4-d4acc5302aa8
              */
             paymentProcessorId: string;
         };
         /** @description Response after settling (closing) a batch of transactions */
         SettleTransactionsResponseDto: {
-            status?: components["schemas"]["ResponseCode"];
-            /** @description Descriptive message about the settlement result */
+            /**
+             * @description Descriptive message about the settlement result
+             * @example Batch settled successfully
+             */
             message?: string | null;
-            /** @description Response code from the payment processor */
+            /**
+             * @description Response code from the payment processor
+             * @example 00
+             */
             processorResponseCode?: string | null;
+            status?: components["schemas"]["ResponseCode"];
         };
         /** @enum {string} */
         SettlementBatchStatus: "Open" | "Settled";
-        SettlementBatchTimeSlotDto: {
-            /**
-             * Format: int32
-             * @description Hours component of the time slot
-             */
-            hours?: number;
-            /**
-             * Format: int32
-             * @description Minutes component of the time slot
-             */
-            minutes?: number;
-            /** @description Timezone name (e.g. America/New_York) */
-            timezoneName?: string | null;
+        /** @description Suggested tips information. */
+        SuggestedTipsDto: {
+            /** Format: double */
+            tipAmount?: number;
+            /** Format: double */
+            tipPercent?: number;
         };
-        /** @enum {string} */
-        TerminalAvailabilityStatus: "Ready" | "Busy";
         /** @enum {string} */
         TerminalConnectionStatus: "Online" | "Offline";
         /** @enum {string} */
@@ -7476,54 +13854,88 @@ export interface components {
         /** @enum {string} */
         TerminalDebitPinKey: "Injected" | "Missing";
         /** @enum {string} */
-        TerminalDeliveryStatus: "PendingShipment" | "Shipping" | "Active" | "Inactive";
-        /** @enum {string} */
         TerminalManufacturer: "Sunmi" | "Verifone";
         /** @enum {string} */
         TerminalMode: "Standalone" | "SemiIntegrated";
         /** @enum {string} */
         TerminalModel: "SunmiP2" | "SunmiP2LiteSe" | "VerifoneVictaMobile" | "VerifoneVictaPortable" | "SunmiP3H";
         /** @enum {string} */
-        TerminalPosStatus: "Active" | "Busy" | "Offline";
+        TerminalPosStatus: "Ready" | "Busy" | "Offline";
         /** @enum {string} */
         TerminalPrinterStatus: "Normal" | "NotNormal" | "NotSupported";
-        /** @description Request to adjust the tip amount on a card transaction. */
+        /**
+         * @description Request to adjust the tip on a card transaction. Provide exactly one of
+         *     Arise.IsvApiBff.Contracts.v2.Transaction.Requests.TipAdjustmentRequestDto.TipAmount or Arise.IsvApiBff.Contracts.v2.Transaction.Requests.TipAdjustmentRequestDto.TipRate.
+         */
         TipAdjustmentRequestDto: {
             /**
-             * Format: uuid
-             * @description ID of the transaction to adjust
+             * Format: double
+             * @description Tip as a fixed amount. Mutually exclusive with Arise.IsvApiBff.Contracts.v2.Transaction.Requests.TipAdjustmentRequestDto.TipRate.
+             * @example 5
              */
-            transactionId?: string;
+            tipAmount?: number | null;
             /**
              * Format: double
-             * @description Tip amount
+             * @description Tip as a percent of the transaction's base amount (e.g. 15 = 15%); the gateway integrates
+             *     it into the merchant's pricing formula. Mutually exclusive with Arise.IsvApiBff.Contracts.v2.Transaction.Requests.TipAdjustmentRequestDto.TipAmount.
+             * @example 15
              */
-            tipAmount?: number;
+            tipRate?: number | null;
         };
         /** @enum {string} */
         TokenType: "Local" | "Network";
-        TransactionAutofillResponseDto: {
-            l2Settings?: components["schemas"]["L2SettingsDto"];
-            l3Settings?: components["schemas"]["L3SettingsDto"];
-        };
+        /**
+         * @description Card Token type<p>Possible values:</p>
+         *     <ul>
+         *     <li><b>1 - Local</b>: Regular</li>
+         *     <li><b>2 - Network</b>: Network</li>
+         *     </ul>
+         * @enum {string}
+         */
+        TokenTypeDto: "Local" | "Network";
         /** @description Address Verification Service (AVS) response for card payments. */
-        TransactionAvsResponseDto: {
+        TransactionAddressVerificationServiceResponseDto: {
             action?: components["schemas"]["AvsActions"];
-            /** @description AVS response code from processor (e.g., "A", "Y", "N"). */
-            responseCode?: string | null;
-            /** @description Description of the AVS result (code description). */
+            /**
+             * @description Description of the Address Verification Service result (code description).
+             * @example Address and ZIP match
+             */
             description?: string | null;
+            /**
+             * @description Address Verification Service response code from processor (e.g., "A", "Y", "N").
+             * @example Y
+             */
+            responseCode?: string | null;
         };
+        /** @description Transaction autofill settings configured for the merchant. */
+        TransactionAutofillResponseDto: {
+            level2Settings?: components["schemas"]["Level2SettingsDto"];
+            level3Settings?: components["schemas"]["Level3SettingsDto"];
+        };
+        /** @description Card details exposed on transaction responses (masked / non-sensitive fields only). */
         TransactionCardDetailsDto: {
+            cardBrand?: components["schemas"]["CardType"];
+            cardDataSource?: components["schemas"]["CardDataSource"];
+            cardProcessedAsType?: components["schemas"]["CreditDebitType"];
+            cardType?: components["schemas"]["CreditDebitType"];
+            cardholderVerificationMethod?: components["schemas"]["CardholderAuthenticationMethod"];
+            emvTags?: components["schemas"]["EmvTagsDto"];
+            /**
+             * @description Masked card number (last 4 digits only).
+             * @example ************1111
+             */
             maskedCardNumber?: string | null;
-            cardType?: components["schemas"]["CardType"];
-            creditDebitType?: components["schemas"]["CreditDebitType"];
+            /**
+             * Format: uuid
+             * @description Identifier of the stored payment method, when the transaction used one.
+             */
+            paymentMethodId?: string | null;
         };
         /** @enum {string} */
-        TransactionDetailEventType: "Authorization" | "Sale" | "Capture" | "Void" | "Refund" | "TipAdjustment" | "CardAuthentication" | "Hold" | "UnHold" | "Credit";
+        TransactionDetailEventType: "Authorization" | "Sale" | "Capture" | "Void" | "Refund" | "TipAdjustment" | "CardAuthentication" | "Hold" | "UnHold" | "Credit" | "Settle";
         TransactionDetailsDto: {
-            cardData?: components["schemas"]["CardDataDto"];
             achData?: components["schemas"]["AchDataDto"];
+            cardData?: components["schemas"]["CardDataDto"];
         };
         /**
          * @description Combined Level 2 and Level 3 enhanced data for card transactions.
@@ -7532,207 +13944,707 @@ export interface components {
         TransactionEnhancedDataDto: {
             /**
              * Format: double
-             * @description Sales tax rate. Decimal Number. Max length=4. Allowed characters: 0-9 .(dot) Allowed range: 0.01 - 100
+             * @description Import or export duties on the order as a percentage rate (e.g. 2.5 = 2.5%). Must be between 0 and 100.
+             * @example 2.5
              */
-            salesTaxRate?: number | null;
-            /** @description The Value Added Tax(VAT) invoice number associated with the transaction. Max length=15. Allowed characters: a-z A-Z 0-9 Space */
+            dutyChargesRate?: number | null;
+            /**
+             * @description The Value Added Tax(VAT) invoice number associated with the transaction.
+             *     Between 1 and 15 characters; letters, numbers and spaces only.
+             * @example INV 001234
+             */
             invoiceNumber?: string | null;
-            /** @description The value used by the customer to identify an order. Issued by the buyer to the seller. Max length=25. Allowed characters: a-z A-Z 0-9 Space */
+            /** @description You can send multiple products in a request */
+            products?: components["schemas"]["TransactionProductDto"][] | null;
+            /**
+             * @description The value used by the customer to identify an order. Issued by the buyer to the seller.
+             * @example PO-2026-0001
+             */
             purchaseOrder?: string | null;
             /**
              * Format: double
-             * @description The dollar amount for shipping or freight charges applied to a product or transaction. Numeric. Max length=12. Allowed characters: 0-9 .(dot)
+             * @description Sales tax rate as a percentage between 0 and 100. Also limited to 4 characters by the TSYS field width (e.g. 8.25 / 99.9).
+             * @example 8.5
+             */
+            salesTaxRate?: number | null;
+            /**
+             * Format: double
+             * @description The dollar amount for shipping or freight charges applied to a product or transaction. Must be 0 or greater.
+             * @example 9.99
              */
             shippingCharges?: number | null;
-            /**
-             * Format: double
-             * @description Indicates the total charges for any import or export duties included in the order. Numeric. Max length=12. Allowed characters: 0-9 .(dot)
-             */
-            dutyCharges?: number | null;
-            /** @description You can send multiple products in a request */
-            products?: components["schemas"]["TransactionProductIsvDto"][] | null;
         };
         TransactionEventDto: {
-            type?: components["schemas"]["TransactionDetailEventType"];
-            status?: components["schemas"]["TransactionStatus"];
-            /** Format: double */
-            amount?: number;
-            /** Format: date-time */
-            dateTime?: string;
-            processorResponse?: components["schemas"]["ProcessorResponseDto"];
-        };
-        TransactionProductIsvDto: {
-            /** @description The name of the product. Alphanumeric and Special Characters. Min Length=1, max length=50. Allowed special characters: Space, Slash /, Hyphen -, Comma */
-            name?: string | null;
-            /** @description The merchant's assigned unique product identification code. Alphanumeric and Special Characters. Min length=1, max length=20. Allowed special characters: Space, Slash / */
-            code?: string | null;
             /**
              * Format: double
-             * @description The product amount. Numeric. Max length=12. Allowed characters: 0-9 .(dot)
+             * @description The requested amount for the operation.
+             * @example 99.99
              */
-            unitPrice?: number | null;
-            /** @description The unit of measurement for the product. Alphanumeric and special character Space. Max length=20 */
+            amount?: number;
+            /**
+             * Format: date-time
+             * @description When the event occurred.
+             * @example 2026-01-01T00:00:00Z
+             */
+            dateTime?: string;
+            declineDetails?: components["schemas"]["DeclineDetailsDto"];
+            /**
+             * Format: uuid
+             * @description On Refund events, the id of the refund transaction created by the event.
+             */
+            originalTransactionId?: string | null;
+            status?: components["schemas"]["TransactionStatus"];
+            type?: components["schemas"]["TransactionDetailEventType"];
+        };
+        /** @description Transaction operation information. */
+        TransactionOperationDto: {
+            /** Format: double */
+            availableAmount?: number | null;
+            suggestedTips?: components["schemas"]["SuggestedTipsDto"][] | null;
+            type?: string | null;
+            typeId?: components["schemas"]["TransactionTypeDto"];
+        };
+        /** @description A product line item in Level 3 enhanced transaction data. */
+        TransactionProductDto: {
+            /**
+             * Format: double
+             * @description The discount percentage applied to a product. This does not impact transaction functionality. It is used for reporting purposes. Must be between 0 and 100.
+             * @example 10
+             */
+            discountRate?: number | null;
+            /**
+             * @description The unit of measurement for the product. Between 1 and 20 characters; letters, numbers and spaces only.
+             * @example EA
+             */
             measurementUnit?: string | null;
             /**
+             * @description The merchant's assigned unique product identification code. Between 1 and 20 characters.
+             * @example ABCD-1234
+             */
+            productCode?: string | null;
+            /**
+             * @description The description of the product.
+             * @example Product A description
+             */
+            productDescription?: string | null;
+            /**
+             * @description The name of the product. Between 1 and 50 characters.
+             * @example Product A
+             */
+            productName?: string | null;
+            /**
              * Format: double
-             * @description The quantity of a product. Decimal number. Max length=12
+             * @description The quantity of a product. Must be greater than zero.
+             * @example 4
              */
             quantity?: number | null;
             /**
              * Format: double
-             * @description The tax amount established on a product. Numeric. Max length=12. Allowed characters: 0-9 .(dot)
+             * @description The tax amount established on a product.
+             * @example 8.25
              */
             taxAmount?: number | null;
             /**
              * Format: double
-             * @description The discount percentage applied to a product. Corresponds with productDiscountName. This does not impact transaction functionality. It is used for reporting purposes. Numeric. Max Length=4. Allowed range:0.01 to 100
+             * @description The price per product unit. Must be greater than zero.
+             * @example 25.9
              */
-            discountRate?: number | null;
-            /** @description The description of the product. Alphanumeric and Special Characters. Min length=1, max length=200. */
-            description?: string | null;
-            /**
-             * Format: int32
-             * @description MeasurementUnitId
-             */
-            measurementUnitId?: number | null;
+            unitPrice?: number | null;
         };
-        /** @description Unified transaction response for card and ACH payments. */
-        TransactionResponseDto: {
+        /** @description Transaction receipt information. */
+        TransactionReceiptDto: {
+            achProcessingDetails?: components["schemas"]["TransactionReceiptDtoElectronicCheckDetails"];
+            amount?: components["schemas"]["TransactionReceiptDtoTransactionReceiptAmountDto"];
+            authCode?: string | null;
+            availableOperations?: components["schemas"]["TransactionOperationDto"][] | null;
+            avsResponse?: components["schemas"]["AvsResponseDto"];
+            cardDataSource?: string | null;
+            cardDataSourceId?: components["schemas"]["CardDataSourceDto"];
+            cardProcessingDetails?: components["schemas"]["TransactionReceiptDtoCardDetailsDto"];
+            cardTokenType?: components["schemas"]["TokenTypeDto"];
+            cardholderAuthenticationMethod?: string | null;
+            cardholderAuthenticationMethodId?: components["schemas"]["CardholderAuthenticationMethodDto"];
+            currency?: string | null;
+            /** Format: int32 */
+            currencyId?: number;
+            /** Format: uuid */
+            customerId?: string | null;
+            customerPan?: string | null;
+            cvmResultMsg?: string | null;
+            emvTags?: components["schemas"]["TransactionReceiptDtoEmvTagsDto"];
+            merchantAddress?: string | null;
+            merchantEmailAddress?: string | null;
+            merchantName?: string | null;
+            merchantPhoneNumber?: string | null;
+            merchantWebsite?: string | null;
+            operationType?: string | null;
+            /** Format: int32 */
+            operationTypeId?: number;
+            orderNumber?: string | null;
+            paymentMethodType?: string | null;
+            /** Format: int32 */
+            paymentMethodTypeId?: number;
+            processor?: string | null;
+            /** Format: uuid */
+            processorId?: string;
+            responseCode?: string | null;
+            responseDescription?: string | null;
+            source?: components["schemas"]["TransactionReceiptDtoTransactionReceiptSourceResponseDto"];
+            status?: string | null;
+            /** Format: int32 */
+            statusId?: number;
+            /** Format: date-time */
+            transactionDateTime?: string;
+            /** Format: uuid */
+            transactionId?: string;
+            transactionType?: string | null;
+            /** Format: int32 */
+            transactionTypeId?: number;
+        };
+        TransactionReceiptDtoCardDetailsDto: {
+            authCode?: string | null;
+            cardCreditDebitType?: string | null;
+            /** Format: int32 */
+            cardCreditDebitTypeId?: number;
+            cardType?: string | null;
+            /** Format: int32 */
+            cardTypeId?: number;
+            mid?: string | null;
+            processCreditDebitType?: string | null;
+            /** Format: int32 */
+            processCreditDebitTypeId?: number;
+            rrn?: string | null;
+            tid?: string | null;
+        };
+        TransactionReceiptDtoElectronicCheckDetails: {
+            accountHolderType?: string | null;
+            /** Format: int32 */
+            accountHolderTypeId?: number;
+            accountType?: string | null;
+            /** Format: int32 */
+            accountTypeId?: number;
+            customerAccountNumber?: string | null;
+            customerRoutingNumber?: string | null;
+            taxId?: string | null;
+        };
+        TransactionReceiptDtoEmvTagsDto: {
+            ac?: string | null;
+            aid?: string | null;
+            applicationLabel?: string | null;
+            rawTags?: components["schemas"]["KeyValuePairOfStringAndString"][] | null;
+            tsi?: string | null;
+            tvr?: string | null;
+        };
+        TransactionReceiptDtoTransactionReceiptAmountDto: {
+            /** Format: double */
+            baseAmount?: number;
+            /** Format: double */
+            cashDiscountAmount?: number;
+            /** Format: double */
+            cashDiscountRate?: number;
+            /** Format: double */
+            percentageOffAmount?: number;
+            /** Format: double */
+            percentageOffRate?: number;
+            /** Format: double */
+            surchargeAmount?: number;
+            /** Format: double */
+            surchargeRate?: number;
+            /** Format: double */
+            tipAmount?: number;
+            /** Format: double */
+            tipRate?: number;
+            /** Format: double */
+            totalAmount?: number;
+        };
+        TransactionReceiptDtoTransactionReceiptSourceResponseDto: {
+            /** Format: uuid */
+            id?: string | null;
+            name?: string | null;
+            type?: string | null;
+            /** Format: int32 */
+            typeId?: number | null;
+        };
+        /** @description Describes what originated the transaction (portal, API key, terminal, invoice, etc.). */
+        TransactionSourceDto: {
             /**
              * Format: uuid
-             * @description Transaction ID
+             * @description Identifier of the originating entity (e.g. the API key, invoice, or subscription id).
+             * @example 3fa85f64-5717-4562-b3fc-2c963f66afa6
              */
-            transactionId?: string;
-            transactionStatus?: components["schemas"]["TransactionStatus"];
+            sourceId?: string | null;
             /**
-             * Format: double
-             * @description Processed amount
+             * @description Human-readable name of the originator.
+             * @example API Key for ecommerce app
              */
-            processedAmount?: number;
-            /**
-             * @description ISO 4217 currency code (e.g., "USD")
-             *     See: https://en.wikipedia.org/wiki/ISO_4217
-             */
-            currencyCode?: string | null;
-            amountDetails?: components["schemas"]["AmountDetailsDto"];
-            processorResponse?: components["schemas"]["ProcessorResponseDto"];
-            responseDetails?: components["schemas"]["ResponseDetailsDto"];
-            avsResponse?: components["schemas"]["TransactionAvsResponseDto"];
-            /** @description Transaction receipt */
-            receipt?: string | null;
+            sourceName?: string | null;
+            sourceType?: components["schemas"]["IdentityType"];
+        };
+        /** @description Transaction source information. */
+        TransactionSourceResponseDto: {
+            /** Format: uuid */
+            id?: string | null;
+            name?: string | null;
+            type?: string | null;
+            /** Format: int32 */
+            typeId?: number | null;
+            version?: string | null;
         };
         /** @enum {string} */
         TransactionStatus: "Pending" | "Approved" | "Declined" | "Failed";
+        /**
+         * @description The reduced transaction summary returned by the transactions list endpoint. Detail-only data
+         *     (decline details, AVS, transaction events, EMV tags, ACH requester IP) is absent — not
+         *     null — from list items; see Arise.IsvApiBff.Contracts.v2.Transaction.Responses.GetTransactionResponseDto for the full detail shape
+         *     returned by Get-by-ID and by every action endpoint.
+         */
+        TransactionSummaryResponseDto: {
+            achDetails?: components["schemas"]["AchDetailsDto"];
+            amountBreakdown?: components["schemas"]["AmountDetailsDto"];
+            /**
+             * Format: uuid
+             * @description The settlement batch this transaction settles in; null until batched.
+             */
+            batchId?: string | null;
+            cardDetails?: components["schemas"]["TransactionCardDetailsDto"];
+            cardTokenType?: components["schemas"]["TokenType"];
+            /**
+             * @description ISO 4217 currency code. Currently always "USD". See: https://en.wikipedia.org/wiki/ISO_4217
+             * @example USD
+             */
+            currencyCode?: string | null;
+            /**
+             * Format: uuid
+             * @description Customer associated with the transaction, when one is attached.
+             * @example 2d3f4a6b-1c2d-4e5f-8a9b-0c1d2e3f4a5b
+             */
+            customerId?: string | null;
+            /**
+             * Format: uuid
+             * @description The merchant the transaction belongs to.
+             * @example 746ba4dd-b1b4-47c3-a034-72aa55007e86
+             */
+            merchantId?: string;
+            paymentMethodType?: components["schemas"]["PaymentMethodType"];
+            /**
+             * Format: uuid
+             * @description Payment processor used for the transaction.
+             * @example 36e0e61e-3614-4c68-a919-1bffc8bdb7b6
+             */
+            paymentProcessorId?: string | null;
+            pricingType?: components["schemas"]["PricingType"];
+            /**
+             * Format: double
+             * @description Amount processed for this transaction.
+             * @example 99.99
+             */
+            processedAmount?: number;
+            processorDetails?: components["schemas"]["ProcessorDetailsDto"];
+            /**
+             * @description Merchant-supplied reference ID for the transaction.
+             * @example REF-EXT-12345
+             */
+            referenceId?: string | null;
+            source?: components["schemas"]["TransactionSourceDto"];
+            /**
+             * Format: date-time
+             * @description Transaction date and time
+             * @example 2026-01-01T00:00:00Z
+             */
+            transactionDateTime?: string;
+            /**
+             * Format: uuid
+             * @description Transaction ID
+             * @example cdb041da-90c6-4e03-82cf-3fa1178680ee
+             */
+            transactionId?: string;
+            transactionStatus?: components["schemas"]["AggregatedTransactionStatus"];
+            transactionType?: components["schemas"]["TransactionDetailEventType"];
+        };
         /** @enum {string} */
         TransactionType: "Authorization" | "Sale" | "Capture" | "Void" | "Refund" | "CardAuthentication" | "RefundWORef" | "TipAdjustment" | "Settle" | "AchDebit" | "AchRefund" | "AchHold" | "AchUnHold" | "AchCancel" | "AchCredit";
+        /**
+         * @description <p>Possible values:</p>
+         *     <ul>
+         *     <li><b>1 - Authorization</b>: </li>
+         *     <li><b>2 - Sale</b>: </li>
+         *     <li><b>3 - Capture</b>: </li>
+         *     <li><b>4 - Void</b>: </li>
+         *     <li><b>5 - Refund</b>: </li>
+         *     <li><b>6 - CardAuthentication</b>: </li>
+         *     <li><b>7 - RefundWORef</b>: </li>
+         *     <li><b>8 - TipAdjustment</b>: </li>
+         *     <li><b>10 - Settle</b>: </li>
+         *     <li><b>11 - AchDebit</b>: </li>
+         *     <li><b>12 - AchRefund</b>: </li>
+         *     <li><b>13 - AchHold</b>: </li>
+         *     <li><b>14 - AchUnHold</b>: </li>
+         *     <li><b>15 - AchCancel</b>: </li>
+         *     <li><b>16 - AchCredit</b>: </li>
+         *     </ul>
+         * @enum {string}
+         */
+        TransactionTypeDto: "Authorization" | "Sale" | "Capture" | "Void" | "Refund" | "CardAuthentication" | "RefundWORef" | "TipAdjustment" | "Settle" | "AchDebit" | "AchRefund" | "AchHold" | "AchUnHold" | "AchCancel" | "AchCredit";
+        /**
+         * @description JSON Merge Patch (RFC 7396) body for a customer. Each field is RiseOsV2.Rest.MergePatch.Optional`1 so
+         *     the controller distinguishes an omitted field (leave unchanged) from an explicit null
+         *     (clear) from a value (overwrite). Nested addresses are recursively presence-tracked.
+         */
         UpdateCustomerRequestDto: {
-            /** @description First name */
-            firstName?: string | null;
-            /** @description Last name */
-            lastName?: string | null;
+            billingAddress?: components["schemas"]["UpdateCustomerRequestDtoUpdateAddressDto"];
             /** @description Company name */
             companyName?: string | null;
-            /** @description Email address */
+            /**
+             * @description Email address
+             * @example jane.doe@example.com
+             */
             email?: string | null;
-            /** @description The customer's mobile phone number. */
-            mobileNumber?: string | null;
+            /** @description First name */
+            firstName?: string | null;
             /** @description Whether SMS notifications are enabled for the customer. */
             hasSmsConsent?: boolean | null;
+            /** @description Last name */
+            lastName?: string | null;
+            /**
+             * @description The customer's mobile phone number. Must be E.164 format when present
+             *     (enforced by `UpdateCustomerRequestValidator`; the attribute cannot run against the
+             *     presence-tracked wrapper).
+             * @example +14125553845
+             */
+            mobilePhoneNumber?: string | null;
+            shippingAddress?: components["schemas"]["UpdateCustomerRequestDtoUpdateAddressDto"];
             /** @description Use billing address as shipping address */
-            shouldUseBillingAsShippingAddress?: boolean;
-            billingAddress?: components["schemas"]["AddressDto"];
-            shippingAddress?: components["schemas"]["AddressDto"];
+            shouldUseBillingAsShippingAddress?: boolean | null;
         };
+        /**
+         * @description Presence-tracked address for merge-patch: each field is RiseOsV2.Rest.MergePatch.Optional`1 so an
+         *     omitted field is left unchanged while an explicit null clears it.
+         */
+        UpdateCustomerRequestDtoUpdateAddressDto: {
+            /**
+             * @description Address line 1.
+             * @example 123 Main Street
+             */
+            addressLine1?: string | null;
+            /**
+             * @description Address line 2.
+             * @example Suite 400
+             */
+            addressLine2?: string | null;
+            /**
+             * @description City name.
+             * @example New York
+             */
+            city?: string | null;
+            /**
+             * @description Country code in ISO 3166-1 alpha-2 format (e.g., "US", "CA", "GB").
+             * @example US
+             */
+            countryCode?: string | null;
+            /**
+             * @description Postal/ZIP code.
+             * @example 10001
+             */
+            postalCode?: string | null;
+            /**
+             * @description ISO 3166-2 subdivision code. For US states, the USPS two-letter abbreviation
+             *     is used (e.g., "NY", "CA", "TX").
+             * @example NY
+             */
+            stateCode?: string | null;
+        };
+        /**
+         * @description JSON Merge Patch (RFC 7396) body for a payment method. Only the name is patchable: an
+         *     omitted Arise.IsvApiBff.Contracts.v2.Customers.PaymentMethods.Requests.UpdatePaymentMethodRequestDto.PaymentName leaves it unchanged; a value overwrites it.
+         */
         UpdatePaymentMethodRequestDto: {
-            /** @description Payment method name */
-            name?: string | null;
+            /**
+             * @description Payment method name
+             * @example Personal Visa
+             */
+            paymentName?: string | null;
         };
+        /**
+         * @description JSON Merge Patch (RFC 7396) body for a merchant's transaction autofill (L2/L3) settings.
+         *     Every leaf field is RiseOsV2.Rest.MergePatch.Optional`1 and the nested groups are themselves
+         *     field-level optional, so patching one nested field leaves its siblings intact.
+         */
         UpdateTransactionAutofillRequestDto: {
-            l2Settings: components["schemas"]["L2SettingsDto"];
-            l3Settings: components["schemas"]["L3SettingsDto"];
+            level2Settings?: components["schemas"]["UpdateTransactionAutofillRequestDtoLevel2SettingsPatchDto"];
+            level3Settings?: components["schemas"]["UpdateTransactionAutofillRequestDtoLevel3SettingsPatchDto"];
         };
+        UpdateTransactionAutofillRequestDtoLevel2SettingsPatchDto: {
+            /**
+             * Format: double
+             * @description Default sale tax rate. Must be between 0 and 22.
+             *     Encoded as raw percentage — e.g. 8.5 represents 8.5%.
+             * @example 8.5
+             */
+            taxRate?: number | null;
+        };
+        UpdateTransactionAutofillRequestDtoLevel3SettingsPatchDto: {
+            /**
+             * Format: double
+             * @description Indicates the percentage for any import or export duties included in the order.
+             *     Encoded as raw percentage — e.g. 2.5 represents 2.5%.
+             * @example 2.5
+             */
+            dutyChargeRate?: number | null;
+            product?: components["schemas"]["UpdateTransactionAutofillRequestDtoProductPatchDto"];
+            /**
+             * Format: double
+             * @description The percentage for shipping or freight charges applied to a product or transaction.
+             *     Encoded as raw percentage — e.g. 2.5 represents 2.5%.
+             * @example 2.5
+             */
+            shippingChargeRate?: number | null;
+        };
+        UpdateTransactionAutofillRequestDtoProductPatchDto: {
+            /**
+             * @description The merchant assigned unique product identification code.
+             * @example SKU-12345
+             */
+            code?: string | null;
+            /**
+             * Format: double
+             * @description Product discount percentage. Encoded as raw percentage — e.g. 10 represents 10%.
+             * @example 10
+             */
+            discountPercentage?: number | null;
+            /**
+             * @description The unit of measurement for the product.
+             * @example EA
+             */
+            measurementUnit?: string | null;
+            /**
+             * @description The name of the product.
+             * @example Widget
+             */
+            productName?: string | null;
+            /**
+             * Format: double
+             * @description Quantity of the product.
+             * @example 1
+             */
+            quantity?: number | null;
+            /**
+             * Format: double
+             * @description The unit price for the product.
+             * @example 19.99
+             */
+            unitPrice?: number | null;
+        };
+        /**
+         * @description JSON Merge Patch (RFC 7396) body for a webhook endpoint. Each field is
+         *     RiseOsV2.Rest.MergePatch.Optional`1: an omitted field is left unchanged, a value overwrites, and the
+         *     event-type list is replaced wholesale when present.
+         */
         UpdateWebhookEndpointIsvRequestDto: {
-            /** @description Display name for the webhook endpoint. */
-            name?: string | null;
-            /** @description HTTPS callback URL to receive webhook events. */
+            /**
+             * @description Display name for the webhook endpoint.
+             * @example Production webhook
+             */
+            endpointName?: string | null;
+            endpointStatus?: components["schemas"]["WebhookEndpointStatus"];
+            /**
+             * @description HTTPS callback URL to receive webhook events.
+             * @example https://example.com/webhooks
+             */
             endpointUrl?: string | null;
-            status?: components["schemas"]["WebhookEndpointStatus"];
-            /** @description Event types to subscribe to. */
+            /** @description Event types to subscribe to. Replaces the existing subscription list wholesale. */
             eventTypes?: components["schemas"]["WebhookEventType"][] | null;
         };
-        /** @enum {string} */
-        WebhookDeliveryAttemptStatus: "Pending" | "Scheduled" | "Delivered" | "Failed";
+        ValidationExceptionExample: {
+            cause?: string | null;
+            correlationId?: string | null;
+            details?: string | null;
+            documentationUrl?: string | null;
+            entityId?: string | null;
+            errorCode?: string | null;
+            errors?: {
+                [key: string]: string[] | null;
+            } | null;
+            exceptionType?: string | null;
+            resolution?: string | null;
+            source?: string | null;
+            /** Format: int32 */
+            statusCode?: number | null;
+            title?: string | null;
+        };
         /** @enum {string} */
         WebhookDeliveryLogExportFormat: "Csv" | "Json";
         WebhookDeliveryLogIsvDetailDto: {
-            /** Format: uuid */
-            id?: string;
-            /** Format: uuid */
-            webhookEndpointId?: string;
-            webhookName?: string | null;
+            /**
+             * Format: int32
+             * @description Attempt number for this delivery.
+             * @example 1
+             */
+            attemptNumber?: number;
+            /**
+             * Format: date-time
+             * @description When the delivery log was created.
+             * @example 2026-01-01T00:00:00Z
+             */
+            createdOn?: string;
+            /**
+             * Format: uuid
+             * @description Delivery log identifier.
+             * @example b695d7b3-935a-4f11-a12b-253c6a00001d
+             */
+            deliveryLogId?: string;
+            deliveryLogStatus?: components["schemas"]["WebhookDeliveryLogStatus"];
+            /**
+             * Format: int32
+             * @description HTTP status code returned by the endpoint.
+             * @example 200
+             */
+            endpointHTTPResponseCode?: number | null;
+            /**
+             * Format: uuid
+             * @description Webhook endpoint identifier.
+             * @example fa5883d8-ec44-4d48-9489-25586c261865
+             */
+            endpointId?: string;
+            /**
+             * @description Webhook endpoint display name.
+             * @example Production webhook
+             */
+            endpointName?: string | null;
+            /**
+             * @description Endpoint URL the delivery was sent to.
+             * @example https://example.com/webhooks
+             */
             endpointUrl?: string | null;
-            /** Format: uuid */
+            /**
+             * @description Error message when delivery failed.
+             * @example Connection timed out after 10s
+             */
+            errorMessage?: string | null;
+            /**
+             * Format: uuid
+             * @description Webhook event identifier.
+             * @example f715eb83-2ad9-4b76-b151-c9fcaec2c3b9
+             */
             eventId?: string;
             eventType?: components["schemas"]["WebhookEventType"];
-            /** Format: int32 */
-            attemptNumber?: number;
-            status?: components["schemas"]["WebhookDeliveryLogStatus"];
-            /** Format: int32 */
-            responseStatusCode?: number | null;
-            /** Format: int32 */
-            durationMs?: number;
-            errorMessage?: string | null;
-            /** Format: date-time */
-            createdOn?: string;
+            /**
+             * Format: date-time
+             * @description When the next retry is scheduled (if applicable).
+             * @example 2026-01-01T00:00:00Z
+             */
+            nextRetryAt?: string | null;
+            /**
+             * @description HTTP request body sent to the endpoint.
+             * @example {
+             *       "id": "898cb277-1b77-4af8-a66c-36d4b30c191e",
+             *       "type": "transaction.card.captured"
+             *     }
+             */
+            requestBody?: string | null;
+            /** @description HTTP request headers sent to the endpoint. */
             requestHeaders?: {
                 [key: string]: string | null;
             } | null;
-            requestBody?: string | null;
+            /**
+             * @description HTTP response body returned by the endpoint.
+             * @example {
+             *       "received": true
+             *     }
+             */
+            responseBody?: string | null;
+            /** @description HTTP response headers returned by the endpoint. */
             responseHeaders?: {
                 [key: string]: string | null;
             } | null;
-            responseBody?: string | null;
-            /** Format: date-time */
-            nextRetryAt?: string | null;
+            /**
+             * Format: int32
+             * @description Total delivery duration in milliseconds.
+             * @example 142
+             */
+            roundTripDurationMs?: number;
         };
         WebhookDeliveryLogIsvSummaryDto: {
-            /** Format: uuid */
-            id?: string;
-            /** Format: uuid */
-            webhookEndpointId?: string;
-            webhookName?: string | null;
+            /**
+             * Format: int32
+             * @description Attempt number for this delivery.
+             * @example 1
+             */
+            attemptNumber?: number;
+            /**
+             * Format: date-time
+             * @description When the delivery log was created.
+             * @example 2026-01-01T00:00:00Z
+             */
+            createdOn?: string;
+            /**
+             * Format: uuid
+             * @description Delivery log identifier.
+             * @example b695d7b3-935a-4f11-a12b-253c6a00001d
+             */
+            deliveryLogId?: string;
+            deliveryLogStatus?: components["schemas"]["WebhookDeliveryLogStatus"];
+            /**
+             * Format: int32
+             * @description HTTP status code returned by the endpoint.
+             * @example 200
+             */
+            endpointHTTPResponseCode?: number | null;
+            /**
+             * Format: uuid
+             * @description Webhook endpoint identifier.
+             * @example fa5883d8-ec44-4d48-9489-25586c261865
+             */
+            endpointId?: string;
+            /**
+             * @description Webhook endpoint display name.
+             * @example Production webhook
+             */
+            endpointName?: string | null;
+            /**
+             * @description Endpoint URL the delivery was sent to.
+             * @example https://example.com/webhooks
+             */
             endpointUrl?: string | null;
-            /** Format: uuid */
+            /**
+             * @description Error message when delivery failed.
+             * @example Connection timed out after 10s
+             */
+            errorMessage?: string | null;
+            /**
+             * Format: uuid
+             * @description Webhook event identifier.
+             * @example f715eb83-2ad9-4b76-b151-c9fcaec2c3b9
+             */
             eventId?: string;
             eventType?: components["schemas"]["WebhookEventType"];
-            /** Format: int32 */
-            attemptNumber?: number;
-            status?: components["schemas"]["WebhookDeliveryLogStatus"];
-            /** Format: int32 */
-            responseStatusCode?: number | null;
-            /** Format: int32 */
-            durationMs?: number;
-            errorMessage?: string | null;
-            /** Format: date-time */
-            createdOn?: string;
+            /**
+             * Format: int32
+             * @description Total delivery duration in milliseconds.
+             * @example 142
+             */
+            roundTripDurationMs?: number;
         };
         /** @enum {string} */
         WebhookDeliveryLogStatus: "Success" | "Failure";
         /** @enum {string} */
         WebhookEndpointStatus: "Active" | "Inactive";
         /** @enum {string} */
-        WebhookEventType: "ping" | "settlement.batch.completed" | "transaction.card.authorized" | "transaction.card.captured" | "transaction.card.declined" | "transaction.card.failed" | "transaction.card.voided" | "transaction.card.refunded" | "transaction.ach.scheduled" | "transaction.ach.in_progress" | "transaction.ach.held" | "transaction.ach.cancelled" | "transaction.ach.cleared" | "transaction.ach.charged_back" | "transaction.ach.failed" | "transaction.ach.refunded" | "invoice.created" | "invoice.paid" | "subscription.created" | "subscription.paid" | "subscription.payment_failed" | "subscription.delinquent" | "quick_payment.created" | "quick_payment.paid" | "merchant.created" | "api_key.created" | "api_key.deleted" | "terminal.added" | "terminal.deactivated" | "terminal.out_of_paper";
+        WebhookEventType: "ping" | "settlement.batch.completed" | "transaction.card.authorized" | "transaction.card.captured" | "transaction.card.declined" | "transaction.card.failed" | "transaction.card.voided" | "transaction.card.refunded" | "transaction.ach.scheduled" | "transaction.ach.in_progress" | "transaction.ach.held" | "transaction.ach.cancelled" | "transaction.ach.cleared" | "transaction.ach.charged_back" | "transaction.ach.failed" | "transaction.ach.refunded" | "invoice.created" | "invoice.paid" | "subscription.created" | "subscription.paid" | "subscription.payment_failed" | "subscription.delinquent" | "quick_payment.created" | "quick_payment.paid" | "merchant.created" | "api_key.created" | "api_key.deleted" | "terminal.added" | "terminal.deactivated" | "terminal.out_of_paper" | "payment_session.created" | "payment_session.completed";
         WebhookEventTypeIsvDto: {
             /**
-             * Format: int32
-             * @description Catalog identifier for this event type — matches the underlying enum value.
+             * @description Human-readable description of when this event fires.
+             * @example Authorized card payment captured
              */
-            id?: number;
-            /** @description Wire-format event type name used in webhook payloads (e.g. "transaction.card.captured"). */
-            name?: string | null;
-            /** @description Human-readable description of when this event fires. */
             description?: string | null;
-            /** @description Logical grouping for display purposes (e.g. "Card Transactions", "Invoices", "Subscriptions"). */
+            /**
+             * @description Wire-format event type name used in webhook payloads.
+             * @example transaction.card.captured
+             */
+            eventType?: string | null;
+            /**
+             * @description Logical grouping for display purposes.
+             * @example Card Transactions
+             */
             group?: string | null;
         };
         /** @enum {string} */
