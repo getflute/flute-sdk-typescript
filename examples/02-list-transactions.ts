@@ -37,33 +37,40 @@ async function main(): Promise<void> {
   const maxPages = Number(process.env['FLUTE_TX_MAX_PAGES'] ?? '4');
 
   let pagesVisited = 0;
-  let total = 0;
+  let printed = 0;
 
-  for (let page = 1; page <= maxPages; page += 1) {
-    const response = await flute.transactions.list({ page, pageSize });
+  // `pageIndex` is zero-based, and the server echoes it back in `pageInfo`
+  // alongside `totalItems` / `hasMore`.
+  for (let pageIndex = 0; pageIndex < maxPages; pageIndex += 1) {
+    const response = await flute.transactions.list({ pageIndex, pageSize });
+    const items = response.items ?? [];
+    const pageInfo = response.pageInfo;
     pagesVisited += 1;
-    total += response.items.length;
+    printed += items.length;
 
+    const totalItems = pageInfo?.totalItems;
     console.log(
-      `page ${String(page)}: ${String(response.items.length)} txns ` +
-        `(running total: ${String(total)} / ${String(response.total)} server-side)`,
+      `page ${String(pageIndex)}: ${String(items.length)} txns ` +
+        `(printed ${String(printed)}${totalItems === undefined ? '' : ` of ${String(totalItems)}`})`,
     );
-    for (const tx of response.items) {
+    for (const tx of items) {
       console.log(
         '  ',
         tx.transactionId ?? '(no id)',
-        tx.status ?? '—',
+        tx.transactionStatus ?? '—',
         '·',
         tx.transactionDateTime ?? '—',
       );
     }
 
-    if (response.items.length < pageSize) break;
-    if (total >= response.total) break;
+    // Prefer the server's own signal; fall back to a short page when the
+    // envelope is absent.
+    if (pageInfo?.hasMore === false) break;
+    if (pageInfo === undefined && items.length < pageSize) break;
   }
 
   console.log(
-    `\nDone. Visited ${String(pagesVisited)} pages, ${String(total)} transactions printed.`,
+    `\nDone. Visited ${String(pagesVisited)} pages, ${String(printed)} transactions printed.`,
   );
 }
 

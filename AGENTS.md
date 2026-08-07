@@ -43,7 +43,7 @@ the subclass first, then on `httpStatus` for retry decisions.
 npm install @getflute/sdk
 
 # Pin to exact patch for reproducible CI:
-npm install @getflute/sdk@0.2.1 --save-exact
+npm install @getflute/sdk@0.3.0 --save-exact
 ```
 
 Engines: Node `>= 20.19.0`. The SDK ships ESM and CJS builds with full
@@ -137,7 +137,7 @@ package root. Wire format is `camelCase`; the SDK does not transform.
 ### Success
 
 Resource methods return the parsed response body, typed against the
-OpenAPI spec. Pagination is exposed as `{ items, total }` for
+OpenAPI spec. Pagination is exposed as `{ items, pageInfo }` for
 `transactions.list`. There is no envelope on success — the response is
 the resource itself.
 
@@ -197,7 +197,7 @@ webhook-driven retry job).
 | ------------------------------------------ | ----------------------------- | --------------------------------------------------------------------------------------- |
 | `transactions.list` / `retrieve`           | yes                           | Pure read.                                                                              |
 | `settings.getPaymentSettings`              | yes                           | Pure read.                                                                              |
-| `transactions.calculateAmount`             | yes                           | Pure read; no transaction is created.                                                   |
+| `transactions.calculateAmount`             | yes                           | A POST, but a pure computation — nothing is created, and no idempotency key is sent.    |
 | `transactions.sale` / `authorize`          | **no**                        | Pass an explicit `idempotencyKey` if your retry path is not under the SDK's auto-retry. |
 | `transactions.capture` / `void` / `refund` | **no**                        | Same. Pair the key with the originating event id.                                       |
 | `paymentSessions.create`                   | **no**                        | Each call without a stable idempotency key creates a new session.                       |
@@ -285,11 +285,11 @@ const flute = new Flute({
 | Intent                                                                 | Snippet                                                                                                                                                         |
 | ---------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | "What payment methods is this merchant configured for?"                | `await flute.settings.getPaymentSettings()`                                                                                                                     |
-| "Show me the last 25 transactions"                                     | `await flute.transactions.list({ pageSize: 25 })`                                                                                                               |
+| "Show me the last 25 transactions"                                     | `await flute.transactions.list({ pageIndex: 0, pageSize: 25 })`                                                                                                 |
 | "Look up a specific transaction by id"                                 | `await flute.transactions.retrieve(id)`                                                                                                                         |
 | "Charge $10 USD on a card (auto-capture)"                              | `await flute.transactions.sale({ baseAmount: 1000, currencyCode: 'USD', transactionDetails: { /* card data */ } })`                                             |
 | "Authorize $10 now, capture later"                                     | `await flute.transactions.authorize({ baseAmount: 1000, currencyCode: 'USD', transactionDetails: { /* card */ } })` then `await flute.transactions.capture(id)` |
-| "Refund a settled transaction"                                         | `await flute.transactions.refund(id, { amount: 1000 })`                                                                                                         |
+| "Refund a settled transaction"                                         | `await flute.transactions.refund(id, { reversalAmount: 1000 })`                                                                                                 |
 | "Void an authorization before capture"                                 | `await flute.transactions.void(id)`                                                                                                                             |
 | "What does this $10 charge actually cost the customer with surcharge?" | `await flute.transactions.calculateAmount({ baseAmount: 1000, pricingType: 'Card', currencyCode: 'USD' })`                                                      |
 | "Create a hosted payment session URL to send to the buyer"             | `await flute.paymentSessions.create({ /* params */ })`                                                                                                          |
@@ -349,7 +349,7 @@ Returns `TransactionResult` with `id`, `status`, `processorResponse`,
 ```ts
 await flute.transactions.capture(
   transactionId, // id from a prior authorize
-  { amount: 750 }, // optional; omit for a full capture
+  { captureAmount: 750 }, // optional; omit for a full capture
 );
 ```
 
@@ -372,18 +372,22 @@ succeeds before settlement; after settlement use `refund` instead.
 ```ts
 await flute.transactions.refund(
   transactionId,
-  { amount: 500 }, // optional; omit for a full refund
+  { reversalAmount: 500 }, // optional; omit for a full refund
 );
 ```
 
 Card refunds may be partial. ACH refunds are full only — passing
-`amount` on an ACH transaction is an error from the gateway. For
+`reversalAmount` on an ACH transaction is an error from the gateway. For
 unsettled card transactions, `void` is cheaper and faster.
 
 ### `transactions.calculateAmount`
 
-`GET /v2/transactions/calculate-amount`; all fields go on the query
-string. Returns one breakdown row per supported payment method.
+`POST /v2/transactions/calculate-amount`; all fields go in the JSON
+body. Returns one breakdown row per supported payment method.
+
+The SDK deliberately does **not** stamp an `Idempotency-Key` on this
+call even though it is a POST: it is a pure computation and creates
+nothing to replay. Pass `idempotencyKey` explicitly if you want one.
 
 ```ts
 await flute.transactions.calculateAmount({
