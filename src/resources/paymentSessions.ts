@@ -152,7 +152,7 @@ const X_API_VERSION = '1';
  *
  * - protect against duplicate charges,
  * - manage tips/surcharges/discounts/auth flows on the same checkout,
- * - delegate fraud protection to Aurora.
+ * - delegate fraud protection to Flute.
  *
  * @public
  */

@@ -7,8 +7,8 @@
 - a55d85a: Fix incorrect default API hosts for both environments.
 
   The `sandbox` and `production` environment defaults pointed at legacy
-  `*.arise.risewithaurora.com` hosts instead of the documented `flute.com`
-  endpoints. In particular, `sandbox` pointed at a **decommissioned UAT** host,
+  pre-rebrand hosts instead of the documented `flute.com` endpoints. In
+  particular, `sandbox` pointed at a **decommissioned** host,
   so `new Flute({ environment: 'sandbox' })` failed with
   `FluteAuthenticationError: HTTP 401` on the first request, during the OAuth
   token exchange (`POST ${oauth}/oauth2/token`).
@@ -24,8 +24,8 @@
     (resolved token endpoint `https://oauth.api.flute.com/oauth2/token`)
 
   ⚠️ **This also changes the default _production_ endpoints.** If you depended on
-  the previous `*.arise.risewithaurora.com` production defaults, review before
-  upgrading. You can always pin any host explicitly via `FluteConfig.baseUrls`.
+  the previous pre-rebrand production defaults, review before upgrading. You can
+  always pin any host explicitly via `FluteConfig.baseUrls`.
 
 ## 0.2.2
 
