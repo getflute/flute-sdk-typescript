@@ -329,19 +329,16 @@ export class TransactionsResource {
       // side effect — a pure pricing computation, with nothing to replay. All
       // 31 other mutating-verb operations genuinely change state.
       //
-      // This matches the server-side design: ARISE-4133 requires that
-      // "read-only endpoints ignore the header safely", and ARISE-4128 puts
-      // "idempotency on read-only endpoints" out of scope for both phases. Its
-      // in-scope list is sale / authorization / capture / void / refund / ACH —
-      // `calculate-amount` is deliberately absent.
+      // This matches the documented server behaviour: read-only endpoints
+      // ignore the header, and idempotent replay is scoped to the endpoints
+      // that actually mutate (sale, authorization, capture, void, refund, and
+      // the ACH operations). `calculate-amount` is deliberately not among them.
       //
-      // It also guards against the likely implementation shortcut. Nothing in
-      // the v2 BFF reads the header today (verified: same key, different body
-      // returns a freshly computed result), so if Phase 1 lands as verb-based
-      // middleware rather than an endpoint allowlist, this call would be swept
-      // in — and a caller reusing one key across a checkout while adjusting the
-      // amount would get Phase 1's 422 body-mismatch conflict on a call that
-      // should simply recompute.
+      // It also guards against a plausible implementation shortcut. If replay
+      // is ever keyed off the HTTP verb rather than an endpoint allowlist, this
+      // call gets swept in — and a caller reusing one key across a checkout
+      // while adjusting the amount would then hit a body-mismatch conflict on a
+      // call that should simply recompute.
       //
       // An explicit caller-supplied key still wins, via the spread below.
       idempotencyKey: null,

@@ -143,7 +143,7 @@ if (!url) {
   fail(
     'ISV_API_SPEC_URL is not set.\n' +
       '       Point it at the v2 swagger document, e.g.\n' +
-      '         ISV_API_SPEC_URL=https://<uat-host>/isv-api/swagger/v2/swagger.json',
+      '         ISV_API_SPEC_URL=https://<api-host>/isv-api/swagger/v2/swagger.json',
   );
 }
 
