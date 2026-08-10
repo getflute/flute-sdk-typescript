@@ -5,6 +5,25 @@ TypeScript / Node.js SDK for the Flute payment platform. Patterns
 that land here become the contract every other Flute SDK follows, so
 we hold this repo to a high bar.
 
+## Where this repo lives
+
+**`github.com/getflute/flute-sdk-typescript` is canonical.** Branch from
+its `main`, open pull requests against it, and cut releases from it — the
+`release` workflow's npm Trusted Publisher is registered against
+`getflute` / `flute-sdk-typescript` / `release.yml`, so a release from
+anywhere else cannot publish.
+
+You may find a second remote, `aurora-payments/flute-sdk-typescript`,
+in older clones. It predates the move to the `@getflute` npm scope, is
+stuck at `0.1.3`, and has diverged — do not push to it and do not treat
+its `main` as a base. If your clone has both, `getflute` is the one that
+matters:
+
+```bash
+git remote -v                       # check what you have
+git log --oneline origin/main -1    # 0.2.3+ => getflute; 0.1.3 => the old one
+```
+
 ## Prerequisites
 
 - Node.js `>=20.19.0` (the `.nvmrc` pins to `22` — latest LTS major)

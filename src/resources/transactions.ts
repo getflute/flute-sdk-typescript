@@ -324,11 +324,25 @@ export class TransactionsResource {
       method: 'POST',
       url: `${this.#config.baseUrls.isvApi}/v2/transactions/calculate-amount`,
       body: params,
-      // POST here is a pure computation, not a state change — it creates
-      // nothing to replay. The transport adds an `Idempotency-Key` to every
-      // POST by default, which would be wrong twice over: it is meaningless
-      // now, and once the gateway implements key deduplication it could serve
-      // a cached breakdown for what is supposed to be a live calculation.
+      // The transport stamps an `Idempotency-Key` on every POST. We opt out
+      // here because this endpoint is the one POST on the v2 surface with no
+      // side effect — a pure pricing computation, with nothing to replay. All
+      // 31 other mutating-verb operations genuinely change state.
+      //
+      // This matches the server-side design: ARISE-4133 requires that
+      // "read-only endpoints ignore the header safely", and ARISE-4128 puts
+      // "idempotency on read-only endpoints" out of scope for both phases. Its
+      // in-scope list is sale / authorization / capture / void / refund / ACH —
+      // `calculate-amount` is deliberately absent.
+      //
+      // It also guards against the likely implementation shortcut. Nothing in
+      // the v2 BFF reads the header today (verified: same key, different body
+      // returns a freshly computed result), so if Phase 1 lands as verb-based
+      // middleware rather than an endpoint allowlist, this call would be swept
+      // in — and a caller reusing one key across a checkout while adjusting the
+      // amount would get Phase 1's 422 body-mismatch conflict on a call that
+      // should simply recompute.
+      //
       // An explicit caller-supplied key still wins, via the spread below.
       idempotencyKey: null,
       ...this.#requestOverrides(options),
