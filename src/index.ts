@@ -30,8 +30,11 @@ export { Sessions } from './auth/sessions.js';
 
 export type {
   Transaction,
+  TransactionSummary,
+  TransactionResult,
   TransactionStatus,
   TransactionType,
+  PageInfo,
   ListTransactionsParams,
   ListTransactionsResponse,
   AuthorizeTransactionParams,

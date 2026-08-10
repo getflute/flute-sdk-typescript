@@ -63,22 +63,55 @@ describe('SettingsResource.getPaymentSettings', () => {
 });
 
 describe('TransactionsResource', () => {
-  it('list() forwards page/pageSize and parses the page envelope', async () => {
+  it('list() forwards pageIndex/pageSize and parses the pageInfo envelope', async () => {
     server.use(
       http.get(`${ISV_BASE}/v2/transactions`, ({ request }) => {
         const url = new URL(request.url);
-        expect(url.searchParams.get('page')).toBe('1');
+        // The wire parameter is `pageIndex` (zero-based), not `page`. A `page`
+        // parameter is silently ignored by the API, which meant pagination
+        // always returned the first page — see the 0.3.0 changeset.
+        expect(url.searchParams.get('pageIndex')).toBe('1');
         expect(url.searchParams.get('pageSize')).toBe('25');
+        expect(url.searchParams.get('page')).toBeNull();
         return HttpResponse.json({
-          items: [{ transactionId: 'tx_1', status: 'Captured' }],
-          total: 1,
+          items: [{ transactionId: 'tx_1', transactionStatus: 'Captured' }],
+          pageInfo: {
+            pageIndex: 1,
+            pageSize: 25,
+            totalItems: 26,
+            totalPages: 2,
+            hasMore: false,
+          },
         });
       }),
     );
     const flute = makeFlute();
-    const result = await flute.transactions.list({ page: 1, pageSize: 25 });
-    expect(result.total).toBe(1);
-    expect(result.items[0]?.transactionId).toBe('tx_1');
+    const result = await flute.transactions.list({ pageIndex: 1, pageSize: 25 });
+    expect(result.pageInfo?.totalItems).toBe(26);
+    expect(result.pageInfo?.hasMore).toBe(false);
+    expect(result.items?.[0]?.transactionId).toBe('tx_1');
+  });
+
+  it('list() forwards the full filter set the API supports', async () => {
+    server.use(
+      http.get(`${ISV_BASE}/v2/transactions`, ({ request }) => {
+        const url = new URL(request.url);
+        expect(url.searchParams.get('transactionStatus')).toBe('Settled');
+        expect(url.searchParams.get('paymentMethodType')).toBe('Card');
+        expect(url.searchParams.get('minAmount')).toBe('10.5');
+        expect(url.searchParams.get('referenceId')).toBe('ref-42');
+        expect(url.searchParams.get('sortOrder')).toBe('desc');
+        return HttpResponse.json({ items: [], pageInfo: { pageIndex: 0 } });
+      }),
+    );
+    const flute = makeFlute();
+    await flute.transactions.list({
+      transactionStatus: 'Settled',
+      paymentMethodType: 'Card',
+      minAmount: 10.5,
+      referenceId: 'ref-42',
+      sortOrder: 'desc',
+    });
   });
 
   it('retrieve() encodes the path id and returns the transaction', async () => {
@@ -149,18 +182,21 @@ describe('TransactionsResource', () => {
     expect(body.transactionDetails.cardData.captureMethod).toBe('Manual');
   });
 
-  it('capture() POSTs to /capture with the optional amount', async () => {
-    let receivedAmount: number | undefined;
+  it('capture() POSTs to /capture with the optional captureAmount', async () => {
+    let body: Record<string, unknown> | undefined;
     server.use(
       http.post(`${ISV_BASE}/v2/transactions/tx_1/capture`, async ({ request }) => {
-        const body = (await request.json()) as { amount?: number };
-        receivedAmount = body.amount;
+        body = (await request.json()) as Record<string, unknown>;
         return HttpResponse.json({ transactionId: 'tx_1', transactionStatus: 'Approved' });
       }),
     );
     const flute = makeFlute();
-    await flute.transactions.capture('tx_1', { amount: 25 });
-    expect(receivedAmount).toBe(25);
+    await flute.transactions.capture('tx_1', { captureAmount: 25 });
+    // The field is `captureAmount`, not `amount`. Upstream enabled strict JSON
+    // binding, so a stale `amount` is now rejected with a 400 rather than
+    // silently ignored — partial capture was broken before 0.3.0.
+    expect(body?.['captureAmount']).toBe(25);
+    expect(body).not.toHaveProperty('amount');
   });
 
   it('void() POSTs to /reversal with an empty body', async () => {
@@ -175,26 +211,29 @@ describe('TransactionsResource', () => {
     await flute.transactions.void('tx_1');
   });
 
-  it('refund() POSTs to /reversal with the optional amount', async () => {
-    let receivedAmount: number | undefined;
+  it('refund() POSTs to /reversal with the optional reversalAmount', async () => {
+    let body: Record<string, unknown> | undefined;
     server.use(
       http.post(`${ISV_BASE}/v2/transactions/tx_1/reversal`, async ({ request }) => {
-        const body = (await request.json()) as { amount?: number };
-        receivedAmount = body.amount;
+        body = (await request.json()) as Record<string, unknown>;
         return HttpResponse.json({ transactionId: 'tx_1' });
       }),
     );
     const flute = makeFlute();
-    await flute.transactions.refund('tx_1', { amount: 10 });
-    expect(receivedAmount).toBe(10);
+    await flute.transactions.refund('tx_1', { reversalAmount: 10 });
+    expect(body?.['reversalAmount']).toBe(10);
+    expect(body).not.toHaveProperty('amount');
   });
 
-  it('calculateAmount() GETs /calculate-amount and forwards query params', async () => {
+  // The endpoint is POST-with-a-body upstream. It was declared GET in the
+  // stale spec, and a GET is swallowed by the `/{transactionId}` route, so the
+  // call failed with `The value 'calculate-amount' is not valid` for every
+  // caller. This test pins the verb.
+  it('calculateAmount() POSTs /calculate-amount with a JSON body', async () => {
+    let body: Record<string, unknown> | undefined;
     server.use(
-      http.get(`${ISV_BASE}/v2/transactions/calculate-amount`, ({ request }) => {
-        const url = new URL(request.url);
-        expect(url.searchParams.get('baseAmount')).toBe('100');
-        expect(url.searchParams.get('tipRate')).toBe('0.15');
+      http.post(`${ISV_BASE}/v2/transactions/calculate-amount`, async ({ request }) => {
+        body = (await request.json()) as Record<string, unknown>;
         return HttpResponse.json({
           currencyCode: 'USD',
           creditCard: { totalAmount: 115 },
@@ -205,8 +244,27 @@ describe('TransactionsResource', () => {
     const result = await flute.transactions.calculateAmount({
       baseAmount: 100,
       tipRate: 0.15,
+      pricingType: 'Card',
     });
+    expect(body).toEqual({ baseAmount: 100, tipRate: 0.15, pricingType: 'Card' });
     expect(result.creditCard?.totalAmount).toBe(115);
+  });
+
+  // `calculateAmount` is a pure computation. The transport stamps an
+  // `Idempotency-Key` on every POST by default, which would be wrong here once
+  // the gateway starts deduplicating on that key.
+  it('calculateAmount() omits Idempotency-Key unless the caller asks for one', async () => {
+    const seen: (string | null)[] = [];
+    server.use(
+      http.post(`${ISV_BASE}/v2/transactions/calculate-amount`, ({ request }) => {
+        seen.push(request.headers.get('idempotency-key'));
+        return HttpResponse.json({ currencyCode: 'USD' });
+      }),
+    );
+    const flute = makeFlute();
+    await flute.transactions.calculateAmount({ baseAmount: 100 });
+    await flute.transactions.calculateAmount({ baseAmount: 100 }, { idempotencyKey: 'key_1' });
+    expect(seen).toEqual([null, 'key_1']);
   });
 
   it('rejects empty ids early', async () => {

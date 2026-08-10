@@ -19,11 +19,30 @@ export type TransactionStatus = NonNullable<components['schemas']['AggregatedTra
 export type TransactionType = NonNullable<components['schemas']['TransactionDetailEventType']>;
 
 /**
- * A single transaction record as returned by `list` / `retrieve`.
+ * A full transaction record, as returned by {@link TransactionsResource.retrieve}
+ * and by every mutating method.
+ *
+ * Richer than the {@link TransactionSummary} rows that come back from
+ * {@link TransactionsResource.list}: this shape additionally carries
+ * `transactionEvents`, `refundDetails`, `declineDetails`,
+ * `addressVerificationServiceResponse`, and `originalTransactionId`.
  *
  * @public
  */
 export type Transaction = NonNullable<components['schemas']['GetTransactionResponseDto']>;
+
+/**
+ * A transaction row as returned inside {@link ListTransactionsResponse}.
+ *
+ * The list endpoint returns a deliberately narrower projection than
+ * {@link Transaction} — call {@link TransactionsResource.retrieve} with the
+ * `transactionId` when you need the event history or refund totals.
+ *
+ * @public
+ */
+export type TransactionSummary = NonNullable<
+  components['schemas']['TransactionSummaryResponseDto']
+>;
 
 /**
  * Result envelope returned by `sale` / `authorize` / `capture` / `void` /
@@ -32,27 +51,41 @@ export type Transaction = NonNullable<components['schemas']['GetTransactionRespo
  *
  * @public
  */
-export type TransactionResult = NonNullable<components['schemas']['TransactionResponseDto']>;
+export type TransactionResult = Transaction;
+
+/**
+ * Pagination metadata attached to {@link ListTransactionsResponse}.
+ *
+ * @public
+ */
+export type PageInfo = NonNullable<components['schemas']['PageInfoDto']>;
 
 /**
  * Query parameters accepted by {@link TransactionsResource.list}.
  *
- * @public
- */
-export interface ListTransactionsParams {
-  readonly page?: number;
-  readonly pageSize?: number;
-}
-
-/**
- * Response shape for {@link TransactionsResource.list}.
+ * Derived straight from the spec, so the full filter set the API supports
+ * (`fromDate` / `toDate`, `transactionStatus`, `paymentMethodType`,
+ * `customerId`, `minAmount` / `maxAmount`, `referenceId`, `batchId`,
+ * `sortBy` / `sortOrder`, ...) is available without this file having to
+ * restate it.
+ *
+ * Note `pageIndex` is **zero-based**.
  *
  * @public
  */
-export interface ListTransactionsResponse {
-  readonly items: readonly Transaction[];
-  readonly total: number;
-}
+export type ListTransactionsParams = NonNullable<
+  paths['/v2/transactions']['get']['parameters']['query']
+>;
+
+/**
+ * Response shape for {@link TransactionsResource.list}: a page of rows plus
+ * the pagination envelope.
+ *
+ * @public
+ */
+export type ListTransactionsResponse = NonNullable<
+  components['schemas']['PagedResponseDtoOfTransactionSummaryResponseDto']
+>;
 
 /**
  * Body fields shared by `sale` and `authorize`. Mirrors
@@ -87,7 +120,7 @@ export type AuthorizeTransactionParams = CreateTransactionParams;
 export type SaleTransactionParams = CreateTransactionParams;
 
 /**
- * Body for {@link TransactionsResource.capture}. Omit `amount` for a
+ * Body for {@link TransactionsResource.capture}. Omit `captureAmount` for a
  * full capture; pass an amount strictly less than the authorized total
  * for a partial capture.
  *
@@ -96,7 +129,7 @@ export type SaleTransactionParams = CreateTransactionParams;
 export type CaptureTransactionParams = NonNullable<components['schemas']['CaptureRequestDto']>;
 
 /**
- * Body for {@link TransactionsResource.refund}. Omit `amount` for a
+ * Body for {@link TransactionsResource.refund}. Omit `reversalAmount` for a
  * full refund; pass an amount for a partial card refund.
  *
  * @public
@@ -104,14 +137,11 @@ export type CaptureTransactionParams = NonNullable<components['schemas']['Captur
 export type RefundTransactionParams = NonNullable<components['schemas']['ReversalRequestDto']>;
 
 /**
- * Query parameters for {@link TransactionsResource.calculateAmount}.
- * Server-side endpoint is GET, so all fields go on the query string.
+ * Body for {@link TransactionsResource.calculateAmount}.
  *
  * @public
  */
-export type CalculateAmountParams = NonNullable<
-  paths['/v2/transactions/calculate-amount']['get']['parameters']['query']
->;
+export type CalculateAmountParams = NonNullable<components['schemas']['CalculateAmountRequestDto']>;
 
 /**
  * Response shape for {@link TransactionsResource.calculateAmount}.
@@ -164,7 +194,18 @@ export class TransactionsResource {
     this.#config = config;
   }
 
-  /** Paginated list of transactions for the merchant. */
+  /**
+   * Paginated list of transactions for the merchant, newest first by default.
+   *
+   * `pageIndex` is zero-based and is echoed back in `pageInfo`. Every filter
+   * the API supports is accepted — see {@link ListTransactionsParams}.
+   *
+   * @example
+   * ```ts
+   * const page = await flute.transactions.list({ pageIndex: 0, pageSize: 25 });
+   * console.log(page.pageInfo?.totalItems, page.pageInfo?.hasMore);
+   * ```
+   */
   public async list(
     params: ListTransactionsParams = {},
     options: TransactionsRequestOptions = {},
@@ -172,10 +213,7 @@ export class TransactionsResource {
     const response = await this.#config.http.request<ListTransactionsResponse>({
       method: 'GET',
       url: `${this.#config.baseUrls.isvApi}/v2/transactions`,
-      query: {
-        ...(params.page !== undefined ? { page: params.page } : {}),
-        ...(params.pageSize !== undefined ? { pageSize: params.pageSize } : {}),
-      },
+      query: params,
       ...this.#requestOverrides(options),
     });
     return response.data;
@@ -283,9 +321,27 @@ export class TransactionsResource {
     options: TransactionsRequestOptions = {},
   ): Promise<CalculateAmountResponse> {
     const response = await this.#config.http.request<CalculateAmountResponse>({
-      method: 'GET',
+      method: 'POST',
       url: `${this.#config.baseUrls.isvApi}/v2/transactions/calculate-amount`,
-      query: params,
+      body: params,
+      // The transport stamps an `Idempotency-Key` on every POST. We opt out
+      // here because this endpoint is the one POST on the v2 surface with no
+      // side effect — a pure pricing computation, with nothing to replay. All
+      // 31 other mutating-verb operations genuinely change state.
+      //
+      // This matches the documented server behaviour: read-only endpoints
+      // ignore the header, and idempotent replay is scoped to the endpoints
+      // that actually mutate (sale, authorization, capture, void, refund, and
+      // the ACH operations). `calculate-amount` is deliberately not among them.
+      //
+      // It also guards against a plausible implementation shortcut. If replay
+      // is ever keyed off the HTTP verb rather than an endpoint allowlist, this
+      // call gets swept in — and a caller reusing one key across a checkout
+      // while adjusting the amount would then hit a body-mismatch conflict on a
+      // call that should simply recompute.
+      //
+      // An explicit caller-supplied key still wins, via the spread below.
+      idempotencyKey: null,
       ...this.#requestOverrides(options),
     });
     return response.data;

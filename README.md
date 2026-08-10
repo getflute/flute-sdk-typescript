@@ -123,8 +123,8 @@ await flute.sessions.authenticate();
 
 // hours go by; the SDK refreshes proactively in the background
 for (let i = 0; i < 1_000; i += 1) {
-  const tx = await flute.transactions.list({ pageSize: 50, page: 1 });
-  console.log(tx.total);
+  const tx = await flute.transactions.list({ pageSize: 50, pageIndex: 0 });
+  console.log(tx.pageInfo?.totalItems);
 }
 
 // for tests / forensic flows you can also drive the lifecycle manually:
@@ -176,19 +176,23 @@ flute.webhooks.verifySignature(sigHeader, idHeader, tsHeader, rawBody, secret);
 [See **`examples/02-list-transactions.ts`**](./examples/02-list-transactions.ts).
 
 ```ts
-let page = 1;
+import type { TransactionSummary } from '@getflute/sdk';
+
+// `pageIndex` is zero-based; the server echoes it back in `pageInfo`.
+let pageIndex = 0;
 const pageSize = 50;
-const all: typeof response.items = [];
+const all: TransactionSummary[] = [];
+let totalItems: number | undefined;
 
 for (;;) {
-  const response = await flute.transactions.list({ page, pageSize });
-  all.push(...response.items);
-  if (response.items.length < pageSize) break;
-  if (all.length >= response.total) break;
-  page += 1;
+  const response = await flute.transactions.list({ pageIndex, pageSize });
+  all.push(...(response.items ?? []));
+  totalItems = response.pageInfo?.totalItems;
+  if (response.pageInfo?.hasMore !== true) break;
+  pageIndex += 1;
 }
 
-console.log(`${all.length} transactions / ${response.total} server-side`);
+console.log(`${all.length} transactions / ${totalItems ?? all.length} server-side`);
 ```
 
 > The SDK doesn't ship a pagination iterator (out of scope); the loop
