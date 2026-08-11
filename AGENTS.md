@@ -282,21 +282,25 @@ const flute = new Flute({
 
 ## Common intents → code
 
-| Intent                                                                 | Snippet                                                                                                                                                         |
-| ---------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| "What payment methods is this merchant configured for?"                | `await flute.settings.getPaymentSettings()`                                                                                                                     |
-| "Show me the last 25 transactions"                                     | `await flute.transactions.list({ pageIndex: 0, pageSize: 25 })`                                                                                                 |
-| "Look up a specific transaction by id"                                 | `await flute.transactions.retrieve(id)`                                                                                                                         |
-| "Charge $10 USD on a card (auto-capture)"                              | `await flute.transactions.sale({ baseAmount: 1000, currencyCode: 'USD', transactionDetails: { /* card data */ } })`                                             |
-| "Authorize $10 now, capture later"                                     | `await flute.transactions.authorize({ baseAmount: 1000, currencyCode: 'USD', transactionDetails: { /* card */ } })` then `await flute.transactions.capture(id)` |
-| "Refund a settled transaction"                                         | `await flute.transactions.refund(id, { reversalAmount: 1000 })`                                                                                                 |
-| "Void an authorization before capture"                                 | `await flute.transactions.void(id)`                                                                                                                             |
-| "What does this $10 charge actually cost the customer with surcharge?" | `await flute.transactions.calculateAmount({ baseAmount: 1000, pricingType: 'Card', currencyCode: 'USD' })`                                                      |
-| "Create a hosted payment session URL to send to the buyer"             | `await flute.paymentSessions.create({ /* params */ })`                                                                                                          |
-| "Verify a webhook delivery I just received"                            | See "Webhook verification" above.                                                                                                                               |
+| Intent                                                                 | Snippet                                                                                                                                                       |
+| ---------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "What payment methods is this merchant configured for?"                | `await flute.settings.getPaymentSettings()`                                                                                                                   |
+| "Show me the last 25 transactions"                                     | `await flute.transactions.list({ pageIndex: 0, pageSize: 25 })`                                                                                               |
+| "Look up a specific transaction by id"                                 | `await flute.transactions.retrieve(id)`                                                                                                                       |
+| "Charge $10 USD on a card (auto-capture)"                              | `await flute.transactions.sale({ baseAmount: 10, currencyCode: 'USD', transactionDetails: { /* card data */ } })`                                             |
+| "Authorize $10 now, capture later"                                     | `await flute.transactions.authorize({ baseAmount: 10, currencyCode: 'USD', transactionDetails: { /* card */ } })` then `await flute.transactions.capture(id)` |
+| "Refund $10 of a settled transaction"                                  | `await flute.transactions.refund(id, { reversalAmount: 10 })`                                                                                                 |
+| "Void an authorization before capture"                                 | `await flute.transactions.void(id)`                                                                                                                           |
+| "What does this $10 charge actually cost the customer with surcharge?" | `await flute.transactions.calculateAmount({ baseAmount: 10, pricingType: 'Card', currencyCode: 'USD' })`                                                      |
+| "Create a hosted payment session URL to send to the buyer"             | `await flute.paymentSessions.create({ /* params */ })`                                                                                                        |
+| "Verify a webhook delivery I just received"                            | See "Webhook verification" above.                                                                                                                             |
 
-`baseAmount` is in the merchant's smallest currency unit (`1000` =
-$10.00 USD). Always pass `currencyCode` explicitly even though the
+`baseAmount` is in **whole currency units, not minor units**: `10` is
+$10.00 USD and `10.5` is $10.50. This is the opposite of the Stripe /
+Square convention, so it is the single easiest thing to get wrong here —
+there is no scaling anywhere in the request or response path, the API
+types the field as a decimal and echoes it back verbatim, and passing
+`1000` for a $10.00 charge silently charges $1,000.00. Always pass `currencyCode` explicitly even though the
 OpenAPI spec marks it optional — the live API returns HTTP 500 if it
 is omitted.
 
@@ -320,12 +324,12 @@ set it yourself.
 
 ```ts
 await flute.transactions.sale({
-  baseAmount: 1000, // smallest currency unit (USD cents)
+  baseAmount: 10, // whole currency units — 10 = $10.00, NOT cents
   currencyCode: 'USD', // see § "Things to avoid" — never omit
   paymentProcessorId: '<uuid>', // see § "UI integration patterns" — fetch from settings
   pricingType: 'Card', // optional; only meaningful on dual-pricing merchants
   referenceId: 'order-1234', // optional; participates in duplicate detection
-  customerInitiatedTransaction: true, // true = CIT (default), false = MIT
+  isCustomerInitiatedTransaction: true, // true = CIT (default), false = MIT
   transactionDetails: {
     // Pick exactly one of `cardData` or `achData`. Card path:
     cardData: {
@@ -349,7 +353,7 @@ Returns `TransactionResult` with `id`, `status`, `processorResponse`,
 ```ts
 await flute.transactions.capture(
   transactionId, // id from a prior authorize
-  { captureAmount: 750 }, // optional; omit for a full capture
+  { captureAmount: 7.5 }, // optional; omit for a full capture
 );
 ```
 
@@ -372,7 +376,7 @@ succeeds before settlement; after settlement use `refund` instead.
 ```ts
 await flute.transactions.refund(
   transactionId,
-  { reversalAmount: 500 }, // optional; omit for a full refund
+  { reversalAmount: 5 }, // optional; omit for a full refund
 );
 ```
 
@@ -391,7 +395,7 @@ nothing to replay. Pass `idempotencyKey` explicitly if you want one.
 
 ```ts
 await flute.transactions.calculateAmount({
-  baseAmount: 1000,
+  baseAmount: 10,
   currencyCode: 'USD', // never omit — see § "Things to avoid"
   pricingType: 'Card', // 'Card' = card-side price (with surcharge / dual-pricing card price)
   // 'Cash' = cash-side price (with cash discount)
