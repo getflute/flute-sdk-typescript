@@ -64,7 +64,7 @@ const flute = new Flute({
 });
 
 const result = await flute.transactions.sale({
-  baseAmount: 100,
+  baseAmount: 100, // whole currency units — $100.00, not cents
   currencyCode: 'USD',
   transactionDetails: {
     cardData: {
@@ -81,6 +81,12 @@ const result = await flute.transactions.sale({
 console.log(result.transactionId, result.transactionStatus);
 ```
 
+> **Amounts are in whole currency units, not minor units.** `baseAmount: 10`
+> charges $10.00; `10.5` charges $10.50. This is the opposite of the
+> Stripe / Square convention — there is no scaling anywhere in the request or
+> response path, so passing `1000` for a $10.00 charge silently charges
+> $1,000.00.
+
 ## Common recipes
 
 Five end-to-end recipes covering the most frequent integration flows.
@@ -94,7 +100,7 @@ Each one runs against the sandbox with real credentials.
 await flute.sessions.authenticate(); // surface bad creds at boot
 const settings = await flute.settings.getPaymentSettings();
 const result = await flute.transactions.sale({
-  baseAmount: 100,
+  baseAmount: 100, // whole currency units — $100.00, not cents
   currencyCode: 'USD',
   transactionDetails: {
     cardData: {

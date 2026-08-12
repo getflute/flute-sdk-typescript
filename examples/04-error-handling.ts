@@ -64,7 +64,7 @@ async function main(): Promise<void> {
     // Intentionally malformed body — missing card data — to trigger
     // a 400/422 response from the API.
     await flute.transactions.authorize({
-      baseAmount: 100,
+      baseAmount: 100, // whole currency units — $100.00, not cents
       currencyCode: 'USD',
       transactionDetails: { cardData: {} },
     });

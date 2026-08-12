@@ -40,7 +40,7 @@ async function main(): Promise<void> {
 
   // 2. Calculate the final amount (respects ZCP / surcharge / tip rules).
   const totals = await flute.transactions.calculateAmount({
-    baseAmount: 100,
+    baseAmount: 100, // whole currency units — $100.00, not cents
     tipRate: 0.18,
   });
   console.log(
@@ -52,7 +52,7 @@ async function main(): Promise<void> {
 
   // 3. Authorize → capture flow (replace with a saved paymentMethodId in production).
   const authorization = await flute.transactions.authorize({
-    baseAmount: 100,
+    baseAmount: 100, // whole currency units — $100.00, not cents
     currencyCode: 'USD',
     transactionDetails: {
       cardData: {
