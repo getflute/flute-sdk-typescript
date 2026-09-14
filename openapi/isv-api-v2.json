@@ -2,17 +2,11 @@
   "components": {
     "schemas": {
       "AccountHolderType": {
-        "enum": [
-          "Business",
-          "Personal"
-        ],
+        "enum": ["Business", "Personal"],
         "type": "string"
       },
       "AccountType": {
-        "enum": [
-          "Checking",
-          "Savings"
-        ],
+        "enum": ["Checking", "Savings"],
         "type": "string"
       },
       "AchDataDto": {
@@ -44,9 +38,7 @@
             "$ref": "#/components/schemas/AchSECCode"
           }
         },
-        "required": [
-          "requesterIpAddress"
-        ],
+        "required": ["requesterIpAddress"],
         "type": "object"
       },
       "AchDetailsDto": {
@@ -93,13 +85,33 @@
         },
         "type": "object"
       },
+      "AchPaymentMethodDto": {
+        "additionalProperties": false,
+        "description": "ACH configuration on a payable resource. Typed separately from\nArise.IsvApiBff.Contracts.v2.Common.CardPaymentMethodDto so ACH-only settings are enforced by the contract rather\nthan by validation.",
+        "properties": {
+          "enabled": {
+            "description": "Whether ACH payments are accepted. Naming the method without a body offers it.",
+            "example": true,
+            "type": "boolean"
+          },
+          "fasterProcessing": {
+            "description": "Sends this resource's ACH payments in the next available window for an extra fee. Requires\nthe merchant's ACH settings to allow faster processing, and defaults to standard processing\nwhen not asked for. On a merge patch this field merges instead of being replaced with the\nrest of the ACH configuration: leaving it out keeps the stored choice.",
+            "example": true,
+            "nullable": true,
+            "type": "boolean"
+          },
+          "processorId": {
+            "description": "Processor charging this resource's ACH payments; must be an active ACH processor of the\nmerchant. Omit to pin the merchant's current default active ACH processor. A response\ncarries the pinned processor, or null on a session created before pinning.",
+            "example": "d529945e-8d10-4cb4-9dc3-718e57f3f14e",
+            "format": "uuid",
+            "nullable": true,
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
       "AchSECCode": {
-        "enum": [
-          "Web",
-          "PPD",
-          "CCD",
-          "Telephone"
-        ],
+        "enum": ["Web", "PPD", "CCD", "Telephone"],
         "type": "string"
       },
       "AddressDto": {
@@ -146,12 +158,7 @@
         "type": "object"
       },
       "AggregatedPosTransactionStatus": {
-        "enum": [
-          "InProgress",
-          "Completed",
-          "Cancelled",
-          "Failed"
-        ],
+        "enum": ["InProgress", "Completed", "Cancelled", "Failed"],
         "type": "string"
       },
       "AggregatedTransactionStatus": {
@@ -173,7 +180,8 @@
           "HeldByProcessor",
           "Pending",
           "Declined",
-          "Failed"
+          "Failed",
+          "UnknownOutcome"
         ],
         "type": "string"
       },
@@ -282,37 +290,21 @@
         "type": "object"
       },
       "AvsActions": {
-        "enum": [
-          "Allow",
-          "Deny"
-        ],
+        "enum": ["Allow", "Deny"],
         "type": "string"
       },
       "AvsActionsDto": {
         "description": "<p>Possible values:</p>\n<ul>\n<li><b>1 - Allow</b>: </li>\n<li><b>2 - Deny</b>: </li>\n</ul>\n",
-        "enum": [
-          "Allow",
-          "Deny"
-        ],
+        "enum": ["Allow", "Deny"],
         "type": "string"
       },
       "AvsCodeGroupTypeDto": {
         "description": "<p>Possible values:</p>\n<ul>\n<li><b>1 - NoMatch</b>: </li>\n<li><b>2 - PartialMatch</b>: </li>\n<li><b>3 - Incompatible</b>: </li>\n<li><b>4 - Unavailable</b>: </li>\n<li><b>5 - ValidGroup</b>: </li>\n</ul>\n",
-        "enum": [
-          "NoMatch",
-          "PartialMatch",
-          "Incompatible",
-          "Unavailable",
-          "ValidGroup"
-        ],
+        "enum": ["NoMatch", "PartialMatch", "Incompatible", "Unavailable", "ValidGroup"],
         "type": "string"
       },
       "AvsMerchantProfile": {
-        "enum": [
-          "Strict",
-          "Moderate",
-          "Tolerant"
-        ],
+        "enum": ["Strict", "Moderate", "Tolerant"],
         "type": "string"
       },
       "AvsResponseDto": {
@@ -353,10 +345,7 @@
       },
       "AvsResponseResultDto": {
         "description": "<p>Possible values:</p>\n<ul>\n<li><b>1 - Passed</b>: </li>\n<li><b>2 - Failed</b>: </li>\n</ul>\n",
-        "enum": [
-          "Passed",
-          "Failed"
-        ],
+        "enum": ["Passed", "Failed"],
         "type": "string"
       },
       "CalculateAmountRequestDto": {
@@ -501,10 +490,7 @@
       },
       "CaptureMethod": {
         "description": "<p>Possible values:</p>\n<ul>\n<li><b>0 - Auto</b>: </li>\n<li><b>1 - Manual</b>: </li>\n</ul>\n",
-        "enum": [
-          "Auto",
-          "Manual"
-        ],
+        "enum": ["Auto", "Manual"],
         "type": "string"
       },
       "CaptureRequestDto": {
@@ -541,29 +527,32 @@
         "type": "object"
       },
       "CardDataSource": {
-        "enum": [
-          "Internet",
-          "Swipe",
-          "NFC",
-          "EMV",
-          "EMVContactless",
-          "FallbackSwipe",
-          "Manual"
-        ],
+        "enum": ["Internet", "Swipe", "NFC", "EMV", "EMVContactless", "FallbackSwipe", "Manual"],
         "type": "string"
       },
       "CardDataSourceDto": {
         "description": "<p>Possible values:</p>\n<ul>\n<li><b>1 - Internet</b>: Virtual Terminal, ISV API</li>\n<li><b>2 - Swipe</b>: Track1, Track2</li>\n<li><b>3 - NFC</b>: EMV Tags, Track2</li>\n<li><b>4 - EMV</b>: EMV Tags</li>\n<li><b>5 - EMVContactless</b>: EMV Tags</li>\n<li><b>6 - FallbackSwipe</b>: Track 2</li>\n<li><b>7 - Manual</b>: Card present keyed transaction.</li>\n</ul>\n",
-        "enum": [
-          "Internet",
-          "Swipe",
-          "NFC",
-          "EMV",
-          "EMVContactless",
-          "FallbackSwipe",
-          "Manual"
-        ],
+        "enum": ["Internet", "Swipe", "NFC", "EMV", "EMVContactless", "FallbackSwipe", "Manual"],
         "type": "string"
+      },
+      "CardPaymentMethodDto": {
+        "additionalProperties": false,
+        "description": "Card configuration on a payable resource.",
+        "properties": {
+          "enabled": {
+            "description": "Whether card payments are accepted. Naming the method without a body offers it.",
+            "example": true,
+            "type": "boolean"
+          },
+          "processorId": {
+            "description": "Processor charging this resource's card payments; must be an active card processor of the\nmerchant. Omit to pin the merchant's current default active card processor. A response\ncarries the pinned processor, or null on a session created before pinning.",
+            "example": "d529945e-8d10-4cb4-9dc3-718e57f3f14e",
+            "format": "uuid",
+            "nullable": true,
+            "type": "string"
+          }
+        },
+        "type": "object"
       },
       "CardType": {
         "enum": [
@@ -605,6 +594,30 @@
           "OfflinePin"
         ],
         "type": "string"
+      },
+      "CloseBatchRequestDto": {
+        "additionalProperties": false,
+        "description": "Request to close the current open batch and submit it for settlement with a payment processor",
+        "properties": {
+          "paymentProcessorId": {
+            "description": "The payment processor ID whose open batch is closed and submitted for settlement",
+            "example": "e8b93550-4dd9-4f1a-9254-ac5de0686cee",
+            "format": "uuid",
+            "type": "string"
+          }
+        },
+        "required": ["paymentProcessorId"],
+        "type": "object"
+      },
+      "CloseBatchResponseDto": {
+        "additionalProperties": false,
+        "description": "Response after closing the open batch. Settlement is processed asynchronously — poll\nGET /v2/settlements/batches to observe the batch progressing through its lifecycle.",
+        "properties": {
+          "batchStatus": {
+            "$ref": "#/components/schemas/SettlementBatchStatus"
+          }
+        },
+        "type": "object"
       },
       "ConflictExceptionExample": {
         "additionalProperties": false,
@@ -852,10 +865,7 @@
             "type": "string"
           }
         },
-        "required": [
-          "apiKeyName",
-          "merchantId"
-        ],
+        "required": ["apiKeyName", "merchantId"],
         "type": "object"
       },
       "CreateApiKeyResponseDto": {
@@ -984,10 +994,7 @@
             "type": "boolean"
           }
         },
-        "required": [
-          "firstName",
-          "lastName"
-        ],
+        "required": ["firstName", "lastName"],
         "type": "object"
       },
       "CreateCustomerResponseDto": {
@@ -1000,6 +1007,72 @@
             "type": "string"
           }
         },
+        "type": "object"
+      },
+      "CreatePaymentLinkRequestDto": {
+        "additionalProperties": false,
+        "description": "Request to create a payment link.",
+        "properties": {
+          "baseAmount": {
+            "description": "Payment amount, must be greater than 0 when provided. Omit for a flexible amount\n(the customer enters it at checkout).",
+            "example": 25,
+            "format": "double",
+            "nullable": true,
+            "type": "number"
+          },
+          "currencyCode": {
+            "description": "ISO 4217 uppercase currency code.",
+            "example": "USD",
+            "nullable": true,
+            "type": "string"
+          },
+          "customerId": {
+            "description": "Customer the link is issued for. Omit for an anonymous link. Not allowed when\nlinkType is MultiUse.",
+            "format": "uuid",
+            "nullable": true,
+            "type": "string"
+          },
+          "description": {
+            "description": "Merchant-internal notes, max 500 characters. Never shown to customers.",
+            "nullable": true,
+            "type": "string"
+          },
+          "expiresOn": {
+            "description": "UTC expiration; must not be in the past. Omit for a link that never expires.",
+            "format": "date-time",
+            "nullable": true,
+            "type": "string"
+          },
+          "linkType": {
+            "$ref": "#/components/schemas/PaymentLinkType"
+          },
+          "name": {
+            "description": "Merchant-facing label, max 80 characters. Auto-generated from the amount if omitted.",
+            "example": "Spring campaign",
+            "nullable": true,
+            "type": "string"
+          },
+          "paymentMethods": {
+            "$ref": "#/components/schemas/PaymentMethodsDto"
+          },
+          "referenceId": {
+            "description": "Merchant label, max 200 characters.",
+            "example": "ORDER-1042",
+            "nullable": true,
+            "type": "string"
+          },
+          "taxMode": {
+            "$ref": "#/components/schemas/TaxMode"
+          },
+          "taxRate": {
+            "description": "Tax rate percentage, 0 to 100, with up to 3 decimal places. Required with\ntaxMode; omit both for a link without tax.",
+            "example": 8.25,
+            "format": "double",
+            "nullable": true,
+            "type": "number"
+          }
+        },
+        "required": ["paymentMethods"],
         "type": "object"
       },
       "CreatePaymentMethodResponseDto": {
@@ -1061,13 +1134,8 @@
             "nullable": true,
             "type": "string"
           },
-          "paymentMethodTypes": {
-            "description": "Restricts which payment methods are shown at checkout. Accepted values: \"card\", \"ach\".",
-            "items": {
-              "type": "string"
-            },
-            "nullable": true,
-            "type": "array"
+          "paymentMethods": {
+            "$ref": "#/components/schemas/PaymentMethodsDto"
           },
           "paymentNotes": {
             "description": "Additional notes shown to the payer on the checkout page.",
@@ -1089,6 +1157,16 @@
             "nullable": true,
             "type": "boolean"
           },
+          "taxMode": {
+            "$ref": "#/components/schemas/TaxMode"
+          },
+          "taxRate": {
+            "description": "Tax rate percentage, 0 to 100, with up to 3 decimal places. Required with\ntaxMode; omit both for a session without tax.",
+            "example": 8.25,
+            "format": "double",
+            "nullable": true,
+            "type": "number"
+          },
           "tipAmount": {
             "description": "Optional tip amount to be charged on top of the base amount.",
             "format": "double",
@@ -1106,6 +1184,9 @@
             "description": "The unique identifier of the created payment session.",
             "format": "uuid",
             "type": "string"
+          },
+          "paymentMethods": {
+            "$ref": "#/components/schemas/PaymentMethodsDto"
           }
         },
         "type": "object"
@@ -1399,11 +1480,7 @@
         "type": "object"
       },
       "CreditDebitType": {
-        "enum": [
-          "Credit",
-          "Debit",
-          "Unknown"
-        ],
+        "enum": ["Credit", "Debit", "Unknown"],
         "type": "string"
       },
       "CreditDetailsDto": {
@@ -1470,16 +1547,11 @@
         "type": "object"
       },
       "Currency": {
-        "enum": [
-          "USD"
-        ],
+        "enum": ["USD"],
         "type": "string"
       },
       "CustomerHandling": {
-        "enum": [
-          "CreateCustomer",
-          "TokenOnly"
-        ],
+        "enum": ["CreateCustomer", "TokenOnly"],
         "type": "string"
       },
       "CustomerPaymentMethodAchDto": {
@@ -2003,12 +2075,13 @@
             "nullable": true,
             "type": "string"
           },
-          "paymentMethodTypes": {
-            "items": {
-              "type": "string"
-            },
+          "paymentLinkId": {
+            "format": "uuid",
             "nullable": true,
-            "type": "array"
+            "type": "string"
+          },
+          "paymentMethods": {
+            "$ref": "#/components/schemas/PaymentMethodsDto"
           },
           "paymentNotes": {
             "nullable": true,
@@ -2035,6 +2108,16 @@
             "$ref": "#/components/schemas/PaymentSessionStatusDto"
           },
           "surchargeAmount": {
+            "format": "double",
+            "nullable": true,
+            "type": "number"
+          },
+          "taxMode": {
+            "$ref": "#/components/schemas/TaxMode"
+          },
+          "taxRate": {
+            "description": "Tax rate percentage pinned on the session. Null = no tax configured; always set\nand cleared with taxMode.",
+            "example": 8.25,
             "format": "double",
             "nullable": true,
             "type": "number"
@@ -2634,63 +2717,64 @@
       },
       "ListBatchesResponseDto": {
         "additionalProperties": false,
-        "description": "Settlement batch details",
+        "description": "Settlement batch details. An open batch keeps taking transactions while its settlement is\npending, so the counts and amounts of a PendingSettlement batch are live until it settles.",
         "properties": {
-          "batchDateTime": {
-            "description": "Date and time when the batch was created or processed",
+          "batchId": {
+            "description": "Unique identifier of the settlement batch. Null for the currently open batch — its\nrecord is only materialized when settlement completes.",
+            "example": "21c75430-a316-456f-9126-365760dca33a",
+            "format": "uuid",
+            "nullable": true,
+            "type": "string"
+          },
+          "batchStatus": {
+            "$ref": "#/components/schemas/SettlementBatchStatus"
+          },
+          "createdOn": {
+            "description": "Date and time when the batch was created, or when an open batch was submitted for\nsettlement. Null while the batch is open and has not been submitted.",
             "example": "2026-01-01T00:00:00Z",
             "format": "date-time",
             "nullable": true,
             "type": "string"
           },
-          "batchId": {
-            "description": "Unique identifier of the settlement batch",
-            "example": "42df0a13-4bf4-48f8-929c-08a379c0a0d6",
-            "format": "uuid",
-            "nullable": true,
-            "type": "string"
-          },
           "externalBatchId": {
             "description": "External batch identifier from the payment processor",
-            "example": "BATCH-EXT-001",
+            "example": "BATCH-001",
             "nullable": true,
             "type": "string"
-          },
-          "netAmount": {
-            "description": "Net amount after all transactions (sales minus refunds)",
-            "example": 9500,
-            "format": "double",
-            "type": "number"
           },
           "paymentProcessorId": {
             "description": "Payment processor identifier associated with this batch",
-            "example": "e29f84ab-a3f3-4bc9-a04e-4b3e3f58d46b",
+            "example": "1092a854-1708-4e0c-8d86-1b8fe34b37ec",
             "format": "uuid",
             "type": "string"
           },
           "paymentProcessorName": {
             "description": "Name of the payment processor",
-            "example": "TSYS",
+            "example": "NY Card Present",
             "nullable": true,
             "type": "string"
           },
-          "refundsAmount": {
+          "totalNetAmount": {
+            "description": "Net amount after all transactions (sales minus refunds)",
+            "example": 1250,
+            "format": "double",
+            "type": "number"
+          },
+          "totalRefundsAmount": {
             "description": "Total amount of refunds in the batch",
-            "example": 500,
+            "example": 50,
             "format": "double",
             "type": "number"
           },
-          "salesAmount": {
+          "totalSalesAmount": {
             "description": "Total amount of sales in the batch",
-            "example": 10000,
+            "example": 1300,
             "format": "double",
             "type": "number"
-          },
-          "status": {
-            "$ref": "#/components/schemas/SettlementBatchStatus"
           },
           "transactionCount": {
             "description": "Total number of transactions in the batch",
+            "example": 15,
             "format": "int32",
             "type": "integer"
           }
@@ -2825,10 +2909,7 @@
         "type": "object"
       },
       "MobilePlatform": {
-        "enum": [
-          "iOS",
-          "Android"
-        ],
+        "enum": ["iOS", "Android"],
         "type": "string"
       },
       "NotFoundExceptionExample": {
@@ -2883,11 +2964,7 @@
         "type": "object"
       },
       "NotificationDeliveryMethod": {
-        "enum": [
-          "None",
-          "Sms",
-          "Email"
-        ],
+        "enum": ["None", "Sms", "Email"],
         "type": "string"
       },
       "PageInfoDto": {
@@ -2988,6 +3065,24 @@
             "description": "The items on the current page. Empty when the requested page is beyond the data.",
             "items": {
               "$ref": "#/components/schemas/ListTerminalsResponseDto"
+            },
+            "nullable": true,
+            "type": "array"
+          },
+          "pageInfo": {
+            "$ref": "#/components/schemas/PageInfoDto"
+          }
+        },
+        "type": "object"
+      },
+      "PagedResponseDtoOfPaymentLinkResponseDto": {
+        "additionalProperties": false,
+        "description": "Standard paginated response envelope: the requested page of items plus\nthe Arise.IsvApiBff.Contracts.v2.Common.PageInfoDto metadata used to drive navigation.",
+        "properties": {
+          "items": {
+            "description": "The items on the current page. Empty when the requested page is beyond the data.",
+            "items": {
+              "$ref": "#/components/schemas/PaymentLinkResponseDto"
             },
             "nullable": true,
             "type": "array"
@@ -3306,6 +3401,129 @@
         },
         "type": "object"
       },
+      "PaymentLinkResponseDto": {
+        "additionalProperties": false,
+        "description": "A payment link, as returned by every payment-links endpoint.",
+        "properties": {
+          "baseAmount": {
+            "description": "Payment amount. Null = flexible amount (the customer enters it at checkout).",
+            "example": 25,
+            "format": "double",
+            "nullable": true,
+            "type": "number"
+          },
+          "createdOn": {
+            "description": "UTC creation timestamp.",
+            "format": "date-time",
+            "type": "string"
+          },
+          "currencyCode": {
+            "description": "ISO 4217 uppercase currency code.",
+            "example": "USD",
+            "nullable": true,
+            "type": "string"
+          },
+          "customerFirstName": {
+            "description": "First name of the attached customer, when any.",
+            "nullable": true,
+            "type": "string"
+          },
+          "customerId": {
+            "description": "Customer the link is issued for; null for an anonymous link.",
+            "format": "uuid",
+            "nullable": true,
+            "type": "string"
+          },
+          "customerLastName": {
+            "description": "Last name of the attached customer, when any.",
+            "nullable": true,
+            "type": "string"
+          },
+          "description": {
+            "description": "Merchant-internal notes. Never shown to customers.",
+            "nullable": true,
+            "type": "string"
+          },
+          "expiresOn": {
+            "description": "UTC expiration; null when the link never expires.",
+            "format": "date-time",
+            "nullable": true,
+            "type": "string"
+          },
+          "lastPaymentOn": {
+            "description": "Timestamp of the newest successful payment; null when none exist.",
+            "format": "date-time",
+            "nullable": true,
+            "type": "string"
+          },
+          "linkType": {
+            "$ref": "#/components/schemas/PaymentLinkType"
+          },
+          "modifiedOn": {
+            "description": "UTC timestamp of the last modification.",
+            "format": "date-time",
+            "type": "string"
+          },
+          "name": {
+            "description": "Merchant-facing label.",
+            "example": "Spring campaign",
+            "nullable": true,
+            "type": "string"
+          },
+          "paymentCount": {
+            "description": "Number of successful payments received.",
+            "format": "int32",
+            "type": "integer"
+          },
+          "paymentLinkId": {
+            "description": "Unique identifier of the payment link.",
+            "format": "uuid",
+            "type": "string"
+          },
+          "paymentLinkStatus": {
+            "$ref": "#/components/schemas/PaymentLinkStatus"
+          },
+          "paymentMethods": {
+            "$ref": "#/components/schemas/PaymentMethodsDto"
+          },
+          "referenceId": {
+            "description": "Merchant label.",
+            "example": "ORDER-1042",
+            "nullable": true,
+            "type": "string"
+          },
+          "shortUrl": {
+            "description": "Customer-facing shortened URL of the payment link.",
+            "example": "https://pay.example.com/l/abc123",
+            "nullable": true,
+            "type": "string"
+          },
+          "taxMode": {
+            "$ref": "#/components/schemas/TaxMode"
+          },
+          "taxRate": {
+            "description": "Tax rate percentage. Null = no tax configured; always set and cleared with taxMode.",
+            "example": 8.25,
+            "format": "double",
+            "nullable": true,
+            "type": "number"
+          },
+          "totalCollectedAmount": {
+            "description": "Sum of all successful payment amounts.",
+            "format": "double",
+            "type": "number"
+          }
+        },
+        "type": "object"
+      },
+      "PaymentLinkStatus": {
+        "enum": ["Active", "Inactive", "Completed", "Expired"],
+        "type": "string"
+      },
+      "PaymentLinkType": {
+        "enum": ["SingleUse", "MultiUse"],
+        "type": "string"
+      },
       "PaymentMethodAchDetailsDto": {
         "additionalProperties": false,
         "properties": {
@@ -3477,31 +3695,29 @@
         "type": "object"
       },
       "PaymentMethodType": {
-        "enum": [
-          "Card",
-          "ACH",
-          "Cash"
-        ],
+        "enum": ["Card", "ACH", "Cash"],
         "type": "string"
       },
+      "PaymentMethodsDto": {
+        "additionalProperties": false,
+        "description": "Payment methods a payable resource accepts, keyed by method so each one carries only the\nconfiguration that applies to it.",
+        "properties": {
+          "ach": {
+            "$ref": "#/components/schemas/AchPaymentMethodDto"
+          },
+          "card": {
+            "$ref": "#/components/schemas/CardPaymentMethodDto"
+          }
+        },
+        "type": "object"
+      },
       "PaymentProcessorType": {
-        "enum": [
-          "Tsys",
-          "Ach",
-          "SandboxCard",
-          "SandboxAch"
-        ],
+        "enum": ["Tsys", "Ach", "SandboxCard", "SandboxAch"],
         "type": "string"
       },
       "PaymentSessionStatusDto": {
         "description": "Payment session status<p>Possible values:</p>\n<ul>\n<li><b>1 - Created</b>: </li>\n<li><b>2 - Cancelled</b>: </li>\n<li><b>3 - Completed</b>: </li>\n<li><b>4 - Failed</b>: </li>\n<li><b>5 - Expired</b>: </li>\n</ul>\n",
-        "enum": [
-          "Created",
-          "Cancelled",
-          "Completed",
-          "Failed",
-          "Expired"
-        ],
+        "enum": ["Created", "Cancelled", "Completed", "Failed", "Expired"],
         "type": "string"
       },
       "PingWebhookIsvResponseDto": {
@@ -3555,17 +3771,11 @@
         "type": "object"
       },
       "PosInitiationChannel": {
-        "enum": [
-          "Cloud",
-          "Deeplink"
-        ],
+        "enum": ["Cloud", "Deeplink"],
         "type": "string"
       },
       "PosReadingMethod": {
-        "enum": [
-          "Regular",
-          "KeyedEntry"
-        ],
+        "enum": ["Regular", "KeyedEntry"],
         "type": "string"
       },
       "PosTransactionResponseDto": {
@@ -3777,10 +3987,7 @@
       },
       "PricingType": {
         "description": "<p>Possible values:</p>\n<ul>\n<li><b>1 - Card</b>: </li>\n<li><b>2 - Cash</b>: </li>\n</ul>\n",
-        "enum": [
-          "Card",
-          "Cash"
-        ],
+        "enum": ["Card", "Cash"],
         "type": "string"
       },
       "PrintTransactionReceiptRequestDto": {
@@ -3941,14 +4148,6 @@
         },
         "type": "object"
       },
-      "ResponseCode": {
-        "enum": [
-          "Approve",
-          "Decline",
-          "Error"
-        ],
-        "type": "string"
-      },
       "ReversalRequestDto": {
         "additionalProperties": false,
         "description": "Request to reverse a transaction. The backend automatically determines\nwhether to void or refund based on the transaction's settlement status.",
@@ -3982,65 +4181,37 @@
             "$ref": "#/components/schemas/NotificationDeliveryMethod"
           }
         },
-        "required": [
-          "hasCustomerConsent",
-          "recipient",
-          "shareBy"
-        ],
+        "required": ["hasCustomerConsent", "recipient", "shareBy"],
         "type": "object"
       },
       "SessionMode": {
-        "enum": [
-          "Payment",
-          "SaveMethod",
-          "PaymentAndSave"
-        ],
+        "enum": ["Payment", "SaveMethod", "PaymentAndSave"],
         "type": "string"
-      },
-      "SettleTransactionsRequestDto": {
-        "additionalProperties": false,
-        "description": "Request to settle (close) a batch of transactions for a given payment processor",
-        "properties": {
-          "paymentProcessorId": {
-            "description": "The payment processor ID to settle transactions for",
-            "example": "70f07e54-ad9d-417c-9ab4-d4acc5302aa8",
-            "format": "uuid",
-            "type": "string"
-          }
-        },
-        "required": [
-          "paymentProcessorId"
-        ],
-        "type": "object"
-      },
-      "SettleTransactionsResponseDto": {
-        "additionalProperties": false,
-        "description": "Response after settling (closing) a batch of transactions",
-        "properties": {
-          "message": {
-            "description": "Descriptive message about the settlement result",
-            "example": "Batch settled successfully",
-            "nullable": true,
-            "type": "string"
-          },
-          "processorResponseCode": {
-            "description": "Response code from the payment processor",
-            "example": "00",
-            "nullable": true,
-            "type": "string"
-          },
-          "status": {
-            "$ref": "#/components/schemas/ResponseCode"
-          }
-        },
-        "type": "object"
       },
       "SettlementBatchStatus": {
-        "enum": [
-          "Open",
-          "Settled"
-        ],
+        "enum": ["Open", "Settled", "PendingSettlement", "Declined"],
         "type": "string"
+      },
+      "SharePaymentLinkRequestDto": {
+        "additionalProperties": false,
+        "description": "Request to share a payment link with a customer.",
+        "properties": {
+          "hasCustomerConsent": {
+            "description": "Whether the customer has consented to receive the message.",
+            "type": "boolean"
+          },
+          "recipient": {
+            "description": "Where the link is sent: a mobile phone number in E.164 format when sharing by\n`Sms`, or an email address (max 254 characters) when sharing by `Email`.",
+            "example": "+14125553845",
+            "minLength": 1,
+            "type": "string"
+          },
+          "shareBy": {
+            "$ref": "#/components/schemas/NotificationDeliveryMethod"
+          }
+        },
+        "required": ["hasCustomerConsent", "recipient", "shareBy"],
+        "type": "object"
       },
       "SuggestedTipsDto": {
         "additionalProperties": false,
@@ -4057,40 +4228,28 @@
         },
         "type": "object"
       },
+      "TaxMode": {
+        "enum": ["Exclusive", "Inclusive"],
+        "type": "string"
+      },
       "TerminalConnectionStatus": {
-        "enum": [
-          "Online",
-          "Offline"
-        ],
+        "enum": ["Online", "Offline"],
         "type": "string"
       },
       "TerminalConnectionType": {
-        "enum": [
-          "WiFi",
-          "Mobile",
-          "Ethernet"
-        ],
+        "enum": ["WiFi", "Mobile", "Ethernet"],
         "type": "string"
       },
       "TerminalDebitPinKey": {
-        "enum": [
-          "Injected",
-          "Missing"
-        ],
+        "enum": ["Injected", "Missing"],
         "type": "string"
       },
       "TerminalManufacturer": {
-        "enum": [
-          "Sunmi",
-          "Verifone"
-        ],
+        "enum": ["Sunmi", "Verifone"],
         "type": "string"
       },
       "TerminalMode": {
-        "enum": [
-          "Standalone",
-          "SemiIntegrated"
-        ],
+        "enum": ["Standalone", "SemiIntegrated"],
         "type": "string"
       },
       "TerminalModel": {
@@ -4104,19 +4263,11 @@
         "type": "string"
       },
       "TerminalPosStatus": {
-        "enum": [
-          "Ready",
-          "Busy",
-          "Offline"
-        ],
+        "enum": ["Ready", "Busy", "Offline"],
         "type": "string"
       },
       "TerminalPrinterStatus": {
-        "enum": [
-          "Normal",
-          "NotNormal",
-          "NotSupported"
-        ],
+        "enum": ["Normal", "NotNormal", "NotSupported"],
         "type": "string"
       },
       "TipAdjustmentRequestDto": {
@@ -4141,18 +4292,12 @@
         "type": "object"
       },
       "TokenType": {
-        "enum": [
-          "Local",
-          "Network"
-        ],
+        "enum": ["Local", "Network"],
         "type": "string"
       },
       "TokenTypeDto": {
         "description": "Card Token type<p>Possible values:</p>\n<ul>\n<li><b>1 - Local</b>: Regular</li>\n<li><b>2 - Network</b>: Network</li>\n</ul>\n",
-        "enum": [
-          "Local",
-          "Network"
-        ],
+        "enum": ["Local", "Network"],
         "type": "string"
       },
       "TransactionAddressVerificationServiceResponseDto": {
@@ -4811,12 +4956,7 @@
         "type": "object"
       },
       "TransactionStatus": {
-        "enum": [
-          "Pending",
-          "Approved",
-          "Declined",
-          "Failed"
-        ],
+        "enum": ["Pending", "Approved", "Declined", "Failed", "UnknownOutcome"],
         "type": "string"
       },
       "TransactionSummaryResponseDto": {
@@ -4953,6 +5093,57 @@
         ],
         "type": "string"
       },
+      "UnprocessableEntityExceptionExample": {
+        "additionalProperties": false,
+        "properties": {
+          "cause": {
+            "nullable": true,
+            "type": "string"
+          },
+          "correlationId": {
+            "nullable": true,
+            "type": "string"
+          },
+          "details": {
+            "nullable": true,
+            "type": "string"
+          },
+          "documentationUrl": {
+            "nullable": true,
+            "type": "string"
+          },
+          "entityId": {
+            "nullable": true,
+            "type": "string"
+          },
+          "errorCode": {
+            "nullable": true,
+            "type": "string"
+          },
+          "exceptionType": {
+            "nullable": true,
+            "type": "string"
+          },
+          "resolution": {
+            "nullable": true,
+            "type": "string"
+          },
+          "source": {
+            "nullable": true,
+            "type": "string"
+          },
+          "statusCode": {
+            "format": "int32",
+            "nullable": true,
+            "type": "integer"
+          },
+          "title": {
+            "nullable": true,
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
       "UpdateCustomerRequestDto": {
         "additionalProperties": false,
         "description": "JSON Merge Patch (RFC 7396) body for a customer. Each field is RiseOsV2.Rest.MergePatch.Optional`1 so\nthe controller distinguishes an omitted field (leave unchanged) from an explicit null\n(clear) from a value (overwrite). Nested addresses are recursively presence-tracked.",
@@ -5042,6 +5233,74 @@
             "example": "NY",
             "nullable": true,
             "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "UpdatePaymentLinkRequestDto": {
+        "additionalProperties": false,
+        "description": "JSON Merge Patch (RFC 7396) body for a payment link. An omitted field is left unchanged;\nan explicit `null` clears a clearable field.",
+        "properties": {
+          "baseAmount": {
+            "description": "Payment amount, must be greater than 0 when provided. Explicit null = flexible amount\n(the customer enters it at checkout).",
+            "example": 25,
+            "format": "double",
+            "nullable": true,
+            "type": "number"
+          },
+          "currencyCode": {
+            "description": "ISO 4217 uppercase currency code. Cannot be cleared, and the currency is frozen once\nthe link has received payments.",
+            "example": "USD",
+            "nullable": true,
+            "type": "string"
+          },
+          "customerId": {
+            "description": "Customer the link is issued for. Explicit null detaches the customer. Not allowed\nonce the merged link is MultiUse.",
+            "format": "uuid",
+            "nullable": true,
+            "type": "string"
+          },
+          "description": {
+            "description": "Merchant-internal notes, max 500 characters. Explicit null clears them.",
+            "nullable": true,
+            "type": "string"
+          },
+          "expiresOn": {
+            "description": "UTC expiration; must be a future date. Explicit null = the link never expires.",
+            "format": "date-time",
+            "nullable": true,
+            "type": "string"
+          },
+          "linkType": {
+            "$ref": "#/components/schemas/PaymentLinkType"
+          },
+          "name": {
+            "description": "Merchant-facing label, max 80 characters. Cannot be cleared.",
+            "example": "Spring campaign",
+            "nullable": true,
+            "type": "string"
+          },
+          "paymentLinkStatus": {
+            "$ref": "#/components/schemas/PaymentLinkStatus"
+          },
+          "paymentMethods": {
+            "$ref": "#/components/schemas/PaymentMethodsDto"
+          },
+          "referenceId": {
+            "description": "Merchant label, max 200 characters. Explicit null clears it.",
+            "example": "ORDER-1042",
+            "nullable": true,
+            "type": "string"
+          },
+          "taxMode": {
+            "$ref": "#/components/schemas/TaxMode"
+          },
+          "taxRate": {
+            "description": "Tax rate percentage, 0 to 100, with up to 3 decimal places. The merged link\nmust keep taxRate and taxMode set or cleared together; explicit null clears the tax.",
+            "example": 8.25,
+            "format": "double",
+            "nullable": true,
+            "type": "number"
           }
         },
         "type": "object"
@@ -5246,10 +5505,7 @@
         "type": "object"
       },
       "WebhookDeliveryLogExportFormat": {
-        "enum": [
-          "Csv",
-          "Json"
-        ],
+        "enum": ["Csv", "Json"],
         "type": "string"
       },
       "WebhookDeliveryLogIsvDetailDto": {
@@ -5441,17 +5697,11 @@
         "type": "object"
       },
       "WebhookDeliveryLogStatus": {
-        "enum": [
-          "Success",
-          "Failure"
-        ],
+        "enum": ["Success", "Failure"],
         "type": "string"
       },
       "WebhookEndpointStatus": {
-        "enum": [
-          "Active",
-          "Inactive"
-        ],
+        "enum": ["Active", "Inactive"],
         "type": "string"
       },
       "WebhookEventType": {
@@ -5487,7 +5737,9 @@
           "terminal.deactivated",
           "terminal.out_of_paper",
           "payment_session.created",
-          "payment_session.completed"
+          "payment_session.completed",
+          "payment_link.created",
+          "payment_link.updated"
         ],
         "type": "string"
       },
@@ -5516,22 +5768,12 @@
         "type": "object"
       },
       "ZeroCostProcessingOption": {
-        "enum": [
-          "None",
-          "CashDiscount",
-          "DualPricing",
-          "Surcharge"
-        ],
+        "enum": ["None", "CashDiscount", "DualPricing", "Surcharge"],
         "type": "string"
       },
       "ZeroCostProcessingOptionDto": {
         "description": "<p>Possible values:</p>\n<ul>\n<li><b>1 - None</b>: </li>\n<li><b>2 - CashDiscount</b>: </li>\n<li><b>3 - DualPricing</b>: </li>\n<li><b>4 - Surcharge</b>: </li>\n</ul>\n",
-        "enum": [
-          "None",
-          "CashDiscount",
-          "DualPricing",
-          "Surcharge"
-        ],
+        "enum": ["None", "CashDiscount", "DualPricing", "Surcharge"],
         "type": "string"
       }
     },
@@ -5553,6 +5795,7 @@
   "paths": {
     "/v2/api-keys": {
       "get": {
+        "description": "List the API keys of the merchants managed by your affiliate account, optionally filtered to a\nsingle merchant.\n            \n**Note:** This endpoint requires the Bearer token to be an Affiliate (ISV) token. Merchant tokens are not accepted.",
         "parameters": [
           {
             "description": "Optional merchant identifier to filter API keys. If not provided, returns keys for all merchants belonging to the affiliate",
@@ -5602,9 +5845,7 @@
                   "entityId": null,
                   "errorCode": "V0000",
                   "errors": {
-                    "Email": [
-                      "'Email' is not a valid email address."
-                    ]
+                    "Email": ["'Email' is not a valid email address."]
                   },
                   "exceptionType": "ValidationException",
                   "resolution": "Review the errors and correct the invalid fields.",
@@ -5716,9 +5957,7 @@
           }
         },
         "summary": "List API Keys Required API Permission: General Configurations",
-        "tags": [
-          "ApiKeys"
-        ]
+        "tags": ["ApiKeys"]
       },
       "post": {
         "description": "Create a new API key for a merchant managed by your affiliate account.\n            \nProvide the Merchant ID and a name to generate a unique API key ID and secret for the merchant.\n            \nUse the returned credentials to authenticate as the merchant for API operations.\n            \n**Note:** The API key secret is only returned once during creation. Store it securely.\n            \n**Note:** This endpoint requires the Bearer token to be an Affiliate (ISV) token. Merchant tokens are not accepted.",
@@ -5761,9 +6000,7 @@
                   "entityId": null,
                   "errorCode": "V0000",
                   "errors": {
-                    "Email": [
-                      "'Email' is not a valid email address."
-                    ]
+                    "Email": ["'Email' is not a valid email address."]
                   },
                   "exceptionType": "ValidationException",
                   "resolution": "Review the errors and correct the invalid fields.",
@@ -5898,9 +6135,7 @@
           }
         },
         "summary": "Create API Key Required API Permission: General Configurations",
-        "tags": [
-          "ApiKeys"
-        ]
+        "tags": ["ApiKeys"]
       }
     },
     "/v2/api-keys/{clientId}": {
@@ -5934,9 +6169,7 @@
                   "entityId": null,
                   "errorCode": "V0000",
                   "errors": {
-                    "Email": [
-                      "'Email' is not a valid email address."
-                    ]
+                    "Email": ["'Email' is not a valid email address."]
                   },
                   "exceptionType": "ValidationException",
                   "resolution": "Review the errors and correct the invalid fields.",
@@ -6071,9 +6304,7 @@
           }
         },
         "summary": "Revoke API Key Required API Permission: General Configurations",
-        "tags": [
-          "ApiKeys"
-        ]
+        "tags": ["ApiKeys"]
       }
     },
     "/v2/customers": {
@@ -6098,18 +6329,22 @@
             }
           },
           {
-            "description": "Sort ascending",
+            "description": "Sort ascending when true. Defaults to false (descending).",
+            "example": false,
             "in": "query",
             "name": "asc",
             "schema": {
+              "example": false,
               "type": "boolean"
             }
           },
           {
-            "description": "Order by field",
+            "description": "Field to order by. Defaults to `createdOn` (newest first).",
+            "example": "createdOn",
             "in": "query",
             "name": "orderBy",
             "schema": {
+              "example": "createdOn",
               "type": "string"
             }
           },
@@ -6235,9 +6470,7 @@
                   "entityId": null,
                   "errorCode": "V0000",
                   "errors": {
-                    "Email": [
-                      "'Email' is not a valid email address."
-                    ]
+                    "Email": ["'Email' is not a valid email address."]
                   },
                   "exceptionType": "ValidationException",
                   "resolution": "Review the errors and correct the invalid fields.",
@@ -6349,9 +6582,7 @@
           }
         },
         "summary": "List Customers Required API Permission: List Customers",
-        "tags": [
-          "Customers"
-        ]
+        "tags": ["Customers"]
       },
       "post": {
         "requestBody": {
@@ -6432,9 +6663,7 @@
                   "entityId": null,
                   "errorCode": "V0000",
                   "errors": {
-                    "Email": [
-                      "'Email' is not a valid email address."
-                    ]
+                    "Email": ["'Email' is not a valid email address."]
                   },
                   "exceptionType": "ValidationException",
                   "resolution": "Review the errors and correct the invalid fields.",
@@ -6569,9 +6798,7 @@
           }
         },
         "summary": "Create Customer Required API Permission: Manage Customers",
-        "tags": [
-          "Customers"
-        ]
+        "tags": ["Customers"]
       }
     },
     "/v2/customers/{customerId}": {
@@ -6604,9 +6831,7 @@
                   "entityId": null,
                   "errorCode": "V0000",
                   "errors": {
-                    "Email": [
-                      "'Email' is not a valid email address."
-                    ]
+                    "Email": ["'Email' is not a valid email address."]
                   },
                   "exceptionType": "ValidationException",
                   "resolution": "Review the errors and correct the invalid fields.",
@@ -6741,9 +6966,7 @@
           }
         },
         "summary": "Delete Customer Required API Permission: Manage Customers",
-        "tags": [
-          "Customers"
-        ]
+        "tags": ["Customers"]
       },
       "get": {
         "parameters": [
@@ -6842,9 +7065,7 @@
                   "entityId": null,
                   "errorCode": "V0000",
                   "errors": {
-                    "Email": [
-                      "'Email' is not a valid email address."
-                    ]
+                    "Email": ["'Email' is not a valid email address."]
                   },
                   "exceptionType": "ValidationException",
                   "resolution": "Review the errors and correct the invalid fields.",
@@ -6956,9 +7177,7 @@
           }
         },
         "summary": "Get Customer Required API Permission: Get Customer Details",
-        "tags": [
-          "Customers"
-        ]
+        "tags": ["Customers"]
       },
       "patch": {
         "description": "Partial update (JSON Merge Patch, RFC 7396): send only the fields you want to change.\nAn omitted field is left unchanged; an explicit `null` clears a clearable field; nested\naddresses merge recursively. Returns the full updated customer.",
@@ -7092,9 +7311,7 @@
                   "entityId": null,
                   "errorCode": "V0000",
                   "errors": {
-                    "Email": [
-                      "'Email' is not a valid email address."
-                    ]
+                    "Email": ["'Email' is not a valid email address."]
                   },
                   "exceptionType": "ValidationException",
                   "resolution": "Review the errors and correct the invalid fields.",
@@ -7229,9 +7446,1005 @@
           }
         },
         "summary": "Update Customer Required API Permission: Manage Customers",
-        "tags": [
-          "Customers"
-        ]
+        "tags": ["Customers"]
+      }
+    },
+    "/v2/payment-links": {
+      "get": {
+        "parameters": [
+          {
+            "description": "Zero-based page index.",
+            "in": "query",
+            "name": "pageIndex",
+            "schema": {
+              "format": "int32",
+              "type": "integer"
+            }
+          },
+          {
+            "description": "Items per page (1–100).",
+            "in": "query",
+            "name": "pageSize",
+            "schema": {
+              "format": "int32",
+              "type": "integer"
+            }
+          },
+          {
+            "description": "Free-text match against name, description, and the payment link id.",
+            "in": "query",
+            "name": "search",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by link type.",
+            "in": "query",
+            "name": "linkType",
+            "schema": {
+              "$ref": "#/components/schemas/PaymentLinkType"
+            }
+          },
+          {
+            "description": "Filter by effective status.",
+            "in": "query",
+            "name": "paymentLinkStatus",
+            "schema": {
+              "$ref": "#/components/schemas/PaymentLinkStatus"
+            }
+          },
+          {
+            "description": "Sort field: createdOn, baseAmount, name, or paymentLinkStatus. Default createdOn.",
+            "in": "query",
+            "name": "sortBy",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Sort direction: asc or desc. Default desc.",
+            "in": "query",
+            "name": "sortOrder",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PagedResponseDtoOfPaymentLinkResponseDto"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "cause": "One or more fields failed validation rules.",
+                  "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                  "details": "One or more validation errors occurred.",
+                  "documentationUrl": "https://developer.flute.com/",
+                  "entityId": null,
+                  "errorCode": "V0000",
+                  "errors": {
+                    "Email": ["'Email' is not a valid email address."]
+                  },
+                  "exceptionType": "ValidationException",
+                  "resolution": "Review the errors and correct the invalid fields.",
+                  "source": "<Service>",
+                  "statusCode": 400,
+                  "title": "Validation failed"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationExceptionExample"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "cause": "You do not have permission to access this resource.",
+                  "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                  "details": "You do not have permission to access this resource.",
+                  "documentationUrl": "https://developer.flute.com/",
+                  "entityId": null,
+                  "errorCode": "F0000",
+                  "exceptionType": "ForbiddenException",
+                  "resolution": "Verify your credentials and permissions or contact your administrator.",
+                  "source": "<Service>",
+                  "statusCode": 403,
+                  "title": "Access forbidden"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ForbiddenExceptionExample"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "cause": "Too many requests sent in a short period.",
+                  "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                  "details": "Too many requests sent in a short period.",
+                  "documentationUrl": "https://developer.flute.com/",
+                  "entityId": null,
+                  "errorCode": "R0000",
+                  "exceptionType": "RateLimitExceededException",
+                  "resolution": "Wait before retrying the request. Check the Retry-After header for more information.",
+                  "source": "<Service>",
+                  "statusCode": 429,
+                  "title": "Rate limit exceeded"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/RateLimitExceededExceptionExample"
+                }
+              }
+            },
+            "description": "Too Many Requests"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "cause": "An unexpected error occurred while processing the request",
+                  "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                  "details": "An unexpected error occurred while processing the request.",
+                  "documentationUrl": "https://developer.flute.com/",
+                  "entityId": null,
+                  "errorCode": "I0000",
+                  "exceptionType": "IntegrationException",
+                  "resolution": "Please contact support with the correlation ID if the issue persists",
+                  "source": "<Service>",
+                  "statusCode": 500,
+                  "title": "Internal server error"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/InternalExceptionExample"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "summary": "List payment links for the authenticated merchant. Required API Permission: Payment Links",
+        "tags": ["PaymentLinks"]
+      },
+      "post": {
+        "description": "A `paymentMethods` entry without `processorId` is pinned to the merchant's default\nactive processor of that type at creation time.",
+        "parameters": [
+          {
+            "description": "Optional client-generated key (max 255 characters) that makes this request safely retryable: a retry with the same key within the retention window returns the original response verbatim without a second side effect; a retry while the original is still processing returns 409 IdempotencyKeyInProgress; reusing a key with a different request returns 422 IdempotencyKeyConflict. Server errors (5xx) are not stored: retrying the same key after one executes the request again.",
+            "in": "header",
+            "name": "Idempotency-Key",
+            "schema": {
+              "maxLength": 255,
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePaymentLinkRequestDto"
+              }
+            }
+          },
+          "description": "Payment link configuration."
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentLinkResponseDto"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "cause": "One or more fields failed validation rules.",
+                  "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                  "details": "One or more validation errors occurred.",
+                  "documentationUrl": "https://developer.flute.com/",
+                  "entityId": null,
+                  "errorCode": "V0000",
+                  "errors": {
+                    "Email": ["'Email' is not a valid email address."]
+                  },
+                  "exceptionType": "ValidationException",
+                  "resolution": "Review the errors and correct the invalid fields.",
+                  "source": "<Service>",
+                  "statusCode": 400,
+                  "title": "Validation failed"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationExceptionExample"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "cause": "You do not have permission to access this resource.",
+                  "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                  "details": "You do not have permission to access this resource.",
+                  "documentationUrl": "https://developer.flute.com/",
+                  "entityId": null,
+                  "errorCode": "F0000",
+                  "exceptionType": "ForbiddenException",
+                  "resolution": "Verify your credentials and permissions or contact your administrator.",
+                  "source": "<Service>",
+                  "statusCode": 403,
+                  "title": "Access forbidden"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ForbiddenExceptionExample"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "cause": "The request is well-formed but was rejected by a business rule.",
+                  "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                  "details": "The request is well-formed but was rejected by a business rule.",
+                  "documentationUrl": "https://developer.flute.com/",
+                  "entityId": null,
+                  "errorCode": "E0000",
+                  "exceptionType": "UnprocessableEntityException",
+                  "resolution": "Correct the request so it satisfies the rule described in the details, then retry.",
+                  "source": "<Service>",
+                  "statusCode": 422,
+                  "title": "Unprocessable entity"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/UnprocessableEntityExceptionExample"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "cause": "Too many requests sent in a short period.",
+                  "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                  "details": "Too many requests sent in a short period.",
+                  "documentationUrl": "https://developer.flute.com/",
+                  "entityId": null,
+                  "errorCode": "R0000",
+                  "exceptionType": "RateLimitExceededException",
+                  "resolution": "Wait before retrying the request. Check the Retry-After header for more information.",
+                  "source": "<Service>",
+                  "statusCode": 429,
+                  "title": "Rate limit exceeded"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/RateLimitExceededExceptionExample"
+                }
+              }
+            },
+            "description": "Too Many Requests"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "cause": "An unexpected error occurred while processing the request",
+                  "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                  "details": "An unexpected error occurred while processing the request.",
+                  "documentationUrl": "https://developer.flute.com/",
+                  "entityId": null,
+                  "errorCode": "I0000",
+                  "exceptionType": "IntegrationException",
+                  "resolution": "Please contact support with the correlation ID if the issue persists",
+                  "source": "<Service>",
+                  "statusCode": 500,
+                  "title": "Internal server error"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/InternalExceptionExample"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "summary": "Create a payment link. Required API Permission: Payment Links",
+        "tags": ["PaymentLinks"]
+      }
+    },
+    "/v2/payment-links/{paymentLinkId}": {
+      "delete": {
+        "parameters": [
+          {
+            "description": "The payment link identifier.",
+            "in": "path",
+            "name": "paymentLinkId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "cause": "One or more fields failed validation rules.",
+                  "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                  "details": "One or more validation errors occurred.",
+                  "documentationUrl": "https://developer.flute.com/",
+                  "entityId": null,
+                  "errorCode": "V0000",
+                  "errors": {
+                    "Email": ["'Email' is not a valid email address."]
+                  },
+                  "exceptionType": "ValidationException",
+                  "resolution": "Review the errors and correct the invalid fields.",
+                  "source": "<Service>",
+                  "statusCode": 400,
+                  "title": "Validation failed"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationExceptionExample"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "cause": "You do not have permission to access this resource.",
+                  "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                  "details": "You do not have permission to access this resource.",
+                  "documentationUrl": "https://developer.flute.com/",
+                  "entityId": null,
+                  "errorCode": "F0000",
+                  "exceptionType": "ForbiddenException",
+                  "resolution": "Verify your credentials and permissions or contact your administrator.",
+                  "source": "<Service>",
+                  "statusCode": 403,
+                  "title": "Access forbidden"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ForbiddenExceptionExample"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "cause": "The requested resource does not exist or has been deleted.",
+                  "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                  "details": "Entity with ID b31fbe9f-eebb-45ce-9cae-92265389f47f does not exist or has been deleted",
+                  "documentationUrl": "https://developer.flute.com/",
+                  "entityId": "b31fbe9f-eebb-45ce-9cae-92265389f47f",
+                  "errorCode": "N0000",
+                  "exceptionType": "NotFoundException",
+                  "resolution": "Verify the resource ID is correct or retrieve a list of available resources.",
+                  "source": "<Service>",
+                  "statusCode": 404,
+                  "title": "Resource not found"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundExceptionExample"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "cause": "Too many requests sent in a short period.",
+                  "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                  "details": "Too many requests sent in a short period.",
+                  "documentationUrl": "https://developer.flute.com/",
+                  "entityId": null,
+                  "errorCode": "R0000",
+                  "exceptionType": "RateLimitExceededException",
+                  "resolution": "Wait before retrying the request. Check the Retry-After header for more information.",
+                  "source": "<Service>",
+                  "statusCode": 429,
+                  "title": "Rate limit exceeded"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/RateLimitExceededExceptionExample"
+                }
+              }
+            },
+            "description": "Too Many Requests"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "cause": "An unexpected error occurred while processing the request",
+                  "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                  "details": "An unexpected error occurred while processing the request.",
+                  "documentationUrl": "https://developer.flute.com/",
+                  "entityId": null,
+                  "errorCode": "I0000",
+                  "exceptionType": "IntegrationException",
+                  "resolution": "Please contact support with the correlation ID if the issue persists",
+                  "source": "<Service>",
+                  "statusCode": 500,
+                  "title": "Internal server error"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/InternalExceptionExample"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "summary": "Delete a payment link. Required API Permission: Payment Links",
+        "tags": ["PaymentLinks"]
+      },
+      "get": {
+        "parameters": [
+          {
+            "description": "The payment link identifier.",
+            "in": "path",
+            "name": "paymentLinkId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentLinkResponseDto"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "cause": "One or more fields failed validation rules.",
+                  "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                  "details": "One or more validation errors occurred.",
+                  "documentationUrl": "https://developer.flute.com/",
+                  "entityId": null,
+                  "errorCode": "V0000",
+                  "errors": {
+                    "Email": ["'Email' is not a valid email address."]
+                  },
+                  "exceptionType": "ValidationException",
+                  "resolution": "Review the errors and correct the invalid fields.",
+                  "source": "<Service>",
+                  "statusCode": 400,
+                  "title": "Validation failed"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationExceptionExample"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "cause": "You do not have permission to access this resource.",
+                  "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                  "details": "You do not have permission to access this resource.",
+                  "documentationUrl": "https://developer.flute.com/",
+                  "entityId": null,
+                  "errorCode": "F0000",
+                  "exceptionType": "ForbiddenException",
+                  "resolution": "Verify your credentials and permissions or contact your administrator.",
+                  "source": "<Service>",
+                  "statusCode": 403,
+                  "title": "Access forbidden"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ForbiddenExceptionExample"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "cause": "The requested resource does not exist or has been deleted.",
+                  "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                  "details": "Entity with ID b31fbe9f-eebb-45ce-9cae-92265389f47f does not exist or has been deleted",
+                  "documentationUrl": "https://developer.flute.com/",
+                  "entityId": "b31fbe9f-eebb-45ce-9cae-92265389f47f",
+                  "errorCode": "N0000",
+                  "exceptionType": "NotFoundException",
+                  "resolution": "Verify the resource ID is correct or retrieve a list of available resources.",
+                  "source": "<Service>",
+                  "statusCode": 404,
+                  "title": "Resource not found"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundExceptionExample"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "cause": "Too many requests sent in a short period.",
+                  "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                  "details": "Too many requests sent in a short period.",
+                  "documentationUrl": "https://developer.flute.com/",
+                  "entityId": null,
+                  "errorCode": "R0000",
+                  "exceptionType": "RateLimitExceededException",
+                  "resolution": "Wait before retrying the request. Check the Retry-After header for more information.",
+                  "source": "<Service>",
+                  "statusCode": 429,
+                  "title": "Rate limit exceeded"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/RateLimitExceededExceptionExample"
+                }
+              }
+            },
+            "description": "Too Many Requests"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "cause": "An unexpected error occurred while processing the request",
+                  "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                  "details": "An unexpected error occurred while processing the request.",
+                  "documentationUrl": "https://developer.flute.com/",
+                  "entityId": null,
+                  "errorCode": "I0000",
+                  "exceptionType": "IntegrationException",
+                  "resolution": "Please contact support with the correlation ID if the issue persists",
+                  "source": "<Service>",
+                  "statusCode": 500,
+                  "title": "Internal server error"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/InternalExceptionExample"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "summary": "Get a payment link by ID. Required API Permission: Payment Links",
+        "tags": ["PaymentLinks"]
+      },
+      "patch": {
+        "description": "Partial update (JSON Merge Patch, RFC 7396): send only the fields you want to change.\nAn omitted field is left unchanged; an explicit `null` clears a clearable field.\n`paymentMethods` is replaced wholesale when present: a type absent from the new array\nstops being accepted, and an entry without `processorId` is pinned to the merchant's\ncurrent default active processor of that type. Returns the full updated payment link.",
+        "parameters": [
+          {
+            "description": "The payment link identifier.",
+            "in": "path",
+            "name": "paymentLinkId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdatePaymentLinkRequestDto"
+              }
+            }
+          },
+          "description": "Payment link fields to update."
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentLinkResponseDto"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "cause": "One or more fields failed validation rules.",
+                  "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                  "details": "One or more validation errors occurred.",
+                  "documentationUrl": "https://developer.flute.com/",
+                  "entityId": null,
+                  "errorCode": "V0000",
+                  "errors": {
+                    "Email": ["'Email' is not a valid email address."]
+                  },
+                  "exceptionType": "ValidationException",
+                  "resolution": "Review the errors and correct the invalid fields.",
+                  "source": "<Service>",
+                  "statusCode": 400,
+                  "title": "Validation failed"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationExceptionExample"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "cause": "You do not have permission to access this resource.",
+                  "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                  "details": "You do not have permission to access this resource.",
+                  "documentationUrl": "https://developer.flute.com/",
+                  "entityId": null,
+                  "errorCode": "F0000",
+                  "exceptionType": "ForbiddenException",
+                  "resolution": "Verify your credentials and permissions or contact your administrator.",
+                  "source": "<Service>",
+                  "statusCode": 403,
+                  "title": "Access forbidden"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ForbiddenExceptionExample"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "cause": "The requested resource does not exist or has been deleted.",
+                  "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                  "details": "Entity with ID b31fbe9f-eebb-45ce-9cae-92265389f47f does not exist or has been deleted",
+                  "documentationUrl": "https://developer.flute.com/",
+                  "entityId": "b31fbe9f-eebb-45ce-9cae-92265389f47f",
+                  "errorCode": "N0000",
+                  "exceptionType": "NotFoundException",
+                  "resolution": "Verify the resource ID is correct or retrieve a list of available resources.",
+                  "source": "<Service>",
+                  "statusCode": 404,
+                  "title": "Resource not found"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundExceptionExample"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "cause": "The request conflicts with the current state of the resource.",
+                  "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                  "details": "The request conflicts with the current state of the resource.",
+                  "documentationUrl": "https://developer.flute.com/",
+                  "entityId": null,
+                  "errorCode": "C0000",
+                  "exceptionType": "ConflictException",
+                  "resolution": "Refresh the resource state and retry the operation, or use a different idempotency key.",
+                  "source": "<Service>",
+                  "statusCode": 409,
+                  "title": "Resource conflict"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ConflictExceptionExample"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "cause": "Too many requests sent in a short period.",
+                  "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                  "details": "Too many requests sent in a short period.",
+                  "documentationUrl": "https://developer.flute.com/",
+                  "entityId": null,
+                  "errorCode": "R0000",
+                  "exceptionType": "RateLimitExceededException",
+                  "resolution": "Wait before retrying the request. Check the Retry-After header for more information.",
+                  "source": "<Service>",
+                  "statusCode": 429,
+                  "title": "Rate limit exceeded"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/RateLimitExceededExceptionExample"
+                }
+              }
+            },
+            "description": "Too Many Requests"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "cause": "An unexpected error occurred while processing the request",
+                  "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                  "details": "An unexpected error occurred while processing the request.",
+                  "documentationUrl": "https://developer.flute.com/",
+                  "entityId": null,
+                  "errorCode": "I0000",
+                  "exceptionType": "IntegrationException",
+                  "resolution": "Please contact support with the correlation ID if the issue persists",
+                  "source": "<Service>",
+                  "statusCode": 500,
+                  "title": "Internal server error"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/InternalExceptionExample"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "summary": "Update a payment link. Required API Permission: Payment Links",
+        "tags": ["PaymentLinks"]
+      }
+    },
+    "/v2/payment-links/{paymentLinkId}/share": {
+      "post": {
+        "description": "Sends the link's URL to the recipient over the selected channel. Only Active links can\nbe shared, and the customer must have consented to receive the message.",
+        "parameters": [
+          {
+            "description": "The payment link identifier.",
+            "in": "path",
+            "name": "paymentLinkId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Optional client-generated key (max 255 characters) that makes this request safely retryable: a retry with the same key within the retention window returns the original response verbatim without a second side effect; a retry while the original is still processing returns 409 IdempotencyKeyInProgress; reusing a key with a different request returns 422 IdempotencyKeyConflict. Server errors (5xx) are not stored: retrying the same key after one executes the request again.",
+            "in": "header",
+            "name": "Idempotency-Key",
+            "schema": {
+              "maxLength": 255,
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SharePaymentLinkRequestDto"
+              }
+            }
+          },
+          "description": "Delivery channel, recipient, and customer consent."
+        },
+        "responses": {
+          "204": {
+            "description": "Payment link shared successfully"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "cause": "One or more fields failed validation rules.",
+                  "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                  "details": "One or more validation errors occurred.",
+                  "documentationUrl": "https://developer.flute.com/",
+                  "entityId": null,
+                  "errorCode": "V0000",
+                  "errors": {
+                    "Email": ["'Email' is not a valid email address."]
+                  },
+                  "exceptionType": "ValidationException",
+                  "resolution": "Review the errors and correct the invalid fields.",
+                  "source": "<Service>",
+                  "statusCode": 400,
+                  "title": "Validation failed"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationExceptionExample"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "cause": "You do not have permission to access this resource.",
+                  "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                  "details": "You do not have permission to access this resource.",
+                  "documentationUrl": "https://developer.flute.com/",
+                  "entityId": null,
+                  "errorCode": "F0000",
+                  "exceptionType": "ForbiddenException",
+                  "resolution": "Verify your credentials and permissions or contact your administrator.",
+                  "source": "<Service>",
+                  "statusCode": 403,
+                  "title": "Access forbidden"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ForbiddenExceptionExample"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "cause": "The requested resource does not exist or has been deleted.",
+                  "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                  "details": "Entity with ID b31fbe9f-eebb-45ce-9cae-92265389f47f does not exist or has been deleted",
+                  "documentationUrl": "https://developer.flute.com/",
+                  "entityId": "b31fbe9f-eebb-45ce-9cae-92265389f47f",
+                  "errorCode": "N0000",
+                  "exceptionType": "NotFoundException",
+                  "resolution": "Verify the resource ID is correct or retrieve a list of available resources.",
+                  "source": "<Service>",
+                  "statusCode": 404,
+                  "title": "Resource not found"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundExceptionExample"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "cause": "The request is well-formed but was rejected by a business rule.",
+                  "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                  "details": "The request is well-formed but was rejected by a business rule.",
+                  "documentationUrl": "https://developer.flute.com/",
+                  "entityId": null,
+                  "errorCode": "E0000",
+                  "exceptionType": "UnprocessableEntityException",
+                  "resolution": "Correct the request so it satisfies the rule described in the details, then retry.",
+                  "source": "<Service>",
+                  "statusCode": 422,
+                  "title": "Unprocessable entity"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/UnprocessableEntityExceptionExample"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "cause": "Too many requests sent in a short period.",
+                  "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                  "details": "Too many requests sent in a short period.",
+                  "documentationUrl": "https://developer.flute.com/",
+                  "entityId": null,
+                  "errorCode": "R0000",
+                  "exceptionType": "RateLimitExceededException",
+                  "resolution": "Wait before retrying the request. Check the Retry-After header for more information.",
+                  "source": "<Service>",
+                  "statusCode": 429,
+                  "title": "Rate limit exceeded"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/RateLimitExceededExceptionExample"
+                }
+              }
+            },
+            "description": "Too Many Requests"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "cause": "An unexpected error occurred while processing the request",
+                  "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                  "details": "An unexpected error occurred while processing the request.",
+                  "documentationUrl": "https://developer.flute.com/",
+                  "entityId": null,
+                  "errorCode": "I0000",
+                  "exceptionType": "IntegrationException",
+                  "resolution": "Please contact support with the correlation ID if the issue persists",
+                  "source": "<Service>",
+                  "statusCode": 500,
+                  "title": "Internal server error"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/InternalExceptionExample"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "summary": "Share a payment link with a customer by SMS or email. Required API Permission: Payment Links",
+        "tags": ["PaymentLinks"]
       }
     },
     "/v2/payment-methods": {
@@ -7372,9 +8585,7 @@
                   "entityId": null,
                   "errorCode": "V0000",
                   "errors": {
-                    "Email": [
-                      "'Email' is not a valid email address."
-                    ]
+                    "Email": ["'Email' is not a valid email address."]
                   },
                   "exceptionType": "ValidationException",
                   "resolution": "Review the errors and correct the invalid fields.",
@@ -7486,9 +8697,7 @@
           }
         },
         "summary": "List payment methods Required API Permission: Get Customer Details",
-        "tags": [
-          "PaymentMethods"
-        ]
+        "tags": ["PaymentMethods"]
       }
     },
     "/v2/payment-methods/ach": {
@@ -7538,9 +8747,7 @@
                   "entityId": null,
                   "errorCode": "V0000",
                   "errors": {
-                    "Email": [
-                      "'Email' is not a valid email address."
-                    ]
+                    "Email": ["'Email' is not a valid email address."]
                   },
                   "exceptionType": "ValidationException",
                   "resolution": "Review the errors and correct the invalid fields.",
@@ -7675,9 +8882,7 @@
           }
         },
         "summary": "Add an ACH payment method Required API Permission: Manage Customers",
-        "tags": [
-          "PaymentMethods"
-        ]
+        "tags": ["PaymentMethods"]
       }
     },
     "/v2/payment-methods/cards": {
@@ -7725,9 +8930,7 @@
                   "entityId": null,
                   "errorCode": "V0000",
                   "errors": {
-                    "Email": [
-                      "'Email' is not a valid email address."
-                    ]
+                    "Email": ["'Email' is not a valid email address."]
                   },
                   "exceptionType": "ValidationException",
                   "resolution": "Review the errors and correct the invalid fields.",
@@ -7862,9 +9065,7 @@
           }
         },
         "summary": "Add a card payment method Required API Permission: Manage Customers",
-        "tags": [
-          "PaymentMethods"
-        ]
+        "tags": ["PaymentMethods"]
       }
     },
     "/v2/payment-methods/{paymentMethodId}": {
@@ -7897,9 +9098,7 @@
                   "entityId": null,
                   "errorCode": "V0000",
                   "errors": {
-                    "Email": [
-                      "'Email' is not a valid email address."
-                    ]
+                    "Email": ["'Email' is not a valid email address."]
                   },
                   "exceptionType": "ValidationException",
                   "resolution": "Review the errors and correct the invalid fields.",
@@ -8034,9 +9233,7 @@
           }
         },
         "summary": "Delete a payment method Required API Permission: Manage Customers",
-        "tags": [
-          "PaymentMethods"
-        ]
+        "tags": ["PaymentMethods"]
       },
       "get": {
         "parameters": [
@@ -8114,9 +9311,7 @@
                   "entityId": null,
                   "errorCode": "V0000",
                   "errors": {
-                    "Email": [
-                      "'Email' is not a valid email address."
-                    ]
+                    "Email": ["'Email' is not a valid email address."]
                   },
                   "exceptionType": "ValidationException",
                   "resolution": "Review the errors and correct the invalid fields.",
@@ -8228,9 +9423,7 @@
           }
         },
         "summary": "Get a payment method Required API Permission: Get Customer Details",
-        "tags": [
-          "PaymentMethods"
-        ]
+        "tags": ["PaymentMethods"]
       },
       "patch": {
         "description": "Partial update (JSON Merge Patch, RFC 7396): send only the fields you want to change; an\nomitted field is left unchanged and an explicit `null` clears the field. Renames the\npayment method. The PM is identified by `paymentMethodId` within the merchant; the\noperation works the same for orphan and customer-linked PMs. Returns the full updated\npayment method.",
@@ -8322,9 +9515,7 @@
                   "entityId": null,
                   "errorCode": "V0000",
                   "errors": {
-                    "Email": [
-                      "'Email' is not a valid email address."
-                    ]
+                    "Email": ["'Email' is not a valid email address."]
                   },
                   "exceptionType": "ValidationException",
                   "resolution": "Review the errors and correct the invalid fields.",
@@ -8459,9 +9650,7 @@
           }
         },
         "summary": "Update a payment method Required API Permission: Manage Customers",
-        "tags": [
-          "PaymentMethods"
-        ]
+        "tags": ["PaymentMethods"]
       }
     },
     "/v2/payment-methods/{paymentMethodId}/set-default": {
@@ -8506,9 +9695,7 @@
                   "entityId": null,
                   "errorCode": "V0000",
                   "errors": {
-                    "Email": [
-                      "'Email' is not a valid email address."
-                    ]
+                    "Email": ["'Email' is not a valid email address."]
                   },
                   "exceptionType": "ValidationException",
                   "resolution": "Review the errors and correct the invalid fields.",
@@ -8666,13 +9853,22 @@
           }
         },
         "summary": "Set a payment method as default Required API Permission: Manage Customers",
-        "tags": [
-          "PaymentMethods"
-        ]
+        "tags": ["PaymentMethods"]
       }
     },
     "/v2/payment-sessions": {
       "post": {
+        "parameters": [
+          {
+            "description": "Optional client-generated key (max 255 characters) that makes this request safely retryable: a retry with the same key within the retention window returns the original response verbatim without a second side effect; a retry while the original is still processing returns 409 IdempotencyKeyInProgress; reusing a key with a different request returns 422 IdempotencyKeyConflict. Server errors (5xx) are not stored: retrying the same key after one executes the request again.",
+            "in": "header",
+            "name": "Idempotency-Key",
+            "schema": {
+              "maxLength": 255,
+              "type": "string"
+            }
+          }
+        ],
         "requestBody": {
           "content": {
             "application/json": {
@@ -8705,9 +9901,7 @@
                   "entityId": null,
                   "errorCode": "V0000",
                   "errors": {
-                    "Email": [
-                      "'Email' is not a valid email address."
-                    ]
+                    "Email": ["'Email' is not a valid email address."]
                   },
                   "exceptionType": "ValidationException",
                   "resolution": "Review the errors and correct the invalid fields.",
@@ -8721,6 +9915,29 @@
               }
             },
             "description": "Bad Request"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "cause": "The request is well-formed but was rejected by a business rule.",
+                  "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                  "details": "The request is well-formed but was rejected by a business rule.",
+                  "documentationUrl": "https://developer.flute.com/",
+                  "entityId": null,
+                  "errorCode": "E0000",
+                  "exceptionType": "UnprocessableEntityException",
+                  "resolution": "Correct the request so it satisfies the rule described in the details, then retry.",
+                  "source": "<Service>",
+                  "statusCode": 422,
+                  "title": "Unprocessable entity"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/UnprocessableEntityExceptionExample"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
           },
           "500": {
             "content": {
@@ -8747,9 +9964,7 @@
           }
         },
         "summary": "Creates a new payment session. Required API Permission: Hosted Web Components",
-        "tags": [
-          "PaymentSessions"
-        ]
+        "tags": ["PaymentSessions"]
       }
     },
     "/v2/payment-sessions/{paymentSessionId}": {
@@ -8826,9 +10041,7 @@
           }
         },
         "summary": "Get payment session details by Id. Required API Permission: Hosted Web Components",
-        "tags": [
-          "PaymentSessions"
-        ]
+        "tags": ["PaymentSessions"]
       }
     },
     "/v2/payment-sessions/{paymentSessionId}/cancel": {
@@ -8841,6 +10054,15 @@
             "required": true,
             "schema": {
               "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Optional client-generated key (max 255 characters) that makes this request safely retryable: a retry with the same key within the retention window returns the original response verbatim without a second side effect; a retry while the original is still processing returns 409 IdempotencyKeyInProgress; reusing a key with a different request returns 422 IdempotencyKeyConflict. Server errors (5xx) are not stored: retrying the same key after one executes the request again.",
+            "in": "header",
+            "name": "Idempotency-Key",
+            "schema": {
+              "maxLength": 255,
               "type": "string"
             }
           }
@@ -8872,6 +10094,29 @@
             },
             "description": "Not Found"
           },
+          "422": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "cause": "The request is well-formed but was rejected by a business rule.",
+                  "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                  "details": "The request is well-formed but was rejected by a business rule.",
+                  "documentationUrl": "https://developer.flute.com/",
+                  "entityId": null,
+                  "errorCode": "E0000",
+                  "exceptionType": "UnprocessableEntityException",
+                  "resolution": "Correct the request so it satisfies the rule described in the details, then retry.",
+                  "source": "<Service>",
+                  "statusCode": 422,
+                  "title": "Unprocessable entity"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/UnprocessableEntityExceptionExample"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
           "500": {
             "content": {
               "application/json": {
@@ -8897,9 +10142,7 @@
           }
         },
         "summary": "Cancels a payment session. Required API Permission: Hosted Web Components",
-        "tags": [
-          "PaymentSessions"
-        ]
+        "tags": ["PaymentSessions"]
       }
     },
     "/v2/ping": {
@@ -8920,9 +10163,7 @@
                   "entityId": null,
                   "errorCode": "V0000",
                   "errors": {
-                    "Email": [
-                      "'Email' is not a valid email address."
-                    ]
+                    "Email": ["'Email' is not a valid email address."]
                   },
                   "exceptionType": "ValidationException",
                   "resolution": "Review the errors and correct the invalid fields.",
@@ -9011,9 +10252,7 @@
           }
         },
         "summary": "Ping. Required API Permission: General Ping",
-        "tags": [
-          "Ping"
-        ]
+        "tags": ["Ping"]
       }
     },
     "/v2/pos/transactions": {
@@ -9175,9 +10414,7 @@
                   "entityId": null,
                   "errorCode": "V0000",
                   "errors": {
-                    "Email": [
-                      "'Email' is not a valid email address."
-                    ]
+                    "Email": ["'Email' is not a valid email address."]
                   },
                   "exceptionType": "ValidationException",
                   "resolution": "Review the errors and correct the invalid fields.",
@@ -9266,12 +10503,21 @@
           }
         },
         "summary": "List Transactions. Required API Permission: Pos Get Transactions",
-        "tags": [
-          "PosTransactions"
-        ]
+        "tags": ["PosTransactions"]
       },
       "post": {
         "description": "Initiates a new Card Present payment transaction on a Semi-Integrated terminal, with predefined\ninformation such as amount and capture method. The terminal flow is asynchronous — poll\nGET /pos/transactions/{posTransactionId} until `posTransactionStatus` reaches a terminal state\n(Completed, Failed, or Cancelled). A POS transaction is a payment intent: when it is Completed,\ncheck `linkedTransaction` for the payment outcome (which may be a decline).",
+        "parameters": [
+          {
+            "description": "Optional client-generated key (max 255 characters) that makes this request safely retryable: a retry with the same key within the retention window returns the original response verbatim without a second side effect; a retry while the original is still processing returns 409 IdempotencyKeyInProgress; reusing a key with a different request returns 422 IdempotencyKeyConflict. Server errors (5xx) are not stored: retrying the same key after one executes the request again.",
+            "in": "header",
+            "name": "Idempotency-Key",
+            "schema": {
+              "maxLength": 255,
+              "type": "string"
+            }
+          }
+        ],
         "requestBody": {
           "content": {
             "application/json": {
@@ -9346,9 +10592,7 @@
                   "entityId": null,
                   "errorCode": "V0000",
                   "errors": {
-                    "Email": [
-                      "'Email' is not a valid email address."
-                    ]
+                    "Email": ["'Email' is not a valid email address."]
                   },
                   "exceptionType": "ValidationException",
                   "resolution": "Review the errors and correct the invalid fields.",
@@ -9458,6 +10702,29 @@
             },
             "description": "Conflict"
           },
+          "422": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "cause": "The request is well-formed but was rejected by a business rule.",
+                  "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                  "details": "The request is well-formed but was rejected by a business rule.",
+                  "documentationUrl": "https://developer.flute.com/",
+                  "entityId": null,
+                  "errorCode": "E0000",
+                  "exceptionType": "UnprocessableEntityException",
+                  "resolution": "Correct the request so it satisfies the rule described in the details, then retry.",
+                  "source": "<Service>",
+                  "statusCode": 422,
+                  "title": "Unprocessable entity"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/UnprocessableEntityExceptionExample"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
           "429": {
             "content": {
               "application/json": {
@@ -9506,14 +10773,23 @@
           }
         },
         "summary": "Create Transaction. Required API Permission: Pos Start Transaction",
-        "tags": [
-          "PosTransactions"
-        ]
+        "tags": ["PosTransactions"]
       }
     },
     "/v2/pos/transactions/reversal": {
       "post": {
         "description": "Initiates a Card Present reversal. With `originalTransactionId` the backend picks the\nexecution path: a void when still available, or a referenced refund executed in the cloud for\ncredit cards — both without a terminal flow, returning `posTransactionStatus` already\n`Completed` — while debit-card refunds start a refund flow on the terminal, requiring the\ncustomer to present their card. Without `originalTransactionId`, an unreferenced refund\nflow is initiated on the terminal. For terminal flows, poll\nGET /pos/transactions/{posTransactionId} until `posTransactionStatus` reaches a terminal state.",
+        "parameters": [
+          {
+            "description": "Optional client-generated key (max 255 characters) that makes this request safely retryable: a retry with the same key within the retention window returns the original response verbatim without a second side effect; a retry while the original is still processing returns 409 IdempotencyKeyInProgress; reusing a key with a different request returns 422 IdempotencyKeyConflict. Server errors (5xx) are not stored: retrying the same key after one executes the request again.",
+            "in": "header",
+            "name": "Idempotency-Key",
+            "schema": {
+              "maxLength": 255,
+              "type": "string"
+            }
+          }
+        ],
         "requestBody": {
           "content": {
             "application/json": {
@@ -9579,9 +10855,7 @@
                   "entityId": null,
                   "errorCode": "V0000",
                   "errors": {
-                    "Email": [
-                      "'Email' is not a valid email address."
-                    ]
+                    "Email": ["'Email' is not a valid email address."]
                   },
                   "exceptionType": "ValidationException",
                   "resolution": "Review the errors and correct the invalid fields.",
@@ -9691,6 +10965,29 @@
             },
             "description": "Conflict"
           },
+          "422": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "cause": "The request is well-formed but was rejected by a business rule.",
+                  "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                  "details": "The request is well-formed but was rejected by a business rule.",
+                  "documentationUrl": "https://developer.flute.com/",
+                  "entityId": null,
+                  "errorCode": "E0000",
+                  "exceptionType": "UnprocessableEntityException",
+                  "resolution": "Correct the request so it satisfies the rule described in the details, then retry.",
+                  "source": "<Service>",
+                  "statusCode": 422,
+                  "title": "Unprocessable entity"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/UnprocessableEntityExceptionExample"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
           "429": {
             "content": {
               "application/json": {
@@ -9739,9 +11036,7 @@
           }
         },
         "summary": "Create a Reversal from POS. Required API Permission: Pos Start Transaction",
-        "tags": [
-          "PosTransactions"
-        ]
+        "tags": ["PosTransactions"]
       }
     },
     "/v2/pos/transactions/{posTransactionId}": {
@@ -9840,9 +11135,7 @@
                   "entityId": null,
                   "errorCode": "V0000",
                   "errors": {
-                    "Email": [
-                      "'Email' is not a valid email address."
-                    ]
+                    "Email": ["'Email' is not a valid email address."]
                   },
                   "exceptionType": "ValidationException",
                   "resolution": "Review the errors and correct the invalid fields.",
@@ -9954,9 +11247,7 @@
           }
         },
         "summary": "Get Transaction. Required API Permission: Pos Get Transaction Details",
-        "tags": [
-          "PosTransactions"
-        ]
+        "tags": ["PosTransactions"]
       }
     },
     "/v2/pos/transactions/{posTransactionId}/cancel": {
@@ -9971,6 +11262,15 @@
             "required": true,
             "schema": {
               "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Optional client-generated key (max 255 characters) that makes this request safely retryable: a retry with the same key within the retention window returns the original response verbatim without a second side effect; a retry while the original is still processing returns 409 IdempotencyKeyInProgress; reusing a key with a different request returns 422 IdempotencyKeyConflict. Server errors (5xx) are not stored: retrying the same key after one executes the request again.",
+            "in": "header",
+            "name": "Idempotency-Key",
+            "schema": {
+              "maxLength": 255,
               "type": "string"
             }
           }
@@ -10017,9 +11317,7 @@
                   "entityId": null,
                   "errorCode": "V0000",
                   "errors": {
-                    "Email": [
-                      "'Email' is not a valid email address."
-                    ]
+                    "Email": ["'Email' is not a valid email address."]
                   },
                   "exceptionType": "ValidationException",
                   "resolution": "Review the errors and correct the invalid fields.",
@@ -10129,6 +11427,29 @@
             },
             "description": "Conflict"
           },
+          "422": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "cause": "The request is well-formed but was rejected by a business rule.",
+                  "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                  "details": "The request is well-formed but was rejected by a business rule.",
+                  "documentationUrl": "https://developer.flute.com/",
+                  "entityId": null,
+                  "errorCode": "E0000",
+                  "exceptionType": "UnprocessableEntityException",
+                  "resolution": "Correct the request so it satisfies the rule described in the details, then retry.",
+                  "source": "<Service>",
+                  "statusCode": 422,
+                  "title": "Unprocessable entity"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/UnprocessableEntityExceptionExample"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
           "429": {
             "content": {
               "application/json": {
@@ -10177,9 +11498,7 @@
           }
         },
         "summary": "Cancel Transaction. Required API Permission: Pos Cancel Transaction",
-        "tags": [
-          "PosTransactions"
-        ]
+        "tags": ["PosTransactions"]
       }
     },
     "/v2/pos/transactions/{posTransactionId}/print-receipt": {
@@ -10226,9 +11545,7 @@
                   "entityId": null,
                   "errorCode": "V0000",
                   "errors": {
-                    "Email": [
-                      "'Email' is not a valid email address."
-                    ]
+                    "Email": ["'Email' is not a valid email address."]
                   },
                   "exceptionType": "ValidationException",
                   "resolution": "Review the errors and correct the invalid fields.",
@@ -10363,9 +11680,7 @@
           }
         },
         "summary": "Print Receipt. Required API Permission: Pos Print Receipt",
-        "tags": [
-          "PosTransactions"
-        ]
+        "tags": ["PosTransactions"]
       }
     },
     "/v2/settings/contact-information": {
@@ -10411,9 +11726,7 @@
                   "entityId": null,
                   "errorCode": "V0000",
                   "errors": {
-                    "Email": [
-                      "'Email' is not a valid email address."
-                    ]
+                    "Email": ["'Email' is not a valid email address."]
                   },
                   "exceptionType": "ValidationException",
                   "resolution": "Review the errors and correct the invalid fields.",
@@ -10502,9 +11815,7 @@
           }
         },
         "summary": "Get contact information Required API Permission: General Configurations",
-        "tags": [
-          "Settings"
-        ]
+        "tags": ["Settings"]
       }
     },
     "/v2/settings/payment-config": {
@@ -10518,15 +11829,8 @@
                     "isEnabled": true,
                     "profile": "Strict"
                   },
-                  "availableCardTypes": [
-                    "Visa",
-                    "MasterCard",
-                    "AmericanExpress",
-                    "Discover"
-                  ],
-                  "availableCurrencies": [
-                    "USD"
-                  ],
+                  "availableCardTypes": ["Visa", "MasterCard", "AmericanExpress", "Discover"],
+                  "availableCurrencies": ["USD"],
                   "availablePaymentProcessors": [
                     {
                       "isDefault": true,
@@ -10542,22 +11846,13 @@
                       "type": "Tsys"
                     }
                   ],
-                  "availableTransactionTypes": [
-                    "Sale",
-                    "Capture",
-                    "Refund",
-                    "Void"
-                  ],
+                  "availableTransactionTypes": ["Sale", "Capture", "Refund", "Void"],
                   "companyName": "Test Company",
                   "currency": "USD",
                   "defaultCashDiscountRate": 2,
                   "defaultDualPricingRate": 1.8,
                   "defaultSurchargeRate": 1.5,
-                  "defaultTipsOptions": [
-                    10,
-                    15,
-                    20
-                  ],
+                  "defaultTipsOptions": [10, 15, 20],
                   "isCustomerCardSavingByTerminalEnabled": true,
                   "isTipsEnabled": true,
                   "maxTransactionAmount": 10000,
@@ -10584,9 +11879,7 @@
                   "entityId": null,
                   "errorCode": "V0000",
                   "errors": {
-                    "Email": [
-                      "'Email' is not a valid email address."
-                    ]
+                    "Email": ["'Email' is not a valid email address."]
                   },
                   "exceptionType": "ValidationException",
                   "resolution": "Review the errors and correct the invalid fields.",
@@ -10675,9 +11968,7 @@
           }
         },
         "summary": "Get payment configuration Required API Permission: General Configurations",
-        "tags": [
-          "Settings"
-        ]
+        "tags": ["Settings"]
       }
     },
     "/v2/settings/transaction-autofill": {
@@ -10721,9 +12012,7 @@
                   "entityId": null,
                   "errorCode": "V0000",
                   "errors": {
-                    "Email": [
-                      "'Email' is not a valid email address."
-                    ]
+                    "Email": ["'Email' is not a valid email address."]
                   },
                   "exceptionType": "ValidationException",
                   "resolution": "Review the errors and correct the invalid fields.",
@@ -10812,9 +12101,7 @@
           }
         },
         "summary": "Get L2/L3 Autofill Settings Required API Permission: General Configurations",
-        "tags": [
-          "Settings"
-        ]
+        "tags": ["Settings"]
       },
       "patch": {
         "description": "Partial update (JSON Merge Patch, RFC 7396): send only the settings you want to change.\nAn omitted field is left unchanged; an explicit `null` clears a clearable field\n(`level2Settings` and its `taxRate` are not clearable); nested L2/L3/product groups merge\nrecursively. Returns the full updated autofill settings.",
@@ -10883,9 +12170,7 @@
                   "entityId": null,
                   "errorCode": "V0000",
                   "errors": {
-                    "Email": [
-                      "'Email' is not a valid email address."
-                    ]
+                    "Email": ["'Email' is not a valid email address."]
                   },
                   "exceptionType": "ValidationException",
                   "resolution": "Review the errors and correct the invalid fields.",
@@ -11020,9 +12305,7 @@
           }
         },
         "summary": "Update L2/L3 Autofill Settings Required API Permission: General Configurations",
-        "tags": [
-          "Settings"
-        ]
+        "tags": ["Settings"]
       }
     },
     "/v2/settlements/batches": {
@@ -11038,7 +12321,7 @@
             }
           },
           {
-            "description": "Number of items per page",
+            "description": "Number of items per page. Between 1 and 100.",
             "in": "query",
             "name": "pageSize",
             "schema": {
@@ -11047,35 +12330,43 @@
             }
           },
           {
-            "description": "Field name to order results by",
+            "description": "Field to sort the results by. Options: `createdOn`, `totalNetAmount`,\n`transactionCount`, `batchStatus`. Defaults to `createdOn`.",
+            "example": "createdOn",
             "in": "query",
-            "name": "orderBy",
+            "name": "sortBy",
             "schema": {
+              "example": "createdOn",
               "type": "string"
             }
           },
           {
-            "description": "Sort ascending when true, descending when false",
+            "description": "Sort direction: `asc` or `desc`. Applies to Arise.IsvApiBff.Contracts.v2.Settlements.Requests.ListBatchesRequestDto.SortBy; defaults to `desc`.",
+            "example": "desc",
             "in": "query",
-            "name": "asc",
+            "name": "sortOrder",
             "schema": {
-              "type": "boolean"
+              "example": "desc",
+              "type": "string"
             }
           },
           {
-            "description": "Filter batches from this date (inclusive)",
+            "description": "Filter batches created on or after this date (inclusive)",
+            "example": "2026-01-01",
             "in": "query",
-            "name": "dateFrom",
+            "name": "fromDate",
             "schema": {
+              "example": "2026-01-01",
               "format": "date-time",
               "type": "string"
             }
           },
           {
-            "description": "Filter batches until this date (inclusive)",
+            "description": "Filter batches created on or before this date (inclusive)",
+            "example": "2026-12-31",
             "in": "query",
-            "name": "dateTo",
+            "name": "toDate",
             "schema": {
+              "example": "2026-12-31",
               "format": "date-time",
               "type": "string"
             }
@@ -11109,9 +12400,10 @@
             }
           },
           {
-            "description": "Filter by batch status: Open, Settled",
+            "description": "Filter by batch status. Options: Open, PendingSettlement, Settled, Declined.",
+            "example": "Settled",
             "in": "query",
-            "name": "status",
+            "name": "batchStatus",
             "schema": {
               "$ref": "#/components/schemas/SettlementBatchStatus"
             }
@@ -11124,15 +12416,15 @@
                 "example": {
                   "items": [
                     {
-                      "batchDateTime": "2026-01-01T00:00:00Z",
                       "batchId": "21c75430-a316-456f-9126-365760dca33a",
+                      "batchStatus": "Settled",
+                      "createdOn": "2026-01-01T00:00:00Z",
                       "externalBatchId": "BATCH-001",
-                      "netAmount": 1250,
                       "paymentProcessorId": "1092a854-1708-4e0c-8d86-1b8fe34b37ec",
-                      "paymentProcessorName": "TSYS",
-                      "refundsAmount": 50,
-                      "salesAmount": 1300,
-                      "status": "Settled",
+                      "paymentProcessorName": "NY Card Present",
+                      "totalNetAmount": 1250,
+                      "totalRefundsAmount": 50,
+                      "totalSalesAmount": 1300,
                       "transactionCount": 15
                     }
                   ],
@@ -11162,9 +12454,7 @@
                   "entityId": null,
                   "errorCode": "V0000",
                   "errors": {
-                    "Email": [
-                      "'Email' is not a valid email address."
-                    ]
+                    "Email": ["'Email' is not a valid email address."]
                   },
                   "exceptionType": "ValidationException",
                   "resolution": "Review the errors and correct the invalid fields.",
@@ -11253,13 +12543,23 @@
           }
         },
         "summary": "List batches Required API Permission: Get Settlement Batches",
-        "tags": [
-          "Settlements"
-        ]
+        "tags": ["Settlements"]
       }
     },
-    "/v2/settlements/settle": {
+    "/v2/settlements/batches/close": {
       "post": {
+        "description": "Submits all unsettled transactions in the current open batch for settlement with the\nspecified payment processor. Settlement is processed asynchronously — poll\nGET /v2/settlements/batches to monitor completion. This operation is irreversible.",
+        "parameters": [
+          {
+            "description": "Optional client-generated key (max 255 characters) that makes this request safely retryable: a retry with the same key within the retention window returns the original response verbatim without a second side effect; a retry while the original is still processing returns 409 IdempotencyKeyInProgress; reusing a key with a different request returns 422 IdempotencyKeyConflict. Server errors (5xx) are not stored: retrying the same key after one executes the request again.",
+            "in": "header",
+            "name": "Idempotency-Key",
+            "schema": {
+              "maxLength": 255,
+              "type": "string"
+            }
+          }
+        ],
         "requestBody": {
           "content": {
             "application/json": {
@@ -11267,7 +12567,7 @@
                 "paymentProcessorId": "e8b93550-4dd9-4f1a-9254-ac5de0686cee"
               },
               "schema": {
-                "$ref": "#/components/schemas/SettleTransactionsRequestDto"
+                "$ref": "#/components/schemas/CloseBatchRequestDto"
               }
             }
           }
@@ -11277,12 +12577,10 @@
             "content": {
               "application/json": {
                 "example": {
-                  "message": "Batch closed successfully",
-                  "processorResponseCode": "00",
-                  "status": "Approve"
+                  "batchStatus": "PendingSettlement"
                 },
                 "schema": {
-                  "$ref": "#/components/schemas/SettleTransactionsResponseDto"
+                  "$ref": "#/components/schemas/CloseBatchResponseDto"
                 }
               }
             },
@@ -11299,9 +12597,7 @@
                   "entityId": null,
                   "errorCode": "V0000",
                   "errors": {
-                    "Email": [
-                      "'Email' is not a valid email address."
-                    ]
+                    "Email": ["'Email' is not a valid email address."]
                   },
                   "exceptionType": "ValidationException",
                   "resolution": "Review the errors and correct the invalid fields.",
@@ -11411,6 +12707,29 @@
             },
             "description": "Conflict"
           },
+          "422": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "cause": "The request is well-formed but was rejected by a business rule.",
+                  "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                  "details": "The request is well-formed but was rejected by a business rule.",
+                  "documentationUrl": "https://developer.flute.com/",
+                  "entityId": null,
+                  "errorCode": "E0000",
+                  "exceptionType": "UnprocessableEntityException",
+                  "resolution": "Correct the request so it satisfies the rule described in the details, then retry.",
+                  "source": "<Service>",
+                  "statusCode": 422,
+                  "title": "Unprocessable entity"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/UnprocessableEntityExceptionExample"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
           "429": {
             "content": {
               "application/json": {
@@ -11458,10 +12777,8 @@
             "description": "Internal Server Error"
           }
         },
-        "summary": "Settle transactions Required API Permission: Submit Batch For Settlement",
-        "tags": [
-          "Settlements"
-        ]
+        "summary": "Close an open batch Required API Permission: Submit Batch For Settlement",
+        "tags": ["Settlements"]
       }
     },
     "/v2/terminals": {
@@ -11487,22 +12804,22 @@
             }
           },
           {
-            "description": "Field to sort by. Options: `serialNumber` (default), `terminalModel`,\n`terminalManufacturer`, `merchantCompanyName`.",
-            "example": "serialNumber",
+            "description": "Field to sort by. Options: `createdOn` (default), `serialNumber`,\n`terminalModel`, `terminalManufacturer`, `merchantCompanyName`.",
+            "example": "createdOn",
             "in": "query",
             "name": "sortBy",
             "schema": {
-              "example": "serialNumber",
+              "example": "createdOn",
               "type": "string"
             }
           },
           {
-            "description": "Sort direction: `asc` (default) or `desc`.",
-            "example": "asc",
+            "description": "Sort direction: `asc` or `desc` (default).",
+            "example": "desc",
             "in": "query",
             "name": "sortOrder",
             "schema": {
-              "example": "asc",
+              "example": "desc",
               "type": "string"
             }
           },
@@ -11621,9 +12938,7 @@
                   "entityId": null,
                   "errorCode": "V0000",
                   "errors": {
-                    "Email": [
-                      "'Email' is not a valid email address."
-                    ]
+                    "Email": ["'Email' is not a valid email address."]
                   },
                   "exceptionType": "ValidationException",
                   "resolution": "Review the errors and correct the invalid fields.",
@@ -11712,9 +13027,7 @@
           }
         },
         "summary": "List Terminals Required API Permission: Get Terminal List",
-        "tags": [
-          "Terminals"
-        ]
+        "tags": ["Terminals"]
       }
     },
     "/v2/terminals/{terminalId}/status": {
@@ -11769,9 +13082,7 @@
                   "entityId": null,
                   "errorCode": "V0000",
                   "errors": {
-                    "Email": [
-                      "'Email' is not a valid email address."
-                    ]
+                    "Email": ["'Email' is not a valid email address."]
                   },
                   "exceptionType": "ValidationException",
                   "resolution": "Review the errors and correct the invalid fields.",
@@ -11883,9 +13194,7 @@
           }
         },
         "summary": "Get Terminal Status Required API Permission: Get Terminal Information",
-        "tags": [
-          "Terminals"
-        ]
+        "tags": ["Terminals"]
       }
     },
     "/v2/transactions": {
@@ -12029,12 +13338,12 @@
             }
           },
           {
-            "description": "Sort direction: `asc` or `desc`. Applies to Arise.IsvApiBff.Contracts.v2.Transaction.Requests.GetTransactionsPageRequestDto.SortBy; defaults to `asc`.",
-            "example": "asc",
+            "description": "Sort direction: `asc` or `desc`. Applies to Arise.IsvApiBff.Contracts.v2.Transaction.Requests.GetTransactionsPageRequestDto.SortBy; defaults to `desc`.",
+            "example": "desc",
             "in": "query",
             "name": "sortOrder",
             "schema": {
-              "example": "asc",
+              "example": "desc",
               "type": "string"
             }
           }
@@ -12164,9 +13473,7 @@
                   "entityId": null,
                   "errorCode": "V0000",
                   "errors": {
-                    "Email": [
-                      "'Email' is not a valid email address."
-                    ]
+                    "Email": ["'Email' is not a valid email address."]
                   },
                   "exceptionType": "ValidationException",
                   "resolution": "Review the errors and correct the invalid fields.",
@@ -12255,11 +13562,20 @@
           }
         },
         "summary": "Get paginated list of transactions Required API Permission: List Transactions",
-        "tags": [
-          "Transactions"
-        ]
+        "tags": ["Transactions"]
       },
       "post": {
+        "parameters": [
+          {
+            "description": "Optional client-generated key (max 255 characters) that makes this request safely retryable: a retry with the same key within the retention window returns the original response verbatim without a second side effect; a retry while the original is still processing returns 409 IdempotencyKeyInProgress; reusing a key with a different request returns 422 IdempotencyKeyConflict. Server errors (5xx) are not stored: retrying the same key after one executes the request again.",
+            "in": "header",
+            "name": "Idempotency-Key",
+            "schema": {
+              "maxLength": 255,
+              "type": "string"
+            }
+          }
+        ],
         "requestBody": {
           "content": {
             "application/json": {
@@ -12599,9 +13915,7 @@
                   "entityId": null,
                   "errorCode": "V0000",
                   "errors": {
-                    "Email": [
-                      "'Email' is not a valid email address."
-                    ]
+                    "Email": ["'Email' is not a valid email address."]
                   },
                   "exceptionType": "ValidationException",
                   "resolution": "Review the errors and correct the invalid fields.",
@@ -12711,6 +14025,29 @@
             },
             "description": "Conflict"
           },
+          "422": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "cause": "The request is well-formed but was rejected by a business rule.",
+                  "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                  "details": "The request is well-formed but was rejected by a business rule.",
+                  "documentationUrl": "https://developer.flute.com/",
+                  "entityId": null,
+                  "errorCode": "E0000",
+                  "exceptionType": "UnprocessableEntityException",
+                  "resolution": "Correct the request so it satisfies the rule described in the details, then retry.",
+                  "source": "<Service>",
+                  "statusCode": 422,
+                  "title": "Unprocessable entity"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/UnprocessableEntityExceptionExample"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
           "429": {
             "content": {
               "application/json": {
@@ -12759,9 +14096,7 @@
           }
         },
         "summary": "Process transaction using unified transaction endpoint",
-        "tags": [
-          "Transactions"
-        ]
+        "tags": ["Transactions"]
       }
     },
     "/v2/transactions/calculate-amount": {
@@ -12853,9 +14188,7 @@
                   "entityId": null,
                   "errorCode": "V0000",
                   "errors": {
-                    "Email": [
-                      "'Email' is not a valid email address."
-                    ]
+                    "Email": ["'Email' is not a valid email address."]
                   },
                   "exceptionType": "ValidationException",
                   "resolution": "Review the errors and correct the invalid fields.",
@@ -12944,13 +14277,22 @@
           }
         },
         "summary": "Calculate transaction amount Required API Permission: Calculate Transaction Amount",
-        "tags": [
-          "Transactions"
-        ]
+        "tags": ["Transactions"]
       }
     },
     "/v2/transactions/credit": {
       "post": {
+        "parameters": [
+          {
+            "description": "Optional client-generated key (max 255 characters) that makes this request safely retryable: a retry with the same key within the retention window returns the original response verbatim without a second side effect; a retry while the original is still processing returns 409 IdempotencyKeyInProgress; reusing a key with a different request returns 422 IdempotencyKeyConflict. Server errors (5xx) are not stored: retrying the same key after one executes the request again.",
+            "in": "header",
+            "name": "Idempotency-Key",
+            "schema": {
+              "maxLength": 255,
+              "type": "string"
+            }
+          }
+        ],
         "requestBody": {
           "content": {
             "application/json": {
@@ -13217,9 +14559,7 @@
                   "entityId": null,
                   "errorCode": "V0000",
                   "errors": {
-                    "Email": [
-                      "'Email' is not a valid email address."
-                    ]
+                    "Email": ["'Email' is not a valid email address."]
                   },
                   "exceptionType": "ValidationException",
                   "resolution": "Review the errors and correct the invalid fields.",
@@ -13329,6 +14669,29 @@
             },
             "description": "Conflict"
           },
+          "422": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "cause": "The request is well-formed but was rejected by a business rule.",
+                  "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                  "details": "The request is well-formed but was rejected by a business rule.",
+                  "documentationUrl": "https://developer.flute.com/",
+                  "entityId": null,
+                  "errorCode": "E0000",
+                  "exceptionType": "UnprocessableEntityException",
+                  "resolution": "Correct the request so it satisfies the rule described in the details, then retry.",
+                  "source": "<Service>",
+                  "statusCode": 422,
+                  "title": "Unprocessable entity"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/UnprocessableEntityExceptionExample"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
           "429": {
             "content": {
               "application/json": {
@@ -13377,9 +14740,7 @@
           }
         },
         "summary": "Create an unreferenced credit (card unreferenced refund or ACH credit).",
-        "tags": [
-          "Transactions"
-        ]
+        "tags": ["Transactions"]
       }
     },
     "/v2/transactions/{transactionId}": {
@@ -13557,9 +14918,7 @@
                   "entityId": null,
                   "errorCode": "V0000",
                   "errors": {
-                    "Email": [
-                      "'Email' is not a valid email address."
-                    ]
+                    "Email": ["'Email' is not a valid email address."]
                   },
                   "exceptionType": "ValidationException",
                   "resolution": "Review the errors and correct the invalid fields.",
@@ -13671,9 +15030,7 @@
           }
         },
         "summary": "Get transaction details by ID Required API Permission: Get Transaction Details",
-        "tags": [
-          "Transactions"
-        ]
+        "tags": ["Transactions"]
       }
     },
     "/v2/transactions/{transactionId}/ach-hold": {
@@ -13687,6 +15044,15 @@
             "required": true,
             "schema": {
               "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Optional client-generated key (max 255 characters) that makes this request safely retryable: a retry with the same key within the retention window returns the original response verbatim without a second side effect; a retry while the original is still processing returns 409 IdempotencyKeyInProgress; reusing a key with a different request returns 422 IdempotencyKeyConflict. Server errors (5xx) are not stored: retrying the same key after one executes the request again.",
+            "in": "header",
+            "name": "Idempotency-Key",
+            "schema": {
+              "maxLength": 255,
               "type": "string"
             }
           }
@@ -13851,9 +15217,7 @@
                   "entityId": null,
                   "errorCode": "V0000",
                   "errors": {
-                    "Email": [
-                      "'Email' is not a valid email address."
-                    ]
+                    "Email": ["'Email' is not a valid email address."]
                   },
                   "exceptionType": "ValidationException",
                   "resolution": "Review the errors and correct the invalid fields.",
@@ -13962,6 +15326,29 @@
               }
             },
             "description": "Conflict"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "cause": "The request is well-formed but was rejected by a business rule.",
+                  "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                  "details": "The request is well-formed but was rejected by a business rule.",
+                  "documentationUrl": "https://developer.flute.com/",
+                  "entityId": null,
+                  "errorCode": "E0000",
+                  "exceptionType": "UnprocessableEntityException",
+                  "resolution": "Correct the request so it satisfies the rule described in the details, then retry.",
+                  "source": "<Service>",
+                  "statusCode": 422,
+                  "title": "Unprocessable entity"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/UnprocessableEntityExceptionExample"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
           },
           "429": {
             "content": {
@@ -14011,9 +15398,7 @@
           }
         },
         "summary": "Hold an ACH transaction. Required API Permission: Ach Hold",
-        "tags": [
-          "Transactions"
-        ]
+        "tags": ["Transactions"]
       }
     },
     "/v2/transactions/{transactionId}/ach-release": {
@@ -14027,6 +15412,15 @@
             "required": true,
             "schema": {
               "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Optional client-generated key (max 255 characters) that makes this request safely retryable: a retry with the same key within the retention window returns the original response verbatim without a second side effect; a retry while the original is still processing returns 409 IdempotencyKeyInProgress; reusing a key with a different request returns 422 IdempotencyKeyConflict. Server errors (5xx) are not stored: retrying the same key after one executes the request again.",
+            "in": "header",
+            "name": "Idempotency-Key",
+            "schema": {
+              "maxLength": 255,
               "type": "string"
             }
           }
@@ -14191,9 +15585,7 @@
                   "entityId": null,
                   "errorCode": "V0000",
                   "errors": {
-                    "Email": [
-                      "'Email' is not a valid email address."
-                    ]
+                    "Email": ["'Email' is not a valid email address."]
                   },
                   "exceptionType": "ValidationException",
                   "resolution": "Review the errors and correct the invalid fields.",
@@ -14303,6 +15695,29 @@
             },
             "description": "Conflict"
           },
+          "422": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "cause": "The request is well-formed but was rejected by a business rule.",
+                  "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                  "details": "The request is well-formed but was rejected by a business rule.",
+                  "documentationUrl": "https://developer.flute.com/",
+                  "entityId": null,
+                  "errorCode": "E0000",
+                  "exceptionType": "UnprocessableEntityException",
+                  "resolution": "Correct the request so it satisfies the rule described in the details, then retry.",
+                  "source": "<Service>",
+                  "statusCode": 422,
+                  "title": "Unprocessable entity"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/UnprocessableEntityExceptionExample"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
           "429": {
             "content": {
               "application/json": {
@@ -14351,9 +15766,7 @@
           }
         },
         "summary": "Release the hold on an ACH transaction. Required API Permission: Ach Unhold",
-        "tags": [
-          "Transactions"
-        ]
+        "tags": ["Transactions"]
       }
     },
     "/v2/transactions/{transactionId}/capture": {
@@ -14367,6 +15780,15 @@
             "required": true,
             "schema": {
               "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Optional client-generated key (max 255 characters) that makes this request safely retryable: a retry with the same key within the retention window returns the original response verbatim without a second side effect; a retry while the original is still processing returns 409 IdempotencyKeyInProgress; reusing a key with a different request returns 422 IdempotencyKeyConflict. Server errors (5xx) are not stored: retrying the same key after one executes the request again.",
+            "in": "header",
+            "name": "Idempotency-Key",
+            "schema": {
+              "maxLength": 255,
               "type": "string"
             }
           }
@@ -14544,9 +15966,7 @@
                   "entityId": null,
                   "errorCode": "V0000",
                   "errors": {
-                    "Email": [
-                      "'Email' is not a valid email address."
-                    ]
+                    "Email": ["'Email' is not a valid email address."]
                   },
                   "exceptionType": "ValidationException",
                   "resolution": "Review the errors and correct the invalid fields.",
@@ -14656,6 +16076,29 @@
             },
             "description": "Conflict"
           },
+          "422": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "cause": "The request is well-formed but was rejected by a business rule.",
+                  "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                  "details": "The request is well-formed but was rejected by a business rule.",
+                  "documentationUrl": "https://developer.flute.com/",
+                  "entityId": null,
+                  "errorCode": "E0000",
+                  "exceptionType": "UnprocessableEntityException",
+                  "resolution": "Correct the request so it satisfies the rule described in the details, then retry.",
+                  "source": "<Service>",
+                  "statusCode": 422,
+                  "title": "Unprocessable entity"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/UnprocessableEntityExceptionExample"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
           "429": {
             "content": {
               "application/json": {
@@ -14704,9 +16147,7 @@
           }
         },
         "summary": "Endpoint for transaction capture. Transaction Id is taken from the route. Body is optional: omit or send empty for full capture, or include CaptureAmount for partial capture. Required API Permission: Ecommerce Capture",
-        "tags": [
-          "Transactions"
-        ]
+        "tags": ["Transactions"]
       }
     },
     "/v2/transactions/{transactionId}/reversal": {
@@ -14720,6 +16161,15 @@
             "required": true,
             "schema": {
               "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Optional client-generated key (max 255 characters) that makes this request safely retryable: a retry with the same key within the retention window returns the original response verbatim without a second side effect; a retry while the original is still processing returns 409 IdempotencyKeyInProgress; reusing a key with a different request returns 422 IdempotencyKeyConflict. Server errors (5xx) are not stored: retrying the same key after one executes the request again.",
+            "in": "header",
+            "name": "Idempotency-Key",
+            "schema": {
+              "maxLength": 255,
               "type": "string"
             }
           }
@@ -14897,9 +16347,7 @@
                   "entityId": null,
                   "errorCode": "V0000",
                   "errors": {
-                    "Email": [
-                      "'Email' is not a valid email address."
-                    ]
+                    "Email": ["'Email' is not a valid email address."]
                   },
                   "exceptionType": "ValidationException",
                   "resolution": "Review the errors and correct the invalid fields.",
@@ -15009,6 +16457,29 @@
             },
             "description": "Conflict"
           },
+          "422": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "cause": "The request is well-formed but was rejected by a business rule.",
+                  "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                  "details": "The request is well-formed but was rejected by a business rule.",
+                  "documentationUrl": "https://developer.flute.com/",
+                  "entityId": null,
+                  "errorCode": "E0000",
+                  "exceptionType": "UnprocessableEntityException",
+                  "resolution": "Correct the request so it satisfies the rule described in the details, then retry.",
+                  "source": "<Service>",
+                  "statusCode": 422,
+                  "title": "Unprocessable entity"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/UnprocessableEntityExceptionExample"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
           "429": {
             "content": {
               "application/json": {
@@ -15057,9 +16528,7 @@
           }
         },
         "summary": "Reverse a transaction (void or refund). Payment method (card vs ACH) is auto-detected.",
-        "tags": [
-          "Transactions"
-        ]
+        "tags": ["Transactions"]
       }
     },
     "/v2/transactions/{transactionId}/share-receipt": {
@@ -15107,9 +16576,7 @@
                   "entityId": null,
                   "errorCode": "V0000",
                   "errors": {
-                    "Email": [
-                      "'Email' is not a valid email address."
-                    ]
+                    "Email": ["'Email' is not a valid email address."]
                   },
                   "exceptionType": "ValidationException",
                   "resolution": "Review the errors and correct the invalid fields.",
@@ -15244,9 +16711,7 @@
           }
         },
         "summary": "Share transaction receipt by SMS Required API Permission: Send Receipt By Sms",
-        "tags": [
-          "Transactions"
-        ]
+        "tags": ["Transactions"]
       }
     },
     "/v2/transactions/{transactionId}/tip-adjustment": {
@@ -15260,6 +16725,15 @@
             "required": true,
             "schema": {
               "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Optional client-generated key (max 255 characters) that makes this request safely retryable: a retry with the same key within the retention window returns the original response verbatim without a second side effect; a retry while the original is still processing returns 409 IdempotencyKeyInProgress; reusing a key with a different request returns 422 IdempotencyKeyConflict. Server errors (5xx) are not stored: retrying the same key after one executes the request again.",
+            "in": "header",
+            "name": "Idempotency-Key",
+            "schema": {
+              "maxLength": 255,
               "type": "string"
             }
           }
@@ -15438,9 +16912,7 @@
                   "entityId": null,
                   "errorCode": "V0000",
                   "errors": {
-                    "Email": [
-                      "'Email' is not a valid email address."
-                    ]
+                    "Email": ["'Email' is not a valid email address."]
                   },
                   "exceptionType": "ValidationException",
                   "resolution": "Review the errors and correct the invalid fields.",
@@ -15550,6 +17022,29 @@
             },
             "description": "Conflict"
           },
+          "422": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "cause": "The request is well-formed but was rejected by a business rule.",
+                  "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                  "details": "The request is well-formed but was rejected by a business rule.",
+                  "documentationUrl": "https://developer.flute.com/",
+                  "entityId": null,
+                  "errorCode": "E0000",
+                  "exceptionType": "UnprocessableEntityException",
+                  "resolution": "Correct the request so it satisfies the rule described in the details, then retry.",
+                  "source": "<Service>",
+                  "statusCode": 422,
+                  "title": "Unprocessable entity"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/UnprocessableEntityExceptionExample"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
           "429": {
             "content": {
               "application/json": {
@@ -15598,9 +17093,7 @@
           }
         },
         "summary": "Adjust Tip Required API Permission: Submit Tip Adjustment",
-        "tags": [
-          "Transactions"
-        ]
+        "tags": ["Transactions"]
       }
     },
     "/v2/webhooks/delivery-logs": {
@@ -15693,7 +17186,7 @@
             }
           },
           {
-            "description": "Sort direction: Asc or Desc. Default Desc.",
+            "description": "Sort direction: asc or desc. Default desc.",
             "in": "query",
             "name": "sortOrder",
             "schema": {
@@ -15762,9 +17255,7 @@
                   "entityId": null,
                   "errorCode": "V0000",
                   "errors": {
-                    "Email": [
-                      "'Email' is not a valid email address."
-                    ]
+                    "Email": ["'Email' is not a valid email address."]
                   },
                   "exceptionType": "ValidationException",
                   "resolution": "Review the errors and correct the invalid fields.",
@@ -15853,9 +17344,7 @@
           }
         },
         "summary": "List webhook delivery logs for the authenticated account. Required API Permission: Webhooks",
-        "tags": [
-          "Webhooks"
-        ]
+        "tags": ["Webhooks"]
       }
     },
     "/v2/webhooks/delivery-logs/export": {
@@ -15953,9 +17442,7 @@
                   "entityId": null,
                   "errorCode": "V0000",
                   "errors": {
-                    "Email": [
-                      "'Email' is not a valid email address."
-                    ]
+                    "Email": ["'Email' is not a valid email address."]
                   },
                   "exceptionType": "ValidationException",
                   "resolution": "Review the errors and correct the invalid fields.",
@@ -16044,9 +17531,7 @@
           }
         },
         "summary": "Export webhook delivery logs as CSV or JSON. Required API Permission: Webhooks",
-        "tags": [
-          "Webhooks"
-        ]
+        "tags": ["Webhooks"]
       }
     },
     "/v2/webhooks/delivery-logs/{deliveryLogId}": {
@@ -16113,9 +17598,7 @@
                   "entityId": null,
                   "errorCode": "V0000",
                   "errors": {
-                    "Email": [
-                      "'Email' is not a valid email address."
-                    ]
+                    "Email": ["'Email' is not a valid email address."]
                   },
                   "exceptionType": "ValidationException",
                   "resolution": "Review the errors and correct the invalid fields.",
@@ -16227,9 +17710,7 @@
           }
         },
         "summary": "Get full request and response detail for a single delivery attempt. Required API Permission: Webhooks",
-        "tags": [
-          "Webhooks"
-        ]
+        "tags": ["Webhooks"]
       }
     },
     "/v2/webhooks/delivery-logs/{deliveryLogId}/retry": {
@@ -16296,9 +17777,7 @@
                   "entityId": null,
                   "errorCode": "V0000",
                   "errors": {
-                    "Email": [
-                      "'Email' is not a valid email address."
-                    ]
+                    "Email": ["'Email' is not a valid email address."]
                   },
                   "exceptionType": "ValidationException",
                   "resolution": "Review the errors and correct the invalid fields.",
@@ -16433,9 +17912,7 @@
           }
         },
         "summary": "Manually retry a failed webhook delivery. Single-shot — no automatic retry chain. Required API Permission: Webhooks",
-        "tags": [
-          "Webhooks"
-        ]
+        "tags": ["Webhooks"]
       }
     },
     "/v2/webhooks/endpoints": {
@@ -16502,7 +17979,7 @@
             }
           },
           {
-            "description": "Sort direction: Asc or Desc. Default Desc.",
+            "description": "Sort direction: asc or desc. Default desc.",
             "in": "query",
             "name": "sortOrder",
             "schema": {
@@ -16556,9 +18033,7 @@
                   "entityId": null,
                   "errorCode": "V0000",
                   "errors": {
-                    "Email": [
-                      "'Email' is not a valid email address."
-                    ]
+                    "Email": ["'Email' is not a valid email address."]
                   },
                   "exceptionType": "ValidationException",
                   "resolution": "Review the errors and correct the invalid fields.",
@@ -16647,9 +18122,7 @@
           }
         },
         "summary": "List webhook endpoints for the authenticated account. Required API Permission: Webhooks",
-        "tags": [
-          "Webhooks"
-        ]
+        "tags": ["Webhooks"]
       },
       "post": {
         "requestBody": {
@@ -16706,9 +18179,7 @@
                   "entityId": null,
                   "errorCode": "V0000",
                   "errors": {
-                    "Email": [
-                      "'Email' is not a valid email address."
-                    ]
+                    "Email": ["'Email' is not a valid email address."]
                   },
                   "exceptionType": "ValidationException",
                   "resolution": "Review the errors and correct the invalid fields.",
@@ -16843,9 +18314,7 @@
           }
         },
         "summary": "Create a webhook endpoint. Required API Permission: Webhooks",
-        "tags": [
-          "Webhooks"
-        ]
+        "tags": ["Webhooks"]
       }
     },
     "/v2/webhooks/endpoints/{endpointId}": {
@@ -16878,9 +18347,7 @@
                   "entityId": null,
                   "errorCode": "V0000",
                   "errors": {
-                    "Email": [
-                      "'Email' is not a valid email address."
-                    ]
+                    "Email": ["'Email' is not a valid email address."]
                   },
                   "exceptionType": "ValidationException",
                   "resolution": "Review the errors and correct the invalid fields.",
@@ -17015,9 +18482,7 @@
           }
         },
         "summary": "Delete a webhook endpoint. Required API Permission: Webhooks",
-        "tags": [
-          "Webhooks"
-        ]
+        "tags": ["Webhooks"]
       },
       "get": {
         "parameters": [
@@ -17068,9 +18533,7 @@
                   "entityId": null,
                   "errorCode": "V0000",
                   "errors": {
-                    "Email": [
-                      "'Email' is not a valid email address."
-                    ]
+                    "Email": ["'Email' is not a valid email address."]
                   },
                   "exceptionType": "ValidationException",
                   "resolution": "Review the errors and correct the invalid fields.",
@@ -17182,9 +18645,7 @@
           }
         },
         "summary": "Get a webhook endpoint by ID. Required API Permission: Webhooks",
-        "tags": [
-          "Webhooks"
-        ]
+        "tags": ["Webhooks"]
       },
       "patch": {
         "description": "Partial update (JSON Merge Patch, RFC 7396): send only the fields you want to change\n(URL, name, status, subscribed event types). An omitted field is left unchanged; an\nexplicit `null` is rejected for these fields (none of them is clearable); the event-type\nlist is replaced wholesale when present.",
@@ -17256,9 +18717,7 @@
                   "entityId": null,
                   "errorCode": "V0000",
                   "errors": {
-                    "Email": [
-                      "'Email' is not a valid email address."
-                    ]
+                    "Email": ["'Email' is not a valid email address."]
                   },
                   "exceptionType": "ValidationException",
                   "resolution": "Review the errors and correct the invalid fields.",
@@ -17393,9 +18852,7 @@
           }
         },
         "summary": "Update a webhook endpoint. Required API Permission: Webhooks",
-        "tags": [
-          "Webhooks"
-        ]
+        "tags": ["Webhooks"]
       }
     },
     "/v2/webhooks/endpoints/{endpointId}/ping": {
@@ -17441,9 +18898,7 @@
                   "entityId": null,
                   "errorCode": "V0000",
                   "errors": {
-                    "Email": [
-                      "'Email' is not a valid email address."
-                    ]
+                    "Email": ["'Email' is not a valid email address."]
                   },
                   "exceptionType": "ValidationException",
                   "resolution": "Review the errors and correct the invalid fields.",
@@ -17578,9 +19033,7 @@
           }
         },
         "summary": "Send a test ping to a webhook endpoint. Required API Permission: Webhooks",
-        "tags": [
-          "Webhooks"
-        ]
+        "tags": ["Webhooks"]
       }
     },
     "/v2/webhooks/event-types": {
@@ -17607,9 +19060,154 @@
                       "group": "Card Transactions"
                     },
                     {
+                      "description": "Card payment declined by issuer",
+                      "eventType": "transaction.card.declined",
+                      "group": "Card Transactions"
+                    },
+                    {
+                      "description": "Card payment failed due to processing error",
+                      "eventType": "transaction.card.failed",
+                      "group": "Card Transactions"
+                    },
+                    {
+                      "description": "Card authorization voided before capture",
+                      "eventType": "transaction.card.voided",
+                      "group": "Card Transactions"
+                    },
+                    {
                       "description": "Card payment refunded to cardholder",
                       "eventType": "transaction.card.refunded",
                       "group": "Card Transactions"
+                    },
+                    {
+                      "description": "ACH transaction created and scheduled",
+                      "eventType": "transaction.ach.scheduled",
+                      "group": "ACH Transactions"
+                    },
+                    {
+                      "description": "ACH transaction submitted to network",
+                      "eventType": "transaction.ach.in_progress",
+                      "group": "ACH Transactions"
+                    },
+                    {
+                      "description": "ACH transaction placed on hold for review",
+                      "eventType": "transaction.ach.held",
+                      "group": "ACH Transactions"
+                    },
+                    {
+                      "description": "ACH transaction cancelled before processing",
+                      "eventType": "transaction.ach.cancelled",
+                      "group": "ACH Transactions"
+                    },
+                    {
+                      "description": "ACH transaction successfully cleared",
+                      "eventType": "transaction.ach.cleared",
+                      "group": "ACH Transactions"
+                    },
+                    {
+                      "description": "ACH transaction returned or charged back",
+                      "eventType": "transaction.ach.charged_back",
+                      "group": "ACH Transactions"
+                    },
+                    {
+                      "description": "ACH transaction failed due to processing error",
+                      "eventType": "transaction.ach.failed",
+                      "group": "ACH Transactions"
+                    },
+                    {
+                      "description": "ACH transaction refunded to originator",
+                      "eventType": "transaction.ach.refunded",
+                      "group": "ACH Transactions"
+                    },
+                    {
+                      "description": "New invoice created",
+                      "eventType": "invoice.created",
+                      "group": "Invoices"
+                    },
+                    {
+                      "description": "Invoice marked as paid",
+                      "eventType": "invoice.paid",
+                      "group": "Invoices"
+                    },
+                    {
+                      "description": "New subscription created",
+                      "eventType": "subscription.created",
+                      "group": "Subscriptions"
+                    },
+                    {
+                      "description": "Subscription payment successfully collected",
+                      "eventType": "subscription.paid",
+                      "group": "Subscriptions"
+                    },
+                    {
+                      "description": "Subscription payment attempt failed",
+                      "eventType": "subscription.payment_failed",
+                      "group": "Subscriptions"
+                    },
+                    {
+                      "description": "Subscription entered delinquent state after repeated failures",
+                      "eventType": "subscription.delinquent",
+                      "group": "Subscriptions"
+                    },
+                    {
+                      "description": "Quick payment link created",
+                      "eventType": "quick_payment.created",
+                      "group": "Quick Payments"
+                    },
+                    {
+                      "description": "Quick payment link paid",
+                      "eventType": "quick_payment.paid",
+                      "group": "Quick Payments"
+                    },
+                    {
+                      "description": "New merchant account created",
+                      "eventType": "merchant.created",
+                      "group": "Merchants"
+                    },
+                    {
+                      "description": "New API key created",
+                      "eventType": "api_key.created",
+                      "group": "API Keys"
+                    },
+                    {
+                      "description": "API key revoked or deleted",
+                      "eventType": "api_key.deleted",
+                      "group": "API Keys"
+                    },
+                    {
+                      "description": "New terminal registered to account",
+                      "eventType": "terminal.added",
+                      "group": "Terminals"
+                    },
+                    {
+                      "description": "Terminal deactivated on account",
+                      "eventType": "terminal.deactivated",
+                      "group": "Terminals"
+                    },
+                    {
+                      "description": "Terminal paper roll is empty",
+                      "eventType": "terminal.out_of_paper",
+                      "group": "Terminals"
+                    },
+                    {
+                      "description": "Payment session created",
+                      "eventType": "payment_session.created",
+                      "group": "Payment Sessions"
+                    },
+                    {
+                      "description": "Payment session reached a terminal state (completed, failed, or cancelled)",
+                      "eventType": "payment_session.completed",
+                      "group": "Payment Sessions"
+                    },
+                    {
+                      "description": "Payment link created",
+                      "eventType": "payment_link.created",
+                      "group": "Payment Links"
+                    },
+                    {
+                      "description": "Payment link edited (name, description, status, expiration, etc.)",
+                      "eventType": "payment_link.updated",
+                      "group": "Payment Links"
                     }
                   ]
                 },
@@ -17631,9 +19229,7 @@
                   "entityId": null,
                   "errorCode": "V0000",
                   "errors": {
-                    "Email": [
-                      "'Email' is not a valid email address."
-                    ]
+                    "Email": ["'Email' is not a valid email address."]
                   },
                   "exceptionType": "ValidationException",
                   "resolution": "Review the errors and correct the invalid fields.",
@@ -17722,9 +19318,7 @@
           }
         },
         "summary": "List available webhook event types. Required API Permission: Webhooks",
-        "tags": [
-          "Webhooks"
-        ]
+        "tags": ["Webhooks"]
       }
     }
   },
@@ -17739,6 +19333,9 @@
     },
     {
       "name": "Customers"
+    },
+    {
+      "name": "PaymentLinks"
     },
     {
       "name": "PaymentMethods"

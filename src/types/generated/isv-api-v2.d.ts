@@ -11,7 +11,13 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** List API Keys Required API Permission: General Configurations */
+        /**
+         * List API Keys Required API Permission: General Configurations
+         * @description List the API keys of the merchants managed by your affiliate account, optionally filtered to a
+         *     single merchant.
+         *
+         *     **Note:** This endpoint requires the Bearer token to be an Affiliate (ISV) token. Merchant tokens are not accepted.
+         */
         get: {
             parameters: {
                 query?: {
@@ -614,9 +620,15 @@ export interface paths {
                     pageIndex?: number;
                     /** @description Page size */
                     pageSize?: number;
-                    /** @description Sort ascending */
+                    /**
+                     * @description Sort ascending when true. Defaults to false (descending).
+                     * @example false
+                     */
                     asc?: boolean;
-                    /** @description Order by field */
+                    /**
+                     * @description Field to order by. Defaults to `createdOn` (newest first).
+                     * @example createdOn
+                     */
                     orderBy?: string;
                     /** @description Filter by full name */
                     fullName?: string;
@@ -1769,6 +1781,1049 @@ export interface paths {
                 };
             };
         };
+        trace?: never;
+    };
+    "/v2/payment-links": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List payment links for the authenticated merchant. Required API Permission: Payment Links */
+        get: {
+            parameters: {
+                query?: {
+                    /** @description Zero-based page index. */
+                    pageIndex?: number;
+                    /** @description Items per page (1–100). */
+                    pageSize?: number;
+                    /** @description Free-text match against name, description, and the payment link id. */
+                    search?: string;
+                    /** @description Filter by link type. */
+                    linkType?: components["schemas"]["PaymentLinkType"];
+                    /** @description Filter by effective status. */
+                    paymentLinkStatus?: components["schemas"]["PaymentLinkStatus"];
+                    /** @description Sort field: createdOn, baseAmount, name, or paymentLinkStatus. Default createdOn. */
+                    sortBy?: string;
+                    /** @description Sort direction: asc or desc. Default desc. */
+                    sortOrder?: string;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["PagedResponseDtoOfPaymentLinkResponseDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "One or more fields failed validation rules.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "One or more validation errors occurred.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "V0000",
+                         *       "errors": {
+                         *         "Email": [
+                         *           "'Email' is not a valid email address."
+                         *         ]
+                         *       },
+                         *       "exceptionType": "ValidationException",
+                         *       "resolution": "Review the errors and correct the invalid fields.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 400,
+                         *       "title": "Validation failed"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ValidationExceptionExample"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Forbidden */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "You do not have permission to access this resource.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "You do not have permission to access this resource.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "F0000",
+                         *       "exceptionType": "ForbiddenException",
+                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 403,
+                         *       "title": "Access forbidden"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ForbiddenExceptionExample"];
+                    };
+                };
+                /** @description Too Many Requests */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "Too many requests sent in a short period.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Too many requests sent in a short period.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "R0000",
+                         *       "exceptionType": "RateLimitExceededException",
+                         *       "resolution": "Wait before retrying the request. Check the Retry-After header for more information.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 429,
+                         *       "title": "Rate limit exceeded"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["RateLimitExceededExceptionExample"];
+                    };
+                };
+                /** @description Internal Server Error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "An unexpected error occurred while processing the request",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "An unexpected error occurred while processing the request.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "I0000",
+                         *       "exceptionType": "IntegrationException",
+                         *       "resolution": "Please contact support with the correlation ID if the issue persists",
+                         *       "source": "<Service>",
+                         *       "statusCode": 500,
+                         *       "title": "Internal server error"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["InternalExceptionExample"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        /**
+         * Create a payment link. Required API Permission: Payment Links
+         * @description A `paymentMethods` entry without `processorId` is pinned to the merchant's default
+         *     active processor of that type at creation time.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: {
+                    /** @description Optional client-generated key (max 255 characters) that makes this request safely retryable: a retry with the same key within the retention window returns the original response verbatim without a second side effect; a retry while the original is still processing returns 409 IdempotencyKeyInProgress; reusing a key with a different request returns 422 IdempotencyKeyConflict. Server errors (5xx) are not stored: retrying the same key after one executes the request again. */
+                    "Idempotency-Key"?: string;
+                };
+                path?: never;
+                cookie?: never;
+            };
+            /** @description Payment link configuration. */
+            requestBody?: {
+                content: {
+                    "application/json": components["schemas"]["CreatePaymentLinkRequestDto"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["PaymentLinkResponseDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "One or more fields failed validation rules.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "One or more validation errors occurred.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "V0000",
+                         *       "errors": {
+                         *         "Email": [
+                         *           "'Email' is not a valid email address."
+                         *         ]
+                         *       },
+                         *       "exceptionType": "ValidationException",
+                         *       "resolution": "Review the errors and correct the invalid fields.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 400,
+                         *       "title": "Validation failed"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ValidationExceptionExample"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Forbidden */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "You do not have permission to access this resource.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "You do not have permission to access this resource.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "F0000",
+                         *       "exceptionType": "ForbiddenException",
+                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 403,
+                         *       "title": "Access forbidden"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ForbiddenExceptionExample"];
+                    };
+                };
+                /** @description Unprocessable Content */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "The request is well-formed but was rejected by a business rule.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "The request is well-formed but was rejected by a business rule.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "E0000",
+                         *       "exceptionType": "UnprocessableEntityException",
+                         *       "resolution": "Correct the request so it satisfies the rule described in the details, then retry.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 422,
+                         *       "title": "Unprocessable entity"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["UnprocessableEntityExceptionExample"];
+                    };
+                };
+                /** @description Too Many Requests */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "Too many requests sent in a short period.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Too many requests sent in a short period.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "R0000",
+                         *       "exceptionType": "RateLimitExceededException",
+                         *       "resolution": "Wait before retrying the request. Check the Retry-After header for more information.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 429,
+                         *       "title": "Rate limit exceeded"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["RateLimitExceededExceptionExample"];
+                    };
+                };
+                /** @description Internal Server Error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "An unexpected error occurred while processing the request",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "An unexpected error occurred while processing the request.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "I0000",
+                         *       "exceptionType": "IntegrationException",
+                         *       "resolution": "Please contact support with the correlation ID if the issue persists",
+                         *       "source": "<Service>",
+                         *       "statusCode": 500,
+                         *       "title": "Internal server error"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["InternalExceptionExample"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v2/payment-links/{paymentLinkId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get a payment link by ID. Required API Permission: Payment Links */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /** @description The payment link identifier. */
+                    paymentLinkId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["PaymentLinkResponseDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "One or more fields failed validation rules.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "One or more validation errors occurred.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "V0000",
+                         *       "errors": {
+                         *         "Email": [
+                         *           "'Email' is not a valid email address."
+                         *         ]
+                         *       },
+                         *       "exceptionType": "ValidationException",
+                         *       "resolution": "Review the errors and correct the invalid fields.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 400,
+                         *       "title": "Validation failed"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ValidationExceptionExample"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Forbidden */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "You do not have permission to access this resource.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "You do not have permission to access this resource.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "F0000",
+                         *       "exceptionType": "ForbiddenException",
+                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 403,
+                         *       "title": "Access forbidden"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ForbiddenExceptionExample"];
+                    };
+                };
+                /** @description Not Found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "The requested resource does not exist or has been deleted.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Entity with ID b31fbe9f-eebb-45ce-9cae-92265389f47f does not exist or has been deleted",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": "b31fbe9f-eebb-45ce-9cae-92265389f47f",
+                         *       "errorCode": "N0000",
+                         *       "exceptionType": "NotFoundException",
+                         *       "resolution": "Verify the resource ID is correct or retrieve a list of available resources.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 404,
+                         *       "title": "Resource not found"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["NotFoundExceptionExample"];
+                    };
+                };
+                /** @description Too Many Requests */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "Too many requests sent in a short period.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Too many requests sent in a short period.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "R0000",
+                         *       "exceptionType": "RateLimitExceededException",
+                         *       "resolution": "Wait before retrying the request. Check the Retry-After header for more information.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 429,
+                         *       "title": "Rate limit exceeded"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["RateLimitExceededExceptionExample"];
+                    };
+                };
+                /** @description Internal Server Error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "An unexpected error occurred while processing the request",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "An unexpected error occurred while processing the request.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "I0000",
+                         *       "exceptionType": "IntegrationException",
+                         *       "resolution": "Please contact support with the correlation ID if the issue persists",
+                         *       "source": "<Service>",
+                         *       "statusCode": 500,
+                         *       "title": "Internal server error"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["InternalExceptionExample"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        /** Delete a payment link. Required API Permission: Payment Links */
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /** @description The payment link identifier. */
+                    paymentLinkId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description No Content */
+                204: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "One or more fields failed validation rules.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "One or more validation errors occurred.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "V0000",
+                         *       "errors": {
+                         *         "Email": [
+                         *           "'Email' is not a valid email address."
+                         *         ]
+                         *       },
+                         *       "exceptionType": "ValidationException",
+                         *       "resolution": "Review the errors and correct the invalid fields.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 400,
+                         *       "title": "Validation failed"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ValidationExceptionExample"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Forbidden */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "You do not have permission to access this resource.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "You do not have permission to access this resource.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "F0000",
+                         *       "exceptionType": "ForbiddenException",
+                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 403,
+                         *       "title": "Access forbidden"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ForbiddenExceptionExample"];
+                    };
+                };
+                /** @description Not Found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "The requested resource does not exist or has been deleted.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Entity with ID b31fbe9f-eebb-45ce-9cae-92265389f47f does not exist or has been deleted",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": "b31fbe9f-eebb-45ce-9cae-92265389f47f",
+                         *       "errorCode": "N0000",
+                         *       "exceptionType": "NotFoundException",
+                         *       "resolution": "Verify the resource ID is correct or retrieve a list of available resources.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 404,
+                         *       "title": "Resource not found"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["NotFoundExceptionExample"];
+                    };
+                };
+                /** @description Too Many Requests */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "Too many requests sent in a short period.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Too many requests sent in a short period.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "R0000",
+                         *       "exceptionType": "RateLimitExceededException",
+                         *       "resolution": "Wait before retrying the request. Check the Retry-After header for more information.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 429,
+                         *       "title": "Rate limit exceeded"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["RateLimitExceededExceptionExample"];
+                    };
+                };
+                /** @description Internal Server Error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "An unexpected error occurred while processing the request",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "An unexpected error occurred while processing the request.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "I0000",
+                         *       "exceptionType": "IntegrationException",
+                         *       "resolution": "Please contact support with the correlation ID if the issue persists",
+                         *       "source": "<Service>",
+                         *       "statusCode": 500,
+                         *       "title": "Internal server error"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["InternalExceptionExample"];
+                    };
+                };
+            };
+        };
+        options?: never;
+        head?: never;
+        /**
+         * Update a payment link. Required API Permission: Payment Links
+         * @description Partial update (JSON Merge Patch, RFC 7396): send only the fields you want to change.
+         *     An omitted field is left unchanged; an explicit `null` clears a clearable field.
+         *     `paymentMethods` is replaced wholesale when present: a type absent from the new array
+         *     stops being accepted, and an entry without `processorId` is pinned to the merchant's
+         *     current default active processor of that type. Returns the full updated payment link.
+         */
+        patch: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /** @description The payment link identifier. */
+                    paymentLinkId: string;
+                };
+                cookie?: never;
+            };
+            /** @description Payment link fields to update. */
+            requestBody?: {
+                content: {
+                    "application/json": components["schemas"]["UpdatePaymentLinkRequestDto"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["PaymentLinkResponseDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "One or more fields failed validation rules.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "One or more validation errors occurred.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "V0000",
+                         *       "errors": {
+                         *         "Email": [
+                         *           "'Email' is not a valid email address."
+                         *         ]
+                         *       },
+                         *       "exceptionType": "ValidationException",
+                         *       "resolution": "Review the errors and correct the invalid fields.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 400,
+                         *       "title": "Validation failed"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ValidationExceptionExample"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Forbidden */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "You do not have permission to access this resource.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "You do not have permission to access this resource.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "F0000",
+                         *       "exceptionType": "ForbiddenException",
+                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 403,
+                         *       "title": "Access forbidden"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ForbiddenExceptionExample"];
+                    };
+                };
+                /** @description Not Found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "The requested resource does not exist or has been deleted.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Entity with ID b31fbe9f-eebb-45ce-9cae-92265389f47f does not exist or has been deleted",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": "b31fbe9f-eebb-45ce-9cae-92265389f47f",
+                         *       "errorCode": "N0000",
+                         *       "exceptionType": "NotFoundException",
+                         *       "resolution": "Verify the resource ID is correct or retrieve a list of available resources.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 404,
+                         *       "title": "Resource not found"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["NotFoundExceptionExample"];
+                    };
+                };
+                /** @description Conflict */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "The request conflicts with the current state of the resource.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "The request conflicts with the current state of the resource.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "C0000",
+                         *       "exceptionType": "ConflictException",
+                         *       "resolution": "Refresh the resource state and retry the operation, or use a different idempotency key.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 409,
+                         *       "title": "Resource conflict"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ConflictExceptionExample"];
+                    };
+                };
+                /** @description Too Many Requests */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "Too many requests sent in a short period.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Too many requests sent in a short period.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "R0000",
+                         *       "exceptionType": "RateLimitExceededException",
+                         *       "resolution": "Wait before retrying the request. Check the Retry-After header for more information.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 429,
+                         *       "title": "Rate limit exceeded"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["RateLimitExceededExceptionExample"];
+                    };
+                };
+                /** @description Internal Server Error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "An unexpected error occurred while processing the request",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "An unexpected error occurred while processing the request.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "I0000",
+                         *       "exceptionType": "IntegrationException",
+                         *       "resolution": "Please contact support with the correlation ID if the issue persists",
+                         *       "source": "<Service>",
+                         *       "statusCode": 500,
+                         *       "title": "Internal server error"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["InternalExceptionExample"];
+                    };
+                };
+            };
+        };
+        trace?: never;
+    };
+    "/v2/payment-links/{paymentLinkId}/share": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Share a payment link with a customer by SMS or email. Required API Permission: Payment Links
+         * @description Sends the link's URL to the recipient over the selected channel. Only Active links can
+         *     be shared, and the customer must have consented to receive the message.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: {
+                    /** @description Optional client-generated key (max 255 characters) that makes this request safely retryable: a retry with the same key within the retention window returns the original response verbatim without a second side effect; a retry while the original is still processing returns 409 IdempotencyKeyInProgress; reusing a key with a different request returns 422 IdempotencyKeyConflict. Server errors (5xx) are not stored: retrying the same key after one executes the request again. */
+                    "Idempotency-Key"?: string;
+                };
+                path: {
+                    /** @description The payment link identifier. */
+                    paymentLinkId: string;
+                };
+                cookie?: never;
+            };
+            /** @description Delivery channel, recipient, and customer consent. */
+            requestBody?: {
+                content: {
+                    "application/json": components["schemas"]["SharePaymentLinkRequestDto"];
+                };
+            };
+            responses: {
+                /** @description Payment link shared successfully */
+                204: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "One or more fields failed validation rules.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "One or more validation errors occurred.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "V0000",
+                         *       "errors": {
+                         *         "Email": [
+                         *           "'Email' is not a valid email address."
+                         *         ]
+                         *       },
+                         *       "exceptionType": "ValidationException",
+                         *       "resolution": "Review the errors and correct the invalid fields.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 400,
+                         *       "title": "Validation failed"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ValidationExceptionExample"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Forbidden */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "You do not have permission to access this resource.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "You do not have permission to access this resource.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "F0000",
+                         *       "exceptionType": "ForbiddenException",
+                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 403,
+                         *       "title": "Access forbidden"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ForbiddenExceptionExample"];
+                    };
+                };
+                /** @description Not Found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "The requested resource does not exist or has been deleted.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Entity with ID b31fbe9f-eebb-45ce-9cae-92265389f47f does not exist or has been deleted",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": "b31fbe9f-eebb-45ce-9cae-92265389f47f",
+                         *       "errorCode": "N0000",
+                         *       "exceptionType": "NotFoundException",
+                         *       "resolution": "Verify the resource ID is correct or retrieve a list of available resources.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 404,
+                         *       "title": "Resource not found"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["NotFoundExceptionExample"];
+                    };
+                };
+                /** @description Unprocessable Content */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "The request is well-formed but was rejected by a business rule.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "The request is well-formed but was rejected by a business rule.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "E0000",
+                         *       "exceptionType": "UnprocessableEntityException",
+                         *       "resolution": "Correct the request so it satisfies the rule described in the details, then retry.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 422,
+                         *       "title": "Unprocessable entity"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["UnprocessableEntityExceptionExample"];
+                    };
+                };
+                /** @description Too Many Requests */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "Too many requests sent in a short period.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Too many requests sent in a short period.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "R0000",
+                         *       "exceptionType": "RateLimitExceededException",
+                         *       "resolution": "Wait before retrying the request. Check the Retry-After header for more information.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 429,
+                         *       "title": "Rate limit exceeded"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["RateLimitExceededExceptionExample"];
+                    };
+                };
+                /** @description Internal Server Error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "An unexpected error occurred while processing the request",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "An unexpected error occurred while processing the request.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "I0000",
+                         *       "exceptionType": "IntegrationException",
+                         *       "resolution": "Please contact support with the correlation ID if the issue persists",
+                         *       "source": "<Service>",
+                         *       "statusCode": 500,
+                         *       "title": "Internal server error"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["InternalExceptionExample"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
         trace?: never;
     };
     "/v2/payment-methods": {
@@ -3236,7 +4291,10 @@ export interface paths {
         post: {
             parameters: {
                 query?: never;
-                header?: never;
+                header?: {
+                    /** @description Optional client-generated key (max 255 characters) that makes this request safely retryable: a retry with the same key within the retention window returns the original response verbatim without a second side effect; a retry while the original is still processing returns 409 IdempotencyKeyInProgress; reusing a key with a different request returns 422 IdempotencyKeyConflict. Server errors (5xx) are not stored: retrying the same key after one executes the request again. */
+                    "Idempotency-Key"?: string;
+                };
                 path?: never;
                 cookie?: never;
             };
@@ -3283,6 +4341,30 @@ export interface paths {
                          *     }
                          */
                         "application/json": components["schemas"]["ValidationExceptionExample"];
+                    };
+                };
+                /** @description Unprocessable Content */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "The request is well-formed but was rejected by a business rule.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "The request is well-formed but was rejected by a business rule.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "E0000",
+                         *       "exceptionType": "UnprocessableEntityException",
+                         *       "resolution": "Correct the request so it satisfies the rule described in the details, then retry.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 422,
+                         *       "title": "Unprocessable entity"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["UnprocessableEntityExceptionExample"];
                     };
                 };
                 /** @description Internal Server Error */
@@ -3421,7 +4503,10 @@ export interface paths {
         post: {
             parameters: {
                 query?: never;
-                header?: never;
+                header?: {
+                    /** @description Optional client-generated key (max 255 characters) that makes this request safely retryable: a retry with the same key within the retention window returns the original response verbatim without a second side effect; a retry while the original is still processing returns 409 IdempotencyKeyInProgress; reusing a key with a different request returns 422 IdempotencyKeyConflict. Server errors (5xx) are not stored: retrying the same key after one executes the request again. */
+                    "Idempotency-Key"?: string;
+                };
                 path: {
                     /** @description The unique identifier of the payment session. */
                     paymentSessionId: string;
@@ -3459,6 +4544,30 @@ export interface paths {
                          *     }
                          */
                         "application/json": components["schemas"]["NotFoundExceptionExample"];
+                    };
+                };
+                /** @description Unprocessable Content */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "The request is well-formed but was rejected by a business rule.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "The request is well-formed but was rejected by a business rule.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "E0000",
+                         *       "exceptionType": "UnprocessableEntityException",
+                         *       "resolution": "Correct the request so it satisfies the rule described in the details, then retry.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 422,
+                         *       "title": "Unprocessable entity"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["UnprocessableEntityExceptionExample"];
                     };
                 };
                 /** @description Internal Server Error */
@@ -3881,7 +4990,10 @@ export interface paths {
         post: {
             parameters: {
                 query?: never;
-                header?: never;
+                header?: {
+                    /** @description Optional client-generated key (max 255 characters) that makes this request safely retryable: a retry with the same key within the retention window returns the original response verbatim without a second side effect; a retry while the original is still processing returns 409 IdempotencyKeyInProgress; reusing a key with a different request returns 422 IdempotencyKeyConflict. Server errors (5xx) are not stored: retrying the same key after one executes the request again. */
+                    "Idempotency-Key"?: string;
+                };
                 path?: never;
                 cookie?: never;
             };
@@ -4078,6 +5190,30 @@ export interface paths {
                         "application/json": components["schemas"]["ConflictExceptionExample"];
                     };
                 };
+                /** @description Unprocessable Content */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "The request is well-formed but was rejected by a business rule.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "The request is well-formed but was rejected by a business rule.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "E0000",
+                         *       "exceptionType": "UnprocessableEntityException",
+                         *       "resolution": "Correct the request so it satisfies the rule described in the details, then retry.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 422,
+                         *       "title": "Unprocessable entity"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["UnprocessableEntityExceptionExample"];
+                    };
+                };
                 /** @description Too Many Requests */
                 429: {
                     headers: {
@@ -4156,7 +5292,10 @@ export interface paths {
         post: {
             parameters: {
                 query?: never;
-                header?: never;
+                header?: {
+                    /** @description Optional client-generated key (max 255 characters) that makes this request safely retryable: a retry with the same key within the retention window returns the original response verbatim without a second side effect; a retry while the original is still processing returns 409 IdempotencyKeyInProgress; reusing a key with a different request returns 422 IdempotencyKeyConflict. Server errors (5xx) are not stored: retrying the same key after one executes the request again. */
+                    "Idempotency-Key"?: string;
+                };
                 path?: never;
                 cookie?: never;
             };
@@ -4342,6 +5481,30 @@ export interface paths {
                          *     }
                          */
                         "application/json": components["schemas"]["ConflictExceptionExample"];
+                    };
+                };
+                /** @description Unprocessable Content */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "The request is well-formed but was rejected by a business rule.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "The request is well-formed but was rejected by a business rule.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "E0000",
+                         *       "exceptionType": "UnprocessableEntityException",
+                         *       "resolution": "Correct the request so it satisfies the rule described in the details, then retry.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 422,
+                         *       "title": "Unprocessable entity"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["UnprocessableEntityExceptionExample"];
                     };
                 };
                 /** @description Too Many Requests */
@@ -4655,7 +5818,10 @@ export interface paths {
         post: {
             parameters: {
                 query?: never;
-                header?: never;
+                header?: {
+                    /** @description Optional client-generated key (max 255 characters) that makes this request safely retryable: a retry with the same key within the retention window returns the original response verbatim without a second side effect; a retry while the original is still processing returns 409 IdempotencyKeyInProgress; reusing a key with a different request returns 422 IdempotencyKeyConflict. Server errors (5xx) are not stored: retrying the same key after one executes the request again. */
+                    "Idempotency-Key"?: string;
+                };
                 path: {
                     /**
                      * @description The POS transaction identifier to cancel.
@@ -4828,6 +5994,30 @@ export interface paths {
                          *     }
                          */
                         "application/json": components["schemas"]["ConflictExceptionExample"];
+                    };
+                };
+                /** @description Unprocessable Content */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "The request is well-formed but was rejected by a business rule.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "The request is well-formed but was rejected by a business rule.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "E0000",
+                         *       "exceptionType": "UnprocessableEntityException",
+                         *       "resolution": "Correct the request so it satisfies the rule described in the details, then retry.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 422,
+                         *       "title": "Unprocessable entity"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["UnprocessableEntityExceptionExample"];
                     };
                 };
                 /** @description Too Many Requests */
@@ -5865,22 +7055,38 @@ export interface paths {
                 query?: {
                     /** @description Zero-based page index. */
                     pageIndex?: number;
-                    /** @description Number of items per page */
+                    /** @description Number of items per page. Between 1 and 100. */
                     pageSize?: number;
-                    /** @description Field name to order results by */
-                    orderBy?: string;
-                    /** @description Sort ascending when true, descending when false */
-                    asc?: boolean;
-                    /** @description Filter batches from this date (inclusive) */
-                    dateFrom?: string;
-                    /** @description Filter batches until this date (inclusive) */
-                    dateTo?: string;
+                    /**
+                     * @description Field to sort the results by. Options: `createdOn`, `totalNetAmount`,
+                     *     `transactionCount`, `batchStatus`. Defaults to `createdOn`.
+                     * @example createdOn
+                     */
+                    sortBy?: string;
+                    /**
+                     * @description Sort direction: `asc` or `desc`. Applies to Arise.IsvApiBff.Contracts.v2.Settlements.Requests.ListBatchesRequestDto.SortBy; defaults to `desc`.
+                     * @example desc
+                     */
+                    sortOrder?: string;
+                    /**
+                     * @description Filter batches created on or after this date (inclusive)
+                     * @example 2026-01-01
+                     */
+                    fromDate?: string;
+                    /**
+                     * @description Filter batches created on or before this date (inclusive)
+                     * @example 2026-12-31
+                     */
+                    toDate?: string;
                     /** @description Filter by specific batch IDs */
                     batchIds?: string[];
                     /** @description Filter by payment processor IDs */
                     paymentProcessorIds?: string[];
-                    /** @description Filter by batch status: Open, Settled */
-                    status?: components["schemas"]["SettlementBatchStatus"];
+                    /**
+                     * @description Filter by batch status. Options: Open, PendingSettlement, Settled, Declined.
+                     * @example Settled
+                     */
+                    batchStatus?: components["schemas"]["SettlementBatchStatus"];
                 };
                 header?: never;
                 path?: never;
@@ -5898,15 +7104,15 @@ export interface paths {
                          * @example {
                          *       "items": [
                          *         {
-                         *           "batchDateTime": "2026-01-01T00:00:00Z",
                          *           "batchId": "21c75430-a316-456f-9126-365760dca33a",
+                         *           "batchStatus": "Settled",
+                         *           "createdOn": "2026-01-01T00:00:00Z",
                          *           "externalBatchId": "BATCH-001",
-                         *           "netAmount": 1250,
                          *           "paymentProcessorId": "1092a854-1708-4e0c-8d86-1b8fe34b37ec",
-                         *           "paymentProcessorName": "TSYS",
-                         *           "refundsAmount": 50,
-                         *           "salesAmount": 1300,
-                         *           "status": "Settled",
+                         *           "paymentProcessorName": "NY Card Present",
+                         *           "totalNetAmount": 1250,
+                         *           "totalRefundsAmount": 50,
+                         *           "totalSalesAmount": 1300,
                          *           "transactionCount": 15
                          *         }
                          *       ],
@@ -6040,7 +7246,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/v2/settlements/settle": {
+    "/v2/settlements/batches/close": {
         parameters: {
             query?: never;
             header?: never;
@@ -6049,11 +7255,19 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Settle transactions Required API Permission: Submit Batch For Settlement */
+        /**
+         * Close an open batch Required API Permission: Submit Batch For Settlement
+         * @description Submits all unsettled transactions in the current open batch for settlement with the
+         *     specified payment processor. Settlement is processed asynchronously — poll
+         *     GET /v2/settlements/batches to monitor completion. This operation is irreversible.
+         */
         post: {
             parameters: {
                 query?: never;
-                header?: never;
+                header?: {
+                    /** @description Optional client-generated key (max 255 characters) that makes this request safely retryable: a retry with the same key within the retention window returns the original response verbatim without a second side effect; a retry while the original is still processing returns 409 IdempotencyKeyInProgress; reusing a key with a different request returns 422 IdempotencyKeyConflict. Server errors (5xx) are not stored: retrying the same key after one executes the request again. */
+                    "Idempotency-Key"?: string;
+                };
                 path?: never;
                 cookie?: never;
             };
@@ -6064,7 +7278,7 @@ export interface paths {
                      *       "paymentProcessorId": "e8b93550-4dd9-4f1a-9254-ac5de0686cee"
                      *     }
                      */
-                    "application/json": components["schemas"]["SettleTransactionsRequestDto"];
+                    "application/json": components["schemas"]["CloseBatchRequestDto"];
                 };
             };
             responses: {
@@ -6076,12 +7290,10 @@ export interface paths {
                     content: {
                         /**
                          * @example {
-                         *       "message": "Batch closed successfully",
-                         *       "processorResponseCode": "00",
-                         *       "status": "Approve"
+                         *       "batchStatus": "PendingSettlement"
                          *     }
                          */
-                        "application/json": components["schemas"]["SettleTransactionsResponseDto"];
+                        "application/json": components["schemas"]["CloseBatchResponseDto"];
                     };
                 };
                 /** @description Bad Request */
@@ -6216,6 +7428,30 @@ export interface paths {
                         "application/json": components["schemas"]["ConflictExceptionExample"];
                     };
                 };
+                /** @description Unprocessable Content */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "The request is well-formed but was rejected by a business rule.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "The request is well-formed but was rejected by a business rule.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "E0000",
+                         *       "exceptionType": "UnprocessableEntityException",
+                         *       "resolution": "Correct the request so it satisfies the rule described in the details, then retry.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 422,
+                         *       "title": "Unprocessable entity"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["UnprocessableEntityExceptionExample"];
+                    };
+                };
                 /** @description Too Many Requests */
                 429: {
                     headers: {
@@ -6297,14 +7533,14 @@ export interface paths {
                     /** @description Number of items per page. Minimum 1, maximum 100. */
                     pageSize?: number;
                     /**
-                     * @description Field to sort by. Options: `serialNumber` (default), `terminalModel`,
-                     *     `terminalManufacturer`, `merchantCompanyName`.
-                     * @example serialNumber
+                     * @description Field to sort by. Options: `createdOn` (default), `serialNumber`,
+                     *     `terminalModel`, `terminalManufacturer`, `merchantCompanyName`.
+                     * @example createdOn
                      */
                     sortBy?: string;
                     /**
-                     * @description Sort direction: `asc` (default) or `desc`.
-                     * @example asc
+                     * @description Sort direction: `asc` or `desc` (default).
+                     * @example desc
                      */
                     sortOrder?: string;
                     /**
@@ -6789,8 +8025,8 @@ export interface paths {
                      */
                     sortBy?: string;
                     /**
-                     * @description Sort direction: `asc` or `desc`. Applies to Arise.IsvApiBff.Contracts.v2.Transaction.Requests.GetTransactionsPageRequestDto.SortBy; defaults to `asc`.
-                     * @example asc
+                     * @description Sort direction: `asc` or `desc`. Applies to Arise.IsvApiBff.Contracts.v2.Transaction.Requests.GetTransactionsPageRequestDto.SortBy; defaults to `desc`.
+                     * @example desc
                      */
                     sortOrder?: string;
                 };
@@ -7029,7 +8265,10 @@ export interface paths {
         post: {
             parameters: {
                 query?: never;
-                header?: never;
+                header?: {
+                    /** @description Optional client-generated key (max 255 characters) that makes this request safely retryable: a retry with the same key within the retention window returns the original response verbatim without a second side effect; a retry while the original is still processing returns 409 IdempotencyKeyInProgress; reusing a key with a different request returns 422 IdempotencyKeyConflict. Server errors (5xx) are not stored: retrying the same key after one executes the request again. */
+                    "Idempotency-Key"?: string;
+                };
                 path?: never;
                 cookie?: never;
             };
@@ -7179,6 +8418,30 @@ export interface paths {
                          *     }
                          */
                         "application/json": components["schemas"]["ConflictExceptionExample"];
+                    };
+                };
+                /** @description Unprocessable Content */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "The request is well-formed but was rejected by a business rule.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "The request is well-formed but was rejected by a business rule.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "E0000",
+                         *       "exceptionType": "UnprocessableEntityException",
+                         *       "resolution": "Correct the request so it satisfies the rule described in the details, then retry.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 422,
+                         *       "title": "Unprocessable entity"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["UnprocessableEntityExceptionExample"];
                     };
                 };
                 /** @description Too Many Requests */
@@ -7462,7 +8725,10 @@ export interface paths {
         post: {
             parameters: {
                 query?: never;
-                header?: never;
+                header?: {
+                    /** @description Optional client-generated key (max 255 characters) that makes this request safely retryable: a retry with the same key within the retention window returns the original response verbatim without a second side effect; a retry while the original is still processing returns 409 IdempotencyKeyInProgress; reusing a key with a different request returns 422 IdempotencyKeyConflict. Server errors (5xx) are not stored: retrying the same key after one executes the request again. */
+                    "Idempotency-Key"?: string;
+                };
                 path?: never;
                 cookie?: never;
             };
@@ -7611,6 +8877,30 @@ export interface paths {
                          *     }
                          */
                         "application/json": components["schemas"]["ConflictExceptionExample"];
+                    };
+                };
+                /** @description Unprocessable Content */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "The request is well-formed but was rejected by a business rule.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "The request is well-formed but was rejected by a business rule.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "E0000",
+                         *       "exceptionType": "UnprocessableEntityException",
+                         *       "resolution": "Correct the request so it satisfies the rule described in the details, then retry.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 422,
+                         *       "title": "Unprocessable entity"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["UnprocessableEntityExceptionExample"];
                     };
                 };
                 /** @description Too Many Requests */
@@ -7856,7 +9146,10 @@ export interface paths {
         post: {
             parameters: {
                 query?: never;
-                header?: never;
+                header?: {
+                    /** @description Optional client-generated key (max 255 characters) that makes this request safely retryable: a retry with the same key within the retention window returns the original response verbatim without a second side effect; a retry while the original is still processing returns 409 IdempotencyKeyInProgress; reusing a key with a different request returns 422 IdempotencyKeyConflict. Server errors (5xx) are not stored: retrying the same key after one executes the request again. */
+                    "Idempotency-Key"?: string;
+                };
                 path: {
                     /**
                      * @description The ACH transaction identifier to hold.
@@ -8009,6 +9302,30 @@ export interface paths {
                         "application/json": components["schemas"]["ConflictExceptionExample"];
                     };
                 };
+                /** @description Unprocessable Content */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "The request is well-formed but was rejected by a business rule.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "The request is well-formed but was rejected by a business rule.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "E0000",
+                         *       "exceptionType": "UnprocessableEntityException",
+                         *       "resolution": "Correct the request so it satisfies the rule described in the details, then retry.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 422,
+                         *       "title": "Unprocessable entity"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["UnprocessableEntityExceptionExample"];
+                    };
+                };
                 /** @description Too Many Requests */
                 429: {
                     headers: {
@@ -8078,7 +9395,10 @@ export interface paths {
         post: {
             parameters: {
                 query?: never;
-                header?: never;
+                header?: {
+                    /** @description Optional client-generated key (max 255 characters) that makes this request safely retryable: a retry with the same key within the retention window returns the original response verbatim without a second side effect; a retry while the original is still processing returns 409 IdempotencyKeyInProgress; reusing a key with a different request returns 422 IdempotencyKeyConflict. Server errors (5xx) are not stored: retrying the same key after one executes the request again. */
+                    "Idempotency-Key"?: string;
+                };
                 path: {
                     /**
                      * @description The ACH transaction identifier to release.
@@ -8231,6 +9551,30 @@ export interface paths {
                         "application/json": components["schemas"]["ConflictExceptionExample"];
                     };
                 };
+                /** @description Unprocessable Content */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "The request is well-formed but was rejected by a business rule.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "The request is well-formed but was rejected by a business rule.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "E0000",
+                         *       "exceptionType": "UnprocessableEntityException",
+                         *       "resolution": "Correct the request so it satisfies the rule described in the details, then retry.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 422,
+                         *       "title": "Unprocessable entity"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["UnprocessableEntityExceptionExample"];
+                    };
+                };
                 /** @description Too Many Requests */
                 429: {
                     headers: {
@@ -8300,7 +9644,10 @@ export interface paths {
         post: {
             parameters: {
                 query?: never;
-                header?: never;
+                header?: {
+                    /** @description Optional client-generated key (max 255 characters) that makes this request safely retryable: a retry with the same key within the retention window returns the original response verbatim without a second side effect; a retry while the original is still processing returns 409 IdempotencyKeyInProgress; reusing a key with a different request returns 422 IdempotencyKeyConflict. Server errors (5xx) are not stored: retrying the same key after one executes the request again. */
+                    "Idempotency-Key"?: string;
+                };
                 path: {
                     /**
                      * @description The transaction identifier of the previously authorised transaction to capture.
@@ -8463,6 +9810,30 @@ export interface paths {
                         "application/json": components["schemas"]["ConflictExceptionExample"];
                     };
                 };
+                /** @description Unprocessable Content */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "The request is well-formed but was rejected by a business rule.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "The request is well-formed but was rejected by a business rule.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "E0000",
+                         *       "exceptionType": "UnprocessableEntityException",
+                         *       "resolution": "Correct the request so it satisfies the rule described in the details, then retry.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 422,
+                         *       "title": "Unprocessable entity"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["UnprocessableEntityExceptionExample"];
+                    };
+                };
                 /** @description Too Many Requests */
                 429: {
                     headers: {
@@ -8532,7 +9903,10 @@ export interface paths {
         post: {
             parameters: {
                 query?: never;
-                header?: never;
+                header?: {
+                    /** @description Optional client-generated key (max 255 characters) that makes this request safely retryable: a retry with the same key within the retention window returns the original response verbatim without a second side effect; a retry while the original is still processing returns 409 IdempotencyKeyInProgress; reusing a key with a different request returns 422 IdempotencyKeyConflict. Server errors (5xx) are not stored: retrying the same key after one executes the request again. */
+                    "Idempotency-Key"?: string;
+                };
                 path: {
                     /**
                      * @description The transaction identifier to reverse.
@@ -8693,6 +10067,30 @@ export interface paths {
                          *     }
                          */
                         "application/json": components["schemas"]["ConflictExceptionExample"];
+                    };
+                };
+                /** @description Unprocessable Content */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "The request is well-formed but was rejected by a business rule.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "The request is well-formed but was rejected by a business rule.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "E0000",
+                         *       "exceptionType": "UnprocessableEntityException",
+                         *       "resolution": "Correct the request so it satisfies the rule described in the details, then retry.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 422,
+                         *       "title": "Unprocessable entity"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["UnprocessableEntityExceptionExample"];
                     };
                 };
                 /** @description Too Many Requests */
@@ -8972,7 +10370,10 @@ export interface paths {
         post: {
             parameters: {
                 query?: never;
-                header?: never;
+                header?: {
+                    /** @description Optional client-generated key (max 255 characters) that makes this request safely retryable: a retry with the same key within the retention window returns the original response verbatim without a second side effect; a retry while the original is still processing returns 409 IdempotencyKeyInProgress; reusing a key with a different request returns 422 IdempotencyKeyConflict. Server errors (5xx) are not stored: retrying the same key after one executes the request again. */
+                    "Idempotency-Key"?: string;
+                };
                 path: {
                     /**
                      * @description The transaction identifier to adjust the tip on.
@@ -9136,6 +10537,30 @@ export interface paths {
                         "application/json": components["schemas"]["ConflictExceptionExample"];
                     };
                 };
+                /** @description Unprocessable Content */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "The request is well-formed but was rejected by a business rule.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "The request is well-formed but was rejected by a business rule.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "E0000",
+                         *       "exceptionType": "UnprocessableEntityException",
+                         *       "resolution": "Correct the request so it satisfies the rule described in the details, then retry.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 422,
+                         *       "title": "Unprocessable entity"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["UnprocessableEntityExceptionExample"];
+                    };
+                };
                 /** @description Too Many Requests */
                 429: {
                     headers: {
@@ -9223,7 +10648,7 @@ export interface paths {
                     search?: string;
                     /** @description Sort field: createdOn, deliveryLogStatus, eventType, endpointId, endpointHTTPResponseCode. Default createdOn. */
                     sortBy?: string;
-                    /** @description Sort direction: Asc or Desc. Default Desc. */
+                    /** @description Sort direction: asc or desc. Default desc. */
                     sortOrder?: string;
                 };
                 header?: never;
@@ -10015,7 +11440,7 @@ export interface paths {
                     toDate?: string;
                     /** @description Sort field: createdOn or endpointName. Default createdOn. */
                     sortBy?: string;
-                    /** @description Sort direction: Asc or Desc. Default Desc. */
+                    /** @description Sort direction: asc or desc. Default desc. */
                     sortOrder?: string;
                 };
                 header?: never;
@@ -11221,9 +12646,154 @@ export interface paths {
                          *           "group": "Card Transactions"
                          *         },
                          *         {
+                         *           "description": "Card payment declined by issuer",
+                         *           "eventType": "transaction.card.declined",
+                         *           "group": "Card Transactions"
+                         *         },
+                         *         {
+                         *           "description": "Card payment failed due to processing error",
+                         *           "eventType": "transaction.card.failed",
+                         *           "group": "Card Transactions"
+                         *         },
+                         *         {
+                         *           "description": "Card authorization voided before capture",
+                         *           "eventType": "transaction.card.voided",
+                         *           "group": "Card Transactions"
+                         *         },
+                         *         {
                          *           "description": "Card payment refunded to cardholder",
                          *           "eventType": "transaction.card.refunded",
                          *           "group": "Card Transactions"
+                         *         },
+                         *         {
+                         *           "description": "ACH transaction created and scheduled",
+                         *           "eventType": "transaction.ach.scheduled",
+                         *           "group": "ACH Transactions"
+                         *         },
+                         *         {
+                         *           "description": "ACH transaction submitted to network",
+                         *           "eventType": "transaction.ach.in_progress",
+                         *           "group": "ACH Transactions"
+                         *         },
+                         *         {
+                         *           "description": "ACH transaction placed on hold for review",
+                         *           "eventType": "transaction.ach.held",
+                         *           "group": "ACH Transactions"
+                         *         },
+                         *         {
+                         *           "description": "ACH transaction cancelled before processing",
+                         *           "eventType": "transaction.ach.cancelled",
+                         *           "group": "ACH Transactions"
+                         *         },
+                         *         {
+                         *           "description": "ACH transaction successfully cleared",
+                         *           "eventType": "transaction.ach.cleared",
+                         *           "group": "ACH Transactions"
+                         *         },
+                         *         {
+                         *           "description": "ACH transaction returned or charged back",
+                         *           "eventType": "transaction.ach.charged_back",
+                         *           "group": "ACH Transactions"
+                         *         },
+                         *         {
+                         *           "description": "ACH transaction failed due to processing error",
+                         *           "eventType": "transaction.ach.failed",
+                         *           "group": "ACH Transactions"
+                         *         },
+                         *         {
+                         *           "description": "ACH transaction refunded to originator",
+                         *           "eventType": "transaction.ach.refunded",
+                         *           "group": "ACH Transactions"
+                         *         },
+                         *         {
+                         *           "description": "New invoice created",
+                         *           "eventType": "invoice.created",
+                         *           "group": "Invoices"
+                         *         },
+                         *         {
+                         *           "description": "Invoice marked as paid",
+                         *           "eventType": "invoice.paid",
+                         *           "group": "Invoices"
+                         *         },
+                         *         {
+                         *           "description": "New subscription created",
+                         *           "eventType": "subscription.created",
+                         *           "group": "Subscriptions"
+                         *         },
+                         *         {
+                         *           "description": "Subscription payment successfully collected",
+                         *           "eventType": "subscription.paid",
+                         *           "group": "Subscriptions"
+                         *         },
+                         *         {
+                         *           "description": "Subscription payment attempt failed",
+                         *           "eventType": "subscription.payment_failed",
+                         *           "group": "Subscriptions"
+                         *         },
+                         *         {
+                         *           "description": "Subscription entered delinquent state after repeated failures",
+                         *           "eventType": "subscription.delinquent",
+                         *           "group": "Subscriptions"
+                         *         },
+                         *         {
+                         *           "description": "Quick payment link created",
+                         *           "eventType": "quick_payment.created",
+                         *           "group": "Quick Payments"
+                         *         },
+                         *         {
+                         *           "description": "Quick payment link paid",
+                         *           "eventType": "quick_payment.paid",
+                         *           "group": "Quick Payments"
+                         *         },
+                         *         {
+                         *           "description": "New merchant account created",
+                         *           "eventType": "merchant.created",
+                         *           "group": "Merchants"
+                         *         },
+                         *         {
+                         *           "description": "New API key created",
+                         *           "eventType": "api_key.created",
+                         *           "group": "API Keys"
+                         *         },
+                         *         {
+                         *           "description": "API key revoked or deleted",
+                         *           "eventType": "api_key.deleted",
+                         *           "group": "API Keys"
+                         *         },
+                         *         {
+                         *           "description": "New terminal registered to account",
+                         *           "eventType": "terminal.added",
+                         *           "group": "Terminals"
+                         *         },
+                         *         {
+                         *           "description": "Terminal deactivated on account",
+                         *           "eventType": "terminal.deactivated",
+                         *           "group": "Terminals"
+                         *         },
+                         *         {
+                         *           "description": "Terminal paper roll is empty",
+                         *           "eventType": "terminal.out_of_paper",
+                         *           "group": "Terminals"
+                         *         },
+                         *         {
+                         *           "description": "Payment session created",
+                         *           "eventType": "payment_session.created",
+                         *           "group": "Payment Sessions"
+                         *         },
+                         *         {
+                         *           "description": "Payment session reached a terminal state (completed, failed, or cancelled)",
+                         *           "eventType": "payment_session.completed",
+                         *           "group": "Payment Sessions"
+                         *         },
+                         *         {
+                         *           "description": "Payment link created",
+                         *           "eventType": "payment_link.created",
+                         *           "group": "Payment Links"
+                         *         },
+                         *         {
+                         *           "description": "Payment link edited (name, description, status, expiration, etc.)",
+                         *           "eventType": "payment_link.updated",
+                         *           "group": "Payment Links"
                          *         }
                          *       ]
                          *     }
@@ -11404,6 +12974,34 @@ export interface components {
             requesterIpAddress?: string | null;
             secCode?: components["schemas"]["AchSECCode"];
         };
+        /**
+         * @description ACH configuration on a payable resource. Typed separately from
+         *     Arise.IsvApiBff.Contracts.v2.Common.CardPaymentMethodDto so ACH-only settings are enforced by the contract rather
+         *     than by validation.
+         */
+        AchPaymentMethodDto: {
+            /**
+             * @description Whether ACH payments are accepted. Naming the method without a body offers it.
+             * @example true
+             */
+            enabled?: boolean;
+            /**
+             * @description Sends this resource's ACH payments in the next available window for an extra fee. Requires
+             *     the merchant's ACH settings to allow faster processing, and defaults to standard processing
+             *     when not asked for. On a merge patch this field merges instead of being replaced with the
+             *     rest of the ACH configuration: leaving it out keeps the stored choice.
+             * @example true
+             */
+            fasterProcessing?: boolean | null;
+            /**
+             * Format: uuid
+             * @description Processor charging this resource's ACH payments; must be an active ACH processor of the
+             *     merchant. Omit to pin the merchant's current default active ACH processor. A response
+             *     carries the pinned processor, or null on a session created before pinning.
+             * @example d529945e-8d10-4cb4-9dc3-718e57f3f14e
+             */
+            processorId?: string | null;
+        };
         /** @enum {string} */
         AchSECCode: "Web" | "PPD" | "CCD" | "Telephone";
         /**
@@ -11451,7 +13049,7 @@ export interface components {
         /** @enum {string} */
         AggregatedPosTransactionStatus: "InProgress" | "Completed" | "Cancelled" | "Failed";
         /** @enum {string} */
-        AggregatedTransactionStatus: "Authorized" | "Captured" | "Voided" | "Refunded" | "Verified" | "Settled" | "PartiallyAuthorized" | "Informational" | "Scheduled" | "Cancelled" | "ChargedBack" | "InProgress" | "Cleared" | "Held" | "HeldByProcessor" | "Pending" | "Declined" | "Failed";
+        AggregatedTransactionStatus: "Authorized" | "Captured" | "Voided" | "Refunded" | "Verified" | "Settled" | "PartiallyAuthorized" | "Informational" | "Scheduled" | "Cancelled" | "ChargedBack" | "InProgress" | "Cleared" | "Held" | "HeldByProcessor" | "Pending" | "Declined" | "Failed" | "UnknownOutcome";
         /** @description Amount breakdown details */
         AmountDetailsDto: {
             /**
@@ -11734,6 +13332,22 @@ export interface components {
          * @enum {string}
          */
         CardDataSourceDto: "Internet" | "Swipe" | "NFC" | "EMV" | "EMVContactless" | "FallbackSwipe" | "Manual";
+        /** @description Card configuration on a payable resource. */
+        CardPaymentMethodDto: {
+            /**
+             * @description Whether card payments are accepted. Naming the method without a body offers it.
+             * @example true
+             */
+            enabled?: boolean;
+            /**
+             * Format: uuid
+             * @description Processor charging this resource's card payments; must be an active card processor of the
+             *     merchant. Omit to pin the merchant's current default active card processor. A response
+             *     carries the pinned processor, or null on a session created before pinning.
+             * @example d529945e-8d10-4cb4-9dc3-718e57f3f14e
+             */
+            processorId?: string | null;
+        };
         /** @enum {string} */
         CardType: "Unknown" | "Visa" | "MasterCard" | "AmericanExpress" | "DinersClub" | "Discover" | "JCB";
         /** @enum {string} */
@@ -11754,6 +13368,22 @@ export interface components {
          * @enum {string}
          */
         CardholderAuthenticationMethodDto: "NotAuthenticated" | "PIN" | "ElectronicSignatureAnalysis" | "ManualSignature" | "ManualOther" | "Unknown" | "SystematicOther" | "ETicketEnvAmex" | "OfflinePin";
+        /** @description Request to close the current open batch and submit it for settlement with a payment processor */
+        CloseBatchRequestDto: {
+            /**
+             * Format: uuid
+             * @description The payment processor ID whose open batch is closed and submitted for settlement
+             * @example e8b93550-4dd9-4f1a-9254-ac5de0686cee
+             */
+            paymentProcessorId: string;
+        };
+        /**
+         * @description Response after closing the open batch. Settlement is processed asynchronously — poll
+         *     GET /v2/settlements/batches to observe the batch progressing through its lifecycle.
+         */
+        CloseBatchResponseDto: {
+            batchStatus?: components["schemas"]["SettlementBatchStatus"];
+        };
         ConflictExceptionExample: {
             cause?: string | null;
             correlationId?: string | null;
@@ -11992,6 +13622,54 @@ export interface components {
              */
             customerId?: string;
         };
+        /** @description Request to create a payment link. */
+        CreatePaymentLinkRequestDto: {
+            /**
+             * Format: double
+             * @description Payment amount, must be greater than 0 when provided. Omit for a flexible amount
+             *     (the customer enters it at checkout).
+             * @example 25
+             */
+            baseAmount?: number | null;
+            /**
+             * @description ISO 4217 uppercase currency code.
+             * @example USD
+             */
+            currencyCode?: string | null;
+            /**
+             * Format: uuid
+             * @description Customer the link is issued for. Omit for an anonymous link. Not allowed when
+             *     linkType is MultiUse.
+             */
+            customerId?: string | null;
+            /** @description Merchant-internal notes, max 500 characters. Never shown to customers. */
+            description?: string | null;
+            /**
+             * Format: date-time
+             * @description UTC expiration; must not be in the past. Omit for a link that never expires.
+             */
+            expiresOn?: string | null;
+            linkType?: components["schemas"]["PaymentLinkType"];
+            /**
+             * @description Merchant-facing label, max 80 characters. Auto-generated from the amount if omitted.
+             * @example Spring campaign
+             */
+            name?: string | null;
+            paymentMethods: components["schemas"]["PaymentMethodsDto"];
+            /**
+             * @description Merchant label, max 200 characters.
+             * @example ORDER-1042
+             */
+            referenceId?: string | null;
+            taxMode?: components["schemas"]["TaxMode"];
+            /**
+             * Format: double
+             * @description Tax rate percentage, 0 to 100, with up to 3 decimal places. Required with
+             *     taxMode; omit both for a link without tax.
+             * @example 8.25
+             */
+            taxRate?: number | null;
+        };
         CreatePaymentMethodResponseDto: {
             /**
              * Format: uuid
@@ -12028,8 +13706,7 @@ export interface components {
             mode?: components["schemas"]["SessionMode"];
             /** @description Display name shown on the checkout page. */
             pageName?: string | null;
-            /** @description Restricts which payment methods are shown at checkout. Accepted values: "card", "ach". */
-            paymentMethodTypes?: string[] | null;
+            paymentMethods?: components["schemas"]["PaymentMethodsDto"];
             /** @description Additional notes shown to the payer on the checkout page. */
             paymentNotes?: string | null;
             /** @description Optional reference ID provided by the ISV. */
@@ -12041,6 +13718,14 @@ export interface components {
              *     Only meaningful for Payment and PaymentAndSave modes.
              */
             skipAddressVerification?: boolean | null;
+            taxMode?: components["schemas"]["TaxMode"];
+            /**
+             * Format: double
+             * @description Tax rate percentage, 0 to 100, with up to 3 decimal places. Required with
+             *     taxMode; omit both for a session without tax.
+             * @example 8.25
+             */
+            taxRate?: number | null;
             /**
              * Format: double
              * @description Optional tip amount to be charged on top of the base amount.
@@ -12054,6 +13739,7 @@ export interface components {
              * @description The unique identifier of the created payment session.
              */
             id?: string;
+            paymentMethods?: components["schemas"]["PaymentMethodsDto"];
         };
         /**
          * @description Request to create a reversal from POS. With `originalTransactionId` the backend picks the
@@ -12639,7 +14325,9 @@ export interface components {
             } | null;
             mode?: components["schemas"]["SessionMode"];
             pageName?: string | null;
-            paymentMethodTypes?: string[] | null;
+            /** Format: uuid */
+            paymentLinkId?: string | null;
+            paymentMethods?: components["schemas"]["PaymentMethodsDto"];
             paymentNotes?: string | null;
             referenceId?: string | null;
             returnUrl?: string | null;
@@ -12656,6 +14344,14 @@ export interface components {
             statusId?: components["schemas"]["PaymentSessionStatusDto"];
             /** Format: double */
             surchargeAmount?: number | null;
+            taxMode?: components["schemas"]["TaxMode"];
+            /**
+             * Format: double
+             * @description Tax rate percentage pinned on the session. Null = no tax configured; always set
+             *     and cleared with taxMode.
+             * @example 8.25
+             */
+            taxRate?: number | null;
             /** Format: double */
             tipAmount?: number | null;
             transactionDetails?: components["schemas"]["GetPaymentSessionTransactionDetailsDto"];
@@ -12945,58 +14641,64 @@ export interface components {
              */
             shippingChargeRate?: number | null;
         };
-        /** @description Settlement batch details */
+        /**
+         * @description Settlement batch details. An open batch keeps taking transactions while its settlement is
+         *     pending, so the counts and amounts of a PendingSettlement batch are live until it settles.
+         */
         ListBatchesResponseDto: {
             /**
-             * Format: date-time
-             * @description Date and time when the batch was created or processed
-             * @example 2026-01-01T00:00:00Z
-             */
-            batchDateTime?: string | null;
-            /**
              * Format: uuid
-             * @description Unique identifier of the settlement batch
-             * @example 42df0a13-4bf4-48f8-929c-08a379c0a0d6
+             * @description Unique identifier of the settlement batch. Null for the currently open batch — its
+             *     record is only materialized when settlement completes.
+             * @example 21c75430-a316-456f-9126-365760dca33a
              */
             batchId?: string | null;
+            batchStatus?: components["schemas"]["SettlementBatchStatus"];
+            /**
+             * Format: date-time
+             * @description Date and time when the batch was created, or when an open batch was submitted for
+             *     settlement. Null while the batch is open and has not been submitted.
+             * @example 2026-01-01T00:00:00Z
+             */
+            createdOn?: string | null;
             /**
              * @description External batch identifier from the payment processor
-             * @example BATCH-EXT-001
+             * @example BATCH-001
              */
             externalBatchId?: string | null;
             /**
-             * Format: double
-             * @description Net amount after all transactions (sales minus refunds)
-             * @example 9500
-             */
-            netAmount?: number;
-            /**
              * Format: uuid
              * @description Payment processor identifier associated with this batch
-             * @example e29f84ab-a3f3-4bc9-a04e-4b3e3f58d46b
+             * @example 1092a854-1708-4e0c-8d86-1b8fe34b37ec
              */
             paymentProcessorId?: string;
             /**
              * @description Name of the payment processor
-             * @example TSYS
+             * @example NY Card Present
              */
             paymentProcessorName?: string | null;
             /**
              * Format: double
-             * @description Total amount of refunds in the batch
-             * @example 500
+             * @description Net amount after all transactions (sales minus refunds)
+             * @example 1250
              */
-            refundsAmount?: number;
+            totalNetAmount?: number;
+            /**
+             * Format: double
+             * @description Total amount of refunds in the batch
+             * @example 50
+             */
+            totalRefundsAmount?: number;
             /**
              * Format: double
              * @description Total amount of sales in the batch
-             * @example 10000
+             * @example 1300
              */
-            salesAmount?: number;
-            status?: components["schemas"]["SettlementBatchStatus"];
+            totalSalesAmount?: number;
             /**
              * Format: int32
              * @description Total number of transactions in the batch
+             * @example 15
              */
             transactionCount?: number;
         };
@@ -13168,6 +14870,15 @@ export interface components {
          * @description Standard paginated response envelope: the requested page of items plus
          *     the Arise.IsvApiBff.Contracts.v2.Common.PageInfoDto metadata used to drive navigation.
          */
+        PagedResponseDtoOfPaymentLinkResponseDto: {
+            /** @description The items on the current page. Empty when the requested page is beyond the data. */
+            items?: components["schemas"]["PaymentLinkResponseDto"][] | null;
+            pageInfo?: components["schemas"]["PageInfoDto"];
+        };
+        /**
+         * @description Standard paginated response envelope: the requested page of items plus
+         *     the Arise.IsvApiBff.Contracts.v2.Common.PageInfoDto metadata used to drive navigation.
+         */
         PagedResponseDtoOfPaymentMethodResponseDto: {
             /** @description The items on the current page. Empty when the requested page is beyond the data. */
             items?: components["schemas"]["PaymentMethodResponseDto"][] | null;
@@ -13318,6 +15029,95 @@ export interface components {
             statusCode?: number | null;
             title?: string | null;
         };
+        /** @description A payment link, as returned by every payment-links endpoint. */
+        PaymentLinkResponseDto: {
+            /**
+             * Format: double
+             * @description Payment amount. Null = flexible amount (the customer enters it at checkout).
+             * @example 25
+             */
+            baseAmount?: number | null;
+            /**
+             * Format: date-time
+             * @description UTC creation timestamp.
+             */
+            createdOn?: string;
+            /**
+             * @description ISO 4217 uppercase currency code.
+             * @example USD
+             */
+            currencyCode?: string | null;
+            /** @description First name of the attached customer, when any. */
+            customerFirstName?: string | null;
+            /**
+             * Format: uuid
+             * @description Customer the link is issued for; null for an anonymous link.
+             */
+            customerId?: string | null;
+            /** @description Last name of the attached customer, when any. */
+            customerLastName?: string | null;
+            /** @description Merchant-internal notes. Never shown to customers. */
+            description?: string | null;
+            /**
+             * Format: date-time
+             * @description UTC expiration; null when the link never expires.
+             */
+            expiresOn?: string | null;
+            /**
+             * Format: date-time
+             * @description Timestamp of the newest successful payment; null when none exist.
+             */
+            lastPaymentOn?: string | null;
+            linkType?: components["schemas"]["PaymentLinkType"];
+            /**
+             * Format: date-time
+             * @description UTC timestamp of the last modification.
+             */
+            modifiedOn?: string;
+            /**
+             * @description Merchant-facing label.
+             * @example Spring campaign
+             */
+            name?: string | null;
+            /**
+             * Format: int32
+             * @description Number of successful payments received.
+             */
+            paymentCount?: number;
+            /**
+             * Format: uuid
+             * @description Unique identifier of the payment link.
+             */
+            paymentLinkId?: string;
+            paymentLinkStatus?: components["schemas"]["PaymentLinkStatus"];
+            paymentMethods?: components["schemas"]["PaymentMethodsDto"];
+            /**
+             * @description Merchant label.
+             * @example ORDER-1042
+             */
+            referenceId?: string | null;
+            /**
+             * @description Customer-facing shortened URL of the payment link.
+             * @example https://pay.example.com/l/abc123
+             */
+            shortUrl?: string | null;
+            taxMode?: components["schemas"]["TaxMode"];
+            /**
+             * Format: double
+             * @description Tax rate percentage. Null = no tax configured; always set and cleared with taxMode.
+             * @example 8.25
+             */
+            taxRate?: number | null;
+            /**
+             * Format: double
+             * @description Sum of all successful payment amounts.
+             */
+            totalCollectedAmount?: number;
+        };
+        /** @enum {string} */
+        PaymentLinkStatus: "Active" | "Inactive" | "Completed" | "Expired";
+        /** @enum {string} */
+        PaymentLinkType: "SingleUse" | "MultiUse";
         PaymentMethodAchDetailsDto: {
             accountHolderType?: components["schemas"]["AccountHolderType"];
             /**
@@ -13444,6 +15244,14 @@ export interface components {
         };
         /** @enum {string} */
         PaymentMethodType: "Card" | "ACH" | "Cash";
+        /**
+         * @description Payment methods a payable resource accepts, keyed by method so each one carries only the
+         *     configuration that applies to it.
+         */
+        PaymentMethodsDto: {
+            ach?: components["schemas"]["AchPaymentMethodDto"];
+            card?: components["schemas"]["CardPaymentMethodDto"];
+        };
         /** @enum {string} */
         PaymentProcessorType: "Tsys" | "Ach" | "SandboxCard" | "SandboxAch";
         /**
@@ -13785,8 +15593,6 @@ export interface components {
              */
             refundedAmount?: number;
         };
-        /** @enum {string} */
-        ResponseCode: "Approve" | "Decline" | "Error";
         /**
          * @description Request to reverse a transaction. The backend automatically determines
          *     whether to void or refund based on the transaction's settlement status.
@@ -13815,31 +15621,20 @@ export interface components {
         };
         /** @enum {string} */
         SessionMode: "Payment" | "SaveMethod" | "PaymentAndSave";
-        /** @description Request to settle (close) a batch of transactions for a given payment processor */
-        SettleTransactionsRequestDto: {
-            /**
-             * Format: uuid
-             * @description The payment processor ID to settle transactions for
-             * @example 70f07e54-ad9d-417c-9ab4-d4acc5302aa8
-             */
-            paymentProcessorId: string;
-        };
-        /** @description Response after settling (closing) a batch of transactions */
-        SettleTransactionsResponseDto: {
-            /**
-             * @description Descriptive message about the settlement result
-             * @example Batch settled successfully
-             */
-            message?: string | null;
-            /**
-             * @description Response code from the payment processor
-             * @example 00
-             */
-            processorResponseCode?: string | null;
-            status?: components["schemas"]["ResponseCode"];
-        };
         /** @enum {string} */
-        SettlementBatchStatus: "Open" | "Settled";
+        SettlementBatchStatus: "Open" | "Settled" | "PendingSettlement" | "Declined";
+        /** @description Request to share a payment link with a customer. */
+        SharePaymentLinkRequestDto: {
+            /** @description Whether the customer has consented to receive the message. */
+            hasCustomerConsent: boolean;
+            /**
+             * @description Where the link is sent: a mobile phone number in E.164 format when sharing by
+             *     `Sms`, or an email address (max 254 characters) when sharing by `Email`.
+             * @example +14125553845
+             */
+            recipient: string;
+            shareBy: components["schemas"]["NotificationDeliveryMethod"];
+        };
         /** @description Suggested tips information. */
         SuggestedTipsDto: {
             /** Format: double */
@@ -13847,6 +15642,8 @@ export interface components {
             /** Format: double */
             tipPercent?: number;
         };
+        /** @enum {string} */
+        TaxMode: "Exclusive" | "Inclusive";
         /** @enum {string} */
         TerminalConnectionStatus: "Online" | "Offline";
         /** @enum {string} */
@@ -14191,7 +15988,7 @@ export interface components {
             version?: string | null;
         };
         /** @enum {string} */
-        TransactionStatus: "Pending" | "Approved" | "Declined" | "Failed";
+        TransactionStatus: "Pending" | "Approved" | "Declined" | "Failed" | "UnknownOutcome";
         /**
          * @description The reduced transaction summary returned by the transactions list endpoint. Detail-only data
          *     (decline details, AVS, transaction events, EMV tags, ACH requester IP) is absent — not
@@ -14285,6 +16082,20 @@ export interface components {
          * @enum {string}
          */
         TransactionTypeDto: "Authorization" | "Sale" | "Capture" | "Void" | "Refund" | "CardAuthentication" | "RefundWORef" | "TipAdjustment" | "Settle" | "AchDebit" | "AchRefund" | "AchHold" | "AchUnHold" | "AchCancel" | "AchCredit";
+        UnprocessableEntityExceptionExample: {
+            cause?: string | null;
+            correlationId?: string | null;
+            details?: string | null;
+            documentationUrl?: string | null;
+            entityId?: string | null;
+            errorCode?: string | null;
+            exceptionType?: string | null;
+            resolution?: string | null;
+            source?: string | null;
+            /** Format: int32 */
+            statusCode?: number | null;
+            title?: string | null;
+        };
         /**
          * @description JSON Merge Patch (RFC 7396) body for a customer. Each field is RiseOsV2.Rest.MergePatch.Optional`1 so
          *     the controller distinguishes an omitted field (leave unchanged) from an explicit null
@@ -14352,6 +16163,59 @@ export interface components {
              * @example NY
              */
             stateCode?: string | null;
+        };
+        /**
+         * @description JSON Merge Patch (RFC 7396) body for a payment link. An omitted field is left unchanged;
+         *     an explicit `null` clears a clearable field.
+         */
+        UpdatePaymentLinkRequestDto: {
+            /**
+             * Format: double
+             * @description Payment amount, must be greater than 0 when provided. Explicit null = flexible amount
+             *     (the customer enters it at checkout).
+             * @example 25
+             */
+            baseAmount?: number | null;
+            /**
+             * @description ISO 4217 uppercase currency code. Cannot be cleared, and the currency is frozen once
+             *     the link has received payments.
+             * @example USD
+             */
+            currencyCode?: string | null;
+            /**
+             * Format: uuid
+             * @description Customer the link is issued for. Explicit null detaches the customer. Not allowed
+             *     once the merged link is MultiUse.
+             */
+            customerId?: string | null;
+            /** @description Merchant-internal notes, max 500 characters. Explicit null clears them. */
+            description?: string | null;
+            /**
+             * Format: date-time
+             * @description UTC expiration; must be a future date. Explicit null = the link never expires.
+             */
+            expiresOn?: string | null;
+            linkType?: components["schemas"]["PaymentLinkType"];
+            /**
+             * @description Merchant-facing label, max 80 characters. Cannot be cleared.
+             * @example Spring campaign
+             */
+            name?: string | null;
+            paymentLinkStatus?: components["schemas"]["PaymentLinkStatus"];
+            paymentMethods?: components["schemas"]["PaymentMethodsDto"];
+            /**
+             * @description Merchant label, max 200 characters. Explicit null clears it.
+             * @example ORDER-1042
+             */
+            referenceId?: string | null;
+            taxMode?: components["schemas"]["TaxMode"];
+            /**
+             * Format: double
+             * @description Tax rate percentage, 0 to 100, with up to 3 decimal places. The merged link
+             *     must keep taxRate and taxMode set or cleared together; explicit null clears the tax.
+             * @example 8.25
+             */
+            taxRate?: number | null;
         };
         /**
          * @description JSON Merge Patch (RFC 7396) body for a payment method. Only the name is patchable: an
@@ -14629,7 +16493,7 @@ export interface components {
         /** @enum {string} */
         WebhookEndpointStatus: "Active" | "Inactive";
         /** @enum {string} */
-        WebhookEventType: "ping" | "settlement.batch.completed" | "transaction.card.authorized" | "transaction.card.captured" | "transaction.card.declined" | "transaction.card.failed" | "transaction.card.voided" | "transaction.card.refunded" | "transaction.ach.scheduled" | "transaction.ach.in_progress" | "transaction.ach.held" | "transaction.ach.cancelled" | "transaction.ach.cleared" | "transaction.ach.charged_back" | "transaction.ach.failed" | "transaction.ach.refunded" | "invoice.created" | "invoice.paid" | "subscription.created" | "subscription.paid" | "subscription.payment_failed" | "subscription.delinquent" | "quick_payment.created" | "quick_payment.paid" | "merchant.created" | "api_key.created" | "api_key.deleted" | "terminal.added" | "terminal.deactivated" | "terminal.out_of_paper" | "payment_session.created" | "payment_session.completed";
+        WebhookEventType: "ping" | "settlement.batch.completed" | "transaction.card.authorized" | "transaction.card.captured" | "transaction.card.declined" | "transaction.card.failed" | "transaction.card.voided" | "transaction.card.refunded" | "transaction.ach.scheduled" | "transaction.ach.in_progress" | "transaction.ach.held" | "transaction.ach.cancelled" | "transaction.ach.cleared" | "transaction.ach.charged_back" | "transaction.ach.failed" | "transaction.ach.refunded" | "invoice.created" | "invoice.paid" | "subscription.created" | "subscription.paid" | "subscription.payment_failed" | "subscription.delinquent" | "quick_payment.created" | "quick_payment.paid" | "merchant.created" | "api_key.created" | "api_key.deleted" | "terminal.added" | "terminal.deactivated" | "terminal.out_of_paper" | "payment_session.created" | "payment_session.completed" | "payment_link.created" | "payment_link.updated";
         WebhookEventTypeIsvDto: {
             /**
              * @description Human-readable description of when this event fires.
