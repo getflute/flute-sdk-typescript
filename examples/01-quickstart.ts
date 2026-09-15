@@ -51,7 +51,12 @@ async function main(): Promise<void> {
   );
 
   // 3. Authorize → capture flow (replace with a saved paymentMethodId in production).
+  const processorId = settings.availablePaymentProcessors?.[0]?.paymentProcessorId;
+  if (!processorId) throw new Error('This merchant has no payment processor configured.');
+
   const authorization = await flute.transactions.authorize({
+    // Belongs to the merchant, so it comes from their settings above.
+    paymentProcessorId: processorId,
     baseAmount: 100, // whole currency units — $100.00, not cents
     currencyCode: 'USD',
     transactionDetails: {

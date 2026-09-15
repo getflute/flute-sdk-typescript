@@ -63,7 +63,14 @@ const flute = new Flute({
   environment: Environment.Sandbox, // or 'sandbox' / 'production'
 });
 
+// Card and ACH transactions carry a `paymentProcessorId`, and the value belongs
+// to the merchant — read it from their settings instead of hard-coding one.
+const settings = await flute.settings.getPaymentSettings();
+const processorId = settings.availablePaymentProcessors?.[0]?.paymentProcessorId;
+if (!processorId) throw new Error('This merchant has no payment processor configured.');
+
 const result = await flute.transactions.sale({
+  paymentProcessorId: processorId,
   baseAmount: 100, // whole currency units — $100.00, not cents
   currencyCode: 'USD',
   transactionDetails: {
@@ -80,6 +87,12 @@ const result = await flute.transactions.sale({
 
 console.log(result.transactionId, result.transactionStatus);
 ```
+
+> **`paymentProcessorId` is required**, and it is the one field you cannot
+> guess: it names which of the merchant's configured processors settles the
+> transaction, so a first sale always follows a `getPaymentSettings()` call.
+> A merchant can expose several, and more than one may be flagged `isDefault`
+> — select by `type` when the distinction matters rather than trusting the flag.
 
 > **Amounts are in whole currency units, not minor units.** `baseAmount: 10`
 > charges $10.00; `10.5` charges $10.50. This is the opposite of the
@@ -99,7 +112,11 @@ Each one runs against the sandbox with real credentials.
 ```ts
 await flute.sessions.authenticate(); // surface bad creds at boot
 const settings = await flute.settings.getPaymentSettings();
+const processorId = settings.availablePaymentProcessors?.[0]?.paymentProcessorId;
+if (!processorId) throw new Error('This merchant has no payment processor configured.');
+
 const result = await flute.transactions.sale({
+  paymentProcessorId: processorId,
   baseAmount: 100, // whole currency units — $100.00, not cents
   currencyCode: 'USD',
   transactionDetails: {
