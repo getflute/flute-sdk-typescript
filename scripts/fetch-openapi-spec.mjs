@@ -170,8 +170,31 @@ console.log(`backend release ${backendRelease}`);
 console.log(`operations      ${countOperations(live)}`);
 console.log(`schemas         ${Object.keys(live.components?.schemas ?? {}).length}`);
 
-if (current === next) {
-  console.log('\nCommitted spec matches the live document. No drift.');
+// Compare canonical forms rather than raw bytes. A byte comparison makes any
+// reformatting of the committed file — a stray `prettier --write`, an editor
+// on save — indistinguishable from a real contract change, and the gate then
+// reports drift on every run until someone notices the diff is only
+// whitespace. Re-serialising through the same pipeline is idempotent for a
+// file this script wrote.
+let currentCanonical = null;
+if (current !== null) {
+  try {
+    currentCanonical = serialise(JSON.parse(current));
+  } catch {
+    // Unparseable: treat as drift so the gate surfaces it rather than crashing.
+    currentCanonical = null;
+  }
+}
+
+if (currentCanonical === next) {
+  if (current !== next) {
+    console.log(
+      '\nCommitted spec matches the live document, but its formatting has drifted.',
+    );
+    console.log('Run `npm run openapi:fetch` to rewrite it in canonical form.');
+  } else {
+    console.log('\nCommitted spec matches the live document. No drift.');
+  }
   process.exit(0);
 }
 
