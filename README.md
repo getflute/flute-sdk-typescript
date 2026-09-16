@@ -66,13 +66,25 @@ const flute = new Flute({
 // Card and ACH transactions carry a `paymentProcessorId`, and the value belongs
 // to the merchant — read it from their settings instead of hard-coding one.
 const settings = await flute.settings.getPaymentSettings();
-const processorId = settings.availablePaymentProcessors?.[0]?.paymentProcessorId;
-if (!processorId) throw new Error('This merchant has no payment processor configured.');
+// A merchant can have several processors, and the ACH ones cannot take card
+// data. Array order is not meaningful and `isDefault` may be true on more than
+// one, so select on `type`: 'Tsys' and 'SandboxCard' are the card processors.
+const processorId = settings.availablePaymentProcessors?.find(
+  (p) => p.type === 'Tsys' || p.type === 'SandboxCard',
+)?.paymentProcessorId;
+if (!processorId) throw new Error('This merchant has no card processor configured.');
 
 const result = await flute.transactions.sale({
   paymentProcessorId: processorId,
   baseAmount: 100, // whole currency units — $100.00, not cents
   currencyCode: 'USD',
+  billingAddress: {
+    addressLine1: '1 Main Street',
+    city: 'New York',
+    stateCode: 'NY',
+    postalCode: '10001',
+    countryCode: 'US',
+  },
   transactionDetails: {
     cardData: {
       paymentMethodDetails: {
@@ -87,6 +99,12 @@ const result = await flute.transactions.sale({
 
 console.log(result.transactionId, result.transactionStatus);
 ```
+
+> **Send a `billingAddress`.** Merchants can have address verification
+> enabled — self-serve sandbox accounts do by default, on a `Moderate`
+> profile — and a card sale without one comes back `Declined` with
+> `declineDetails.code === 'AVS'`. The transaction succeeds, so this is not an
+> error you can catch; you have to read the status.
 
 > **`paymentProcessorId` is required**, and it is the one field you cannot
 > guess: it names which of the merchant's configured processors settles the
@@ -112,13 +130,25 @@ Each one runs against the sandbox with real credentials.
 ```ts
 await flute.sessions.authenticate(); // surface bad creds at boot
 const settings = await flute.settings.getPaymentSettings();
-const processorId = settings.availablePaymentProcessors?.[0]?.paymentProcessorId;
-if (!processorId) throw new Error('This merchant has no payment processor configured.');
+// A merchant can have several processors, and the ACH ones cannot take card
+// data. Array order is not meaningful and `isDefault` may be true on more than
+// one, so select on `type`: 'Tsys' and 'SandboxCard' are the card processors.
+const processorId = settings.availablePaymentProcessors?.find(
+  (p) => p.type === 'Tsys' || p.type === 'SandboxCard',
+)?.paymentProcessorId;
+if (!processorId) throw new Error('This merchant has no card processor configured.');
 
 const result = await flute.transactions.sale({
   paymentProcessorId: processorId,
   baseAmount: 100, // whole currency units — $100.00, not cents
   currencyCode: 'USD',
+  billingAddress: {
+    addressLine1: '1 Main Street',
+    city: 'New York',
+    stateCode: 'NY',
+    postalCode: '10001',
+    countryCode: 'US',
+  },
   transactionDetails: {
     cardData: {
       paymentMethodDetails: {
