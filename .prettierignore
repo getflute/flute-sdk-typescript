@@ -6,3 +6,7 @@ src/types/generated/
 *.tsbuildinfo
 package-lock.json
 CHANGELOG.md
+
+# Written by scripts/fetch-openapi-spec.mjs in a canonical form the drift
+# gate compares against. Reformatting it makes every run report drift.
+openapi/

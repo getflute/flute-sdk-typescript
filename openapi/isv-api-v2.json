@@ -2,11 +2,17 @@
   "components": {
     "schemas": {
       "AccountHolderType": {
-        "enum": ["Business", "Personal"],
+        "enum": [
+          "Business",
+          "Personal"
+        ],
         "type": "string"
       },
       "AccountType": {
-        "enum": ["Checking", "Savings"],
+        "enum": [
+          "Checking",
+          "Savings"
+        ],
         "type": "string"
       },
       "AchDataDto": {
@@ -38,7 +44,9 @@
             "$ref": "#/components/schemas/AchSECCode"
           }
         },
-        "required": ["requesterIpAddress"],
+        "required": [
+          "requesterIpAddress"
+        ],
         "type": "object"
       },
       "AchDetailsDto": {
@@ -111,7 +119,12 @@
         "type": "object"
       },
       "AchSECCode": {
-        "enum": ["Web", "PPD", "CCD", "Telephone"],
+        "enum": [
+          "Web",
+          "PPD",
+          "CCD",
+          "Telephone"
+        ],
         "type": "string"
       },
       "AddressDto": {
@@ -158,7 +171,12 @@
         "type": "object"
       },
       "AggregatedPosTransactionStatus": {
-        "enum": ["InProgress", "Completed", "Cancelled", "Failed"],
+        "enum": [
+          "InProgress",
+          "Completed",
+          "Cancelled",
+          "Failed"
+        ],
         "type": "string"
       },
       "AggregatedTransactionStatus": {
@@ -290,21 +308,37 @@
         "type": "object"
       },
       "AvsActions": {
-        "enum": ["Allow", "Deny"],
+        "enum": [
+          "Allow",
+          "Deny"
+        ],
         "type": "string"
       },
       "AvsActionsDto": {
         "description": "<p>Possible values:</p>\n<ul>\n<li><b>1 - Allow</b>: </li>\n<li><b>2 - Deny</b>: </li>\n</ul>\n",
-        "enum": ["Allow", "Deny"],
+        "enum": [
+          "Allow",
+          "Deny"
+        ],
         "type": "string"
       },
       "AvsCodeGroupTypeDto": {
         "description": "<p>Possible values:</p>\n<ul>\n<li><b>1 - NoMatch</b>: </li>\n<li><b>2 - PartialMatch</b>: </li>\n<li><b>3 - Incompatible</b>: </li>\n<li><b>4 - Unavailable</b>: </li>\n<li><b>5 - ValidGroup</b>: </li>\n</ul>\n",
-        "enum": ["NoMatch", "PartialMatch", "Incompatible", "Unavailable", "ValidGroup"],
+        "enum": [
+          "NoMatch",
+          "PartialMatch",
+          "Incompatible",
+          "Unavailable",
+          "ValidGroup"
+        ],
         "type": "string"
       },
       "AvsMerchantProfile": {
-        "enum": ["Strict", "Moderate", "Tolerant"],
+        "enum": [
+          "Strict",
+          "Moderate",
+          "Tolerant"
+        ],
         "type": "string"
       },
       "AvsResponseDto": {
@@ -345,7 +379,10 @@
       },
       "AvsResponseResultDto": {
         "description": "<p>Possible values:</p>\n<ul>\n<li><b>1 - Passed</b>: </li>\n<li><b>2 - Failed</b>: </li>\n</ul>\n",
-        "enum": ["Passed", "Failed"],
+        "enum": [
+          "Passed",
+          "Failed"
+        ],
         "type": "string"
       },
       "CalculateAmountRequestDto": {
@@ -490,7 +527,10 @@
       },
       "CaptureMethod": {
         "description": "<p>Possible values:</p>\n<ul>\n<li><b>0 - Auto</b>: </li>\n<li><b>1 - Manual</b>: </li>\n</ul>\n",
-        "enum": ["Auto", "Manual"],
+        "enum": [
+          "Auto",
+          "Manual"
+        ],
         "type": "string"
       },
       "CaptureRequestDto": {
@@ -527,12 +567,28 @@
         "type": "object"
       },
       "CardDataSource": {
-        "enum": ["Internet", "Swipe", "NFC", "EMV", "EMVContactless", "FallbackSwipe", "Manual"],
+        "enum": [
+          "Internet",
+          "Swipe",
+          "NFC",
+          "EMV",
+          "EMVContactless",
+          "FallbackSwipe",
+          "Manual"
+        ],
         "type": "string"
       },
       "CardDataSourceDto": {
         "description": "<p>Possible values:</p>\n<ul>\n<li><b>1 - Internet</b>: Virtual Terminal, ISV API</li>\n<li><b>2 - Swipe</b>: Track1, Track2</li>\n<li><b>3 - NFC</b>: EMV Tags, Track2</li>\n<li><b>4 - EMV</b>: EMV Tags</li>\n<li><b>5 - EMVContactless</b>: EMV Tags</li>\n<li><b>6 - FallbackSwipe</b>: Track 2</li>\n<li><b>7 - Manual</b>: Card present keyed transaction.</li>\n</ul>\n",
-        "enum": ["Internet", "Swipe", "NFC", "EMV", "EMVContactless", "FallbackSwipe", "Manual"],
+        "enum": [
+          "Internet",
+          "Swipe",
+          "NFC",
+          "EMV",
+          "EMVContactless",
+          "FallbackSwipe",
+          "Manual"
+        ],
         "type": "string"
       },
       "CardPaymentMethodDto": {
@@ -606,7 +662,9 @@
             "type": "string"
           }
         },
-        "required": ["paymentProcessorId"],
+        "required": [
+          "paymentProcessorId"
+        ],
         "type": "object"
       },
       "CloseBatchResponseDto": {
@@ -865,7 +923,10 @@
             "type": "string"
           }
         },
-        "required": ["apiKeyName", "merchantId"],
+        "required": [
+          "apiKeyName",
+          "merchantId"
+        ],
         "type": "object"
       },
       "CreateApiKeyResponseDto": {
@@ -994,7 +1055,10 @@
             "type": "boolean"
           }
         },
-        "required": ["firstName", "lastName"],
+        "required": [
+          "firstName",
+          "lastName"
+        ],
         "type": "object"
       },
       "CreateCustomerResponseDto": {
@@ -1072,7 +1136,9 @@
             "type": "number"
           }
         },
-        "required": ["paymentMethods"],
+        "required": [
+          "paymentMethods"
+        ],
         "type": "object"
       },
       "CreatePaymentMethodResponseDto": {
@@ -1480,7 +1546,11 @@
         "type": "object"
       },
       "CreditDebitType": {
-        "enum": ["Credit", "Debit", "Unknown"],
+        "enum": [
+          "Credit",
+          "Debit",
+          "Unknown"
+        ],
         "type": "string"
       },
       "CreditDetailsDto": {
@@ -1547,11 +1617,16 @@
         "type": "object"
       },
       "Currency": {
-        "enum": ["USD"],
+        "enum": [
+          "USD"
+        ],
         "type": "string"
       },
       "CustomerHandling": {
-        "enum": ["CreateCustomer", "TokenOnly"],
+        "enum": [
+          "CreateCustomer",
+          "TokenOnly"
+        ],
         "type": "string"
       },
       "CustomerPaymentMethodAchDto": {
@@ -2909,7 +2984,10 @@
         "type": "object"
       },
       "MobilePlatform": {
-        "enum": ["iOS", "Android"],
+        "enum": [
+          "iOS",
+          "Android"
+        ],
         "type": "string"
       },
       "NotFoundExceptionExample": {
@@ -2964,7 +3042,11 @@
         "type": "object"
       },
       "NotificationDeliveryMethod": {
-        "enum": ["None", "Sms", "Email"],
+        "enum": [
+          "None",
+          "Sms",
+          "Email"
+        ],
         "type": "string"
       },
       "PageInfoDto": {
@@ -3517,11 +3599,19 @@
         "type": "object"
       },
       "PaymentLinkStatus": {
-        "enum": ["Active", "Inactive", "Completed", "Expired"],
+        "enum": [
+          "Active",
+          "Inactive",
+          "Completed",
+          "Expired"
+        ],
         "type": "string"
       },
       "PaymentLinkType": {
-        "enum": ["SingleUse", "MultiUse"],
+        "enum": [
+          "SingleUse",
+          "MultiUse"
+        ],
         "type": "string"
       },
       "PaymentMethodAchDetailsDto": {
@@ -3695,7 +3785,11 @@
         "type": "object"
       },
       "PaymentMethodType": {
-        "enum": ["Card", "ACH", "Cash"],
+        "enum": [
+          "Card",
+          "ACH",
+          "Cash"
+        ],
         "type": "string"
       },
       "PaymentMethodsDto": {
@@ -3712,12 +3806,23 @@
         "type": "object"
       },
       "PaymentProcessorType": {
-        "enum": ["Tsys", "Ach", "SandboxCard", "SandboxAch"],
+        "enum": [
+          "Tsys",
+          "Ach",
+          "SandboxCard",
+          "SandboxAch"
+        ],
         "type": "string"
       },
       "PaymentSessionStatusDto": {
         "description": "Payment session status<p>Possible values:</p>\n<ul>\n<li><b>1 - Created</b>: </li>\n<li><b>2 - Cancelled</b>: </li>\n<li><b>3 - Completed</b>: </li>\n<li><b>4 - Failed</b>: </li>\n<li><b>5 - Expired</b>: </li>\n</ul>\n",
-        "enum": ["Created", "Cancelled", "Completed", "Failed", "Expired"],
+        "enum": [
+          "Created",
+          "Cancelled",
+          "Completed",
+          "Failed",
+          "Expired"
+        ],
         "type": "string"
       },
       "PingWebhookIsvResponseDto": {
@@ -3771,11 +3876,17 @@
         "type": "object"
       },
       "PosInitiationChannel": {
-        "enum": ["Cloud", "Deeplink"],
+        "enum": [
+          "Cloud",
+          "Deeplink"
+        ],
         "type": "string"
       },
       "PosReadingMethod": {
-        "enum": ["Regular", "KeyedEntry"],
+        "enum": [
+          "Regular",
+          "KeyedEntry"
+        ],
         "type": "string"
       },
       "PosTransactionResponseDto": {
@@ -3987,7 +4098,10 @@
       },
       "PricingType": {
         "description": "<p>Possible values:</p>\n<ul>\n<li><b>1 - Card</b>: </li>\n<li><b>2 - Cash</b>: </li>\n</ul>\n",
-        "enum": ["Card", "Cash"],
+        "enum": [
+          "Card",
+          "Cash"
+        ],
         "type": "string"
       },
       "PrintTransactionReceiptRequestDto": {
@@ -4181,15 +4295,28 @@
             "$ref": "#/components/schemas/NotificationDeliveryMethod"
           }
         },
-        "required": ["hasCustomerConsent", "recipient", "shareBy"],
+        "required": [
+          "hasCustomerConsent",
+          "recipient",
+          "shareBy"
+        ],
         "type": "object"
       },
       "SessionMode": {
-        "enum": ["Payment", "SaveMethod", "PaymentAndSave"],
+        "enum": [
+          "Payment",
+          "SaveMethod",
+          "PaymentAndSave"
+        ],
         "type": "string"
       },
       "SettlementBatchStatus": {
-        "enum": ["Open", "Settled", "PendingSettlement", "Declined"],
+        "enum": [
+          "Open",
+          "Settled",
+          "PendingSettlement",
+          "Declined"
+        ],
         "type": "string"
       },
       "SharePaymentLinkRequestDto": {
@@ -4210,7 +4337,11 @@
             "$ref": "#/components/schemas/NotificationDeliveryMethod"
           }
         },
-        "required": ["hasCustomerConsent", "recipient", "shareBy"],
+        "required": [
+          "hasCustomerConsent",
+          "recipient",
+          "shareBy"
+        ],
         "type": "object"
       },
       "SuggestedTipsDto": {
@@ -4229,27 +4360,46 @@
         "type": "object"
       },
       "TaxMode": {
-        "enum": ["Exclusive", "Inclusive"],
+        "enum": [
+          "Exclusive",
+          "Inclusive"
+        ],
         "type": "string"
       },
       "TerminalConnectionStatus": {
-        "enum": ["Online", "Offline"],
+        "enum": [
+          "Online",
+          "Offline"
+        ],
         "type": "string"
       },
       "TerminalConnectionType": {
-        "enum": ["WiFi", "Mobile", "Ethernet"],
+        "enum": [
+          "WiFi",
+          "Mobile",
+          "Ethernet"
+        ],
         "type": "string"
       },
       "TerminalDebitPinKey": {
-        "enum": ["Injected", "Missing"],
+        "enum": [
+          "Injected",
+          "Missing"
+        ],
         "type": "string"
       },
       "TerminalManufacturer": {
-        "enum": ["Sunmi", "Verifone"],
+        "enum": [
+          "Sunmi",
+          "Verifone"
+        ],
         "type": "string"
       },
       "TerminalMode": {
-        "enum": ["Standalone", "SemiIntegrated"],
+        "enum": [
+          "Standalone",
+          "SemiIntegrated"
+        ],
         "type": "string"
       },
       "TerminalModel": {
@@ -4263,11 +4413,19 @@
         "type": "string"
       },
       "TerminalPosStatus": {
-        "enum": ["Ready", "Busy", "Offline"],
+        "enum": [
+          "Ready",
+          "Busy",
+          "Offline"
+        ],
         "type": "string"
       },
       "TerminalPrinterStatus": {
-        "enum": ["Normal", "NotNormal", "NotSupported"],
+        "enum": [
+          "Normal",
+          "NotNormal",
+          "NotSupported"
+        ],
         "type": "string"
       },
       "TipAdjustmentRequestDto": {
@@ -4292,12 +4450,18 @@
         "type": "object"
       },
       "TokenType": {
-        "enum": ["Local", "Network"],
+        "enum": [
+          "Local",
+          "Network"
+        ],
         "type": "string"
       },
       "TokenTypeDto": {
         "description": "Card Token type<p>Possible values:</p>\n<ul>\n<li><b>1 - Local</b>: Regular</li>\n<li><b>2 - Network</b>: Network</li>\n</ul>\n",
-        "enum": ["Local", "Network"],
+        "enum": [
+          "Local",
+          "Network"
+        ],
         "type": "string"
       },
       "TransactionAddressVerificationServiceResponseDto": {
@@ -4956,7 +5120,13 @@
         "type": "object"
       },
       "TransactionStatus": {
-        "enum": ["Pending", "Approved", "Declined", "Failed", "UnknownOutcome"],
+        "enum": [
+          "Pending",
+          "Approved",
+          "Declined",
+          "Failed",
+          "UnknownOutcome"
+        ],
         "type": "string"
       },
       "TransactionSummaryResponseDto": {
@@ -5505,7 +5675,10 @@
         "type": "object"
       },
       "WebhookDeliveryLogExportFormat": {
-        "enum": ["Csv", "Json"],
+        "enum": [
+          "Csv",
+          "Json"
+        ],
         "type": "string"
       },
       "WebhookDeliveryLogIsvDetailDto": {
@@ -5697,11 +5870,17 @@
         "type": "object"
       },
       "WebhookDeliveryLogStatus": {
-        "enum": ["Success", "Failure"],
+        "enum": [
+          "Success",
+          "Failure"
+        ],
         "type": "string"
       },
       "WebhookEndpointStatus": {
-        "enum": ["Active", "Inactive"],
+        "enum": [
+          "Active",
+          "Inactive"
+        ],
         "type": "string"
       },
       "WebhookEventType": {
@@ -5768,12 +5947,22 @@
         "type": "object"
       },
       "ZeroCostProcessingOption": {
-        "enum": ["None", "CashDiscount", "DualPricing", "Surcharge"],
+        "enum": [
+          "None",
+          "CashDiscount",
+          "DualPricing",
+          "Surcharge"
+        ],
         "type": "string"
       },
       "ZeroCostProcessingOptionDto": {
         "description": "<p>Possible values:</p>\n<ul>\n<li><b>1 - None</b>: </li>\n<li><b>2 - CashDiscount</b>: </li>\n<li><b>3 - DualPricing</b>: </li>\n<li><b>4 - Surcharge</b>: </li>\n</ul>\n",
-        "enum": ["None", "CashDiscount", "DualPricing", "Surcharge"],
+        "enum": [
+          "None",
+          "CashDiscount",
+          "DualPricing",
+          "Surcharge"
+        ],
         "type": "string"
       }
     },
@@ -5845,7 +6034,9 @@
                   "entityId": null,
                   "errorCode": "V0000",
                   "errors": {
-                    "Email": ["'Email' is not a valid email address."]
+                    "Email": [
+                      "'Email' is not a valid email address."
+                    ]
                   },
                   "exceptionType": "ValidationException",
                   "resolution": "Review the errors and correct the invalid fields.",
@@ -5957,7 +6148,9 @@
           }
         },
         "summary": "List API Keys Required API Permission: General Configurations",
-        "tags": ["ApiKeys"]
+        "tags": [
+          "ApiKeys"
+        ]
       },
       "post": {
         "description": "Create a new API key for a merchant managed by your affiliate account.\n            \nProvide the Merchant ID and a name to generate a unique API key ID and secret for the merchant.\n            \nUse the returned credentials to authenticate as the merchant for API operations.\n            \n**Note:** The API key secret is only returned once during creation. Store it securely.\n            \n**Note:** This endpoint requires the Bearer token to be an Affiliate (ISV) token. Merchant tokens are not accepted.",
@@ -6000,7 +6193,9 @@
                   "entityId": null,
                   "errorCode": "V0000",
                   "errors": {
-                    "Email": ["'Email' is not a valid email address."]
+                    "Email": [
+                      "'Email' is not a valid email address."
+                    ]
                   },
                   "exceptionType": "ValidationException",
                   "resolution": "Review the errors and correct the invalid fields.",
@@ -6135,7 +6330,9 @@
           }
         },
         "summary": "Create API Key Required API Permission: General Configurations",
-        "tags": ["ApiKeys"]
+        "tags": [
+          "ApiKeys"
+        ]
       }
     },
     "/v2/api-keys/{clientId}": {
@@ -6169,7 +6366,9 @@
                   "entityId": null,
                   "errorCode": "V0000",
                   "errors": {
-                    "Email": ["'Email' is not a valid email address."]
+                    "Email": [
+                      "'Email' is not a valid email address."
+                    ]
                   },
                   "exceptionType": "ValidationException",
                   "resolution": "Review the errors and correct the invalid fields.",
@@ -6304,7 +6503,9 @@
           }
         },
         "summary": "Revoke API Key Required API Permission: General Configurations",
-        "tags": ["ApiKeys"]
+        "tags": [
+          "ApiKeys"
+        ]
       }
     },
     "/v2/customers": {
@@ -6470,7 +6671,9 @@
                   "entityId": null,
                   "errorCode": "V0000",
                   "errors": {
-                    "Email": ["'Email' is not a valid email address."]
+                    "Email": [
+                      "'Email' is not a valid email address."
+                    ]
                   },
                   "exceptionType": "ValidationException",
                   "resolution": "Review the errors and correct the invalid fields.",
@@ -6582,7 +6785,9 @@
           }
         },
         "summary": "List Customers Required API Permission: List Customers",
-        "tags": ["Customers"]
+        "tags": [
+          "Customers"
+        ]
       },
       "post": {
         "requestBody": {
@@ -6663,7 +6868,9 @@
                   "entityId": null,
                   "errorCode": "V0000",
                   "errors": {
-                    "Email": ["'Email' is not a valid email address."]
+                    "Email": [
+                      "'Email' is not a valid email address."
+                    ]
                   },
                   "exceptionType": "ValidationException",
                   "resolution": "Review the errors and correct the invalid fields.",
@@ -6798,7 +7005,9 @@
           }
         },
         "summary": "Create Customer Required API Permission: Manage Customers",
-        "tags": ["Customers"]
+        "tags": [
+          "Customers"
+        ]
       }
     },
     "/v2/customers/{customerId}": {
@@ -6831,7 +7040,9 @@
                   "entityId": null,
                   "errorCode": "V0000",
                   "errors": {
-                    "Email": ["'Email' is not a valid email address."]
+                    "Email": [
+                      "'Email' is not a valid email address."
+                    ]
                   },
                   "exceptionType": "ValidationException",
                   "resolution": "Review the errors and correct the invalid fields.",
@@ -6966,7 +7177,9 @@
           }
         },
         "summary": "Delete Customer Required API Permission: Manage Customers",
-        "tags": ["Customers"]
+        "tags": [
+          "Customers"
+        ]
       },
       "get": {
         "parameters": [
@@ -7065,7 +7278,9 @@
                   "entityId": null,
                   "errorCode": "V0000",
                   "errors": {
-                    "Email": ["'Email' is not a valid email address."]
+                    "Email": [
+                      "'Email' is not a valid email address."
+                    ]
                   },
                   "exceptionType": "ValidationException",
                   "resolution": "Review the errors and correct the invalid fields.",
@@ -7177,7 +7392,9 @@
           }
         },
         "summary": "Get Customer Required API Permission: Get Customer Details",
-        "tags": ["Customers"]
+        "tags": [
+          "Customers"
+        ]
       },
       "patch": {
         "description": "Partial update (JSON Merge Patch, RFC 7396): send only the fields you want to change.\nAn omitted field is left unchanged; an explicit `null` clears a clearable field; nested\naddresses merge recursively. Returns the full updated customer.",
@@ -7311,7 +7528,9 @@
                   "entityId": null,
                   "errorCode": "V0000",
                   "errors": {
-                    "Email": ["'Email' is not a valid email address."]
+                    "Email": [
+                      "'Email' is not a valid email address."
+                    ]
                   },
                   "exceptionType": "ValidationException",
                   "resolution": "Review the errors and correct the invalid fields.",
@@ -7446,7 +7665,9 @@
           }
         },
         "summary": "Update Customer Required API Permission: Manage Customers",
-        "tags": ["Customers"]
+        "tags": [
+          "Customers"
+        ]
       }
     },
     "/v2/payment-links": {
@@ -7533,7 +7754,9 @@
                   "entityId": null,
                   "errorCode": "V0000",
                   "errors": {
-                    "Email": ["'Email' is not a valid email address."]
+                    "Email": [
+                      "'Email' is not a valid email address."
+                    ]
                   },
                   "exceptionType": "ValidationException",
                   "resolution": "Review the errors and correct the invalid fields.",
@@ -7622,7 +7845,9 @@
           }
         },
         "summary": "List payment links for the authenticated merchant. Required API Permission: Payment Links",
-        "tags": ["PaymentLinks"]
+        "tags": [
+          "PaymentLinks"
+        ]
       },
       "post": {
         "description": "A `paymentMethods` entry without `processorId` is pinned to the merchant's default\nactive processor of that type at creation time.",
@@ -7669,7 +7894,9 @@
                   "entityId": null,
                   "errorCode": "V0000",
                   "errors": {
-                    "Email": ["'Email' is not a valid email address."]
+                    "Email": [
+                      "'Email' is not a valid email address."
+                    ]
                   },
                   "exceptionType": "ValidationException",
                   "resolution": "Review the errors and correct the invalid fields.",
@@ -7781,7 +8008,9 @@
           }
         },
         "summary": "Create a payment link. Required API Permission: Payment Links",
-        "tags": ["PaymentLinks"]
+        "tags": [
+          "PaymentLinks"
+        ]
       }
     },
     "/v2/payment-links/{paymentLinkId}": {
@@ -7813,7 +8042,9 @@
                   "entityId": null,
                   "errorCode": "V0000",
                   "errors": {
-                    "Email": ["'Email' is not a valid email address."]
+                    "Email": [
+                      "'Email' is not a valid email address."
+                    ]
                   },
                   "exceptionType": "ValidationException",
                   "resolution": "Review the errors and correct the invalid fields.",
@@ -7925,7 +8156,9 @@
           }
         },
         "summary": "Delete a payment link. Required API Permission: Payment Links",
-        "tags": ["PaymentLinks"]
+        "tags": [
+          "PaymentLinks"
+        ]
       },
       "get": {
         "parameters": [
@@ -7962,7 +8195,9 @@
                   "entityId": null,
                   "errorCode": "V0000",
                   "errors": {
-                    "Email": ["'Email' is not a valid email address."]
+                    "Email": [
+                      "'Email' is not a valid email address."
+                    ]
                   },
                   "exceptionType": "ValidationException",
                   "resolution": "Review the errors and correct the invalid fields.",
@@ -8074,7 +8309,9 @@
           }
         },
         "summary": "Get a payment link by ID. Required API Permission: Payment Links",
-        "tags": ["PaymentLinks"]
+        "tags": [
+          "PaymentLinks"
+        ]
       },
       "patch": {
         "description": "Partial update (JSON Merge Patch, RFC 7396): send only the fields you want to change.\nAn omitted field is left unchanged; an explicit `null` clears a clearable field.\n`paymentMethods` is replaced wholesale when present: a type absent from the new array\nstops being accepted, and an entry without `processorId` is pinned to the merchant's\ncurrent default active processor of that type. Returns the full updated payment link.",
@@ -8122,7 +8359,9 @@
                   "entityId": null,
                   "errorCode": "V0000",
                   "errors": {
-                    "Email": ["'Email' is not a valid email address."]
+                    "Email": [
+                      "'Email' is not a valid email address."
+                    ]
                   },
                   "exceptionType": "ValidationException",
                   "resolution": "Review the errors and correct the invalid fields.",
@@ -8257,7 +8496,9 @@
           }
         },
         "summary": "Update a payment link. Required API Permission: Payment Links",
-        "tags": ["PaymentLinks"]
+        "tags": [
+          "PaymentLinks"
+        ]
       }
     },
     "/v2/payment-links/{paymentLinkId}/share": {
@@ -8309,7 +8550,9 @@
                   "entityId": null,
                   "errorCode": "V0000",
                   "errors": {
-                    "Email": ["'Email' is not a valid email address."]
+                    "Email": [
+                      "'Email' is not a valid email address."
+                    ]
                   },
                   "exceptionType": "ValidationException",
                   "resolution": "Review the errors and correct the invalid fields.",
@@ -8444,7 +8687,9 @@
           }
         },
         "summary": "Share a payment link with a customer by SMS or email. Required API Permission: Payment Links",
-        "tags": ["PaymentLinks"]
+        "tags": [
+          "PaymentLinks"
+        ]
       }
     },
     "/v2/payment-methods": {
@@ -8585,7 +8830,9 @@
                   "entityId": null,
                   "errorCode": "V0000",
                   "errors": {
-                    "Email": ["'Email' is not a valid email address."]
+                    "Email": [
+                      "'Email' is not a valid email address."
+                    ]
                   },
                   "exceptionType": "ValidationException",
                   "resolution": "Review the errors and correct the invalid fields.",
@@ -8697,7 +8944,9 @@
           }
         },
         "summary": "List payment methods Required API Permission: Get Customer Details",
-        "tags": ["PaymentMethods"]
+        "tags": [
+          "PaymentMethods"
+        ]
       }
     },
     "/v2/payment-methods/ach": {
@@ -8747,7 +8996,9 @@
                   "entityId": null,
                   "errorCode": "V0000",
                   "errors": {
-                    "Email": ["'Email' is not a valid email address."]
+                    "Email": [
+                      "'Email' is not a valid email address."
+                    ]
                   },
                   "exceptionType": "ValidationException",
                   "resolution": "Review the errors and correct the invalid fields.",
@@ -8882,7 +9133,9 @@
           }
         },
         "summary": "Add an ACH payment method Required API Permission: Manage Customers",
-        "tags": ["PaymentMethods"]
+        "tags": [
+          "PaymentMethods"
+        ]
       }
     },
     "/v2/payment-methods/cards": {
@@ -8930,7 +9183,9 @@
                   "entityId": null,
                   "errorCode": "V0000",
                   "errors": {
-                    "Email": ["'Email' is not a valid email address."]
+                    "Email": [
+                      "'Email' is not a valid email address."
+                    ]
                   },
                   "exceptionType": "ValidationException",
                   "resolution": "Review the errors and correct the invalid fields.",
@@ -9065,7 +9320,9 @@
           }
         },
         "summary": "Add a card payment method Required API Permission: Manage Customers",
-        "tags": ["PaymentMethods"]
+        "tags": [
+          "PaymentMethods"
+        ]
       }
     },
     "/v2/payment-methods/{paymentMethodId}": {
@@ -9098,7 +9355,9 @@
                   "entityId": null,
                   "errorCode": "V0000",
                   "errors": {
-                    "Email": ["'Email' is not a valid email address."]
+                    "Email": [
+                      "'Email' is not a valid email address."
+                    ]
                   },
                   "exceptionType": "ValidationException",
                   "resolution": "Review the errors and correct the invalid fields.",
@@ -9233,7 +9492,9 @@
           }
         },
         "summary": "Delete a payment method Required API Permission: Manage Customers",
-        "tags": ["PaymentMethods"]
+        "tags": [
+          "PaymentMethods"
+        ]
       },
       "get": {
         "parameters": [
@@ -9311,7 +9572,9 @@
                   "entityId": null,
                   "errorCode": "V0000",
                   "errors": {
-                    "Email": ["'Email' is not a valid email address."]
+                    "Email": [
+                      "'Email' is not a valid email address."
+                    ]
                   },
                   "exceptionType": "ValidationException",
                   "resolution": "Review the errors and correct the invalid fields.",
@@ -9423,7 +9686,9 @@
           }
         },
         "summary": "Get a payment method Required API Permission: Get Customer Details",
-        "tags": ["PaymentMethods"]
+        "tags": [
+          "PaymentMethods"
+        ]
       },
       "patch": {
         "description": "Partial update (JSON Merge Patch, RFC 7396): send only the fields you want to change; an\nomitted field is left unchanged and an explicit `null` clears the field. Renames the\npayment method. The PM is identified by `paymentMethodId` within the merchant; the\noperation works the same for orphan and customer-linked PMs. Returns the full updated\npayment method.",
@@ -9515,7 +9780,9 @@
                   "entityId": null,
                   "errorCode": "V0000",
                   "errors": {
-                    "Email": ["'Email' is not a valid email address."]
+                    "Email": [
+                      "'Email' is not a valid email address."
+                    ]
                   },
                   "exceptionType": "ValidationException",
                   "resolution": "Review the errors and correct the invalid fields.",
@@ -9650,7 +9917,9 @@
           }
         },
         "summary": "Update a payment method Required API Permission: Manage Customers",
-        "tags": ["PaymentMethods"]
+        "tags": [
+          "PaymentMethods"
+        ]
       }
     },
     "/v2/payment-methods/{paymentMethodId}/set-default": {
@@ -9695,7 +9964,9 @@
                   "entityId": null,
                   "errorCode": "V0000",
                   "errors": {
-                    "Email": ["'Email' is not a valid email address."]
+                    "Email": [
+                      "'Email' is not a valid email address."
+                    ]
                   },
                   "exceptionType": "ValidationException",
                   "resolution": "Review the errors and correct the invalid fields.",
@@ -9853,7 +10124,9 @@
           }
         },
         "summary": "Set a payment method as default Required API Permission: Manage Customers",
-        "tags": ["PaymentMethods"]
+        "tags": [
+          "PaymentMethods"
+        ]
       }
     },
     "/v2/payment-sessions": {
@@ -9901,7 +10174,9 @@
                   "entityId": null,
                   "errorCode": "V0000",
                   "errors": {
-                    "Email": ["'Email' is not a valid email address."]
+                    "Email": [
+                      "'Email' is not a valid email address."
+                    ]
                   },
                   "exceptionType": "ValidationException",
                   "resolution": "Review the errors and correct the invalid fields.",
@@ -9964,7 +10239,9 @@
           }
         },
         "summary": "Creates a new payment session. Required API Permission: Hosted Web Components",
-        "tags": ["PaymentSessions"]
+        "tags": [
+          "PaymentSessions"
+        ]
       }
     },
     "/v2/payment-sessions/{paymentSessionId}": {
@@ -10041,7 +10318,9 @@
           }
         },
         "summary": "Get payment session details by Id. Required API Permission: Hosted Web Components",
-        "tags": ["PaymentSessions"]
+        "tags": [
+          "PaymentSessions"
+        ]
       }
     },
     "/v2/payment-sessions/{paymentSessionId}/cancel": {
@@ -10142,7 +10421,9 @@
           }
         },
         "summary": "Cancels a payment session. Required API Permission: Hosted Web Components",
-        "tags": ["PaymentSessions"]
+        "tags": [
+          "PaymentSessions"
+        ]
       }
     },
     "/v2/ping": {
@@ -10163,7 +10444,9 @@
                   "entityId": null,
                   "errorCode": "V0000",
                   "errors": {
-                    "Email": ["'Email' is not a valid email address."]
+                    "Email": [
+                      "'Email' is not a valid email address."
+                    ]
                   },
                   "exceptionType": "ValidationException",
                   "resolution": "Review the errors and correct the invalid fields.",
@@ -10252,7 +10535,9 @@
           }
         },
         "summary": "Ping. Required API Permission: General Ping",
-        "tags": ["Ping"]
+        "tags": [
+          "Ping"
+        ]
       }
     },
     "/v2/pos/transactions": {
@@ -10414,7 +10699,9 @@
                   "entityId": null,
                   "errorCode": "V0000",
                   "errors": {
-                    "Email": ["'Email' is not a valid email address."]
+                    "Email": [
+                      "'Email' is not a valid email address."
+                    ]
                   },
                   "exceptionType": "ValidationException",
                   "resolution": "Review the errors and correct the invalid fields.",
@@ -10503,7 +10790,9 @@
           }
         },
         "summary": "List Transactions. Required API Permission: Pos Get Transactions",
-        "tags": ["PosTransactions"]
+        "tags": [
+          "PosTransactions"
+        ]
       },
       "post": {
         "description": "Initiates a new Card Present payment transaction on a Semi-Integrated terminal, with predefined\ninformation such as amount and capture method. The terminal flow is asynchronous — poll\nGET /pos/transactions/{posTransactionId} until `posTransactionStatus` reaches a terminal state\n(Completed, Failed, or Cancelled). A POS transaction is a payment intent: when it is Completed,\ncheck `linkedTransaction` for the payment outcome (which may be a decline).",
@@ -10592,7 +10881,9 @@
                   "entityId": null,
                   "errorCode": "V0000",
                   "errors": {
-                    "Email": ["'Email' is not a valid email address."]
+                    "Email": [
+                      "'Email' is not a valid email address."
+                    ]
                   },
                   "exceptionType": "ValidationException",
                   "resolution": "Review the errors and correct the invalid fields.",
@@ -10773,7 +11064,9 @@
           }
         },
         "summary": "Create Transaction. Required API Permission: Pos Start Transaction",
-        "tags": ["PosTransactions"]
+        "tags": [
+          "PosTransactions"
+        ]
       }
     },
     "/v2/pos/transactions/reversal": {
@@ -10855,7 +11148,9 @@
                   "entityId": null,
                   "errorCode": "V0000",
                   "errors": {
-                    "Email": ["'Email' is not a valid email address."]
+                    "Email": [
+                      "'Email' is not a valid email address."
+                    ]
                   },
                   "exceptionType": "ValidationException",
                   "resolution": "Review the errors and correct the invalid fields.",
@@ -11036,7 +11331,9 @@
           }
         },
         "summary": "Create a Reversal from POS. Required API Permission: Pos Start Transaction",
-        "tags": ["PosTransactions"]
+        "tags": [
+          "PosTransactions"
+        ]
       }
     },
     "/v2/pos/transactions/{posTransactionId}": {
@@ -11135,7 +11432,9 @@
                   "entityId": null,
                   "errorCode": "V0000",
                   "errors": {
-                    "Email": ["'Email' is not a valid email address."]
+                    "Email": [
+                      "'Email' is not a valid email address."
+                    ]
                   },
                   "exceptionType": "ValidationException",
                   "resolution": "Review the errors and correct the invalid fields.",
@@ -11247,7 +11546,9 @@
           }
         },
         "summary": "Get Transaction. Required API Permission: Pos Get Transaction Details",
-        "tags": ["PosTransactions"]
+        "tags": [
+          "PosTransactions"
+        ]
       }
     },
     "/v2/pos/transactions/{posTransactionId}/cancel": {
@@ -11317,7 +11618,9 @@
                   "entityId": null,
                   "errorCode": "V0000",
                   "errors": {
-                    "Email": ["'Email' is not a valid email address."]
+                    "Email": [
+                      "'Email' is not a valid email address."
+                    ]
                   },
                   "exceptionType": "ValidationException",
                   "resolution": "Review the errors and correct the invalid fields.",
@@ -11498,7 +11801,9 @@
           }
         },
         "summary": "Cancel Transaction. Required API Permission: Pos Cancel Transaction",
-        "tags": ["PosTransactions"]
+        "tags": [
+          "PosTransactions"
+        ]
       }
     },
     "/v2/pos/transactions/{posTransactionId}/print-receipt": {
@@ -11545,7 +11850,9 @@
                   "entityId": null,
                   "errorCode": "V0000",
                   "errors": {
-                    "Email": ["'Email' is not a valid email address."]
+                    "Email": [
+                      "'Email' is not a valid email address."
+                    ]
                   },
                   "exceptionType": "ValidationException",
                   "resolution": "Review the errors and correct the invalid fields.",
@@ -11680,7 +11987,9 @@
           }
         },
         "summary": "Print Receipt. Required API Permission: Pos Print Receipt",
-        "tags": ["PosTransactions"]
+        "tags": [
+          "PosTransactions"
+        ]
       }
     },
     "/v2/settings/contact-information": {
@@ -11726,7 +12035,9 @@
                   "entityId": null,
                   "errorCode": "V0000",
                   "errors": {
-                    "Email": ["'Email' is not a valid email address."]
+                    "Email": [
+                      "'Email' is not a valid email address."
+                    ]
                   },
                   "exceptionType": "ValidationException",
                   "resolution": "Review the errors and correct the invalid fields.",
@@ -11815,7 +12126,9 @@
           }
         },
         "summary": "Get contact information Required API Permission: General Configurations",
-        "tags": ["Settings"]
+        "tags": [
+          "Settings"
+        ]
       }
     },
     "/v2/settings/payment-config": {
@@ -11829,8 +12142,15 @@
                     "isEnabled": true,
                     "profile": "Strict"
                   },
-                  "availableCardTypes": ["Visa", "MasterCard", "AmericanExpress", "Discover"],
-                  "availableCurrencies": ["USD"],
+                  "availableCardTypes": [
+                    "Visa",
+                    "MasterCard",
+                    "AmericanExpress",
+                    "Discover"
+                  ],
+                  "availableCurrencies": [
+                    "USD"
+                  ],
                   "availablePaymentProcessors": [
                     {
                       "isDefault": true,
@@ -11846,13 +12166,22 @@
                       "type": "Tsys"
                     }
                   ],
-                  "availableTransactionTypes": ["Sale", "Capture", "Refund", "Void"],
+                  "availableTransactionTypes": [
+                    "Sale",
+                    "Capture",
+                    "Refund",
+                    "Void"
+                  ],
                   "companyName": "Test Company",
                   "currency": "USD",
                   "defaultCashDiscountRate": 2,
                   "defaultDualPricingRate": 1.8,
                   "defaultSurchargeRate": 1.5,
-                  "defaultTipsOptions": [10, 15, 20],
+                  "defaultTipsOptions": [
+                    10,
+                    15,
+                    20
+                  ],
                   "isCustomerCardSavingByTerminalEnabled": true,
                   "isTipsEnabled": true,
                   "maxTransactionAmount": 10000,
@@ -11879,7 +12208,9 @@
                   "entityId": null,
                   "errorCode": "V0000",
                   "errors": {
-                    "Email": ["'Email' is not a valid email address."]
+                    "Email": [
+                      "'Email' is not a valid email address."
+                    ]
                   },
                   "exceptionType": "ValidationException",
                   "resolution": "Review the errors and correct the invalid fields.",
@@ -11968,7 +12299,9 @@
           }
         },
         "summary": "Get payment configuration Required API Permission: General Configurations",
-        "tags": ["Settings"]
+        "tags": [
+          "Settings"
+        ]
       }
     },
     "/v2/settings/transaction-autofill": {
@@ -12012,7 +12345,9 @@
                   "entityId": null,
                   "errorCode": "V0000",
                   "errors": {
-                    "Email": ["'Email' is not a valid email address."]
+                    "Email": [
+                      "'Email' is not a valid email address."
+                    ]
                   },
                   "exceptionType": "ValidationException",
                   "resolution": "Review the errors and correct the invalid fields.",
@@ -12101,7 +12436,9 @@
           }
         },
         "summary": "Get L2/L3 Autofill Settings Required API Permission: General Configurations",
-        "tags": ["Settings"]
+        "tags": [
+          "Settings"
+        ]
       },
       "patch": {
         "description": "Partial update (JSON Merge Patch, RFC 7396): send only the settings you want to change.\nAn omitted field is left unchanged; an explicit `null` clears a clearable field\n(`level2Settings` and its `taxRate` are not clearable); nested L2/L3/product groups merge\nrecursively. Returns the full updated autofill settings.",
@@ -12170,7 +12507,9 @@
                   "entityId": null,
                   "errorCode": "V0000",
                   "errors": {
-                    "Email": ["'Email' is not a valid email address."]
+                    "Email": [
+                      "'Email' is not a valid email address."
+                    ]
                   },
                   "exceptionType": "ValidationException",
                   "resolution": "Review the errors and correct the invalid fields.",
@@ -12305,7 +12644,9 @@
           }
         },
         "summary": "Update L2/L3 Autofill Settings Required API Permission: General Configurations",
-        "tags": ["Settings"]
+        "tags": [
+          "Settings"
+        ]
       }
     },
     "/v2/settlements/batches": {
@@ -12454,7 +12795,9 @@
                   "entityId": null,
                   "errorCode": "V0000",
                   "errors": {
-                    "Email": ["'Email' is not a valid email address."]
+                    "Email": [
+                      "'Email' is not a valid email address."
+                    ]
                   },
                   "exceptionType": "ValidationException",
                   "resolution": "Review the errors and correct the invalid fields.",
@@ -12543,7 +12886,9 @@
           }
         },
         "summary": "List batches Required API Permission: Get Settlement Batches",
-        "tags": ["Settlements"]
+        "tags": [
+          "Settlements"
+        ]
       }
     },
     "/v2/settlements/batches/close": {
@@ -12597,7 +12942,9 @@
                   "entityId": null,
                   "errorCode": "V0000",
                   "errors": {
-                    "Email": ["'Email' is not a valid email address."]
+                    "Email": [
+                      "'Email' is not a valid email address."
+                    ]
                   },
                   "exceptionType": "ValidationException",
                   "resolution": "Review the errors and correct the invalid fields.",
@@ -12778,7 +13125,9 @@
           }
         },
         "summary": "Close an open batch Required API Permission: Submit Batch For Settlement",
-        "tags": ["Settlements"]
+        "tags": [
+          "Settlements"
+        ]
       }
     },
     "/v2/terminals": {
@@ -12938,7 +13287,9 @@
                   "entityId": null,
                   "errorCode": "V0000",
                   "errors": {
-                    "Email": ["'Email' is not a valid email address."]
+                    "Email": [
+                      "'Email' is not a valid email address."
+                    ]
                   },
                   "exceptionType": "ValidationException",
                   "resolution": "Review the errors and correct the invalid fields.",
@@ -13027,7 +13378,9 @@
           }
         },
         "summary": "List Terminals Required API Permission: Get Terminal List",
-        "tags": ["Terminals"]
+        "tags": [
+          "Terminals"
+        ]
       }
     },
     "/v2/terminals/{terminalId}/status": {
@@ -13082,7 +13435,9 @@
                   "entityId": null,
                   "errorCode": "V0000",
                   "errors": {
-                    "Email": ["'Email' is not a valid email address."]
+                    "Email": [
+                      "'Email' is not a valid email address."
+                    ]
                   },
                   "exceptionType": "ValidationException",
                   "resolution": "Review the errors and correct the invalid fields.",
@@ -13194,7 +13549,9 @@
           }
         },
         "summary": "Get Terminal Status Required API Permission: Get Terminal Information",
-        "tags": ["Terminals"]
+        "tags": [
+          "Terminals"
+        ]
       }
     },
     "/v2/transactions": {
@@ -13473,7 +13830,9 @@
                   "entityId": null,
                   "errorCode": "V0000",
                   "errors": {
-                    "Email": ["'Email' is not a valid email address."]
+                    "Email": [
+                      "'Email' is not a valid email address."
+                    ]
                   },
                   "exceptionType": "ValidationException",
                   "resolution": "Review the errors and correct the invalid fields.",
@@ -13562,7 +13921,9 @@
           }
         },
         "summary": "Get paginated list of transactions Required API Permission: List Transactions",
-        "tags": ["Transactions"]
+        "tags": [
+          "Transactions"
+        ]
       },
       "post": {
         "parameters": [
@@ -13915,7 +14276,9 @@
                   "entityId": null,
                   "errorCode": "V0000",
                   "errors": {
-                    "Email": ["'Email' is not a valid email address."]
+                    "Email": [
+                      "'Email' is not a valid email address."
+                    ]
                   },
                   "exceptionType": "ValidationException",
                   "resolution": "Review the errors and correct the invalid fields.",
@@ -14096,7 +14459,9 @@
           }
         },
         "summary": "Process transaction using unified transaction endpoint",
-        "tags": ["Transactions"]
+        "tags": [
+          "Transactions"
+        ]
       }
     },
     "/v2/transactions/calculate-amount": {
@@ -14188,7 +14553,9 @@
                   "entityId": null,
                   "errorCode": "V0000",
                   "errors": {
-                    "Email": ["'Email' is not a valid email address."]
+                    "Email": [
+                      "'Email' is not a valid email address."
+                    ]
                   },
                   "exceptionType": "ValidationException",
                   "resolution": "Review the errors and correct the invalid fields.",
@@ -14277,7 +14644,9 @@
           }
         },
         "summary": "Calculate transaction amount Required API Permission: Calculate Transaction Amount",
-        "tags": ["Transactions"]
+        "tags": [
+          "Transactions"
+        ]
       }
     },
     "/v2/transactions/credit": {
@@ -14559,7 +14928,9 @@
                   "entityId": null,
                   "errorCode": "V0000",
                   "errors": {
-                    "Email": ["'Email' is not a valid email address."]
+                    "Email": [
+                      "'Email' is not a valid email address."
+                    ]
                   },
                   "exceptionType": "ValidationException",
                   "resolution": "Review the errors and correct the invalid fields.",
@@ -14740,7 +15111,9 @@
           }
         },
         "summary": "Create an unreferenced credit (card unreferenced refund or ACH credit).",
-        "tags": ["Transactions"]
+        "tags": [
+          "Transactions"
+        ]
       }
     },
     "/v2/transactions/{transactionId}": {
@@ -14918,7 +15291,9 @@
                   "entityId": null,
                   "errorCode": "V0000",
                   "errors": {
-                    "Email": ["'Email' is not a valid email address."]
+                    "Email": [
+                      "'Email' is not a valid email address."
+                    ]
                   },
                   "exceptionType": "ValidationException",
                   "resolution": "Review the errors and correct the invalid fields.",
@@ -15030,7 +15405,9 @@
           }
         },
         "summary": "Get transaction details by ID Required API Permission: Get Transaction Details",
-        "tags": ["Transactions"]
+        "tags": [
+          "Transactions"
+        ]
       }
     },
     "/v2/transactions/{transactionId}/ach-hold": {
@@ -15217,7 +15594,9 @@
                   "entityId": null,
                   "errorCode": "V0000",
                   "errors": {
-                    "Email": ["'Email' is not a valid email address."]
+                    "Email": [
+                      "'Email' is not a valid email address."
+                    ]
                   },
                   "exceptionType": "ValidationException",
                   "resolution": "Review the errors and correct the invalid fields.",
@@ -15398,7 +15777,9 @@
           }
         },
         "summary": "Hold an ACH transaction. Required API Permission: Ach Hold",
-        "tags": ["Transactions"]
+        "tags": [
+          "Transactions"
+        ]
       }
     },
     "/v2/transactions/{transactionId}/ach-release": {
@@ -15585,7 +15966,9 @@
                   "entityId": null,
                   "errorCode": "V0000",
                   "errors": {
-                    "Email": ["'Email' is not a valid email address."]
+                    "Email": [
+                      "'Email' is not a valid email address."
+                    ]
                   },
                   "exceptionType": "ValidationException",
                   "resolution": "Review the errors and correct the invalid fields.",
@@ -15766,7 +16149,9 @@
           }
         },
         "summary": "Release the hold on an ACH transaction. Required API Permission: Ach Unhold",
-        "tags": ["Transactions"]
+        "tags": [
+          "Transactions"
+        ]
       }
     },
     "/v2/transactions/{transactionId}/capture": {
@@ -15966,7 +16351,9 @@
                   "entityId": null,
                   "errorCode": "V0000",
                   "errors": {
-                    "Email": ["'Email' is not a valid email address."]
+                    "Email": [
+                      "'Email' is not a valid email address."
+                    ]
                   },
                   "exceptionType": "ValidationException",
                   "resolution": "Review the errors and correct the invalid fields.",
@@ -16147,7 +16534,9 @@
           }
         },
         "summary": "Endpoint for transaction capture. Transaction Id is taken from the route. Body is optional: omit or send empty for full capture, or include CaptureAmount for partial capture. Required API Permission: Ecommerce Capture",
-        "tags": ["Transactions"]
+        "tags": [
+          "Transactions"
+        ]
       }
     },
     "/v2/transactions/{transactionId}/reversal": {
@@ -16347,7 +16736,9 @@
                   "entityId": null,
                   "errorCode": "V0000",
                   "errors": {
-                    "Email": ["'Email' is not a valid email address."]
+                    "Email": [
+                      "'Email' is not a valid email address."
+                    ]
                   },
                   "exceptionType": "ValidationException",
                   "resolution": "Review the errors and correct the invalid fields.",
@@ -16528,7 +16919,9 @@
           }
         },
         "summary": "Reverse a transaction (void or refund). Payment method (card vs ACH) is auto-detected.",
-        "tags": ["Transactions"]
+        "tags": [
+          "Transactions"
+        ]
       }
     },
     "/v2/transactions/{transactionId}/share-receipt": {
@@ -16576,7 +16969,9 @@
                   "entityId": null,
                   "errorCode": "V0000",
                   "errors": {
-                    "Email": ["'Email' is not a valid email address."]
+                    "Email": [
+                      "'Email' is not a valid email address."
+                    ]
                   },
                   "exceptionType": "ValidationException",
                   "resolution": "Review the errors and correct the invalid fields.",
@@ -16711,7 +17106,9 @@
           }
         },
         "summary": "Share transaction receipt by SMS Required API Permission: Send Receipt By Sms",
-        "tags": ["Transactions"]
+        "tags": [
+          "Transactions"
+        ]
       }
     },
     "/v2/transactions/{transactionId}/tip-adjustment": {
@@ -16912,7 +17309,9 @@
                   "entityId": null,
                   "errorCode": "V0000",
                   "errors": {
-                    "Email": ["'Email' is not a valid email address."]
+                    "Email": [
+                      "'Email' is not a valid email address."
+                    ]
                   },
                   "exceptionType": "ValidationException",
                   "resolution": "Review the errors and correct the invalid fields.",
@@ -17093,7 +17492,9 @@
           }
         },
         "summary": "Adjust Tip Required API Permission: Submit Tip Adjustment",
-        "tags": ["Transactions"]
+        "tags": [
+          "Transactions"
+        ]
       }
     },
     "/v2/webhooks/delivery-logs": {
@@ -17255,7 +17656,9 @@
                   "entityId": null,
                   "errorCode": "V0000",
                   "errors": {
-                    "Email": ["'Email' is not a valid email address."]
+                    "Email": [
+                      "'Email' is not a valid email address."
+                    ]
                   },
                   "exceptionType": "ValidationException",
                   "resolution": "Review the errors and correct the invalid fields.",
@@ -17344,7 +17747,9 @@
           }
         },
         "summary": "List webhook delivery logs for the authenticated account. Required API Permission: Webhooks",
-        "tags": ["Webhooks"]
+        "tags": [
+          "Webhooks"
+        ]
       }
     },
     "/v2/webhooks/delivery-logs/export": {
@@ -17442,7 +17847,9 @@
                   "entityId": null,
                   "errorCode": "V0000",
                   "errors": {
-                    "Email": ["'Email' is not a valid email address."]
+                    "Email": [
+                      "'Email' is not a valid email address."
+                    ]
                   },
                   "exceptionType": "ValidationException",
                   "resolution": "Review the errors and correct the invalid fields.",
@@ -17531,7 +17938,9 @@
           }
         },
         "summary": "Export webhook delivery logs as CSV or JSON. Required API Permission: Webhooks",
-        "tags": ["Webhooks"]
+        "tags": [
+          "Webhooks"
+        ]
       }
     },
     "/v2/webhooks/delivery-logs/{deliveryLogId}": {
@@ -17598,7 +18007,9 @@
                   "entityId": null,
                   "errorCode": "V0000",
                   "errors": {
-                    "Email": ["'Email' is not a valid email address."]
+                    "Email": [
+                      "'Email' is not a valid email address."
+                    ]
                   },
                   "exceptionType": "ValidationException",
                   "resolution": "Review the errors and correct the invalid fields.",
@@ -17710,7 +18121,9 @@
           }
         },
         "summary": "Get full request and response detail for a single delivery attempt. Required API Permission: Webhooks",
-        "tags": ["Webhooks"]
+        "tags": [
+          "Webhooks"
+        ]
       }
     },
     "/v2/webhooks/delivery-logs/{deliveryLogId}/retry": {
@@ -17777,7 +18190,9 @@
                   "entityId": null,
                   "errorCode": "V0000",
                   "errors": {
-                    "Email": ["'Email' is not a valid email address."]
+                    "Email": [
+                      "'Email' is not a valid email address."
+                    ]
                   },
                   "exceptionType": "ValidationException",
                   "resolution": "Review the errors and correct the invalid fields.",
@@ -17912,7 +18327,9 @@
           }
         },
         "summary": "Manually retry a failed webhook delivery. Single-shot — no automatic retry chain. Required API Permission: Webhooks",
-        "tags": ["Webhooks"]
+        "tags": [
+          "Webhooks"
+        ]
       }
     },
     "/v2/webhooks/endpoints": {
@@ -18033,7 +18450,9 @@
                   "entityId": null,
                   "errorCode": "V0000",
                   "errors": {
-                    "Email": ["'Email' is not a valid email address."]
+                    "Email": [
+                      "'Email' is not a valid email address."
+                    ]
                   },
                   "exceptionType": "ValidationException",
                   "resolution": "Review the errors and correct the invalid fields.",
@@ -18122,7 +18541,9 @@
           }
         },
         "summary": "List webhook endpoints for the authenticated account. Required API Permission: Webhooks",
-        "tags": ["Webhooks"]
+        "tags": [
+          "Webhooks"
+        ]
       },
       "post": {
         "requestBody": {
@@ -18179,7 +18600,9 @@
                   "entityId": null,
                   "errorCode": "V0000",
                   "errors": {
-                    "Email": ["'Email' is not a valid email address."]
+                    "Email": [
+                      "'Email' is not a valid email address."
+                    ]
                   },
                   "exceptionType": "ValidationException",
                   "resolution": "Review the errors and correct the invalid fields.",
@@ -18314,7 +18737,9 @@
           }
         },
         "summary": "Create a webhook endpoint. Required API Permission: Webhooks",
-        "tags": ["Webhooks"]
+        "tags": [
+          "Webhooks"
+        ]
       }
     },
     "/v2/webhooks/endpoints/{endpointId}": {
@@ -18347,7 +18772,9 @@
                   "entityId": null,
                   "errorCode": "V0000",
                   "errors": {
-                    "Email": ["'Email' is not a valid email address."]
+                    "Email": [
+                      "'Email' is not a valid email address."
+                    ]
                   },
                   "exceptionType": "ValidationException",
                   "resolution": "Review the errors and correct the invalid fields.",
@@ -18482,7 +18909,9 @@
           }
         },
         "summary": "Delete a webhook endpoint. Required API Permission: Webhooks",
-        "tags": ["Webhooks"]
+        "tags": [
+          "Webhooks"
+        ]
       },
       "get": {
         "parameters": [
@@ -18533,7 +18962,9 @@
                   "entityId": null,
                   "errorCode": "V0000",
                   "errors": {
-                    "Email": ["'Email' is not a valid email address."]
+                    "Email": [
+                      "'Email' is not a valid email address."
+                    ]
                   },
                   "exceptionType": "ValidationException",
                   "resolution": "Review the errors and correct the invalid fields.",
@@ -18645,7 +19076,9 @@
           }
         },
         "summary": "Get a webhook endpoint by ID. Required API Permission: Webhooks",
-        "tags": ["Webhooks"]
+        "tags": [
+          "Webhooks"
+        ]
       },
       "patch": {
         "description": "Partial update (JSON Merge Patch, RFC 7396): send only the fields you want to change\n(URL, name, status, subscribed event types). An omitted field is left unchanged; an\nexplicit `null` is rejected for these fields (none of them is clearable); the event-type\nlist is replaced wholesale when present.",
@@ -18717,7 +19150,9 @@
                   "entityId": null,
                   "errorCode": "V0000",
                   "errors": {
-                    "Email": ["'Email' is not a valid email address."]
+                    "Email": [
+                      "'Email' is not a valid email address."
+                    ]
                   },
                   "exceptionType": "ValidationException",
                   "resolution": "Review the errors and correct the invalid fields.",
@@ -18852,7 +19287,9 @@
           }
         },
         "summary": "Update a webhook endpoint. Required API Permission: Webhooks",
-        "tags": ["Webhooks"]
+        "tags": [
+          "Webhooks"
+        ]
       }
     },
     "/v2/webhooks/endpoints/{endpointId}/ping": {
@@ -18898,7 +19335,9 @@
                   "entityId": null,
                   "errorCode": "V0000",
                   "errors": {
-                    "Email": ["'Email' is not a valid email address."]
+                    "Email": [
+                      "'Email' is not a valid email address."
+                    ]
                   },
                   "exceptionType": "ValidationException",
                   "resolution": "Review the errors and correct the invalid fields.",
@@ -19033,7 +19472,9 @@
           }
         },
         "summary": "Send a test ping to a webhook endpoint. Required API Permission: Webhooks",
-        "tags": ["Webhooks"]
+        "tags": [
+          "Webhooks"
+        ]
       }
     },
     "/v2/webhooks/event-types": {
@@ -19229,7 +19670,9 @@
                   "entityId": null,
                   "errorCode": "V0000",
                   "errors": {
-                    "Email": ["'Email' is not a valid email address."]
+                    "Email": [
+                      "'Email' is not a valid email address."
+                    ]
                   },
                   "exceptionType": "ValidationException",
                   "resolution": "Review the errors and correct the invalid fields.",
@@ -19318,7 +19761,9 @@
           }
         },
         "summary": "List available webhook event types. Required API Permission: Webhooks",
-        "tags": ["Webhooks"]
+        "tags": [
+          "Webhooks"
+        ]
       }
     }
   },
