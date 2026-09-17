@@ -51,14 +51,27 @@ async function main(): Promise<void> {
   );
 
   // 3. Authorize → capture flow (replace with a saved paymentMethodId in production).
-  const processorId = settings.availablePaymentProcessors?.[0]?.paymentProcessorId;
-  if (!processorId) throw new Error('This merchant has no payment processor configured.');
+  // Card data needs a card processor; a merchant may also have ACH ones, and
+  // neither array order nor `isDefault` distinguishes them.
+  const processorId = settings.availablePaymentProcessors?.find(
+    (p) => p.type === 'Tsys' || p.type === 'SandboxCard',
+  )?.paymentProcessorId;
+  if (!processorId) throw new Error('This merchant has no card processor configured.');
 
   const authorization = await flute.transactions.authorize({
     // Belongs to the merchant, so it comes from their settings above.
     paymentProcessorId: processorId,
     baseAmount: 100, // whole currency units — $100.00, not cents
     currencyCode: 'USD',
+    // Merchants with address verification enabled decline card sales that
+    // arrive without one — status Declined, declineDetails.code 'AVS'.
+    billingAddress: {
+      addressLine1: '1 Main Street',
+      city: 'New York',
+      stateCode: 'NY',
+      postalCode: '10001',
+      countryCode: 'US',
+    },
     transactionDetails: {
       cardData: {
         paymentMethodDetails: {
