@@ -880,7 +880,7 @@ export interface paths {
                      *           "accountType": "Checking",
                      *           "paymentName": "Business Checking",
                      *           "routingNumber": "021000021",
-                     *           "taxId": "12-3456789"
+                     *           "taxId": "123456789"
                      *         }
                      *       ],
                      *       "paymentMethodsCards": [
@@ -1125,7 +1125,7 @@ export interface paths {
                          *           "paymentMethodId": "a7402e6f-7b52-4884-9214-b68dcd7b80bf",
                          *           "paymentName": "Business Checking",
                          *           "routingNumber": "021000021",
-                         *           "taxId": "***-**-6789"
+                         *           "taxId": "*****6789"
                          *         }
                          *       ],
                          *       "billingAddress": {
@@ -1568,7 +1568,7 @@ export interface paths {
                          *           "paymentMethodId": "a7402e6f-7b52-4884-9214-b68dcd7b80bf",
                          *           "paymentName": "Business Checking",
                          *           "routingNumber": "021000021",
-                         *           "taxId": "***-**-6789"
+                         *           "taxId": "*****6789"
                          *         }
                          *       ],
                          *       "billingAddress": {
@@ -2895,7 +2895,7 @@ export interface paths {
                          *             "accountType": "Checking",
                          *             "companyName": "Acme Corp Inc",
                          *             "routingNumber": "021000021",
-                         *             "taxId": "***-**-6789"
+                         *             "taxId": "*****6789"
                          *           },
                          *           "card": null,
                          *           "createdOn": "2026-01-01T00:00:00Z",
@@ -3094,7 +3094,7 @@ export interface paths {
                      *       "customerId": "3ad6a05a-48b4-4c77-9601-fdad2963b92b",
                      *       "name": "Business Checking",
                      *       "routingNumber": "021000021",
-                     *       "taxId": "12-3456789"
+                     *       "taxId": "123456789"
                      *     }
                      */
                     "application/json": components["schemas"]["CreateAchPaymentMethodRequestDto"];
@@ -8053,6 +8053,8 @@ export interface paths {
                          *             "discountRate": 0,
                          *             "surchargeAmount": 5.5,
                          *             "surchargeRate": 0,
+                         *             "taxAmount": 0,
+                         *             "taxRate": 0,
                          *             "tipAmount": 10,
                          *             "tipRate": 10
                          *           },
@@ -8107,6 +8109,8 @@ export interface paths {
                          *             "discountRate": 0,
                          *             "surchargeAmount": 0,
                          *             "surchargeRate": 0,
+                         *             "taxAmount": 0,
+                         *             "taxRate": 0,
                          *             "tipAmount": 0,
                          *             "tipRate": 0
                          *           },
@@ -13060,7 +13064,10 @@ export interface components {
             baseAmount?: number;
             /**
              * Format: double
-             * @description Discount amount applied
+             * @description Discount applied: the percentage-off and cash-discount portions together. For an invoice the
+             *     percentage-off is recorded here but is already subtracted from Arise.IsvApiBff.Contracts.v2.Transaction.SharedDtos.AmountDetailsDto.BaseAmount, because
+             *     the invoice applies its discount before the charge is submitted; it is then not an additive
+             *     component of the processed amount.
              * @example 1
              */
             discountAmount?: number;
@@ -13083,6 +13090,24 @@ export interface components {
              * @example 3
              */
             surchargeRate?: number;
+            /**
+             * Format: double
+             * @description Sales tax charged on top of Arise.IsvApiBff.Contracts.v2.Transaction.SharedDtos.AmountDetailsDto.BaseAmount, as the tip and surcharge are. Zero when
+             *     the transaction carries no tax, and also when its tax is quoted as already included in the
+             *     price: such a tax is inside Arise.IsvApiBff.Contracts.v2.Transaction.SharedDtos.AmountDetailsDto.BaseAmount and reporting it here as well would count
+             *     it twice.
+             * @example 10
+             */
+            taxAmount?: number;
+            /**
+             * Format: double
+             * @description Rate behind Arise.IsvApiBff.Contracts.v2.Transaction.SharedDtos.AmountDetailsDto.TaxAmount, as a percent (e.g. 10 = 10%); zero under the same rule.
+             *     It describes the base the tax was computed on, which for a resource that taxes a narrower base
+             *     than the transaction amount — an invoice taxing only its line items — is not
+             *     Arise.IsvApiBff.Contracts.v2.Transaction.SharedDtos.AmountDetailsDto.BaseAmount, so it does not re-derive Arise.IsvApiBff.Contracts.v2.Transaction.SharedDtos.AmountDetailsDto.TaxAmount.
+             * @example 10
+             */
+            taxRate?: number;
             /**
              * Format: double
              * @description Tip amount
@@ -13520,7 +13545,7 @@ export interface components {
             routingNumber?: string | null;
             /**
              * @description Tax ID
-             * @example 12-3456789
+             * @example 123456789
              */
             taxId?: string | null;
         };
@@ -13709,7 +13734,11 @@ export interface components {
             paymentMethods?: components["schemas"]["PaymentMethodsDto"];
             /** @description Additional notes shown to the payer on the checkout page. */
             paymentNotes?: string | null;
-            /** @description Optional reference ID provided by the ISV. */
+            /**
+             * @description Optional reference ID provided by the ISV, at most 100 characters. It is stored and
+             *     reported back whole; a value wider than an ACH processor accepts is shortened only for
+             *     the wire.
+             */
             referenceId?: string | null;
             /** @description URL to redirect the payer to after a successful payment. */
             returnUrl?: string | null;
@@ -14039,7 +14068,7 @@ export interface components {
             routingNumber?: string | null;
             /**
              * @description Tax ID
-             * @example 12-3456789
+             * @example 123456789
              */
             taxId?: string | null;
         };
@@ -14271,8 +14300,8 @@ export interface components {
              */
             routingNumber?: string | null;
             /**
-             * @description Tax ID
-             * @example 12-3456789
+             * @description Tax ID (masked)
+             * @example *****6789
              */
             taxId?: string | null;
         };
@@ -15133,7 +15162,7 @@ export interface components {
             routingNumber?: string | null;
             /**
              * @description Tax ID
-             * @example 12-3456789
+             * @example 123456789
              */
             taxId?: string | null;
         };
@@ -15217,8 +15246,8 @@ export interface components {
              */
             routingNumber?: string | null;
             /**
-             * @description ACH tax id
-             * @example ***-**-6789
+             * @description ACH tax id (masked)
+             * @example *****6789
              */
             taxId?: string | null;
         };
@@ -16493,7 +16522,7 @@ export interface components {
         /** @enum {string} */
         WebhookEndpointStatus: "Active" | "Inactive";
         /** @enum {string} */
-        WebhookEventType: "ping" | "settlement.batch.completed" | "transaction.card.authorized" | "transaction.card.captured" | "transaction.card.declined" | "transaction.card.failed" | "transaction.card.voided" | "transaction.card.refunded" | "transaction.ach.scheduled" | "transaction.ach.in_progress" | "transaction.ach.held" | "transaction.ach.cancelled" | "transaction.ach.cleared" | "transaction.ach.charged_back" | "transaction.ach.failed" | "transaction.ach.refunded" | "invoice.created" | "invoice.paid" | "subscription.created" | "subscription.paid" | "subscription.payment_failed" | "subscription.delinquent" | "quick_payment.created" | "quick_payment.paid" | "merchant.created" | "api_key.created" | "api_key.deleted" | "terminal.added" | "terminal.deactivated" | "terminal.out_of_paper" | "payment_session.created" | "payment_session.completed" | "payment_link.created" | "payment_link.updated";
+        WebhookEventType: "ping" | "settlement.batch.completed" | "transaction.card.authorized" | "transaction.card.captured" | "transaction.card.declined" | "transaction.card.failed" | "transaction.card.voided" | "transaction.card.refunded" | "transaction.ach.scheduled" | "transaction.ach.in_progress" | "transaction.ach.held" | "transaction.ach.cancelled" | "transaction.ach.cleared" | "transaction.ach.charged_back" | "transaction.ach.failed" | "transaction.ach.refunded" | "invoice.created" | "invoice.paid" | "subscription.created" | "subscription.paid" | "subscription.payment_failed" | "subscription.delinquent" | "quick_payment.created" | "quick_payment.paid" | "merchant.created" | "api_key.created" | "api_key.deleted" | "terminal.added" | "terminal.deactivated" | "terminal.out_of_paper" | "payment_session.created" | "payment_session.completed" | "payment_link.created" | "payment_link.updated" | "application.draft" | "application.invited" | "application.in_progress" | "application.submitted" | "application.awaiting_signature" | "application.under_review" | "application.information_needed" | "application.declined";
         WebhookEventTypeIsvDto: {
             /**
              * @description Human-readable description of when this event fires.
