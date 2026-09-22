@@ -83,15 +83,21 @@ jobs:
   #
   # Deliberately NOT part of the PR matrix: a backend deploy would then redden
   # unrelated pull requests, which is somebody else's change and not something
-  # the PR author can fix. Scheduled + manual instead, and it files an issue so
-  # a red scheduled run cannot quietly rot.
+  # the PR author can fix. Scheduled + manual instead.
+  #
+  # It opens a pull request rather than filing an issue. The issue version was
+  # correct and useless: it detected three real drifts on the day they happened
+  # and each sat untouched for days — 24, then 4 — because a red scheduled run
+  # notifies an inbox nobody owns, while a PR lands in a review queue that
+  # somebody already works through. The job itself stays green when it opens a
+  # PR, because a recurring red run is the thing people learn to ignore.
   spec-drift:
     name: OpenAPI spec drift (backend → spec)
     if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     permissions:
-      contents: read
-      issues: write
+      contents: write
+      pull-requests: write
     steps:
       - uses: actions/checkout@v6
 
@@ -104,11 +110,20 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      # Built before touching the spec so the published type surface can be
+      # diffed afterwards. That diff is what decides whether the resync needs a
+      # changeset, and getting it wrong means either a pointless release or
+      # consumers left on types that no longer match the API.
+      - name: Baseline the published type surface
+        run: |
+          npm run --silent build
+          cp dist/index.d.ts /tmp/dts-before.d.ts
+
       # The URL is a secret rather than a literal: this repository is public and
       # the swagger document is served from a non-production host that is not
       # part of the published surface. Forks without the secret skip cleanly
       # instead of failing.
-      - name: Compare the committed spec against the live document
+      - name: Refresh the spec from the live document
         id: drift
         env:
           ISV_API_SPEC_URL: ${{ secrets.ISV_API_SPEC_URL }}
@@ -119,18 +134,129 @@ jobs:
             echo 'status=skipped' >> "$GITHUB_OUTPUT"
             exit 0
           fi
-          if npm run --silent openapi:check 2>&1 | tee drift.log; then
+          npm run --silent openapi:fetch 2>&1 | tee drift.log
+          if git diff --quiet -- openapi/; then
             echo 'status=clean' >> "$GITHUB_OUTPUT"
           else
             echo 'status=drift' >> "$GITHUB_OUTPUT"
           fi
 
+      - name: Regenerate types
+        if: steps.drift.outputs.status == 'drift'
+        run: npm run --silent openapi:types
+
+      # Runs lint, typecheck, tests and build. A failure here is signal, not
+      # noise: the compile errors ARE the contract changes. The PR is still
+      # opened, flagged, so the diff is available to whoever picks it up.
+      - name: Verify against the refreshed contract
+        id: verify
+        if: steps.drift.outputs.status == 'drift'
+        continue-on-error: true
+        run: npm run verify
+
+      # Only meaningful when verify succeeded: `npm run verify` builds last, so
+      # a failure anywhere before it leaves dist/ holding the baseline build and
+      # the comparison would report "unchanged" for a surface nobody rebuilt.
+      - name: Did the published type surface change?
+        id: dts
+        if: steps.drift.outputs.status == 'drift'
+        run: |
+          if [ '${{ steps.verify.outcome }}' != 'success' ]; then
+            echo 'changed=unknown' >> "$GITHUB_OUTPUT"
+          elif diff -q /tmp/dts-before.d.ts dist/index.d.ts >/dev/null 2>&1; then
+            echo 'changed=no' >> "$GITHUB_OUTPUT"
+          else
+            echo 'changed=yes' >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Open or update the resync pull request
+        if: steps.drift.outputs.status == 'drift'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          VERIFY: ${{ steps.verify.outcome }}
+          DTS_CHANGED: ${{ steps.dts.outputs.changed }}
+        run: |
+          set -euo pipefail
+          BRANCH=chore/openapi-resync
+
+          if [ "$VERIFY" = 'success' ]; then
+            TITLE='chore(openapi): resync the spec with the live backend'
+            VERDICT='`npm run verify` passes — lint, typecheck, tests and build, with no source changes.'
+          else
+            TITLE='chore(openapi): resync the spec — NEEDS WORK, verify fails'
+            VERDICT='**`npm run verify` fails.** The backend changed something this SDK depends on; the errors in the run log are the contract changes and need fixing by hand before this merges.'
+          fi
+
+          case "$DTS_CHANGED" in
+            yes) CHANGESET='`dist/index.d.ts` **changed**, so this alters the published type surface and needs a changeset before it reaches consumers.' ;;
+            no)  CHANGESET='`dist/index.d.ts` is unchanged, so nothing reaches the published surface and no changeset is needed.' ;;
+            *)   CHANGESET='Whether the published type surface changed could not be determined, because the build never ran. Check it by hand once verify passes.' ;;
+          esac
+
+          BODY=$(
+            printf 'Opened automatically: the committed spec fell behind the live ISV API v2 document.\n\n'
+            printf 'Run: %s\n\n' "$RUN_URL"
+            printf '## What the refresh reported\n\n```\n'
+            cat drift.log
+            printf '\n```\n\n## Verification\n\n%s\n\n%s\n\n' "$VERDICT" "$CHANGESET"
+            printf '## Note on checks\n\n'
+            printf 'Pull requests opened with `GITHUB_TOKEN` do not trigger workflows, so this PR will show no checks of its own. '
+            printf 'That is why verification runs inside the drift job and is reported above rather than left to CI.\n'
+          )
+
+          EXISTING=$(gh pr list --head "$BRANCH" --state open --json number --jq '.[0].number // empty')
+
+          # The branch is reused so repeated runs update one PR instead of
+          # spawning a new one per day. That means force-pushing, which would
+          # destroy a human's commits if somebody is fixing a verify failure on
+          # it — so only push when the branch is untouched or the bot wrote the
+          # last commit on it.
+          SAFE=yes
+          if git ls-remote --exit-code --heads origin "$BRANCH" >/dev/null 2>&1; then
+            git fetch --depth=1 origin "$BRANCH"
+            LAST_AUTHOR=$(git log -1 --format='%ae' FETCH_HEAD)
+            case "$LAST_AUTHOR" in
+              *github-actions*) ;;
+              *) SAFE=no ;;
+            esac
+          fi
+
+          if [ "$SAFE" = 'no' ]; then
+            echo "::warning::$BRANCH carries commits from $LAST_AUTHOR; leaving it alone."
+            if [ -n "$EXISTING" ]; then
+              gh pr comment "$EXISTING" --body "The scheduled drift job ran again and the spec is still behind. This branch has human commits on it, so it was left untouched. Latest report: $RUN_URL"
+            fi
+            exit 0
+          fi
+
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git checkout -B "$BRANCH"
+          git add openapi/ src/types/generated/
+          git commit -m "chore(openapi): resync the spec with the live backend" -m "Opened automatically by the scheduled drift job. See $RUN_URL"
+          git push --force origin "$BRANCH"
+
+          if [ -n "$EXISTING" ]; then
+            gh pr edit "$EXISTING" --title "$TITLE" --body "$BODY"
+            echo "Updated PR #$EXISTING."
+          else
+            gh pr create --base main --head "$BRANCH" --title "$TITLE" --body "$BODY"
+          fi
+
       - name: Summarise
+        if: always()
         run: |
           {
             echo '### OpenAPI spec drift'
             echo
             echo "Result: **${{ steps.drift.outputs.status }}**"
+            if [ '${{ steps.drift.outputs.status }}' = 'drift' ]; then
+              echo
+              echo "verify: **${{ steps.verify.outcome }}** · published types changed: **${{ steps.dts.outputs.changed }}**"
+              echo
+              echo 'A resync pull request has been opened or updated.'
+            fi
             if [ -f drift.log ]; then
               echo
               echo '```'
@@ -138,34 +264,3 @@ jobs:
               echo '```'
             fi
           } >> "$GITHUB_STEP_SUMMARY"
-
-      - name: File or update the drift issue
-        if: steps.drift.outputs.status == 'drift'
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-        run: |
-          TITLE='OpenAPI spec drift: openapi/isv-api-v2.json is behind the backend'
-          BODY=$(
-            printf 'The committed spec no longer matches the live ISV API v2 document.\n\n'
-            printf 'Run: %s\n\n```\n' "$RUN_URL"
-            cat drift.log
-            printf '\n```\n\nTo resolve:\n\n'
-            printf '1. `ISV_API_SPEC_URL=<url> npm run openapi:fetch`\n'
-            printf '2. `npm run openapi:types`\n'
-            printf '3. Fix the resulting compile errors — they are the contract changes.\n'
-            printf '4. Commit the spec and the generated types together.\n'
-          )
-          EXISTING=$(gh issue list --state open --search "$TITLE in:title" --json number --jq '.[0].number // empty')
-          if [ -n "$EXISTING" ]; then
-            gh issue comment "$EXISTING" --body "$BODY"
-            echo "Commented on existing issue #$EXISTING."
-          else
-            gh issue create --title "$TITLE" --body "$BODY"
-          fi
-
-      - name: Fail on drift
-        if: steps.drift.outputs.status == 'drift'
-        run: |
-          echo '::error::Committed OpenAPI spec is behind the backend. See the issue filed by this run.'
-          exit 1
