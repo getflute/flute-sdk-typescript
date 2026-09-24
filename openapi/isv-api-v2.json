@@ -214,7 +214,7 @@
             "type": "number"
           },
           "discountAmount": {
-            "description": "Discount amount applied",
+            "description": "Discount applied: the percentage-off and cash-discount portions together. For an invoice the\npercentage-off is recorded here but is already subtracted from Arise.IsvApiBff.Contracts.v2.Transaction.SharedDtos.AmountDetailsDto.BaseAmount, because\nthe invoice applies its discount before the charge is submitted; it is then not an additive\ncomponent of the processed amount.",
             "example": 1,
             "format": "double",
             "type": "number"
@@ -234,6 +234,18 @@
           "surchargeRate": {
             "description": "Surcharge rate applied, as a percent of the base (e.g. 3 = 3%).",
             "example": 3,
+            "format": "double",
+            "type": "number"
+          },
+          "taxAmount": {
+            "description": "Sales tax charged on top of Arise.IsvApiBff.Contracts.v2.Transaction.SharedDtos.AmountDetailsDto.BaseAmount, as the tip and surcharge are. Zero when\nthe transaction carries no tax, and also when its tax is quoted as already included in the\nprice: such a tax is inside Arise.IsvApiBff.Contracts.v2.Transaction.SharedDtos.AmountDetailsDto.BaseAmount and reporting it here as well would count\nit twice.",
+            "example": 10,
+            "format": "double",
+            "type": "number"
+          },
+          "taxRate": {
+            "description": "Rate behind Arise.IsvApiBff.Contracts.v2.Transaction.SharedDtos.AmountDetailsDto.TaxAmount, as a percent (e.g. 10 = 10%); zero under the same rule.\nIt describes the base the tax was computed on, which for a resource that taxes a narrower base\nthan the transaction amount — an invoice taxing only its line items — is not\nArise.IsvApiBff.Contracts.v2.Transaction.SharedDtos.AmountDetailsDto.BaseAmount, so it does not re-derive Arise.IsvApiBff.Contracts.v2.Transaction.SharedDtos.AmountDetailsDto.TaxAmount.",
+            "example": 10,
             "format": "double",
             "type": "number"
           },
@@ -900,7 +912,7 @@
           },
           "taxId": {
             "description": "Tax ID",
-            "example": "12-3456789",
+            "example": 123456789,
             "nullable": true,
             "type": "string"
           }
@@ -1209,7 +1221,7 @@
             "type": "string"
           },
           "referenceId": {
-            "description": "Optional reference ID provided by the ISV.",
+            "description": "Optional reference ID provided by the ISV, at most 100 characters. It is stored and\nreported back whole; a value wider than an ACH processor accepts is shortened only for\nthe wire.",
             "nullable": true,
             "type": "string"
           },
@@ -1658,7 +1670,7 @@
           },
           "taxId": {
             "description": "Tax ID",
-            "example": "12-3456789",
+            "example": 123456789,
             "nullable": true,
             "type": "string"
           }
@@ -2052,8 +2064,8 @@
             "type": "string"
           },
           "taxId": {
-            "description": "Tax ID",
-            "example": "12-3456789",
+            "description": "Tax ID (masked)",
+            "example": "*****6789",
             "nullable": true,
             "type": "string"
           }
@@ -3637,7 +3649,7 @@
           },
           "taxId": {
             "description": "Tax ID",
-            "example": "12-3456789",
+            "example": 123456789,
             "nullable": true,
             "type": "string"
           }
@@ -3749,8 +3761,8 @@
             "type": "string"
           },
           "taxId": {
-            "description": "ACH tax id",
-            "example": "***-**-6789",
+            "description": "ACH tax id (masked)",
+            "example": "*****6789",
             "nullable": true,
             "type": "string"
           }
@@ -5918,7 +5930,15 @@
           "payment_session.created",
           "payment_session.completed",
           "payment_link.created",
-          "payment_link.updated"
+          "payment_link.updated",
+          "application.draft",
+          "application.invited",
+          "application.in_progress",
+          "application.submitted",
+          "application.awaiting_signature",
+          "application.under_review",
+          "application.information_needed",
+          "application.declined"
         ],
         "type": "string"
       },
@@ -6815,7 +6835,7 @@
                     "accountType": "Checking",
                     "paymentName": "Business Checking",
                     "routingNumber": "021000021",
-                    "taxId": "12-3456789"
+                    "taxId": "123456789"
                   }
                 ],
                 "paymentMethodsCards": [
@@ -7209,7 +7229,7 @@
                       "paymentMethodId": "a7402e6f-7b52-4884-9214-b68dcd7b80bf",
                       "paymentName": "Business Checking",
                       "routingNumber": "021000021",
-                      "taxId": "***-**-6789"
+                      "taxId": "*****6789"
                     }
                   ],
                   "billingAddress": {
@@ -7459,7 +7479,7 @@
                       "paymentMethodId": "a7402e6f-7b52-4884-9214-b68dcd7b80bf",
                       "paymentName": "Business Checking",
                       "routingNumber": "021000021",
-                      "taxId": "***-**-6789"
+                      "taxId": "*****6789"
                     }
                   ],
                   "billingAddress": {
@@ -8793,7 +8813,7 @@
                         "accountType": "Checking",
                         "companyName": "Acme Corp Inc",
                         "routingNumber": "021000021",
-                        "taxId": "***-**-6789"
+                        "taxId": "*****6789"
                       },
                       "card": null,
                       "createdOn": "2026-01-01T00:00:00Z",
@@ -8963,7 +8983,7 @@
                 "customerId": "3ad6a05a-48b4-4c77-9601-fdad2963b92b",
                 "name": "Business Checking",
                 "routingNumber": "021000021",
-                "taxId": "12-3456789"
+                "taxId": "123456789"
               },
               "schema": {
                 "$ref": "#/components/schemas/CreateAchPaymentMethodRequestDto"
@@ -9524,7 +9544,7 @@
                         "accountType": "Checking",
                         "companyName": "Acme Corp Inc",
                         "routingNumber": "021000021",
-                        "taxId": "***-**-6789"
+                        "taxId": "*****6789"
                       },
                       "card": null,
                       "createdOn": "2026-01-01T00:00:00Z",
@@ -9732,7 +9752,7 @@
                         "accountType": "Checking",
                         "companyName": "Acme Corp Inc",
                         "routingNumber": "021000021",
-                        "taxId": "***-**-6789"
+                        "taxId": "*****6789"
                       },
                       "card": null,
                       "createdOn": "2026-01-01T00:00:00Z",
@@ -13719,6 +13739,8 @@
                         "discountRate": 0,
                         "surchargeAmount": 5.5,
                         "surchargeRate": 0,
+                        "taxAmount": 0,
+                        "taxRate": 0,
                         "tipAmount": 10,
                         "tipRate": 10
                       },
@@ -13773,6 +13795,8 @@
                         "discountRate": 0,
                         "surchargeAmount": 0,
                         "surchargeRate": 0,
+                        "taxAmount": 0,
+                        "taxRate": 0,
                         "tipAmount": 0,
                         "tipRate": 0
                       },
@@ -13977,7 +14001,7 @@
                           "accountNumber": "1234567890",
                           "accountType": "Checking",
                           "routingNumber": "021000021",
-                          "taxId": "12-3456789"
+                          "taxId": "123456789"
                         },
                         "paymentMethodId": null,
                         "requesterIpAddress": "203.0.113.45",
@@ -14140,6 +14164,8 @@
                         "discountRate": 0,
                         "surchargeAmount": 0,
                         "surchargeRate": 0,
+                        "taxAmount": 0,
+                        "taxRate": 0,
                         "tipAmount": 0,
                         "tipRate": 0
                       },
@@ -14202,6 +14228,8 @@
                         "discountRate": 0,
                         "surchargeAmount": 5.5,
                         "surchargeRate": 0,
+                        "taxAmount": 0,
+                        "taxRate": 0,
                         "tipAmount": 10,
                         "tipRate": 10
                       },
@@ -14694,7 +14722,7 @@
                           "accountNumber": "1234567890",
                           "accountType": "Checking",
                           "routingNumber": "021000021",
-                          "taxId": "12-3456789"
+                          "taxId": "123456789"
                         },
                         "paymentMethodId": null,
                         "requesterIpAddress": "203.0.113.45",
@@ -14792,6 +14820,8 @@
                         "discountRate": 0,
                         "surchargeAmount": 0,
                         "surchargeRate": 0,
+                        "taxAmount": 0,
+                        "taxRate": 0,
                         "tipAmount": 0,
                         "tipRate": 0
                       },
@@ -14854,6 +14884,8 @@
                         "discountRate": 0,
                         "surchargeAmount": 5.5,
                         "surchargeRate": 0,
+                        "taxAmount": 0,
+                        "taxRate": 0,
                         "tipAmount": 10,
                         "tipRate": 10
                       },
@@ -15155,6 +15187,8 @@
                         "discountRate": 0,
                         "surchargeAmount": 0,
                         "surchargeRate": 0,
+                        "taxAmount": 0,
+                        "taxRate": 0,
                         "tipAmount": 0,
                         "tipRate": 0
                       },
@@ -15217,6 +15251,8 @@
                         "discountRate": 0,
                         "surchargeAmount": 5.5,
                         "surchargeRate": 0,
+                        "taxAmount": 0,
+                        "taxRate": 0,
                         "tipAmount": 10,
                         "tipRate": 10
                       },
@@ -15458,6 +15494,8 @@
                         "discountRate": 0,
                         "surchargeAmount": 0,
                         "surchargeRate": 0,
+                        "taxAmount": 0,
+                        "taxRate": 0,
                         "tipAmount": 0,
                         "tipRate": 0
                       },
@@ -15520,6 +15558,8 @@
                         "discountRate": 0,
                         "surchargeAmount": 5.5,
                         "surchargeRate": 0,
+                        "taxAmount": 0,
+                        "taxRate": 0,
                         "tipAmount": 10,
                         "tipRate": 10
                       },
@@ -15830,6 +15870,8 @@
                         "discountRate": 0,
                         "surchargeAmount": 0,
                         "surchargeRate": 0,
+                        "taxAmount": 0,
+                        "taxRate": 0,
                         "tipAmount": 0,
                         "tipRate": 0
                       },
@@ -15892,6 +15934,8 @@
                         "discountRate": 0,
                         "surchargeAmount": 5.5,
                         "surchargeRate": 0,
+                        "taxAmount": 0,
+                        "taxRate": 0,
                         "tipAmount": 10,
                         "tipRate": 10
                       },
@@ -16215,6 +16259,8 @@
                         "discountRate": 0,
                         "surchargeAmount": 0,
                         "surchargeRate": 0,
+                        "taxAmount": 0,
+                        "taxRate": 0,
                         "tipAmount": 0,
                         "tipRate": 0
                       },
@@ -16277,6 +16323,8 @@
                         "discountRate": 0,
                         "surchargeAmount": 5.5,
                         "surchargeRate": 0,
+                        "taxAmount": 0,
+                        "taxRate": 0,
                         "tipAmount": 10,
                         "tipRate": 10
                       },
@@ -16600,6 +16648,8 @@
                         "discountRate": 0,
                         "surchargeAmount": 0,
                         "surchargeRate": 0,
+                        "taxAmount": 0,
+                        "taxRate": 0,
                         "tipAmount": 0,
                         "tipRate": 0
                       },
@@ -16662,6 +16712,8 @@
                         "discountRate": 0,
                         "surchargeAmount": 5.5,
                         "surchargeRate": 0,
+                        "taxAmount": 0,
+                        "taxRate": 0,
                         "tipAmount": 10,
                         "tipRate": 10
                       },
@@ -17173,6 +17225,8 @@
                         "discountRate": 0,
                         "surchargeAmount": 0,
                         "surchargeRate": 0,
+                        "taxAmount": 0,
+                        "taxRate": 0,
                         "tipAmount": 0,
                         "tipRate": 0
                       },
@@ -17235,6 +17289,8 @@
                         "discountRate": 0,
                         "surchargeAmount": 5.5,
                         "surchargeRate": 0,
+                        "taxAmount": 0,
+                        "taxRate": 0,
                         "tipAmount": 10,
                         "tipRate": 10
                       },
@@ -19775,6 +19831,9 @@
   "tags": [
     {
       "name": "ApiKeys"
+    },
+    {
+      "name": "Applications"
     },
     {
       "name": "Customers"
