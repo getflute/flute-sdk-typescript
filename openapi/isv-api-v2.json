@@ -1103,7 +1103,7 @@
             "type": "string"
           },
           "customerId": {
-            "description": "Customer the link is issued for. Omit for an anonymous link. Not allowed when\nlinkType is MultiUse.",
+            "description": "Customer the link is issued for. Omit for an anonymous link. On a MultiUse link its\npayments, and any payment method a payer saves there, are recorded under this customer,\nbut the payment page never shows the customer's details or saved methods.",
             "format": "uuid",
             "nullable": true,
             "type": "string"
@@ -1122,6 +1122,18 @@
           "linkType": {
             "$ref": "#/components/schemas/PaymentLinkType"
           },
+          "metadata": {
+            "additionalProperties": {
+              "nullable": true,
+              "type": "string"
+            },
+            "description": "Your own key-value pairs, copied into every payment session the link opens and returned\nwith that session. At most 50 keys, keys of at most 100 characters, values of at most 500\ncharacters, 8 KB in all. A key with a null value is not stored.",
+            "nullable": true,
+            "type": "object"
+          },
+          "mode": {
+            "$ref": "#/components/schemas/SessionMode"
+          },
           "name": {
             "description": "Merchant-facing label, max 80 characters. Auto-generated from the amount if omitted.",
             "example": "Spring campaign",
@@ -1137,11 +1149,18 @@
             "nullable": true,
             "type": "string"
           },
+          "taxAmount": {
+            "description": "Pre-calculated tax in currency units, with up to 2 decimal places, not negative. Mutually\nexclusive with taxRate: send exactly one of them together with taxMode. Requires a fixed\nbaseAmount, and in Inclusive mode must be less than it. The transaction records the rate\nderived from it.",
+            "example": 2.06,
+            "format": "double",
+            "nullable": true,
+            "type": "number"
+          },
           "taxMode": {
             "$ref": "#/components/schemas/TaxMode"
           },
           "taxRate": {
-            "description": "Tax rate percentage, 0 to 100, with up to 3 decimal places. Required with\ntaxMode; omit both for a link without tax.",
+            "description": "Tax rate percentage, 0 to 100, with up to 3 decimal places. Mutually exclusive with\ntaxAmount: send exactly one of them together with taxMode, or none of the three.",
             "example": 8.25,
             "format": "double",
             "nullable": true,
@@ -1235,11 +1254,18 @@
             "nullable": true,
             "type": "boolean"
           },
+          "taxAmount": {
+            "description": "Pre-calculated tax in currency units, with up to 2 decimal places, not negative. Mutually\nexclusive with taxRate: send exactly one of them together with taxMode. Requires a fixed\namount, and in Inclusive mode must be less than it. The transaction records the rate\nderived from it.",
+            "example": 9,
+            "format": "double",
+            "nullable": true,
+            "type": "number"
+          },
           "taxMode": {
             "$ref": "#/components/schemas/TaxMode"
           },
           "taxRate": {
-            "description": "Tax rate percentage, 0 to 100, with up to 3 decimal places. Required with\ntaxMode; omit both for a session without tax.",
+            "description": "Tax rate percentage, 0 to 100, with up to 3 decimal places. Mutually exclusive with\ntaxAmount: send exactly one of them together with taxMode, or none of the three.",
             "example": 8.25,
             "format": "double",
             "nullable": true,
@@ -2199,11 +2225,18 @@
             "nullable": true,
             "type": "number"
           },
+          "taxAmount": {
+            "description": "Fixed tax pinned on the session, when the tax was configured as an amount. Null otherwise.",
+            "example": 9,
+            "format": "double",
+            "nullable": true,
+            "type": "number"
+          },
           "taxMode": {
             "$ref": "#/components/schemas/TaxMode"
           },
           "taxRate": {
-            "description": "Tax rate percentage pinned on the session. Null = no tax configured; always set\nand cleared with taxMode.",
+            "description": "Tax rate percentage pinned on the session, when the tax was configured as a rate.",
             "example": 8.25,
             "format": "double",
             "nullable": true,
@@ -2608,6 +2641,9 @@
           },
           "source": {
             "$ref": "#/components/schemas/TransactionSourceDto"
+          },
+          "taxDetails": {
+            "$ref": "#/components/schemas/TaxDetailsDto"
           },
           "transactionDateTime": {
             "description": "Transaction date and time",
@@ -3553,6 +3589,18 @@
           "linkType": {
             "$ref": "#/components/schemas/PaymentLinkType"
           },
+          "metadata": {
+            "additionalProperties": {
+              "nullable": true,
+              "type": "string"
+            },
+            "description": "Your own key-value pairs, copied into every payment session the link opens. Null when the\nlink has none.",
+            "nullable": true,
+            "type": "object"
+          },
+          "mode": {
+            "$ref": "#/components/schemas/SessionMode"
+          },
           "modifiedOn": {
             "description": "UTC timestamp of the last modification.",
             "format": "date-time",
@@ -3592,11 +3640,18 @@
             "nullable": true,
             "type": "string"
           },
+          "taxAmount": {
+            "description": "Fixed tax in currency units, when the tax was configured as an amount. Null otherwise.",
+            "example": 2.06,
+            "format": "double",
+            "nullable": true,
+            "type": "number"
+          },
           "taxMode": {
             "$ref": "#/components/schemas/TaxMode"
           },
           "taxRate": {
-            "description": "Tax rate percentage. Null = no tax configured; always set and cleared with taxMode.",
+            "description": "Tax rate percentage, when the tax was configured as a rate. Null otherwise.",
             "example": 8.25,
             "format": "double",
             "nullable": true,
@@ -4371,6 +4426,34 @@
         },
         "type": "object"
       },
+      "TaxDetailsDto": {
+        "additionalProperties": false,
+        "description": "The tax recorded on the transaction, which a checkout session or a payment link configures. Null when\nthe transaction carries none — including when the only tax sent was an enhanced-data (Level 2) sales\ntax rate, which qualifies the transaction for interchange without being charged to the payer.\nDistinct from Arise.IsvApiBff.Contracts.v2.Transaction.SharedDtos.AmountDetailsDto.TaxAmount, which is a component of the amount breakdown\nand so reports only a tax that raised the total: an Inclusive tax is already inside\nArise.IsvApiBff.Contracts.v2.Transaction.SharedDtos.AmountDetailsDto.BaseAmount and is 0 there.",
+        "properties": {
+          "taxAmount": {
+            "description": "Tax the transaction was quoted at, whatever the mode. It describes the quote, as the amount\nbreakdown does: a capture or a host approval for less leaves it unchanged, and processedAmount\nreports what was taken.",
+            "example": 7.83,
+            "format": "double",
+            "type": "number"
+          },
+          "taxMode": {
+            "$ref": "#/components/schemas/TaxMode"
+          },
+          "taxRate": {
+            "description": "The rate the tax was configured at, as a percent (e.g. 8.5 = 8.5%). A resource that supplies its\nown tax amount — an invoice, which taxes its line items rather than the whole amount — has this\nrate recorded rather than applied, so it need not reproduce Arise.IsvApiBff.Contracts.v2.Transaction.SharedDtos.TaxDetailsDto.TaxAmount; one that\nsupplies only the amount has the rate derived from it.",
+            "example": 8.5,
+            "format": "double",
+            "type": "number"
+          },
+          "taxableAmount": {
+            "description": "What the quote charged before the tax: its total less the tip, the surcharge and an Exclusive tax,\nall charged outside the taxed amount, and less Arise.IsvApiBff.Contracts.v2.Transaction.SharedDtos.TaxDetailsDto.TaxAmount when the tax is Inclusive\nand therefore already inside it. With a rate-driven tax this is the amount the rate was applied\nto, to the cent: the quote's components are each rounded before they are stored, so the residual\ncan differ from it by 0.01. With a supplied amount it is still what was charged before tax, which\nis not the narrower base that amount was computed on.",
+            "example": 92.17,
+            "format": "double",
+            "type": "number"
+          }
+        },
+        "type": "object"
+      },
       "TaxMode": {
         "enum": [
           "Exclusive",
@@ -4420,7 +4503,9 @@
           "SunmiP2LiteSe",
           "VerifoneVictaMobile",
           "VerifoneVictaPortable",
-          "SunmiP3H"
+          "SunmiP3H",
+          "SunmiCPadPay",
+          "SunmiP3Air"
         ],
         "type": "string"
       },
@@ -5437,7 +5522,7 @@
             "type": "string"
           },
           "customerId": {
-            "description": "Customer the link is issued for. Explicit null detaches the customer. Not allowed\nonce the merged link is MultiUse.",
+            "description": "Customer the link is issued for. Explicit null detaches the customer. On a link\ncreated without a mode, attaching or detaching the customer also turns the save\noffer on or off. On a MultiUse link its payments, and any payment method a payer saves\nthere, are recorded under this customer, but the payment page never shows the\ncustomer's details or saved methods.",
             "format": "uuid",
             "nullable": true,
             "type": "string"
@@ -5455,6 +5540,15 @@
           },
           "linkType": {
             "$ref": "#/components/schemas/PaymentLinkType"
+          },
+          "metadata": {
+            "additionalProperties": {
+              "nullable": true,
+              "type": "string"
+            },
+            "description": "Merged key by key: a key with a value is added or replaced, a key set to null is removed,\nand keys left out are kept. Explicit null removes every key. The merged pairs must stay\nwithin the limits of create. Only sessions the link opens afterwards carry the change.",
+            "nullable": true,
+            "type": "object"
           },
           "name": {
             "description": "Merchant-facing label, max 80 characters. Cannot be cleared.",
@@ -5474,11 +5568,18 @@
             "nullable": true,
             "type": "string"
           },
+          "taxAmount": {
+            "description": "Pre-calculated tax in currency units, with up to 2 decimal places, not negative. Same merge\nrule as taxRate; the merged link must keep a fixed baseAmount, and in Inclusive mode the\namount must stay below it.",
+            "example": 2.06,
+            "format": "double",
+            "nullable": true,
+            "type": "number"
+          },
           "taxMode": {
             "$ref": "#/components/schemas/TaxMode"
           },
           "taxRate": {
-            "description": "Tax rate percentage, 0 to 100, with up to 3 decimal places. The merged link\nmust keep taxRate and taxMode set or cleared together; explicit null clears the tax.",
+            "description": "Tax rate percentage, 0 to 100, with up to 3 decimal places. The merged link must keep\ntaxMode set together with exactly one of taxRate and taxAmount, or all three cleared;\nswitching a link to taxAmount therefore needs an explicit null here.",
             "example": 8.25,
             "format": "double",
             "nullable": true,
@@ -6714,25 +6815,46 @@
           "403": {
             "content": {
               "application/json": {
-                "example": {
-                  "cause": "You do not have permission to access this resource.",
-                  "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                  "details": "You do not have permission to access this resource.",
-                  "documentationUrl": "https://developer.flute.com/",
-                  "entityId": null,
-                  "errorCode": "F0000",
-                  "exceptionType": "ForbiddenException",
-                  "resolution": "Verify your credentials and permissions or contact your administrator.",
-                  "source": "<Service>",
-                  "statusCode": 403,
-                  "title": "Access forbidden"
+                "examples": {
+                  "Missing API permission": {
+                    "summary": "Missing API permission",
+                    "value": {
+                      "cause": "You do not have permission to access this resource.",
+                      "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                      "details": "You do not have permission to access this resource.",
+                      "documentationUrl": "https://developer.flute.com/",
+                      "entityId": null,
+                      "errorCode": "F0000",
+                      "exceptionType": "ForbiddenException",
+                      "resolution": "Verify your credentials and permissions or contact your administrator.",
+                      "source": "<Service>",
+                      "statusCode": 403,
+                      "title": "Access forbidden"
+                    }
+                  },
+                  "Partner API key on a merchant endpoint": {
+                    "summary": "Partner API key on a merchant endpoint",
+                    "value": {
+                      "cause": "You do not have permission to access this resource.",
+                      "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                      "details": "Partner token is being used. Use a merchant token instead.",
+                      "documentationUrl": "https://developer.flute.com/",
+                      "entityId": null,
+                      "errorCode": "F0000",
+                      "exceptionType": "ForbiddenException",
+                      "resolution": "Verify your credentials and permissions or contact your administrator.",
+                      "source": "IsvApiBff",
+                      "statusCode": 403,
+                      "title": "Access forbidden"
+                    }
+                  }
                 },
                 "schema": {
                   "$ref": "#/components/schemas/ForbiddenExceptionExample"
                 }
               }
             },
-            "description": "Forbidden"
+            "description": "Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: \"Partner token is being used. Use a merchant token instead.\""
           },
           "404": {
             "content": {
@@ -6911,25 +7033,46 @@
           "403": {
             "content": {
               "application/json": {
-                "example": {
-                  "cause": "You do not have permission to access this resource.",
-                  "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                  "details": "You do not have permission to access this resource.",
-                  "documentationUrl": "https://developer.flute.com/",
-                  "entityId": null,
-                  "errorCode": "F0000",
-                  "exceptionType": "ForbiddenException",
-                  "resolution": "Verify your credentials and permissions or contact your administrator.",
-                  "source": "<Service>",
-                  "statusCode": 403,
-                  "title": "Access forbidden"
+                "examples": {
+                  "Missing API permission": {
+                    "summary": "Missing API permission",
+                    "value": {
+                      "cause": "You do not have permission to access this resource.",
+                      "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                      "details": "You do not have permission to access this resource.",
+                      "documentationUrl": "https://developer.flute.com/",
+                      "entityId": null,
+                      "errorCode": "F0000",
+                      "exceptionType": "ForbiddenException",
+                      "resolution": "Verify your credentials and permissions or contact your administrator.",
+                      "source": "<Service>",
+                      "statusCode": 403,
+                      "title": "Access forbidden"
+                    }
+                  },
+                  "Partner API key on a merchant endpoint": {
+                    "summary": "Partner API key on a merchant endpoint",
+                    "value": {
+                      "cause": "You do not have permission to access this resource.",
+                      "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                      "details": "Partner token is being used. Use a merchant token instead.",
+                      "documentationUrl": "https://developer.flute.com/",
+                      "entityId": null,
+                      "errorCode": "F0000",
+                      "exceptionType": "ForbiddenException",
+                      "resolution": "Verify your credentials and permissions or contact your administrator.",
+                      "source": "IsvApiBff",
+                      "statusCode": 403,
+                      "title": "Access forbidden"
+                    }
+                  }
                 },
                 "schema": {
                   "$ref": "#/components/schemas/ForbiddenExceptionExample"
                 }
               }
             },
-            "description": "Forbidden"
+            "description": "Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: \"Partner token is being used. Use a merchant token instead.\""
           },
           "404": {
             "content": {
@@ -7083,25 +7226,46 @@
           "403": {
             "content": {
               "application/json": {
-                "example": {
-                  "cause": "You do not have permission to access this resource.",
-                  "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                  "details": "You do not have permission to access this resource.",
-                  "documentationUrl": "https://developer.flute.com/",
-                  "entityId": null,
-                  "errorCode": "F0000",
-                  "exceptionType": "ForbiddenException",
-                  "resolution": "Verify your credentials and permissions or contact your administrator.",
-                  "source": "<Service>",
-                  "statusCode": 403,
-                  "title": "Access forbidden"
+                "examples": {
+                  "Missing API permission": {
+                    "summary": "Missing API permission",
+                    "value": {
+                      "cause": "You do not have permission to access this resource.",
+                      "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                      "details": "You do not have permission to access this resource.",
+                      "documentationUrl": "https://developer.flute.com/",
+                      "entityId": null,
+                      "errorCode": "F0000",
+                      "exceptionType": "ForbiddenException",
+                      "resolution": "Verify your credentials and permissions or contact your administrator.",
+                      "source": "<Service>",
+                      "statusCode": 403,
+                      "title": "Access forbidden"
+                    }
+                  },
+                  "Partner API key on a merchant endpoint": {
+                    "summary": "Partner API key on a merchant endpoint",
+                    "value": {
+                      "cause": "You do not have permission to access this resource.",
+                      "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                      "details": "Partner token is being used. Use a merchant token instead.",
+                      "documentationUrl": "https://developer.flute.com/",
+                      "entityId": null,
+                      "errorCode": "F0000",
+                      "exceptionType": "ForbiddenException",
+                      "resolution": "Verify your credentials and permissions or contact your administrator.",
+                      "source": "IsvApiBff",
+                      "statusCode": 403,
+                      "title": "Access forbidden"
+                    }
+                  }
                 },
                 "schema": {
                   "$ref": "#/components/schemas/ForbiddenExceptionExample"
                 }
               }
             },
-            "description": "Forbidden"
+            "description": "Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: \"Partner token is being used. Use a merchant token instead.\""
           },
           "404": {
             "content": {
@@ -7321,25 +7485,46 @@
           "403": {
             "content": {
               "application/json": {
-                "example": {
-                  "cause": "You do not have permission to access this resource.",
-                  "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                  "details": "You do not have permission to access this resource.",
-                  "documentationUrl": "https://developer.flute.com/",
-                  "entityId": null,
-                  "errorCode": "F0000",
-                  "exceptionType": "ForbiddenException",
-                  "resolution": "Verify your credentials and permissions or contact your administrator.",
-                  "source": "<Service>",
-                  "statusCode": 403,
-                  "title": "Access forbidden"
+                "examples": {
+                  "Missing API permission": {
+                    "summary": "Missing API permission",
+                    "value": {
+                      "cause": "You do not have permission to access this resource.",
+                      "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                      "details": "You do not have permission to access this resource.",
+                      "documentationUrl": "https://developer.flute.com/",
+                      "entityId": null,
+                      "errorCode": "F0000",
+                      "exceptionType": "ForbiddenException",
+                      "resolution": "Verify your credentials and permissions or contact your administrator.",
+                      "source": "<Service>",
+                      "statusCode": 403,
+                      "title": "Access forbidden"
+                    }
+                  },
+                  "Partner API key on a merchant endpoint": {
+                    "summary": "Partner API key on a merchant endpoint",
+                    "value": {
+                      "cause": "You do not have permission to access this resource.",
+                      "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                      "details": "Partner token is being used. Use a merchant token instead.",
+                      "documentationUrl": "https://developer.flute.com/",
+                      "entityId": null,
+                      "errorCode": "F0000",
+                      "exceptionType": "ForbiddenException",
+                      "resolution": "Verify your credentials and permissions or contact your administrator.",
+                      "source": "IsvApiBff",
+                      "statusCode": 403,
+                      "title": "Access forbidden"
+                    }
+                  }
                 },
                 "schema": {
                   "$ref": "#/components/schemas/ForbiddenExceptionExample"
                 }
               }
             },
-            "description": "Forbidden"
+            "description": "Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: \"Partner token is being used. Use a merchant token instead.\""
           },
           "404": {
             "content": {
@@ -7571,25 +7756,46 @@
           "403": {
             "content": {
               "application/json": {
-                "example": {
-                  "cause": "You do not have permission to access this resource.",
-                  "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                  "details": "You do not have permission to access this resource.",
-                  "documentationUrl": "https://developer.flute.com/",
-                  "entityId": null,
-                  "errorCode": "F0000",
-                  "exceptionType": "ForbiddenException",
-                  "resolution": "Verify your credentials and permissions or contact your administrator.",
-                  "source": "<Service>",
-                  "statusCode": 403,
-                  "title": "Access forbidden"
+                "examples": {
+                  "Missing API permission": {
+                    "summary": "Missing API permission",
+                    "value": {
+                      "cause": "You do not have permission to access this resource.",
+                      "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                      "details": "You do not have permission to access this resource.",
+                      "documentationUrl": "https://developer.flute.com/",
+                      "entityId": null,
+                      "errorCode": "F0000",
+                      "exceptionType": "ForbiddenException",
+                      "resolution": "Verify your credentials and permissions or contact your administrator.",
+                      "source": "<Service>",
+                      "statusCode": 403,
+                      "title": "Access forbidden"
+                    }
+                  },
+                  "Partner API key on a merchant endpoint": {
+                    "summary": "Partner API key on a merchant endpoint",
+                    "value": {
+                      "cause": "You do not have permission to access this resource.",
+                      "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                      "details": "Partner token is being used. Use a merchant token instead.",
+                      "documentationUrl": "https://developer.flute.com/",
+                      "entityId": null,
+                      "errorCode": "F0000",
+                      "exceptionType": "ForbiddenException",
+                      "resolution": "Verify your credentials and permissions or contact your administrator.",
+                      "source": "IsvApiBff",
+                      "statusCode": 403,
+                      "title": "Access forbidden"
+                    }
+                  }
                 },
                 "schema": {
                   "$ref": "#/components/schemas/ForbiddenExceptionExample"
                 }
               }
             },
-            "description": "Forbidden"
+            "description": "Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: \"Partner token is being used. Use a merchant token instead.\""
           },
           "404": {
             "content": {
@@ -7797,25 +8003,46 @@
           "403": {
             "content": {
               "application/json": {
-                "example": {
-                  "cause": "You do not have permission to access this resource.",
-                  "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                  "details": "You do not have permission to access this resource.",
-                  "documentationUrl": "https://developer.flute.com/",
-                  "entityId": null,
-                  "errorCode": "F0000",
-                  "exceptionType": "ForbiddenException",
-                  "resolution": "Verify your credentials and permissions or contact your administrator.",
-                  "source": "<Service>",
-                  "statusCode": 403,
-                  "title": "Access forbidden"
+                "examples": {
+                  "Missing API permission": {
+                    "summary": "Missing API permission",
+                    "value": {
+                      "cause": "You do not have permission to access this resource.",
+                      "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                      "details": "You do not have permission to access this resource.",
+                      "documentationUrl": "https://developer.flute.com/",
+                      "entityId": null,
+                      "errorCode": "F0000",
+                      "exceptionType": "ForbiddenException",
+                      "resolution": "Verify your credentials and permissions or contact your administrator.",
+                      "source": "<Service>",
+                      "statusCode": 403,
+                      "title": "Access forbidden"
+                    }
+                  },
+                  "Partner API key on a merchant endpoint": {
+                    "summary": "Partner API key on a merchant endpoint",
+                    "value": {
+                      "cause": "You do not have permission to access this resource.",
+                      "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                      "details": "Partner token is being used. Use a merchant token instead.",
+                      "documentationUrl": "https://developer.flute.com/",
+                      "entityId": null,
+                      "errorCode": "F0000",
+                      "exceptionType": "ForbiddenException",
+                      "resolution": "Verify your credentials and permissions or contact your administrator.",
+                      "source": "IsvApiBff",
+                      "statusCode": 403,
+                      "title": "Access forbidden"
+                    }
+                  }
                 },
                 "schema": {
                   "$ref": "#/components/schemas/ForbiddenExceptionExample"
                 }
               }
             },
-            "description": "Forbidden"
+            "description": "Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: \"Partner token is being used. Use a merchant token instead.\""
           },
           "429": {
             "content": {
@@ -7937,25 +8164,46 @@
           "403": {
             "content": {
               "application/json": {
-                "example": {
-                  "cause": "You do not have permission to access this resource.",
-                  "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                  "details": "You do not have permission to access this resource.",
-                  "documentationUrl": "https://developer.flute.com/",
-                  "entityId": null,
-                  "errorCode": "F0000",
-                  "exceptionType": "ForbiddenException",
-                  "resolution": "Verify your credentials and permissions or contact your administrator.",
-                  "source": "<Service>",
-                  "statusCode": 403,
-                  "title": "Access forbidden"
+                "examples": {
+                  "Missing API permission": {
+                    "summary": "Missing API permission",
+                    "value": {
+                      "cause": "You do not have permission to access this resource.",
+                      "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                      "details": "You do not have permission to access this resource.",
+                      "documentationUrl": "https://developer.flute.com/",
+                      "entityId": null,
+                      "errorCode": "F0000",
+                      "exceptionType": "ForbiddenException",
+                      "resolution": "Verify your credentials and permissions or contact your administrator.",
+                      "source": "<Service>",
+                      "statusCode": 403,
+                      "title": "Access forbidden"
+                    }
+                  },
+                  "Partner API key on a merchant endpoint": {
+                    "summary": "Partner API key on a merchant endpoint",
+                    "value": {
+                      "cause": "You do not have permission to access this resource.",
+                      "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                      "details": "Partner token is being used. Use a merchant token instead.",
+                      "documentationUrl": "https://developer.flute.com/",
+                      "entityId": null,
+                      "errorCode": "F0000",
+                      "exceptionType": "ForbiddenException",
+                      "resolution": "Verify your credentials and permissions or contact your administrator.",
+                      "source": "IsvApiBff",
+                      "statusCode": 403,
+                      "title": "Access forbidden"
+                    }
+                  }
                 },
                 "schema": {
                   "$ref": "#/components/schemas/ForbiddenExceptionExample"
                 }
               }
             },
-            "description": "Forbidden"
+            "description": "Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: \"Partner token is being used. Use a merchant token instead.\""
           },
           "422": {
             "content": {
@@ -8085,25 +8333,46 @@
           "403": {
             "content": {
               "application/json": {
-                "example": {
-                  "cause": "You do not have permission to access this resource.",
-                  "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                  "details": "You do not have permission to access this resource.",
-                  "documentationUrl": "https://developer.flute.com/",
-                  "entityId": null,
-                  "errorCode": "F0000",
-                  "exceptionType": "ForbiddenException",
-                  "resolution": "Verify your credentials and permissions or contact your administrator.",
-                  "source": "<Service>",
-                  "statusCode": 403,
-                  "title": "Access forbidden"
+                "examples": {
+                  "Missing API permission": {
+                    "summary": "Missing API permission",
+                    "value": {
+                      "cause": "You do not have permission to access this resource.",
+                      "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                      "details": "You do not have permission to access this resource.",
+                      "documentationUrl": "https://developer.flute.com/",
+                      "entityId": null,
+                      "errorCode": "F0000",
+                      "exceptionType": "ForbiddenException",
+                      "resolution": "Verify your credentials and permissions or contact your administrator.",
+                      "source": "<Service>",
+                      "statusCode": 403,
+                      "title": "Access forbidden"
+                    }
+                  },
+                  "Partner API key on a merchant endpoint": {
+                    "summary": "Partner API key on a merchant endpoint",
+                    "value": {
+                      "cause": "You do not have permission to access this resource.",
+                      "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                      "details": "Partner token is being used. Use a merchant token instead.",
+                      "documentationUrl": "https://developer.flute.com/",
+                      "entityId": null,
+                      "errorCode": "F0000",
+                      "exceptionType": "ForbiddenException",
+                      "resolution": "Verify your credentials and permissions or contact your administrator.",
+                      "source": "IsvApiBff",
+                      "statusCode": 403,
+                      "title": "Access forbidden"
+                    }
+                  }
                 },
                 "schema": {
                   "$ref": "#/components/schemas/ForbiddenExceptionExample"
                 }
               }
             },
-            "description": "Forbidden"
+            "description": "Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: \"Partner token is being used. Use a merchant token instead.\""
           },
           "404": {
             "content": {
@@ -8238,25 +8507,46 @@
           "403": {
             "content": {
               "application/json": {
-                "example": {
-                  "cause": "You do not have permission to access this resource.",
-                  "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                  "details": "You do not have permission to access this resource.",
-                  "documentationUrl": "https://developer.flute.com/",
-                  "entityId": null,
-                  "errorCode": "F0000",
-                  "exceptionType": "ForbiddenException",
-                  "resolution": "Verify your credentials and permissions or contact your administrator.",
-                  "source": "<Service>",
-                  "statusCode": 403,
-                  "title": "Access forbidden"
+                "examples": {
+                  "Missing API permission": {
+                    "summary": "Missing API permission",
+                    "value": {
+                      "cause": "You do not have permission to access this resource.",
+                      "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                      "details": "You do not have permission to access this resource.",
+                      "documentationUrl": "https://developer.flute.com/",
+                      "entityId": null,
+                      "errorCode": "F0000",
+                      "exceptionType": "ForbiddenException",
+                      "resolution": "Verify your credentials and permissions or contact your administrator.",
+                      "source": "<Service>",
+                      "statusCode": 403,
+                      "title": "Access forbidden"
+                    }
+                  },
+                  "Partner API key on a merchant endpoint": {
+                    "summary": "Partner API key on a merchant endpoint",
+                    "value": {
+                      "cause": "You do not have permission to access this resource.",
+                      "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                      "details": "Partner token is being used. Use a merchant token instead.",
+                      "documentationUrl": "https://developer.flute.com/",
+                      "entityId": null,
+                      "errorCode": "F0000",
+                      "exceptionType": "ForbiddenException",
+                      "resolution": "Verify your credentials and permissions or contact your administrator.",
+                      "source": "IsvApiBff",
+                      "statusCode": 403,
+                      "title": "Access forbidden"
+                    }
+                  }
                 },
                 "schema": {
                   "$ref": "#/components/schemas/ForbiddenExceptionExample"
                 }
               }
             },
-            "description": "Forbidden"
+            "description": "Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: \"Partner token is being used. Use a merchant token instead.\""
           },
           "404": {
             "content": {
@@ -8402,25 +8692,46 @@
           "403": {
             "content": {
               "application/json": {
-                "example": {
-                  "cause": "You do not have permission to access this resource.",
-                  "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                  "details": "You do not have permission to access this resource.",
-                  "documentationUrl": "https://developer.flute.com/",
-                  "entityId": null,
-                  "errorCode": "F0000",
-                  "exceptionType": "ForbiddenException",
-                  "resolution": "Verify your credentials and permissions or contact your administrator.",
-                  "source": "<Service>",
-                  "statusCode": 403,
-                  "title": "Access forbidden"
+                "examples": {
+                  "Missing API permission": {
+                    "summary": "Missing API permission",
+                    "value": {
+                      "cause": "You do not have permission to access this resource.",
+                      "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                      "details": "You do not have permission to access this resource.",
+                      "documentationUrl": "https://developer.flute.com/",
+                      "entityId": null,
+                      "errorCode": "F0000",
+                      "exceptionType": "ForbiddenException",
+                      "resolution": "Verify your credentials and permissions or contact your administrator.",
+                      "source": "<Service>",
+                      "statusCode": 403,
+                      "title": "Access forbidden"
+                    }
+                  },
+                  "Partner API key on a merchant endpoint": {
+                    "summary": "Partner API key on a merchant endpoint",
+                    "value": {
+                      "cause": "You do not have permission to access this resource.",
+                      "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                      "details": "Partner token is being used. Use a merchant token instead.",
+                      "documentationUrl": "https://developer.flute.com/",
+                      "entityId": null,
+                      "errorCode": "F0000",
+                      "exceptionType": "ForbiddenException",
+                      "resolution": "Verify your credentials and permissions or contact your administrator.",
+                      "source": "IsvApiBff",
+                      "statusCode": 403,
+                      "title": "Access forbidden"
+                    }
+                  }
                 },
                 "schema": {
                   "$ref": "#/components/schemas/ForbiddenExceptionExample"
                 }
               }
             },
-            "description": "Forbidden"
+            "description": "Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: \"Partner token is being used. Use a merchant token instead.\""
           },
           "404": {
             "content": {
@@ -8593,25 +8904,46 @@
           "403": {
             "content": {
               "application/json": {
-                "example": {
-                  "cause": "You do not have permission to access this resource.",
-                  "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                  "details": "You do not have permission to access this resource.",
-                  "documentationUrl": "https://developer.flute.com/",
-                  "entityId": null,
-                  "errorCode": "F0000",
-                  "exceptionType": "ForbiddenException",
-                  "resolution": "Verify your credentials and permissions or contact your administrator.",
-                  "source": "<Service>",
-                  "statusCode": 403,
-                  "title": "Access forbidden"
+                "examples": {
+                  "Missing API permission": {
+                    "summary": "Missing API permission",
+                    "value": {
+                      "cause": "You do not have permission to access this resource.",
+                      "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                      "details": "You do not have permission to access this resource.",
+                      "documentationUrl": "https://developer.flute.com/",
+                      "entityId": null,
+                      "errorCode": "F0000",
+                      "exceptionType": "ForbiddenException",
+                      "resolution": "Verify your credentials and permissions or contact your administrator.",
+                      "source": "<Service>",
+                      "statusCode": 403,
+                      "title": "Access forbidden"
+                    }
+                  },
+                  "Partner API key on a merchant endpoint": {
+                    "summary": "Partner API key on a merchant endpoint",
+                    "value": {
+                      "cause": "You do not have permission to access this resource.",
+                      "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                      "details": "Partner token is being used. Use a merchant token instead.",
+                      "documentationUrl": "https://developer.flute.com/",
+                      "entityId": null,
+                      "errorCode": "F0000",
+                      "exceptionType": "ForbiddenException",
+                      "resolution": "Verify your credentials and permissions or contact your administrator.",
+                      "source": "IsvApiBff",
+                      "statusCode": 403,
+                      "title": "Access forbidden"
+                    }
+                  }
                 },
                 "schema": {
                   "$ref": "#/components/schemas/ForbiddenExceptionExample"
                 }
               }
             },
-            "description": "Forbidden"
+            "description": "Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: \"Partner token is being used. Use a merchant token instead.\""
           },
           "404": {
             "content": {
@@ -8873,25 +9205,46 @@
           "403": {
             "content": {
               "application/json": {
-                "example": {
-                  "cause": "You do not have permission to access this resource.",
-                  "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                  "details": "You do not have permission to access this resource.",
-                  "documentationUrl": "https://developer.flute.com/",
-                  "entityId": null,
-                  "errorCode": "F0000",
-                  "exceptionType": "ForbiddenException",
-                  "resolution": "Verify your credentials and permissions or contact your administrator.",
-                  "source": "<Service>",
-                  "statusCode": 403,
-                  "title": "Access forbidden"
+                "examples": {
+                  "Missing API permission": {
+                    "summary": "Missing API permission",
+                    "value": {
+                      "cause": "You do not have permission to access this resource.",
+                      "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                      "details": "You do not have permission to access this resource.",
+                      "documentationUrl": "https://developer.flute.com/",
+                      "entityId": null,
+                      "errorCode": "F0000",
+                      "exceptionType": "ForbiddenException",
+                      "resolution": "Verify your credentials and permissions or contact your administrator.",
+                      "source": "<Service>",
+                      "statusCode": 403,
+                      "title": "Access forbidden"
+                    }
+                  },
+                  "Partner API key on a merchant endpoint": {
+                    "summary": "Partner API key on a merchant endpoint",
+                    "value": {
+                      "cause": "You do not have permission to access this resource.",
+                      "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                      "details": "Partner token is being used. Use a merchant token instead.",
+                      "documentationUrl": "https://developer.flute.com/",
+                      "entityId": null,
+                      "errorCode": "F0000",
+                      "exceptionType": "ForbiddenException",
+                      "resolution": "Verify your credentials and permissions or contact your administrator.",
+                      "source": "IsvApiBff",
+                      "statusCode": 403,
+                      "title": "Access forbidden"
+                    }
+                  }
                 },
                 "schema": {
                   "$ref": "#/components/schemas/ForbiddenExceptionExample"
                 }
               }
             },
-            "description": "Forbidden"
+            "description": "Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: \"Partner token is being used. Use a merchant token instead.\""
           },
           "404": {
             "content": {
@@ -9039,25 +9392,46 @@
           "403": {
             "content": {
               "application/json": {
-                "example": {
-                  "cause": "You do not have permission to access this resource.",
-                  "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                  "details": "You do not have permission to access this resource.",
-                  "documentationUrl": "https://developer.flute.com/",
-                  "entityId": null,
-                  "errorCode": "F0000",
-                  "exceptionType": "ForbiddenException",
-                  "resolution": "Verify your credentials and permissions or contact your administrator.",
-                  "source": "<Service>",
-                  "statusCode": 403,
-                  "title": "Access forbidden"
+                "examples": {
+                  "Missing API permission": {
+                    "summary": "Missing API permission",
+                    "value": {
+                      "cause": "You do not have permission to access this resource.",
+                      "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                      "details": "You do not have permission to access this resource.",
+                      "documentationUrl": "https://developer.flute.com/",
+                      "entityId": null,
+                      "errorCode": "F0000",
+                      "exceptionType": "ForbiddenException",
+                      "resolution": "Verify your credentials and permissions or contact your administrator.",
+                      "source": "<Service>",
+                      "statusCode": 403,
+                      "title": "Access forbidden"
+                    }
+                  },
+                  "Partner API key on a merchant endpoint": {
+                    "summary": "Partner API key on a merchant endpoint",
+                    "value": {
+                      "cause": "You do not have permission to access this resource.",
+                      "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                      "details": "Partner token is being used. Use a merchant token instead.",
+                      "documentationUrl": "https://developer.flute.com/",
+                      "entityId": null,
+                      "errorCode": "F0000",
+                      "exceptionType": "ForbiddenException",
+                      "resolution": "Verify your credentials and permissions or contact your administrator.",
+                      "source": "IsvApiBff",
+                      "statusCode": 403,
+                      "title": "Access forbidden"
+                    }
+                  }
                 },
                 "schema": {
                   "$ref": "#/components/schemas/ForbiddenExceptionExample"
                 }
               }
             },
-            "description": "Forbidden"
+            "description": "Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: \"Partner token is being used. Use a merchant token instead.\""
           },
           "404": {
             "content": {
@@ -9226,25 +9600,46 @@
           "403": {
             "content": {
               "application/json": {
-                "example": {
-                  "cause": "You do not have permission to access this resource.",
-                  "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                  "details": "You do not have permission to access this resource.",
-                  "documentationUrl": "https://developer.flute.com/",
-                  "entityId": null,
-                  "errorCode": "F0000",
-                  "exceptionType": "ForbiddenException",
-                  "resolution": "Verify your credentials and permissions or contact your administrator.",
-                  "source": "<Service>",
-                  "statusCode": 403,
-                  "title": "Access forbidden"
+                "examples": {
+                  "Missing API permission": {
+                    "summary": "Missing API permission",
+                    "value": {
+                      "cause": "You do not have permission to access this resource.",
+                      "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                      "details": "You do not have permission to access this resource.",
+                      "documentationUrl": "https://developer.flute.com/",
+                      "entityId": null,
+                      "errorCode": "F0000",
+                      "exceptionType": "ForbiddenException",
+                      "resolution": "Verify your credentials and permissions or contact your administrator.",
+                      "source": "<Service>",
+                      "statusCode": 403,
+                      "title": "Access forbidden"
+                    }
+                  },
+                  "Partner API key on a merchant endpoint": {
+                    "summary": "Partner API key on a merchant endpoint",
+                    "value": {
+                      "cause": "You do not have permission to access this resource.",
+                      "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                      "details": "Partner token is being used. Use a merchant token instead.",
+                      "documentationUrl": "https://developer.flute.com/",
+                      "entityId": null,
+                      "errorCode": "F0000",
+                      "exceptionType": "ForbiddenException",
+                      "resolution": "Verify your credentials and permissions or contact your administrator.",
+                      "source": "IsvApiBff",
+                      "statusCode": 403,
+                      "title": "Access forbidden"
+                    }
+                  }
                 },
                 "schema": {
                   "$ref": "#/components/schemas/ForbiddenExceptionExample"
                 }
               }
             },
-            "description": "Forbidden"
+            "description": "Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: \"Partner token is being used. Use a merchant token instead.\""
           },
           "404": {
             "content": {
@@ -9398,25 +9793,46 @@
           "403": {
             "content": {
               "application/json": {
-                "example": {
-                  "cause": "You do not have permission to access this resource.",
-                  "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                  "details": "You do not have permission to access this resource.",
-                  "documentationUrl": "https://developer.flute.com/",
-                  "entityId": null,
-                  "errorCode": "F0000",
-                  "exceptionType": "ForbiddenException",
-                  "resolution": "Verify your credentials and permissions or contact your administrator.",
-                  "source": "<Service>",
-                  "statusCode": 403,
-                  "title": "Access forbidden"
+                "examples": {
+                  "Missing API permission": {
+                    "summary": "Missing API permission",
+                    "value": {
+                      "cause": "You do not have permission to access this resource.",
+                      "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                      "details": "You do not have permission to access this resource.",
+                      "documentationUrl": "https://developer.flute.com/",
+                      "entityId": null,
+                      "errorCode": "F0000",
+                      "exceptionType": "ForbiddenException",
+                      "resolution": "Verify your credentials and permissions or contact your administrator.",
+                      "source": "<Service>",
+                      "statusCode": 403,
+                      "title": "Access forbidden"
+                    }
+                  },
+                  "Partner API key on a merchant endpoint": {
+                    "summary": "Partner API key on a merchant endpoint",
+                    "value": {
+                      "cause": "You do not have permission to access this resource.",
+                      "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                      "details": "Partner token is being used. Use a merchant token instead.",
+                      "documentationUrl": "https://developer.flute.com/",
+                      "entityId": null,
+                      "errorCode": "F0000",
+                      "exceptionType": "ForbiddenException",
+                      "resolution": "Verify your credentials and permissions or contact your administrator.",
+                      "source": "IsvApiBff",
+                      "statusCode": 403,
+                      "title": "Access forbidden"
+                    }
+                  }
                 },
                 "schema": {
                   "$ref": "#/components/schemas/ForbiddenExceptionExample"
                 }
               }
             },
-            "description": "Forbidden"
+            "description": "Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: \"Partner token is being used. Use a merchant token instead.\""
           },
           "404": {
             "content": {
@@ -9615,25 +10031,46 @@
           "403": {
             "content": {
               "application/json": {
-                "example": {
-                  "cause": "You do not have permission to access this resource.",
-                  "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                  "details": "You do not have permission to access this resource.",
-                  "documentationUrl": "https://developer.flute.com/",
-                  "entityId": null,
-                  "errorCode": "F0000",
-                  "exceptionType": "ForbiddenException",
-                  "resolution": "Verify your credentials and permissions or contact your administrator.",
-                  "source": "<Service>",
-                  "statusCode": 403,
-                  "title": "Access forbidden"
+                "examples": {
+                  "Missing API permission": {
+                    "summary": "Missing API permission",
+                    "value": {
+                      "cause": "You do not have permission to access this resource.",
+                      "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                      "details": "You do not have permission to access this resource.",
+                      "documentationUrl": "https://developer.flute.com/",
+                      "entityId": null,
+                      "errorCode": "F0000",
+                      "exceptionType": "ForbiddenException",
+                      "resolution": "Verify your credentials and permissions or contact your administrator.",
+                      "source": "<Service>",
+                      "statusCode": 403,
+                      "title": "Access forbidden"
+                    }
+                  },
+                  "Partner API key on a merchant endpoint": {
+                    "summary": "Partner API key on a merchant endpoint",
+                    "value": {
+                      "cause": "You do not have permission to access this resource.",
+                      "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                      "details": "Partner token is being used. Use a merchant token instead.",
+                      "documentationUrl": "https://developer.flute.com/",
+                      "entityId": null,
+                      "errorCode": "F0000",
+                      "exceptionType": "ForbiddenException",
+                      "resolution": "Verify your credentials and permissions or contact your administrator.",
+                      "source": "IsvApiBff",
+                      "statusCode": 403,
+                      "title": "Access forbidden"
+                    }
+                  }
                 },
                 "schema": {
                   "$ref": "#/components/schemas/ForbiddenExceptionExample"
                 }
               }
             },
-            "description": "Forbidden"
+            "description": "Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: \"Partner token is being used. Use a merchant token instead.\""
           },
           "404": {
             "content": {
@@ -9823,25 +10260,46 @@
           "403": {
             "content": {
               "application/json": {
-                "example": {
-                  "cause": "You do not have permission to access this resource.",
-                  "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                  "details": "You do not have permission to access this resource.",
-                  "documentationUrl": "https://developer.flute.com/",
-                  "entityId": null,
-                  "errorCode": "F0000",
-                  "exceptionType": "ForbiddenException",
-                  "resolution": "Verify your credentials and permissions or contact your administrator.",
-                  "source": "<Service>",
-                  "statusCode": 403,
-                  "title": "Access forbidden"
+                "examples": {
+                  "Missing API permission": {
+                    "summary": "Missing API permission",
+                    "value": {
+                      "cause": "You do not have permission to access this resource.",
+                      "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                      "details": "You do not have permission to access this resource.",
+                      "documentationUrl": "https://developer.flute.com/",
+                      "entityId": null,
+                      "errorCode": "F0000",
+                      "exceptionType": "ForbiddenException",
+                      "resolution": "Verify your credentials and permissions or contact your administrator.",
+                      "source": "<Service>",
+                      "statusCode": 403,
+                      "title": "Access forbidden"
+                    }
+                  },
+                  "Partner API key on a merchant endpoint": {
+                    "summary": "Partner API key on a merchant endpoint",
+                    "value": {
+                      "cause": "You do not have permission to access this resource.",
+                      "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                      "details": "Partner token is being used. Use a merchant token instead.",
+                      "documentationUrl": "https://developer.flute.com/",
+                      "entityId": null,
+                      "errorCode": "F0000",
+                      "exceptionType": "ForbiddenException",
+                      "resolution": "Verify your credentials and permissions or contact your administrator.",
+                      "source": "IsvApiBff",
+                      "statusCode": 403,
+                      "title": "Access forbidden"
+                    }
+                  }
                 },
                 "schema": {
                   "$ref": "#/components/schemas/ForbiddenExceptionExample"
                 }
               }
             },
-            "description": "Forbidden"
+            "description": "Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: \"Partner token is being used. Use a merchant token instead.\""
           },
           "404": {
             "content": {
@@ -10030,25 +10488,46 @@
           "403": {
             "content": {
               "application/json": {
-                "example": {
-                  "cause": "You do not have permission to access this resource.",
-                  "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                  "details": "You do not have permission to access this resource.",
-                  "documentationUrl": "https://developer.flute.com/",
-                  "entityId": null,
-                  "errorCode": "F0000",
-                  "exceptionType": "ForbiddenException",
-                  "resolution": "Verify your credentials and permissions or contact your administrator.",
-                  "source": "<Service>",
-                  "statusCode": 403,
-                  "title": "Access forbidden"
+                "examples": {
+                  "Missing API permission": {
+                    "summary": "Missing API permission",
+                    "value": {
+                      "cause": "You do not have permission to access this resource.",
+                      "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                      "details": "You do not have permission to access this resource.",
+                      "documentationUrl": "https://developer.flute.com/",
+                      "entityId": null,
+                      "errorCode": "F0000",
+                      "exceptionType": "ForbiddenException",
+                      "resolution": "Verify your credentials and permissions or contact your administrator.",
+                      "source": "<Service>",
+                      "statusCode": 403,
+                      "title": "Access forbidden"
+                    }
+                  },
+                  "Partner API key on a merchant endpoint": {
+                    "summary": "Partner API key on a merchant endpoint",
+                    "value": {
+                      "cause": "You do not have permission to access this resource.",
+                      "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                      "details": "Partner token is being used. Use a merchant token instead.",
+                      "documentationUrl": "https://developer.flute.com/",
+                      "entityId": null,
+                      "errorCode": "F0000",
+                      "exceptionType": "ForbiddenException",
+                      "resolution": "Verify your credentials and permissions or contact your administrator.",
+                      "source": "IsvApiBff",
+                      "statusCode": 403,
+                      "title": "Access forbidden"
+                    }
+                  }
                 },
                 "schema": {
                   "$ref": "#/components/schemas/ForbiddenExceptionExample"
                 }
               }
             },
-            "description": "Forbidden"
+            "description": "Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: \"Partner token is being used. Use a merchant token instead.\""
           },
           "404": {
             "content": {
@@ -10211,6 +10690,50 @@
             },
             "description": "Bad Request"
           },
+          "403": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Missing API permission": {
+                    "summary": "Missing API permission",
+                    "value": {
+                      "cause": "You do not have permission to access this resource.",
+                      "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                      "details": "You do not have permission to access this resource.",
+                      "documentationUrl": "https://developer.flute.com/",
+                      "entityId": null,
+                      "errorCode": "F0000",
+                      "exceptionType": "ForbiddenException",
+                      "resolution": "Verify your credentials and permissions or contact your administrator.",
+                      "source": "<Service>",
+                      "statusCode": 403,
+                      "title": "Access forbidden"
+                    }
+                  },
+                  "Partner API key on a merchant endpoint": {
+                    "summary": "Partner API key on a merchant endpoint",
+                    "value": {
+                      "cause": "You do not have permission to access this resource.",
+                      "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                      "details": "Partner token is being used. Use a merchant token instead.",
+                      "documentationUrl": "https://developer.flute.com/",
+                      "entityId": null,
+                      "errorCode": "F0000",
+                      "exceptionType": "ForbiddenException",
+                      "resolution": "Verify your credentials and permissions or contact your administrator.",
+                      "source": "IsvApiBff",
+                      "statusCode": 403,
+                      "title": "Access forbidden"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ForbiddenExceptionExample"
+                }
+              }
+            },
+            "description": "Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: \"Partner token is being used. Use a merchant token instead.\""
+          },
           "422": {
             "content": {
               "application/json": {
@@ -10289,6 +10812,50 @@
               }
             },
             "description": "OK"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Missing API permission": {
+                    "summary": "Missing API permission",
+                    "value": {
+                      "cause": "You do not have permission to access this resource.",
+                      "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                      "details": "You do not have permission to access this resource.",
+                      "documentationUrl": "https://developer.flute.com/",
+                      "entityId": null,
+                      "errorCode": "F0000",
+                      "exceptionType": "ForbiddenException",
+                      "resolution": "Verify your credentials and permissions or contact your administrator.",
+                      "source": "<Service>",
+                      "statusCode": 403,
+                      "title": "Access forbidden"
+                    }
+                  },
+                  "Partner API key on a merchant endpoint": {
+                    "summary": "Partner API key on a merchant endpoint",
+                    "value": {
+                      "cause": "You do not have permission to access this resource.",
+                      "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                      "details": "Partner token is being used. Use a merchant token instead.",
+                      "documentationUrl": "https://developer.flute.com/",
+                      "entityId": null,
+                      "errorCode": "F0000",
+                      "exceptionType": "ForbiddenException",
+                      "resolution": "Verify your credentials and permissions or contact your administrator.",
+                      "source": "IsvApiBff",
+                      "statusCode": 403,
+                      "title": "Access forbidden"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ForbiddenExceptionExample"
+                }
+              }
+            },
+            "description": "Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: \"Partner token is being used. Use a merchant token instead.\""
           },
           "404": {
             "content": {
@@ -10369,6 +10936,50 @@
         "responses": {
           "200": {
             "description": "Payment session cancelled successfully"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Missing API permission": {
+                    "summary": "Missing API permission",
+                    "value": {
+                      "cause": "You do not have permission to access this resource.",
+                      "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                      "details": "You do not have permission to access this resource.",
+                      "documentationUrl": "https://developer.flute.com/",
+                      "entityId": null,
+                      "errorCode": "F0000",
+                      "exceptionType": "ForbiddenException",
+                      "resolution": "Verify your credentials and permissions or contact your administrator.",
+                      "source": "<Service>",
+                      "statusCode": 403,
+                      "title": "Access forbidden"
+                    }
+                  },
+                  "Partner API key on a merchant endpoint": {
+                    "summary": "Partner API key on a merchant endpoint",
+                    "value": {
+                      "cause": "You do not have permission to access this resource.",
+                      "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                      "details": "Partner token is being used. Use a merchant token instead.",
+                      "documentationUrl": "https://developer.flute.com/",
+                      "entityId": null,
+                      "errorCode": "F0000",
+                      "exceptionType": "ForbiddenException",
+                      "resolution": "Verify your credentials and permissions or contact your administrator.",
+                      "source": "IsvApiBff",
+                      "statusCode": 403,
+                      "title": "Access forbidden"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ForbiddenExceptionExample"
+                }
+              }
+            },
+            "description": "Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: \"Partner token is being used. Use a merchant token instead.\""
           },
           "404": {
             "content": {
@@ -10742,25 +11353,46 @@
           "403": {
             "content": {
               "application/json": {
-                "example": {
-                  "cause": "You do not have permission to access this resource.",
-                  "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                  "details": "You do not have permission to access this resource.",
-                  "documentationUrl": "https://developer.flute.com/",
-                  "entityId": null,
-                  "errorCode": "F0000",
-                  "exceptionType": "ForbiddenException",
-                  "resolution": "Verify your credentials and permissions or contact your administrator.",
-                  "source": "<Service>",
-                  "statusCode": 403,
-                  "title": "Access forbidden"
+                "examples": {
+                  "Missing API permission": {
+                    "summary": "Missing API permission",
+                    "value": {
+                      "cause": "You do not have permission to access this resource.",
+                      "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                      "details": "You do not have permission to access this resource.",
+                      "documentationUrl": "https://developer.flute.com/",
+                      "entityId": null,
+                      "errorCode": "F0000",
+                      "exceptionType": "ForbiddenException",
+                      "resolution": "Verify your credentials and permissions or contact your administrator.",
+                      "source": "<Service>",
+                      "statusCode": 403,
+                      "title": "Access forbidden"
+                    }
+                  },
+                  "Partner API key on a merchant endpoint": {
+                    "summary": "Partner API key on a merchant endpoint",
+                    "value": {
+                      "cause": "You do not have permission to access this resource.",
+                      "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                      "details": "Partner token is being used. Use a merchant token instead.",
+                      "documentationUrl": "https://developer.flute.com/",
+                      "entityId": null,
+                      "errorCode": "F0000",
+                      "exceptionType": "ForbiddenException",
+                      "resolution": "Verify your credentials and permissions or contact your administrator.",
+                      "source": "IsvApiBff",
+                      "statusCode": 403,
+                      "title": "Access forbidden"
+                    }
+                  }
                 },
                 "schema": {
                   "$ref": "#/components/schemas/ForbiddenExceptionExample"
                 }
               }
             },
-            "description": "Forbidden"
+            "description": "Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: \"Partner token is being used. Use a merchant token instead.\""
           },
           "429": {
             "content": {
@@ -10947,25 +11579,46 @@
           "403": {
             "content": {
               "application/json": {
-                "example": {
-                  "cause": "You do not have permission to access this resource.",
-                  "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                  "details": "You do not have permission to access this resource.",
-                  "documentationUrl": "https://developer.flute.com/",
-                  "entityId": null,
-                  "errorCode": "F0000",
-                  "exceptionType": "ForbiddenException",
-                  "resolution": "Verify your credentials and permissions or contact your administrator.",
-                  "source": "<Service>",
-                  "statusCode": 403,
-                  "title": "Access forbidden"
+                "examples": {
+                  "Missing API permission": {
+                    "summary": "Missing API permission",
+                    "value": {
+                      "cause": "You do not have permission to access this resource.",
+                      "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                      "details": "You do not have permission to access this resource.",
+                      "documentationUrl": "https://developer.flute.com/",
+                      "entityId": null,
+                      "errorCode": "F0000",
+                      "exceptionType": "ForbiddenException",
+                      "resolution": "Verify your credentials and permissions or contact your administrator.",
+                      "source": "<Service>",
+                      "statusCode": 403,
+                      "title": "Access forbidden"
+                    }
+                  },
+                  "Partner API key on a merchant endpoint": {
+                    "summary": "Partner API key on a merchant endpoint",
+                    "value": {
+                      "cause": "You do not have permission to access this resource.",
+                      "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                      "details": "Partner token is being used. Use a merchant token instead.",
+                      "documentationUrl": "https://developer.flute.com/",
+                      "entityId": null,
+                      "errorCode": "F0000",
+                      "exceptionType": "ForbiddenException",
+                      "resolution": "Verify your credentials and permissions or contact your administrator.",
+                      "source": "IsvApiBff",
+                      "statusCode": 403,
+                      "title": "Access forbidden"
+                    }
+                  }
                 },
                 "schema": {
                   "$ref": "#/components/schemas/ForbiddenExceptionExample"
                 }
               }
             },
-            "description": "Forbidden"
+            "description": "Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: \"Partner token is being used. Use a merchant token instead.\""
           },
           "404": {
             "content": {
@@ -11214,25 +11867,46 @@
           "403": {
             "content": {
               "application/json": {
-                "example": {
-                  "cause": "You do not have permission to access this resource.",
-                  "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                  "details": "You do not have permission to access this resource.",
-                  "documentationUrl": "https://developer.flute.com/",
-                  "entityId": null,
-                  "errorCode": "F0000",
-                  "exceptionType": "ForbiddenException",
-                  "resolution": "Verify your credentials and permissions or contact your administrator.",
-                  "source": "<Service>",
-                  "statusCode": 403,
-                  "title": "Access forbidden"
+                "examples": {
+                  "Missing API permission": {
+                    "summary": "Missing API permission",
+                    "value": {
+                      "cause": "You do not have permission to access this resource.",
+                      "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                      "details": "You do not have permission to access this resource.",
+                      "documentationUrl": "https://developer.flute.com/",
+                      "entityId": null,
+                      "errorCode": "F0000",
+                      "exceptionType": "ForbiddenException",
+                      "resolution": "Verify your credentials and permissions or contact your administrator.",
+                      "source": "<Service>",
+                      "statusCode": 403,
+                      "title": "Access forbidden"
+                    }
+                  },
+                  "Partner API key on a merchant endpoint": {
+                    "summary": "Partner API key on a merchant endpoint",
+                    "value": {
+                      "cause": "You do not have permission to access this resource.",
+                      "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                      "details": "Partner token is being used. Use a merchant token instead.",
+                      "documentationUrl": "https://developer.flute.com/",
+                      "entityId": null,
+                      "errorCode": "F0000",
+                      "exceptionType": "ForbiddenException",
+                      "resolution": "Verify your credentials and permissions or contact your administrator.",
+                      "source": "IsvApiBff",
+                      "statusCode": 403,
+                      "title": "Access forbidden"
+                    }
+                  }
                 },
                 "schema": {
                   "$ref": "#/components/schemas/ForbiddenExceptionExample"
                 }
               }
             },
-            "description": "Forbidden"
+            "description": "Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: \"Partner token is being used. Use a merchant token instead.\""
           },
           "404": {
             "content": {
@@ -11417,6 +12091,7 @@
                     "referenceId": "REF-12345",
                     "refundDetails": null,
                     "source": null,
+                    "taxDetails": null,
                     "transactionDateTime": "2026-01-01T00:00:00Z",
                     "transactionEvents": null,
                     "transactionId": "7a62ba78-c4e2-4317-bc4e-c90a9d169107",
@@ -11475,25 +12150,46 @@
           "403": {
             "content": {
               "application/json": {
-                "example": {
-                  "cause": "You do not have permission to access this resource.",
-                  "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                  "details": "You do not have permission to access this resource.",
-                  "documentationUrl": "https://developer.flute.com/",
-                  "entityId": null,
-                  "errorCode": "F0000",
-                  "exceptionType": "ForbiddenException",
-                  "resolution": "Verify your credentials and permissions or contact your administrator.",
-                  "source": "<Service>",
-                  "statusCode": 403,
-                  "title": "Access forbidden"
+                "examples": {
+                  "Missing API permission": {
+                    "summary": "Missing API permission",
+                    "value": {
+                      "cause": "You do not have permission to access this resource.",
+                      "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                      "details": "You do not have permission to access this resource.",
+                      "documentationUrl": "https://developer.flute.com/",
+                      "entityId": null,
+                      "errorCode": "F0000",
+                      "exceptionType": "ForbiddenException",
+                      "resolution": "Verify your credentials and permissions or contact your administrator.",
+                      "source": "<Service>",
+                      "statusCode": 403,
+                      "title": "Access forbidden"
+                    }
+                  },
+                  "Partner API key on a merchant endpoint": {
+                    "summary": "Partner API key on a merchant endpoint",
+                    "value": {
+                      "cause": "You do not have permission to access this resource.",
+                      "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                      "details": "Partner token is being used. Use a merchant token instead.",
+                      "documentationUrl": "https://developer.flute.com/",
+                      "entityId": null,
+                      "errorCode": "F0000",
+                      "exceptionType": "ForbiddenException",
+                      "resolution": "Verify your credentials and permissions or contact your administrator.",
+                      "source": "IsvApiBff",
+                      "statusCode": 403,
+                      "title": "Access forbidden"
+                    }
+                  }
                 },
                 "schema": {
                   "$ref": "#/components/schemas/ForbiddenExceptionExample"
                 }
               }
             },
-            "description": "Forbidden"
+            "description": "Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: \"Partner token is being used. Use a merchant token instead.\""
           },
           "404": {
             "content": {
@@ -11684,25 +12380,46 @@
           "403": {
             "content": {
               "application/json": {
-                "example": {
-                  "cause": "You do not have permission to access this resource.",
-                  "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                  "details": "You do not have permission to access this resource.",
-                  "documentationUrl": "https://developer.flute.com/",
-                  "entityId": null,
-                  "errorCode": "F0000",
-                  "exceptionType": "ForbiddenException",
-                  "resolution": "Verify your credentials and permissions or contact your administrator.",
-                  "source": "<Service>",
-                  "statusCode": 403,
-                  "title": "Access forbidden"
+                "examples": {
+                  "Missing API permission": {
+                    "summary": "Missing API permission",
+                    "value": {
+                      "cause": "You do not have permission to access this resource.",
+                      "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                      "details": "You do not have permission to access this resource.",
+                      "documentationUrl": "https://developer.flute.com/",
+                      "entityId": null,
+                      "errorCode": "F0000",
+                      "exceptionType": "ForbiddenException",
+                      "resolution": "Verify your credentials and permissions or contact your administrator.",
+                      "source": "<Service>",
+                      "statusCode": 403,
+                      "title": "Access forbidden"
+                    }
+                  },
+                  "Partner API key on a merchant endpoint": {
+                    "summary": "Partner API key on a merchant endpoint",
+                    "value": {
+                      "cause": "You do not have permission to access this resource.",
+                      "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                      "details": "Partner token is being used. Use a merchant token instead.",
+                      "documentationUrl": "https://developer.flute.com/",
+                      "entityId": null,
+                      "errorCode": "F0000",
+                      "exceptionType": "ForbiddenException",
+                      "resolution": "Verify your credentials and permissions or contact your administrator.",
+                      "source": "IsvApiBff",
+                      "statusCode": 403,
+                      "title": "Access forbidden"
+                    }
+                  }
                 },
                 "schema": {
                   "$ref": "#/components/schemas/ForbiddenExceptionExample"
                 }
               }
             },
-            "description": "Forbidden"
+            "description": "Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: \"Partner token is being used. Use a merchant token instead.\""
           },
           "404": {
             "content": {
@@ -11893,25 +12610,46 @@
           "403": {
             "content": {
               "application/json": {
-                "example": {
-                  "cause": "You do not have permission to access this resource.",
-                  "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                  "details": "You do not have permission to access this resource.",
-                  "documentationUrl": "https://developer.flute.com/",
-                  "entityId": null,
-                  "errorCode": "F0000",
-                  "exceptionType": "ForbiddenException",
-                  "resolution": "Verify your credentials and permissions or contact your administrator.",
-                  "source": "<Service>",
-                  "statusCode": 403,
-                  "title": "Access forbidden"
+                "examples": {
+                  "Missing API permission": {
+                    "summary": "Missing API permission",
+                    "value": {
+                      "cause": "You do not have permission to access this resource.",
+                      "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                      "details": "You do not have permission to access this resource.",
+                      "documentationUrl": "https://developer.flute.com/",
+                      "entityId": null,
+                      "errorCode": "F0000",
+                      "exceptionType": "ForbiddenException",
+                      "resolution": "Verify your credentials and permissions or contact your administrator.",
+                      "source": "<Service>",
+                      "statusCode": 403,
+                      "title": "Access forbidden"
+                    }
+                  },
+                  "Partner API key on a merchant endpoint": {
+                    "summary": "Partner API key on a merchant endpoint",
+                    "value": {
+                      "cause": "You do not have permission to access this resource.",
+                      "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                      "details": "Partner token is being used. Use a merchant token instead.",
+                      "documentationUrl": "https://developer.flute.com/",
+                      "entityId": null,
+                      "errorCode": "F0000",
+                      "exceptionType": "ForbiddenException",
+                      "resolution": "Verify your credentials and permissions or contact your administrator.",
+                      "source": "IsvApiBff",
+                      "statusCode": 403,
+                      "title": "Access forbidden"
+                    }
+                  }
                 },
                 "schema": {
                   "$ref": "#/components/schemas/ForbiddenExceptionExample"
                 }
               }
             },
-            "description": "Forbidden"
+            "description": "Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: \"Partner token is being used. Use a merchant token instead.\""
           },
           "404": {
             "content": {
@@ -12078,25 +12816,46 @@
           "403": {
             "content": {
               "application/json": {
-                "example": {
-                  "cause": "You do not have permission to access this resource.",
-                  "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                  "details": "You do not have permission to access this resource.",
-                  "documentationUrl": "https://developer.flute.com/",
-                  "entityId": null,
-                  "errorCode": "F0000",
-                  "exceptionType": "ForbiddenException",
-                  "resolution": "Verify your credentials and permissions or contact your administrator.",
-                  "source": "<Service>",
-                  "statusCode": 403,
-                  "title": "Access forbidden"
+                "examples": {
+                  "Missing API permission": {
+                    "summary": "Missing API permission",
+                    "value": {
+                      "cause": "You do not have permission to access this resource.",
+                      "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                      "details": "You do not have permission to access this resource.",
+                      "documentationUrl": "https://developer.flute.com/",
+                      "entityId": null,
+                      "errorCode": "F0000",
+                      "exceptionType": "ForbiddenException",
+                      "resolution": "Verify your credentials and permissions or contact your administrator.",
+                      "source": "<Service>",
+                      "statusCode": 403,
+                      "title": "Access forbidden"
+                    }
+                  },
+                  "Partner API key on a merchant endpoint": {
+                    "summary": "Partner API key on a merchant endpoint",
+                    "value": {
+                      "cause": "You do not have permission to access this resource.",
+                      "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                      "details": "Partner token is being used. Use a merchant token instead.",
+                      "documentationUrl": "https://developer.flute.com/",
+                      "entityId": null,
+                      "errorCode": "F0000",
+                      "exceptionType": "ForbiddenException",
+                      "resolution": "Verify your credentials and permissions or contact your administrator.",
+                      "source": "IsvApiBff",
+                      "statusCode": 403,
+                      "title": "Access forbidden"
+                    }
+                  }
                 },
                 "schema": {
                   "$ref": "#/components/schemas/ForbiddenExceptionExample"
                 }
               }
             },
-            "description": "Forbidden"
+            "description": "Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: \"Partner token is being used. Use a merchant token instead.\""
           },
           "429": {
             "content": {
@@ -12251,25 +13010,69 @@
           "403": {
             "content": {
               "application/json": {
-                "example": {
-                  "cause": "You do not have permission to access this resource.",
-                  "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                  "details": "You do not have permission to access this resource.",
-                  "documentationUrl": "https://developer.flute.com/",
-                  "entityId": null,
-                  "errorCode": "F0000",
-                  "exceptionType": "ForbiddenException",
-                  "resolution": "Verify your credentials and permissions or contact your administrator.",
-                  "source": "<Service>",
-                  "statusCode": 403,
-                  "title": "Access forbidden"
+                "examples": {
+                  "Missing API permission": {
+                    "summary": "Missing API permission",
+                    "value": {
+                      "cause": "You do not have permission to access this resource.",
+                      "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                      "details": "You do not have permission to access this resource.",
+                      "documentationUrl": "https://developer.flute.com/",
+                      "entityId": null,
+                      "errorCode": "F0000",
+                      "exceptionType": "ForbiddenException",
+                      "resolution": "Verify your credentials and permissions or contact your administrator.",
+                      "source": "<Service>",
+                      "statusCode": 403,
+                      "title": "Access forbidden"
+                    }
+                  },
+                  "Partner API key on a merchant endpoint": {
+                    "summary": "Partner API key on a merchant endpoint",
+                    "value": {
+                      "cause": "You do not have permission to access this resource.",
+                      "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                      "details": "Partner token is being used. Use a merchant token instead.",
+                      "documentationUrl": "https://developer.flute.com/",
+                      "entityId": null,
+                      "errorCode": "F0000",
+                      "exceptionType": "ForbiddenException",
+                      "resolution": "Verify your credentials and permissions or contact your administrator.",
+                      "source": "IsvApiBff",
+                      "statusCode": 403,
+                      "title": "Access forbidden"
+                    }
+                  }
                 },
                 "schema": {
                   "$ref": "#/components/schemas/ForbiddenExceptionExample"
                 }
               }
             },
-            "description": "Forbidden"
+            "description": "Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: \"Partner token is being used. Use a merchant token instead.\""
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "cause": "The requested resource does not exist or has been deleted.",
+                  "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                  "details": "Entity with ID b31fbe9f-eebb-45ce-9cae-92265389f47f does not exist or has been deleted",
+                  "documentationUrl": "https://developer.flute.com/",
+                  "entityId": "b31fbe9f-eebb-45ce-9cae-92265389f47f",
+                  "errorCode": "N0000",
+                  "exceptionType": "NotFoundException",
+                  "resolution": "Verify the resource ID is correct or retrieve a list of available resources.",
+                  "source": "<Service>",
+                  "statusCode": 404,
+                  "title": "Resource not found"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundExceptionExample"
+                }
+              }
+            },
+            "description": "Not Found"
           },
           "429": {
             "content": {
@@ -12388,25 +13191,46 @@
           "403": {
             "content": {
               "application/json": {
-                "example": {
-                  "cause": "You do not have permission to access this resource.",
-                  "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                  "details": "You do not have permission to access this resource.",
-                  "documentationUrl": "https://developer.flute.com/",
-                  "entityId": null,
-                  "errorCode": "F0000",
-                  "exceptionType": "ForbiddenException",
-                  "resolution": "Verify your credentials and permissions or contact your administrator.",
-                  "source": "<Service>",
-                  "statusCode": 403,
-                  "title": "Access forbidden"
+                "examples": {
+                  "Missing API permission": {
+                    "summary": "Missing API permission",
+                    "value": {
+                      "cause": "You do not have permission to access this resource.",
+                      "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                      "details": "You do not have permission to access this resource.",
+                      "documentationUrl": "https://developer.flute.com/",
+                      "entityId": null,
+                      "errorCode": "F0000",
+                      "exceptionType": "ForbiddenException",
+                      "resolution": "Verify your credentials and permissions or contact your administrator.",
+                      "source": "<Service>",
+                      "statusCode": 403,
+                      "title": "Access forbidden"
+                    }
+                  },
+                  "Partner API key on a merchant endpoint": {
+                    "summary": "Partner API key on a merchant endpoint",
+                    "value": {
+                      "cause": "You do not have permission to access this resource.",
+                      "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                      "details": "Partner token is being used. Use a merchant token instead.",
+                      "documentationUrl": "https://developer.flute.com/",
+                      "entityId": null,
+                      "errorCode": "F0000",
+                      "exceptionType": "ForbiddenException",
+                      "resolution": "Verify your credentials and permissions or contact your administrator.",
+                      "source": "IsvApiBff",
+                      "statusCode": 403,
+                      "title": "Access forbidden"
+                    }
+                  }
                 },
                 "schema": {
                   "$ref": "#/components/schemas/ForbiddenExceptionExample"
                 }
               }
             },
-            "description": "Forbidden"
+            "description": "Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: \"Partner token is being used. Use a merchant token instead.\""
           },
           "429": {
             "content": {
@@ -12550,25 +13374,46 @@
           "403": {
             "content": {
               "application/json": {
-                "example": {
-                  "cause": "You do not have permission to access this resource.",
-                  "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                  "details": "You do not have permission to access this resource.",
-                  "documentationUrl": "https://developer.flute.com/",
-                  "entityId": null,
-                  "errorCode": "F0000",
-                  "exceptionType": "ForbiddenException",
-                  "resolution": "Verify your credentials and permissions or contact your administrator.",
-                  "source": "<Service>",
-                  "statusCode": 403,
-                  "title": "Access forbidden"
+                "examples": {
+                  "Missing API permission": {
+                    "summary": "Missing API permission",
+                    "value": {
+                      "cause": "You do not have permission to access this resource.",
+                      "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                      "details": "You do not have permission to access this resource.",
+                      "documentationUrl": "https://developer.flute.com/",
+                      "entityId": null,
+                      "errorCode": "F0000",
+                      "exceptionType": "ForbiddenException",
+                      "resolution": "Verify your credentials and permissions or contact your administrator.",
+                      "source": "<Service>",
+                      "statusCode": 403,
+                      "title": "Access forbidden"
+                    }
+                  },
+                  "Partner API key on a merchant endpoint": {
+                    "summary": "Partner API key on a merchant endpoint",
+                    "value": {
+                      "cause": "You do not have permission to access this resource.",
+                      "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                      "details": "Partner token is being used. Use a merchant token instead.",
+                      "documentationUrl": "https://developer.flute.com/",
+                      "entityId": null,
+                      "errorCode": "F0000",
+                      "exceptionType": "ForbiddenException",
+                      "resolution": "Verify your credentials and permissions or contact your administrator.",
+                      "source": "IsvApiBff",
+                      "statusCode": 403,
+                      "title": "Access forbidden"
+                    }
+                  }
                 },
                 "schema": {
                   "$ref": "#/components/schemas/ForbiddenExceptionExample"
                 }
               }
             },
-            "description": "Forbidden"
+            "description": "Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: \"Partner token is being used. Use a merchant token instead.\""
           },
           "404": {
             "content": {
@@ -12838,25 +13683,46 @@
           "403": {
             "content": {
               "application/json": {
-                "example": {
-                  "cause": "You do not have permission to access this resource.",
-                  "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                  "details": "You do not have permission to access this resource.",
-                  "documentationUrl": "https://developer.flute.com/",
-                  "entityId": null,
-                  "errorCode": "F0000",
-                  "exceptionType": "ForbiddenException",
-                  "resolution": "Verify your credentials and permissions or contact your administrator.",
-                  "source": "<Service>",
-                  "statusCode": 403,
-                  "title": "Access forbidden"
+                "examples": {
+                  "Missing API permission": {
+                    "summary": "Missing API permission",
+                    "value": {
+                      "cause": "You do not have permission to access this resource.",
+                      "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                      "details": "You do not have permission to access this resource.",
+                      "documentationUrl": "https://developer.flute.com/",
+                      "entityId": null,
+                      "errorCode": "F0000",
+                      "exceptionType": "ForbiddenException",
+                      "resolution": "Verify your credentials and permissions or contact your administrator.",
+                      "source": "<Service>",
+                      "statusCode": 403,
+                      "title": "Access forbidden"
+                    }
+                  },
+                  "Partner API key on a merchant endpoint": {
+                    "summary": "Partner API key on a merchant endpoint",
+                    "value": {
+                      "cause": "You do not have permission to access this resource.",
+                      "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                      "details": "Partner token is being used. Use a merchant token instead.",
+                      "documentationUrl": "https://developer.flute.com/",
+                      "entityId": null,
+                      "errorCode": "F0000",
+                      "exceptionType": "ForbiddenException",
+                      "resolution": "Verify your credentials and permissions or contact your administrator.",
+                      "source": "IsvApiBff",
+                      "statusCode": 403,
+                      "title": "Access forbidden"
+                    }
+                  }
                 },
                 "schema": {
                   "$ref": "#/components/schemas/ForbiddenExceptionExample"
                 }
               }
             },
-            "description": "Forbidden"
+            "description": "Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: \"Partner token is being used. Use a merchant token instead.\""
           },
           "429": {
             "content": {
@@ -13008,25 +13874,46 @@
           "403": {
             "content": {
               "application/json": {
-                "example": {
-                  "cause": "You do not have permission to access this resource.",
-                  "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                  "details": "You do not have permission to access this resource.",
-                  "documentationUrl": "https://developer.flute.com/",
-                  "entityId": null,
-                  "errorCode": "F0000",
-                  "exceptionType": "ForbiddenException",
-                  "resolution": "Verify your credentials and permissions or contact your administrator.",
-                  "source": "<Service>",
-                  "statusCode": 403,
-                  "title": "Access forbidden"
+                "examples": {
+                  "Missing API permission": {
+                    "summary": "Missing API permission",
+                    "value": {
+                      "cause": "You do not have permission to access this resource.",
+                      "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                      "details": "You do not have permission to access this resource.",
+                      "documentationUrl": "https://developer.flute.com/",
+                      "entityId": null,
+                      "errorCode": "F0000",
+                      "exceptionType": "ForbiddenException",
+                      "resolution": "Verify your credentials and permissions or contact your administrator.",
+                      "source": "<Service>",
+                      "statusCode": 403,
+                      "title": "Access forbidden"
+                    }
+                  },
+                  "Partner API key on a merchant endpoint": {
+                    "summary": "Partner API key on a merchant endpoint",
+                    "value": {
+                      "cause": "You do not have permission to access this resource.",
+                      "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                      "details": "Partner token is being used. Use a merchant token instead.",
+                      "documentationUrl": "https://developer.flute.com/",
+                      "entityId": null,
+                      "errorCode": "F0000",
+                      "exceptionType": "ForbiddenException",
+                      "resolution": "Verify your credentials and permissions or contact your administrator.",
+                      "source": "IsvApiBff",
+                      "statusCode": 403,
+                      "title": "Access forbidden"
+                    }
+                  }
                 },
                 "schema": {
                   "$ref": "#/components/schemas/ForbiddenExceptionExample"
                 }
               }
             },
-            "description": "Forbidden"
+            "description": "Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: \"Partner token is being used. Use a merchant token instead.\""
           },
           "404": {
             "content": {
@@ -13330,25 +14217,46 @@
           "403": {
             "content": {
               "application/json": {
-                "example": {
-                  "cause": "You do not have permission to access this resource.",
-                  "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                  "details": "You do not have permission to access this resource.",
-                  "documentationUrl": "https://developer.flute.com/",
-                  "entityId": null,
-                  "errorCode": "F0000",
-                  "exceptionType": "ForbiddenException",
-                  "resolution": "Verify your credentials and permissions or contact your administrator.",
-                  "source": "<Service>",
-                  "statusCode": 403,
-                  "title": "Access forbidden"
+                "examples": {
+                  "Missing API permission": {
+                    "summary": "Missing API permission",
+                    "value": {
+                      "cause": "You do not have permission to access this resource.",
+                      "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                      "details": "You do not have permission to access this resource.",
+                      "documentationUrl": "https://developer.flute.com/",
+                      "entityId": null,
+                      "errorCode": "F0000",
+                      "exceptionType": "ForbiddenException",
+                      "resolution": "Verify your credentials and permissions or contact your administrator.",
+                      "source": "<Service>",
+                      "statusCode": 403,
+                      "title": "Access forbidden"
+                    }
+                  },
+                  "Partner API key on a merchant endpoint": {
+                    "summary": "Partner API key on a merchant endpoint",
+                    "value": {
+                      "cause": "You do not have permission to access this resource.",
+                      "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                      "details": "Partner token is being used. Use a merchant token instead.",
+                      "documentationUrl": "https://developer.flute.com/",
+                      "entityId": null,
+                      "errorCode": "F0000",
+                      "exceptionType": "ForbiddenException",
+                      "resolution": "Verify your credentials and permissions or contact your administrator.",
+                      "source": "IsvApiBff",
+                      "statusCode": 403,
+                      "title": "Access forbidden"
+                    }
+                  }
                 },
                 "schema": {
                   "$ref": "#/components/schemas/ForbiddenExceptionExample"
                 }
               }
             },
-            "description": "Forbidden"
+            "description": "Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: \"Partner token is being used. Use a merchant token instead.\""
           },
           "429": {
             "content": {
@@ -13478,25 +14386,46 @@
           "403": {
             "content": {
               "application/json": {
-                "example": {
-                  "cause": "You do not have permission to access this resource.",
-                  "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                  "details": "You do not have permission to access this resource.",
-                  "documentationUrl": "https://developer.flute.com/",
-                  "entityId": null,
-                  "errorCode": "F0000",
-                  "exceptionType": "ForbiddenException",
-                  "resolution": "Verify your credentials and permissions or contact your administrator.",
-                  "source": "<Service>",
-                  "statusCode": 403,
-                  "title": "Access forbidden"
+                "examples": {
+                  "Missing API permission": {
+                    "summary": "Missing API permission",
+                    "value": {
+                      "cause": "You do not have permission to access this resource.",
+                      "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                      "details": "You do not have permission to access this resource.",
+                      "documentationUrl": "https://developer.flute.com/",
+                      "entityId": null,
+                      "errorCode": "F0000",
+                      "exceptionType": "ForbiddenException",
+                      "resolution": "Verify your credentials and permissions or contact your administrator.",
+                      "source": "<Service>",
+                      "statusCode": 403,
+                      "title": "Access forbidden"
+                    }
+                  },
+                  "Partner API key on a merchant endpoint": {
+                    "summary": "Partner API key on a merchant endpoint",
+                    "value": {
+                      "cause": "You do not have permission to access this resource.",
+                      "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                      "details": "Partner token is being used. Use a merchant token instead.",
+                      "documentationUrl": "https://developer.flute.com/",
+                      "entityId": null,
+                      "errorCode": "F0000",
+                      "exceptionType": "ForbiddenException",
+                      "resolution": "Verify your credentials and permissions or contact your administrator.",
+                      "source": "IsvApiBff",
+                      "statusCode": 403,
+                      "title": "Access forbidden"
+                    }
+                  }
                 },
                 "schema": {
                   "$ref": "#/components/schemas/ForbiddenExceptionExample"
                 }
               }
             },
-            "description": "Forbidden"
+            "description": "Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: \"Partner token is being used. Use a merchant token instead.\""
           },
           "404": {
             "content": {
@@ -13877,25 +14806,46 @@
           "403": {
             "content": {
               "application/json": {
-                "example": {
-                  "cause": "You do not have permission to access this resource.",
-                  "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                  "details": "You do not have permission to access this resource.",
-                  "documentationUrl": "https://developer.flute.com/",
-                  "entityId": null,
-                  "errorCode": "F0000",
-                  "exceptionType": "ForbiddenException",
-                  "resolution": "Verify your credentials and permissions or contact your administrator.",
-                  "source": "<Service>",
-                  "statusCode": 403,
-                  "title": "Access forbidden"
+                "examples": {
+                  "Missing API permission": {
+                    "summary": "Missing API permission",
+                    "value": {
+                      "cause": "You do not have permission to access this resource.",
+                      "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                      "details": "You do not have permission to access this resource.",
+                      "documentationUrl": "https://developer.flute.com/",
+                      "entityId": null,
+                      "errorCode": "F0000",
+                      "exceptionType": "ForbiddenException",
+                      "resolution": "Verify your credentials and permissions or contact your administrator.",
+                      "source": "<Service>",
+                      "statusCode": 403,
+                      "title": "Access forbidden"
+                    }
+                  },
+                  "Partner API key on a merchant endpoint": {
+                    "summary": "Partner API key on a merchant endpoint",
+                    "value": {
+                      "cause": "You do not have permission to access this resource.",
+                      "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                      "details": "Partner token is being used. Use a merchant token instead.",
+                      "documentationUrl": "https://developer.flute.com/",
+                      "entityId": null,
+                      "errorCode": "F0000",
+                      "exceptionType": "ForbiddenException",
+                      "resolution": "Verify your credentials and permissions or contact your administrator.",
+                      "source": "IsvApiBff",
+                      "statusCode": 403,
+                      "title": "Access forbidden"
+                    }
+                  }
                 },
                 "schema": {
                   "$ref": "#/components/schemas/ForbiddenExceptionExample"
                 }
               }
             },
-            "description": "Forbidden"
+            "description": "Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: \"Partner token is being used. Use a merchant token instead.\""
           },
           "429": {
             "content": {
@@ -14194,8 +15144,14 @@
                       },
                       "source": {
                         "sourceId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-                        "sourceName": "API Key for ecommerce app",
-                        "sourceType": "ApiKey"
+                        "sourceName": "Checkout session",
+                        "sourceType": "Checkout"
+                      },
+                      "taxDetails": {
+                        "taxAmount": 15.67,
+                        "taxMode": "Inclusive",
+                        "taxRate": 8.5,
+                        "taxableAmount": 184.33
                       },
                       "transactionDateTime": "2026-01-01T00:00:00Z",
                       "transactionEvents": [
@@ -14269,6 +15225,7 @@
                         "sourceName": "API Key for ecommerce app",
                         "sourceType": "ApiKey"
                       },
+                      "taxDetails": null,
                       "transactionDateTime": "2026-01-01T00:00:00Z",
                       "transactionEvents": [
                         {
@@ -14350,25 +15307,46 @@
           "403": {
             "content": {
               "application/json": {
-                "example": {
-                  "cause": "You do not have permission to access this resource.",
-                  "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                  "details": "You do not have permission to access this resource.",
-                  "documentationUrl": "https://developer.flute.com/",
-                  "entityId": null,
-                  "errorCode": "F0000",
-                  "exceptionType": "ForbiddenException",
-                  "resolution": "Verify your credentials and permissions or contact your administrator.",
-                  "source": "<Service>",
-                  "statusCode": 403,
-                  "title": "Access forbidden"
+                "examples": {
+                  "Missing API permission": {
+                    "summary": "Missing API permission",
+                    "value": {
+                      "cause": "You do not have permission to access this resource.",
+                      "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                      "details": "You do not have permission to access this resource.",
+                      "documentationUrl": "https://developer.flute.com/",
+                      "entityId": null,
+                      "errorCode": "F0000",
+                      "exceptionType": "ForbiddenException",
+                      "resolution": "Verify your credentials and permissions or contact your administrator.",
+                      "source": "<Service>",
+                      "statusCode": 403,
+                      "title": "Access forbidden"
+                    }
+                  },
+                  "Partner API key on a merchant endpoint": {
+                    "summary": "Partner API key on a merchant endpoint",
+                    "value": {
+                      "cause": "You do not have permission to access this resource.",
+                      "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                      "details": "Partner token is being used. Use a merchant token instead.",
+                      "documentationUrl": "https://developer.flute.com/",
+                      "entityId": null,
+                      "errorCode": "F0000",
+                      "exceptionType": "ForbiddenException",
+                      "resolution": "Verify your credentials and permissions or contact your administrator.",
+                      "source": "IsvApiBff",
+                      "statusCode": 403,
+                      "title": "Access forbidden"
+                    }
+                  }
                 },
                 "schema": {
                   "$ref": "#/components/schemas/ForbiddenExceptionExample"
                 }
               }
             },
-            "description": "Forbidden"
+            "description": "Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: \"Partner token is being used. Use a merchant token instead.\""
           },
           "404": {
             "content": {
@@ -14604,25 +15582,46 @@
           "403": {
             "content": {
               "application/json": {
-                "example": {
-                  "cause": "You do not have permission to access this resource.",
-                  "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                  "details": "You do not have permission to access this resource.",
-                  "documentationUrl": "https://developer.flute.com/",
-                  "entityId": null,
-                  "errorCode": "F0000",
-                  "exceptionType": "ForbiddenException",
-                  "resolution": "Verify your credentials and permissions or contact your administrator.",
-                  "source": "<Service>",
-                  "statusCode": 403,
-                  "title": "Access forbidden"
+                "examples": {
+                  "Missing API permission": {
+                    "summary": "Missing API permission",
+                    "value": {
+                      "cause": "You do not have permission to access this resource.",
+                      "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                      "details": "You do not have permission to access this resource.",
+                      "documentationUrl": "https://developer.flute.com/",
+                      "entityId": null,
+                      "errorCode": "F0000",
+                      "exceptionType": "ForbiddenException",
+                      "resolution": "Verify your credentials and permissions or contact your administrator.",
+                      "source": "<Service>",
+                      "statusCode": 403,
+                      "title": "Access forbidden"
+                    }
+                  },
+                  "Partner API key on a merchant endpoint": {
+                    "summary": "Partner API key on a merchant endpoint",
+                    "value": {
+                      "cause": "You do not have permission to access this resource.",
+                      "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                      "details": "Partner token is being used. Use a merchant token instead.",
+                      "documentationUrl": "https://developer.flute.com/",
+                      "entityId": null,
+                      "errorCode": "F0000",
+                      "exceptionType": "ForbiddenException",
+                      "resolution": "Verify your credentials and permissions or contact your administrator.",
+                      "source": "IsvApiBff",
+                      "statusCode": 403,
+                      "title": "Access forbidden"
+                    }
+                  }
                 },
                 "schema": {
                   "$ref": "#/components/schemas/ForbiddenExceptionExample"
                 }
               }
             },
-            "description": "Forbidden"
+            "description": "Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: \"Partner token is being used. Use a merchant token instead.\""
           },
           "429": {
             "content": {
@@ -14850,8 +15849,14 @@
                       },
                       "source": {
                         "sourceId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-                        "sourceName": "API Key for ecommerce app",
-                        "sourceType": "ApiKey"
+                        "sourceName": "Checkout session",
+                        "sourceType": "Checkout"
+                      },
+                      "taxDetails": {
+                        "taxAmount": 15.67,
+                        "taxMode": "Inclusive",
+                        "taxRate": 8.5,
+                        "taxableAmount": 184.33
                       },
                       "transactionDateTime": "2026-01-01T00:00:00Z",
                       "transactionEvents": [
@@ -14925,6 +15930,7 @@
                         "sourceName": "API Key for ecommerce app",
                         "sourceType": "ApiKey"
                       },
+                      "taxDetails": null,
                       "transactionDateTime": "2026-01-01T00:00:00Z",
                       "transactionEvents": [
                         {
@@ -15006,25 +16012,46 @@
           "403": {
             "content": {
               "application/json": {
-                "example": {
-                  "cause": "You do not have permission to access this resource.",
-                  "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                  "details": "You do not have permission to access this resource.",
-                  "documentationUrl": "https://developer.flute.com/",
-                  "entityId": null,
-                  "errorCode": "F0000",
-                  "exceptionType": "ForbiddenException",
-                  "resolution": "Verify your credentials and permissions or contact your administrator.",
-                  "source": "<Service>",
-                  "statusCode": 403,
-                  "title": "Access forbidden"
+                "examples": {
+                  "Missing API permission": {
+                    "summary": "Missing API permission",
+                    "value": {
+                      "cause": "You do not have permission to access this resource.",
+                      "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                      "details": "You do not have permission to access this resource.",
+                      "documentationUrl": "https://developer.flute.com/",
+                      "entityId": null,
+                      "errorCode": "F0000",
+                      "exceptionType": "ForbiddenException",
+                      "resolution": "Verify your credentials and permissions or contact your administrator.",
+                      "source": "<Service>",
+                      "statusCode": 403,
+                      "title": "Access forbidden"
+                    }
+                  },
+                  "Partner API key on a merchant endpoint": {
+                    "summary": "Partner API key on a merchant endpoint",
+                    "value": {
+                      "cause": "You do not have permission to access this resource.",
+                      "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                      "details": "Partner token is being used. Use a merchant token instead.",
+                      "documentationUrl": "https://developer.flute.com/",
+                      "entityId": null,
+                      "errorCode": "F0000",
+                      "exceptionType": "ForbiddenException",
+                      "resolution": "Verify your credentials and permissions or contact your administrator.",
+                      "source": "IsvApiBff",
+                      "statusCode": 403,
+                      "title": "Access forbidden"
+                    }
+                  }
                 },
                 "schema": {
                   "$ref": "#/components/schemas/ForbiddenExceptionExample"
                 }
               }
             },
-            "description": "Forbidden"
+            "description": "Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: \"Partner token is being used. Use a merchant token instead.\""
           },
           "404": {
             "content": {
@@ -15217,8 +16244,14 @@
                       },
                       "source": {
                         "sourceId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-                        "sourceName": "API Key for ecommerce app",
-                        "sourceType": "ApiKey"
+                        "sourceName": "Checkout session",
+                        "sourceType": "Checkout"
+                      },
+                      "taxDetails": {
+                        "taxAmount": 15.67,
+                        "taxMode": "Inclusive",
+                        "taxRate": 8.5,
+                        "taxableAmount": 184.33
                       },
                       "transactionDateTime": "2026-01-01T00:00:00Z",
                       "transactionEvents": [
@@ -15292,6 +16325,7 @@
                         "sourceName": "API Key for ecommerce app",
                         "sourceType": "ApiKey"
                       },
+                      "taxDetails": null,
                       "transactionDateTime": "2026-01-01T00:00:00Z",
                       "transactionEvents": [
                         {
@@ -15350,25 +16384,46 @@
           "403": {
             "content": {
               "application/json": {
-                "example": {
-                  "cause": "You do not have permission to access this resource.",
-                  "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                  "details": "You do not have permission to access this resource.",
-                  "documentationUrl": "https://developer.flute.com/",
-                  "entityId": null,
-                  "errorCode": "F0000",
-                  "exceptionType": "ForbiddenException",
-                  "resolution": "Verify your credentials and permissions or contact your administrator.",
-                  "source": "<Service>",
-                  "statusCode": 403,
-                  "title": "Access forbidden"
+                "examples": {
+                  "Missing API permission": {
+                    "summary": "Missing API permission",
+                    "value": {
+                      "cause": "You do not have permission to access this resource.",
+                      "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                      "details": "You do not have permission to access this resource.",
+                      "documentationUrl": "https://developer.flute.com/",
+                      "entityId": null,
+                      "errorCode": "F0000",
+                      "exceptionType": "ForbiddenException",
+                      "resolution": "Verify your credentials and permissions or contact your administrator.",
+                      "source": "<Service>",
+                      "statusCode": 403,
+                      "title": "Access forbidden"
+                    }
+                  },
+                  "Partner API key on a merchant endpoint": {
+                    "summary": "Partner API key on a merchant endpoint",
+                    "value": {
+                      "cause": "You do not have permission to access this resource.",
+                      "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                      "details": "Partner token is being used. Use a merchant token instead.",
+                      "documentationUrl": "https://developer.flute.com/",
+                      "entityId": null,
+                      "errorCode": "F0000",
+                      "exceptionType": "ForbiddenException",
+                      "resolution": "Verify your credentials and permissions or contact your administrator.",
+                      "source": "IsvApiBff",
+                      "statusCode": 403,
+                      "title": "Access forbidden"
+                    }
+                  }
                 },
                 "schema": {
                   "$ref": "#/components/schemas/ForbiddenExceptionExample"
                 }
               }
             },
-            "description": "Forbidden"
+            "description": "Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: \"Partner token is being used. Use a merchant token instead.\""
           },
           "404": {
             "content": {
@@ -15524,8 +16579,14 @@
                       },
                       "source": {
                         "sourceId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-                        "sourceName": "API Key for ecommerce app",
-                        "sourceType": "ApiKey"
+                        "sourceName": "Checkout session",
+                        "sourceType": "Checkout"
+                      },
+                      "taxDetails": {
+                        "taxAmount": 15.67,
+                        "taxMode": "Inclusive",
+                        "taxRate": 8.5,
+                        "taxableAmount": 184.33
                       },
                       "transactionDateTime": "2026-01-01T00:00:00Z",
                       "transactionEvents": [
@@ -15599,6 +16660,7 @@
                         "sourceName": "API Key for ecommerce app",
                         "sourceType": "ApiKey"
                       },
+                      "taxDetails": null,
                       "transactionDateTime": "2026-01-01T00:00:00Z",
                       "transactionEvents": [
                         {
@@ -15680,25 +16742,46 @@
           "403": {
             "content": {
               "application/json": {
-                "example": {
-                  "cause": "You do not have permission to access this resource.",
-                  "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                  "details": "You do not have permission to access this resource.",
-                  "documentationUrl": "https://developer.flute.com/",
-                  "entityId": null,
-                  "errorCode": "F0000",
-                  "exceptionType": "ForbiddenException",
-                  "resolution": "Verify your credentials and permissions or contact your administrator.",
-                  "source": "<Service>",
-                  "statusCode": 403,
-                  "title": "Access forbidden"
+                "examples": {
+                  "Missing API permission": {
+                    "summary": "Missing API permission",
+                    "value": {
+                      "cause": "You do not have permission to access this resource.",
+                      "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                      "details": "You do not have permission to access this resource.",
+                      "documentationUrl": "https://developer.flute.com/",
+                      "entityId": null,
+                      "errorCode": "F0000",
+                      "exceptionType": "ForbiddenException",
+                      "resolution": "Verify your credentials and permissions or contact your administrator.",
+                      "source": "<Service>",
+                      "statusCode": 403,
+                      "title": "Access forbidden"
+                    }
+                  },
+                  "Partner API key on a merchant endpoint": {
+                    "summary": "Partner API key on a merchant endpoint",
+                    "value": {
+                      "cause": "You do not have permission to access this resource.",
+                      "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                      "details": "Partner token is being used. Use a merchant token instead.",
+                      "documentationUrl": "https://developer.flute.com/",
+                      "entityId": null,
+                      "errorCode": "F0000",
+                      "exceptionType": "ForbiddenException",
+                      "resolution": "Verify your credentials and permissions or contact your administrator.",
+                      "source": "IsvApiBff",
+                      "statusCode": 403,
+                      "title": "Access forbidden"
+                    }
+                  }
                 },
                 "schema": {
                   "$ref": "#/components/schemas/ForbiddenExceptionExample"
                 }
               }
             },
-            "description": "Forbidden"
+            "description": "Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: \"Partner token is being used. Use a merchant token instead.\""
           },
           "404": {
             "content": {
@@ -15900,8 +16983,14 @@
                       },
                       "source": {
                         "sourceId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-                        "sourceName": "API Key for ecommerce app",
-                        "sourceType": "ApiKey"
+                        "sourceName": "Checkout session",
+                        "sourceType": "Checkout"
+                      },
+                      "taxDetails": {
+                        "taxAmount": 15.67,
+                        "taxMode": "Inclusive",
+                        "taxRate": 8.5,
+                        "taxableAmount": 184.33
                       },
                       "transactionDateTime": "2026-01-01T00:00:00Z",
                       "transactionEvents": [
@@ -15975,6 +17064,7 @@
                         "sourceName": "API Key for ecommerce app",
                         "sourceType": "ApiKey"
                       },
+                      "taxDetails": null,
                       "transactionDateTime": "2026-01-01T00:00:00Z",
                       "transactionEvents": [
                         {
@@ -16056,25 +17146,46 @@
           "403": {
             "content": {
               "application/json": {
-                "example": {
-                  "cause": "You do not have permission to access this resource.",
-                  "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                  "details": "You do not have permission to access this resource.",
-                  "documentationUrl": "https://developer.flute.com/",
-                  "entityId": null,
-                  "errorCode": "F0000",
-                  "exceptionType": "ForbiddenException",
-                  "resolution": "Verify your credentials and permissions or contact your administrator.",
-                  "source": "<Service>",
-                  "statusCode": 403,
-                  "title": "Access forbidden"
+                "examples": {
+                  "Missing API permission": {
+                    "summary": "Missing API permission",
+                    "value": {
+                      "cause": "You do not have permission to access this resource.",
+                      "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                      "details": "You do not have permission to access this resource.",
+                      "documentationUrl": "https://developer.flute.com/",
+                      "entityId": null,
+                      "errorCode": "F0000",
+                      "exceptionType": "ForbiddenException",
+                      "resolution": "Verify your credentials and permissions or contact your administrator.",
+                      "source": "<Service>",
+                      "statusCode": 403,
+                      "title": "Access forbidden"
+                    }
+                  },
+                  "Partner API key on a merchant endpoint": {
+                    "summary": "Partner API key on a merchant endpoint",
+                    "value": {
+                      "cause": "You do not have permission to access this resource.",
+                      "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                      "details": "Partner token is being used. Use a merchant token instead.",
+                      "documentationUrl": "https://developer.flute.com/",
+                      "entityId": null,
+                      "errorCode": "F0000",
+                      "exceptionType": "ForbiddenException",
+                      "resolution": "Verify your credentials and permissions or contact your administrator.",
+                      "source": "IsvApiBff",
+                      "statusCode": 403,
+                      "title": "Access forbidden"
+                    }
+                  }
                 },
                 "schema": {
                   "$ref": "#/components/schemas/ForbiddenExceptionExample"
                 }
               }
             },
-            "description": "Forbidden"
+            "description": "Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: \"Partner token is being used. Use a merchant token instead.\""
           },
           "404": {
             "content": {
@@ -16289,8 +17400,14 @@
                       },
                       "source": {
                         "sourceId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-                        "sourceName": "API Key for ecommerce app",
-                        "sourceType": "ApiKey"
+                        "sourceName": "Checkout session",
+                        "sourceType": "Checkout"
+                      },
+                      "taxDetails": {
+                        "taxAmount": 15.67,
+                        "taxMode": "Inclusive",
+                        "taxRate": 8.5,
+                        "taxableAmount": 184.33
                       },
                       "transactionDateTime": "2026-01-01T00:00:00Z",
                       "transactionEvents": [
@@ -16364,6 +17481,7 @@
                         "sourceName": "API Key for ecommerce app",
                         "sourceType": "ApiKey"
                       },
+                      "taxDetails": null,
                       "transactionDateTime": "2026-01-01T00:00:00Z",
                       "transactionEvents": [
                         {
@@ -16445,25 +17563,46 @@
           "403": {
             "content": {
               "application/json": {
-                "example": {
-                  "cause": "You do not have permission to access this resource.",
-                  "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                  "details": "You do not have permission to access this resource.",
-                  "documentationUrl": "https://developer.flute.com/",
-                  "entityId": null,
-                  "errorCode": "F0000",
-                  "exceptionType": "ForbiddenException",
-                  "resolution": "Verify your credentials and permissions or contact your administrator.",
-                  "source": "<Service>",
-                  "statusCode": 403,
-                  "title": "Access forbidden"
+                "examples": {
+                  "Missing API permission": {
+                    "summary": "Missing API permission",
+                    "value": {
+                      "cause": "You do not have permission to access this resource.",
+                      "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                      "details": "You do not have permission to access this resource.",
+                      "documentationUrl": "https://developer.flute.com/",
+                      "entityId": null,
+                      "errorCode": "F0000",
+                      "exceptionType": "ForbiddenException",
+                      "resolution": "Verify your credentials and permissions or contact your administrator.",
+                      "source": "<Service>",
+                      "statusCode": 403,
+                      "title": "Access forbidden"
+                    }
+                  },
+                  "Partner API key on a merchant endpoint": {
+                    "summary": "Partner API key on a merchant endpoint",
+                    "value": {
+                      "cause": "You do not have permission to access this resource.",
+                      "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                      "details": "Partner token is being used. Use a merchant token instead.",
+                      "documentationUrl": "https://developer.flute.com/",
+                      "entityId": null,
+                      "errorCode": "F0000",
+                      "exceptionType": "ForbiddenException",
+                      "resolution": "Verify your credentials and permissions or contact your administrator.",
+                      "source": "IsvApiBff",
+                      "statusCode": 403,
+                      "title": "Access forbidden"
+                    }
+                  }
                 },
                 "schema": {
                   "$ref": "#/components/schemas/ForbiddenExceptionExample"
                 }
               }
             },
-            "description": "Forbidden"
+            "description": "Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: \"Partner token is being used. Use a merchant token instead.\""
           },
           "404": {
             "content": {
@@ -16678,8 +17817,14 @@
                       },
                       "source": {
                         "sourceId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-                        "sourceName": "API Key for ecommerce app",
-                        "sourceType": "ApiKey"
+                        "sourceName": "Checkout session",
+                        "sourceType": "Checkout"
+                      },
+                      "taxDetails": {
+                        "taxAmount": 15.67,
+                        "taxMode": "Inclusive",
+                        "taxRate": 8.5,
+                        "taxableAmount": 184.33
                       },
                       "transactionDateTime": "2026-01-01T00:00:00Z",
                       "transactionEvents": [
@@ -16753,6 +17898,7 @@
                         "sourceName": "API Key for ecommerce app",
                         "sourceType": "ApiKey"
                       },
+                      "taxDetails": null,
                       "transactionDateTime": "2026-01-01T00:00:00Z",
                       "transactionEvents": [
                         {
@@ -16834,25 +17980,46 @@
           "403": {
             "content": {
               "application/json": {
-                "example": {
-                  "cause": "You do not have permission to access this resource.",
-                  "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                  "details": "You do not have permission to access this resource.",
-                  "documentationUrl": "https://developer.flute.com/",
-                  "entityId": null,
-                  "errorCode": "F0000",
-                  "exceptionType": "ForbiddenException",
-                  "resolution": "Verify your credentials and permissions or contact your administrator.",
-                  "source": "<Service>",
-                  "statusCode": 403,
-                  "title": "Access forbidden"
+                "examples": {
+                  "Missing API permission": {
+                    "summary": "Missing API permission",
+                    "value": {
+                      "cause": "You do not have permission to access this resource.",
+                      "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                      "details": "You do not have permission to access this resource.",
+                      "documentationUrl": "https://developer.flute.com/",
+                      "entityId": null,
+                      "errorCode": "F0000",
+                      "exceptionType": "ForbiddenException",
+                      "resolution": "Verify your credentials and permissions or contact your administrator.",
+                      "source": "<Service>",
+                      "statusCode": 403,
+                      "title": "Access forbidden"
+                    }
+                  },
+                  "Partner API key on a merchant endpoint": {
+                    "summary": "Partner API key on a merchant endpoint",
+                    "value": {
+                      "cause": "You do not have permission to access this resource.",
+                      "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                      "details": "Partner token is being used. Use a merchant token instead.",
+                      "documentationUrl": "https://developer.flute.com/",
+                      "entityId": null,
+                      "errorCode": "F0000",
+                      "exceptionType": "ForbiddenException",
+                      "resolution": "Verify your credentials and permissions or contact your administrator.",
+                      "source": "IsvApiBff",
+                      "statusCode": 403,
+                      "title": "Access forbidden"
+                    }
+                  }
                 },
                 "schema": {
                   "$ref": "#/components/schemas/ForbiddenExceptionExample"
                 }
               }
             },
-            "description": "Forbidden"
+            "description": "Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: \"Partner token is being used. Use a merchant token instead.\""
           },
           "404": {
             "content": {
@@ -17044,25 +18211,46 @@
           "403": {
             "content": {
               "application/json": {
-                "example": {
-                  "cause": "You do not have permission to access this resource.",
-                  "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                  "details": "You do not have permission to access this resource.",
-                  "documentationUrl": "https://developer.flute.com/",
-                  "entityId": null,
-                  "errorCode": "F0000",
-                  "exceptionType": "ForbiddenException",
-                  "resolution": "Verify your credentials and permissions or contact your administrator.",
-                  "source": "<Service>",
-                  "statusCode": 403,
-                  "title": "Access forbidden"
+                "examples": {
+                  "Missing API permission": {
+                    "summary": "Missing API permission",
+                    "value": {
+                      "cause": "You do not have permission to access this resource.",
+                      "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                      "details": "You do not have permission to access this resource.",
+                      "documentationUrl": "https://developer.flute.com/",
+                      "entityId": null,
+                      "errorCode": "F0000",
+                      "exceptionType": "ForbiddenException",
+                      "resolution": "Verify your credentials and permissions or contact your administrator.",
+                      "source": "<Service>",
+                      "statusCode": 403,
+                      "title": "Access forbidden"
+                    }
+                  },
+                  "Partner API key on a merchant endpoint": {
+                    "summary": "Partner API key on a merchant endpoint",
+                    "value": {
+                      "cause": "You do not have permission to access this resource.",
+                      "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                      "details": "Partner token is being used. Use a merchant token instead.",
+                      "documentationUrl": "https://developer.flute.com/",
+                      "entityId": null,
+                      "errorCode": "F0000",
+                      "exceptionType": "ForbiddenException",
+                      "resolution": "Verify your credentials and permissions or contact your administrator.",
+                      "source": "IsvApiBff",
+                      "statusCode": 403,
+                      "title": "Access forbidden"
+                    }
+                  }
                 },
                 "schema": {
                   "$ref": "#/components/schemas/ForbiddenExceptionExample"
                 }
               }
             },
-            "description": "Forbidden"
+            "description": "Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: \"Partner token is being used. Use a merchant token instead.\""
           },
           "404": {
             "content": {
@@ -17255,8 +18443,14 @@
                       },
                       "source": {
                         "sourceId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-                        "sourceName": "API Key for ecommerce app",
-                        "sourceType": "ApiKey"
+                        "sourceName": "Checkout session",
+                        "sourceType": "Checkout"
+                      },
+                      "taxDetails": {
+                        "taxAmount": 15.67,
+                        "taxMode": "Inclusive",
+                        "taxRate": 8.5,
+                        "taxableAmount": 184.33
                       },
                       "transactionDateTime": "2026-01-01T00:00:00Z",
                       "transactionEvents": [
@@ -17330,6 +18524,7 @@
                         "sourceName": "API Key for ecommerce app",
                         "sourceType": "ApiKey"
                       },
+                      "taxDetails": null,
                       "transactionDateTime": "2026-01-01T00:00:00Z",
                       "transactionEvents": [
                         {
@@ -17411,25 +18606,46 @@
           "403": {
             "content": {
               "application/json": {
-                "example": {
-                  "cause": "You do not have permission to access this resource.",
-                  "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                  "details": "You do not have permission to access this resource.",
-                  "documentationUrl": "https://developer.flute.com/",
-                  "entityId": null,
-                  "errorCode": "F0000",
-                  "exceptionType": "ForbiddenException",
-                  "resolution": "Verify your credentials and permissions or contact your administrator.",
-                  "source": "<Service>",
-                  "statusCode": 403,
-                  "title": "Access forbidden"
+                "examples": {
+                  "Missing API permission": {
+                    "summary": "Missing API permission",
+                    "value": {
+                      "cause": "You do not have permission to access this resource.",
+                      "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                      "details": "You do not have permission to access this resource.",
+                      "documentationUrl": "https://developer.flute.com/",
+                      "entityId": null,
+                      "errorCode": "F0000",
+                      "exceptionType": "ForbiddenException",
+                      "resolution": "Verify your credentials and permissions or contact your administrator.",
+                      "source": "<Service>",
+                      "statusCode": 403,
+                      "title": "Access forbidden"
+                    }
+                  },
+                  "Partner API key on a merchant endpoint": {
+                    "summary": "Partner API key on a merchant endpoint",
+                    "value": {
+                      "cause": "You do not have permission to access this resource.",
+                      "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                      "details": "Partner token is being used. Use a merchant token instead.",
+                      "documentationUrl": "https://developer.flute.com/",
+                      "entityId": null,
+                      "errorCode": "F0000",
+                      "exceptionType": "ForbiddenException",
+                      "resolution": "Verify your credentials and permissions or contact your administrator.",
+                      "source": "IsvApiBff",
+                      "statusCode": 403,
+                      "title": "Access forbidden"
+                    }
+                  }
                 },
                 "schema": {
                   "$ref": "#/components/schemas/ForbiddenExceptionExample"
                 }
               }
             },
-            "description": "Forbidden"
+            "description": "Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: \"Partner token is being used. Use a merchant token instead.\""
           },
           "404": {
             "content": {
@@ -19864,6 +21080,10 @@
     },
     {
       "name": "Transactions"
+    },
+    {
+      "description": "The users the caller's credentials can see, and per partner user the onboarding configuration\nan application created for that user has to reference.",
+      "name": "Users"
     },
     {
       "name": "Webhooks"
