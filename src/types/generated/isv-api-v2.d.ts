@@ -605,6 +605,433 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v2/applications": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List applications Required API Permission: List Applications
+         * @description Returns the merchant applications you initiated, newest application number first. Use
+         *     applicationStatus to track where each one sits in onboarding; the application lifecycle
+         *     webhooks report the individual events that move it between statuses. Cancelled
+         *     applications are left out unless you ask for them with applicationStatus=Cancelled.
+         *     createdFrom is inclusive and createdTo exclusive, so a calendar month is
+         *     createdFrom=2026-06-01 and createdTo=2026-07-01.
+         */
+        get: {
+            parameters: {
+                query?: {
+                    /**
+                     * @description Zero-based page index.
+                     * @example 0
+                     */
+                    pageIndex?: number;
+                    /**
+                     * @description Number of items per page. Between 1 and 100.
+                     * @example 20
+                     */
+                    pageSize?: number;
+                    /**
+                     * @description Filter by application status. Cancelled applications are only returned when asked for
+                     *     explicitly.
+                     * @example InReview
+                     */
+                    applicationStatus?: components["schemas"]["ApplicationStatus"];
+                    /** @description Filter to a single application. */
+                    applicationId?: string;
+                    /**
+                     * @description Filter to applications created on or after this date (inclusive).
+                     * @example 2026-01-01
+                     */
+                    createdFrom?: string;
+                    /**
+                     * @description Filter to applications created before this date (exclusive). Pass the day after the
+                     *     last one you want, so June is createdFrom=2026-06-01 and createdTo=2026-07-01.
+                     * @example 2027-01-01
+                     */
+                    createdTo?: string;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "items": [
+                         *         {
+                         *           "applicationNumber": 4711,
+                         *           "applicationStatus": "InReview",
+                         *           "applicationStatusStartedAt": "2026-01-01T00:00:00Z",
+                         *           "businessName": "Corner Coffee",
+                         *           "createdOn": "2026-01-01T00:00:00Z",
+                         *           "id": "3f2504e0-4f89-11d3-9a0c-0305e82c3301",
+                         *           "invitedBy": "Jane Doe",
+                         *           "merchantId": "7c9e6679-7425-40de-944b-e07fc1f90ae7",
+                         *           "metadata": {
+                         *             "locationId": "vinted_loc_00441"
+                         *           },
+                         *           "mid": "932129304958123",
+                         *           "partner": "Acme Partners",
+                         *           "partnerUser": {
+                         *             "firstName": "Ada",
+                         *             "lastName": "Lovelace"
+                         *           },
+                         *           "processor": "Fiserv",
+                         *           "sentAt": "2026-01-01T00:00:00Z",
+                         *           "sponsor": "Esquire"
+                         *         }
+                         *       ],
+                         *       "pageInfo": {
+                         *         "hasMore": false,
+                         *         "pageIndex": 0,
+                         *         "pageSize": 20,
+                         *         "totalItems": 1,
+                         *         "totalPages": 1
+                         *       }
+                         *     }
+                         */
+                        "application/json": components["schemas"]["PagedResponseDtoOfApplicationDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "One or more fields failed validation rules.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "One or more validation errors occurred.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "V0000",
+                         *       "errors": {
+                         *         "Email": [
+                         *           "'Email' is not a valid email address."
+                         *         ]
+                         *       },
+                         *       "exceptionType": "ValidationException",
+                         *       "resolution": "Review the errors and correct the invalid fields.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 400,
+                         *       "title": "Validation failed"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ValidationExceptionExample"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Forbidden */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "You do not have permission to access this resource.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "You do not have permission to access this resource.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "F0000",
+                         *       "exceptionType": "ForbiddenException",
+                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 403,
+                         *       "title": "Access forbidden"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ForbiddenExceptionExample"];
+                    };
+                };
+                /** @description Too Many Requests */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "Too many requests sent in a short period.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Too many requests sent in a short period.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "R0000",
+                         *       "exceptionType": "RateLimitExceededException",
+                         *       "resolution": "Wait before retrying the request. Check the Retry-After header for more information.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 429,
+                         *       "title": "Rate limit exceeded"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["RateLimitExceededExceptionExample"];
+                    };
+                };
+                /** @description Internal Server Error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "An unexpected error occurred while processing the request",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "An unexpected error occurred while processing the request.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "I0000",
+                         *       "exceptionType": "IntegrationException",
+                         *       "resolution": "Please contact support with the correlation ID if the issue persists",
+                         *       "source": "<Service>",
+                         *       "statusCode": 500,
+                         *       "title": "Internal server error"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["InternalExceptionExample"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        /**
+         * Create application Required API Permission: Create Applications
+         * @description Invites a merchant to complete an application you have pre-filled. Send as little as the
+         *     business name and the merchant's email, or as much of the application as you hold; every
+         *     field you leave out stays empty for the merchant to fill in, including sensitive ones such
+         *     as SSN and bank details. The application is attributed to partnerUserId, whose scheduleAId
+         *     and splitProfileId must be among the ones GET /isv/v2/users/{userId}/schedule-as and
+         *     /split-profiles return. deliveryMethod decides who hands the merchant the link: Email means
+         *     we send the invitation email; PartnerDirect means you deliver applicationUrl yourself; Iframe
+         *     means you embed applicationUrl in an iframe on your own page and the merchant completes and
+         *     signs the application there without creating a Flute account; the frame posts
+         *     arise:application-submitted and arise:application-signed to your page as it goes, and your page
+         *     should check event.origin against applicationUrl before acting on them. The link grants access to the
+         *     application, so treat it like a password. Send an Idempotency-Key to make retries safe, and
+         *     metadata to correlate the application with your own records; it is stored as sent and
+         *     returned on the response and on GET /isv/v2/applications.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: {
+                    /** @description Optional client-generated key (max 255 characters) that makes this request safely retryable: a retry with the same key within the retention window returns the original response verbatim without a second side effect; a retry while the original is still processing returns 409 IdempotencyKeyInProgress; reusing a key with a different request returns 422 IdempotencyKeyConflict. Server errors (5xx) are not stored: retrying the same key after one executes the request again. */
+                    "Idempotency-Key"?: string;
+                };
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": components["schemas"]["CreateApplicationRequestDto"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "applicationId": "3f2504e0-4f89-11d3-9a0c-0305e82c3301",
+                         *       "applicationUrl": "https://dashboard.flute.com/onboarding/register?invite_token=019c76de-cbd3-788d-8cb0-f829e90a0623&email=marcus%40example.com",
+                         *       "createdOn": "2026-01-01T00:00:00Z",
+                         *       "deliveryMethod": "PartnerDirect",
+                         *       "metadata": {
+                         *         "locationId": "vinted_loc_00441"
+                         *       }
+                         *     }
+                         */
+                        "application/json": components["schemas"]["CreateApplicationResponseDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "One or more fields failed validation rules.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "One or more validation errors occurred.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "V0000",
+                         *       "errors": {
+                         *         "Email": [
+                         *           "'Email' is not a valid email address."
+                         *         ]
+                         *       },
+                         *       "exceptionType": "ValidationException",
+                         *       "resolution": "Review the errors and correct the invalid fields.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 400,
+                         *       "title": "Validation failed"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ValidationExceptionExample"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Forbidden */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "You do not have permission to access this resource.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "You do not have permission to access this resource.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "F0000",
+                         *       "exceptionType": "ForbiddenException",
+                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 403,
+                         *       "title": "Access forbidden"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ForbiddenExceptionExample"];
+                    };
+                };
+                /** @description Conflict */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "The request conflicts with the current state of the resource.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "The request conflicts with the current state of the resource.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "C0000",
+                         *       "exceptionType": "ConflictException",
+                         *       "resolution": "Refresh the resource state and retry the operation, or use a different idempotency key.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 409,
+                         *       "title": "Resource conflict"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ConflictExceptionExample"];
+                    };
+                };
+                /** @description Unprocessable Content */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "The request is well-formed but was rejected by a business rule.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "The request is well-formed but was rejected by a business rule.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "E0000",
+                         *       "exceptionType": "UnprocessableEntityException",
+                         *       "resolution": "Correct the request so it satisfies the rule described in the details, then retry.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 422,
+                         *       "title": "Unprocessable entity"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["UnprocessableEntityExceptionExample"];
+                    };
+                };
+                /** @description Too Many Requests */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "Too many requests sent in a short period.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Too many requests sent in a short period.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "R0000",
+                         *       "exceptionType": "RateLimitExceededException",
+                         *       "resolution": "Wait before retrying the request. Check the Retry-After header for more information.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 429,
+                         *       "title": "Rate limit exceeded"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["RateLimitExceededExceptionExample"];
+                    };
+                };
+                /** @description Internal Server Error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "An unexpected error occurred while processing the request",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "An unexpected error occurred while processing the request.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "I0000",
+                         *       "exceptionType": "IntegrationException",
+                         *       "resolution": "Please contact support with the correlation ID if the issue persists",
+                         *       "source": "<Service>",
+                         *       "statusCode": 500,
+                         *       "title": "Internal server error"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["InternalExceptionExample"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v2/customers": {
         parameters: {
             query?: never;
@@ -748,27 +1175,12 @@ export interface paths {
                     };
                     content?: never;
                 };
-                /** @description Forbidden */
+                /** @description Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: "Partner token is being used. Use a merchant token instead." */
                 403: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        /**
-                         * @example {
-                         *       "cause": "You do not have permission to access this resource.",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "details": "You do not have permission to access this resource.",
-                         *       "documentationUrl": "https://developer.flute.com/",
-                         *       "entityId": null,
-                         *       "errorCode": "F0000",
-                         *       "exceptionType": "ForbiddenException",
-                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
-                         *       "source": "<Service>",
-                         *       "statusCode": 403,
-                         *       "title": "Access forbidden"
-                         *     }
-                         */
                         "application/json": components["schemas"]["ForbiddenExceptionExample"];
                     };
                 };
@@ -957,27 +1369,12 @@ export interface paths {
                     };
                     content?: never;
                 };
-                /** @description Forbidden */
+                /** @description Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: "Partner token is being used. Use a merchant token instead." */
                 403: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        /**
-                         * @example {
-                         *       "cause": "You do not have permission to access this resource.",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "details": "You do not have permission to access this resource.",
-                         *       "documentationUrl": "https://developer.flute.com/",
-                         *       "entityId": null,
-                         *       "errorCode": "F0000",
-                         *       "exceptionType": "ForbiddenException",
-                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
-                         *       "source": "<Service>",
-                         *       "statusCode": 403,
-                         *       "title": "Access forbidden"
-                         *     }
-                         */
                         "application/json": components["schemas"]["ForbiddenExceptionExample"];
                     };
                 };
@@ -1216,27 +1613,12 @@ export interface paths {
                     };
                     content?: never;
                 };
-                /** @description Forbidden */
+                /** @description Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: "Partner token is being used. Use a merchant token instead." */
                 403: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        /**
-                         * @example {
-                         *       "cause": "You do not have permission to access this resource.",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "details": "You do not have permission to access this resource.",
-                         *       "documentationUrl": "https://developer.flute.com/",
-                         *       "entityId": null,
-                         *       "errorCode": "F0000",
-                         *       "exceptionType": "ForbiddenException",
-                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
-                         *       "source": "<Service>",
-                         *       "statusCode": 403,
-                         *       "title": "Access forbidden"
-                         *     }
-                         */
                         "application/json": components["schemas"]["ForbiddenExceptionExample"];
                     };
                 };
@@ -1375,27 +1757,12 @@ export interface paths {
                     };
                     content?: never;
                 };
-                /** @description Forbidden */
+                /** @description Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: "Partner token is being used. Use a merchant token instead." */
                 403: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        /**
-                         * @example {
-                         *       "cause": "You do not have permission to access this resource.",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "details": "You do not have permission to access this resource.",
-                         *       "documentationUrl": "https://developer.flute.com/",
-                         *       "entityId": null,
-                         *       "errorCode": "F0000",
-                         *       "exceptionType": "ForbiddenException",
-                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
-                         *       "source": "<Service>",
-                         *       "statusCode": 403,
-                         *       "title": "Access forbidden"
-                         *     }
-                         */
                         "application/json": components["schemas"]["ForbiddenExceptionExample"];
                     };
                 };
@@ -1659,27 +2026,12 @@ export interface paths {
                     };
                     content?: never;
                 };
-                /** @description Forbidden */
+                /** @description Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: "Partner token is being used. Use a merchant token instead." */
                 403: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        /**
-                         * @example {
-                         *       "cause": "You do not have permission to access this resource.",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "details": "You do not have permission to access this resource.",
-                         *       "documentationUrl": "https://developer.flute.com/",
-                         *       "entityId": null,
-                         *       "errorCode": "F0000",
-                         *       "exceptionType": "ForbiddenException",
-                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
-                         *       "source": "<Service>",
-                         *       "statusCode": 403,
-                         *       "title": "Access forbidden"
-                         *     }
-                         */
                         "application/json": components["schemas"]["ForbiddenExceptionExample"];
                     };
                 };
@@ -1860,27 +2212,12 @@ export interface paths {
                     };
                     content?: never;
                 };
-                /** @description Forbidden */
+                /** @description Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: "Partner token is being used. Use a merchant token instead." */
                 403: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        /**
-                         * @example {
-                         *       "cause": "You do not have permission to access this resource.",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "details": "You do not have permission to access this resource.",
-                         *       "documentationUrl": "https://developer.flute.com/",
-                         *       "entityId": null,
-                         *       "errorCode": "F0000",
-                         *       "exceptionType": "ForbiddenException",
-                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
-                         *       "source": "<Service>",
-                         *       "statusCode": 403,
-                         *       "title": "Access forbidden"
-                         *     }
-                         */
                         "application/json": components["schemas"]["ForbiddenExceptionExample"];
                     };
                 };
@@ -2002,27 +2339,12 @@ export interface paths {
                     };
                     content?: never;
                 };
-                /** @description Forbidden */
+                /** @description Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: "Partner token is being used. Use a merchant token instead." */
                 403: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        /**
-                         * @example {
-                         *       "cause": "You do not have permission to access this resource.",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "details": "You do not have permission to access this resource.",
-                         *       "documentationUrl": "https://developer.flute.com/",
-                         *       "entityId": null,
-                         *       "errorCode": "F0000",
-                         *       "exceptionType": "ForbiddenException",
-                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
-                         *       "source": "<Service>",
-                         *       "statusCode": 403,
-                         *       "title": "Access forbidden"
-                         *     }
-                         */
                         "application/json": components["schemas"]["ForbiddenExceptionExample"];
                     };
                 };
@@ -2171,27 +2493,12 @@ export interface paths {
                     };
                     content?: never;
                 };
-                /** @description Forbidden */
+                /** @description Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: "Partner token is being used. Use a merchant token instead." */
                 403: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        /**
-                         * @example {
-                         *       "cause": "You do not have permission to access this resource.",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "details": "You do not have permission to access this resource.",
-                         *       "documentationUrl": "https://developer.flute.com/",
-                         *       "entityId": null,
-                         *       "errorCode": "F0000",
-                         *       "exceptionType": "ForbiddenException",
-                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
-                         *       "source": "<Service>",
-                         *       "statusCode": 403,
-                         *       "title": "Access forbidden"
-                         *     }
-                         */
                         "application/json": components["schemas"]["ForbiddenExceptionExample"];
                     };
                 };
@@ -2327,27 +2634,12 @@ export interface paths {
                     };
                     content?: never;
                 };
-                /** @description Forbidden */
+                /** @description Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: "Partner token is being used. Use a merchant token instead." */
                 403: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        /**
-                         * @example {
-                         *       "cause": "You do not have permission to access this resource.",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "details": "You do not have permission to access this resource.",
-                         *       "documentationUrl": "https://developer.flute.com/",
-                         *       "entityId": null,
-                         *       "errorCode": "F0000",
-                         *       "exceptionType": "ForbiddenException",
-                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
-                         *       "source": "<Service>",
-                         *       "statusCode": 403,
-                         *       "title": "Access forbidden"
-                         *     }
-                         */
                         "application/json": components["schemas"]["ForbiddenExceptionExample"];
                     };
                 };
@@ -2497,27 +2789,12 @@ export interface paths {
                     };
                     content?: never;
                 };
-                /** @description Forbidden */
+                /** @description Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: "Partner token is being used. Use a merchant token instead." */
                 403: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        /**
-                         * @example {
-                         *       "cause": "You do not have permission to access this resource.",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "details": "You do not have permission to access this resource.",
-                         *       "documentationUrl": "https://developer.flute.com/",
-                         *       "entityId": null,
-                         *       "errorCode": "F0000",
-                         *       "exceptionType": "ForbiddenException",
-                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
-                         *       "source": "<Service>",
-                         *       "statusCode": 403,
-                         *       "title": "Access forbidden"
-                         *     }
-                         */
                         "application/json": components["schemas"]["ForbiddenExceptionExample"];
                     };
                 };
@@ -2698,27 +2975,12 @@ export interface paths {
                     };
                     content?: never;
                 };
-                /** @description Forbidden */
+                /** @description Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: "Partner token is being used. Use a merchant token instead." */
                 403: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        /**
-                         * @example {
-                         *       "cause": "You do not have permission to access this resource.",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "details": "You do not have permission to access this resource.",
-                         *       "documentationUrl": "https://developer.flute.com/",
-                         *       "entityId": null,
-                         *       "errorCode": "F0000",
-                         *       "exceptionType": "ForbiddenException",
-                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
-                         *       "source": "<Service>",
-                         *       "statusCode": 403,
-                         *       "title": "Access forbidden"
-                         *     }
-                         */
                         "application/json": components["schemas"]["ForbiddenExceptionExample"];
                     };
                 };
@@ -2954,27 +3216,12 @@ export interface paths {
                     };
                     content?: never;
                 };
-                /** @description Forbidden */
+                /** @description Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: "Partner token is being used. Use a merchant token instead." */
                 403: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        /**
-                         * @example {
-                         *       "cause": "You do not have permission to access this resource.",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "details": "You do not have permission to access this resource.",
-                         *       "documentationUrl": "https://developer.flute.com/",
-                         *       "entityId": null,
-                         *       "errorCode": "F0000",
-                         *       "exceptionType": "ForbiddenException",
-                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
-                         *       "source": "<Service>",
-                         *       "statusCode": 403,
-                         *       "title": "Access forbidden"
-                         *     }
-                         */
                         "application/json": components["schemas"]["ForbiddenExceptionExample"];
                     };
                 };
@@ -3151,27 +3398,12 @@ export interface paths {
                     };
                     content?: never;
                 };
-                /** @description Forbidden */
+                /** @description Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: "Partner token is being used. Use a merchant token instead." */
                 403: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        /**
-                         * @example {
-                         *       "cause": "You do not have permission to access this resource.",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "details": "You do not have permission to access this resource.",
-                         *       "documentationUrl": "https://developer.flute.com/",
-                         *       "entityId": null,
-                         *       "errorCode": "F0000",
-                         *       "exceptionType": "ForbiddenException",
-                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
-                         *       "source": "<Service>",
-                         *       "statusCode": 403,
-                         *       "title": "Access forbidden"
-                         *     }
-                         */
                         "application/json": components["schemas"]["ForbiddenExceptionExample"];
                     };
                 };
@@ -3366,27 +3598,12 @@ export interface paths {
                     };
                     content?: never;
                 };
-                /** @description Forbidden */
+                /** @description Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: "Partner token is being used. Use a merchant token instead." */
                 403: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        /**
-                         * @example {
-                         *       "cause": "You do not have permission to access this resource.",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "details": "You do not have permission to access this resource.",
-                         *       "documentationUrl": "https://developer.flute.com/",
-                         *       "entityId": null,
-                         *       "errorCode": "F0000",
-                         *       "exceptionType": "ForbiddenException",
-                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
-                         *       "source": "<Service>",
-                         *       "statusCode": 403,
-                         *       "title": "Access forbidden"
-                         *     }
-                         */
                         "application/json": components["schemas"]["ForbiddenExceptionExample"];
                     };
                 };
@@ -3562,27 +3779,12 @@ export interface paths {
                     };
                     content?: never;
                 };
-                /** @description Forbidden */
+                /** @description Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: "Partner token is being used. Use a merchant token instead." */
                 403: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        /**
-                         * @example {
-                         *       "cause": "You do not have permission to access this resource.",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "details": "You do not have permission to access this resource.",
-                         *       "documentationUrl": "https://developer.flute.com/",
-                         *       "entityId": null,
-                         *       "errorCode": "F0000",
-                         *       "exceptionType": "ForbiddenException",
-                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
-                         *       "source": "<Service>",
-                         *       "statusCode": 403,
-                         *       "title": "Access forbidden"
-                         *     }
-                         */
                         "application/json": components["schemas"]["ForbiddenExceptionExample"];
                     };
                 };
@@ -3721,27 +3923,12 @@ export interface paths {
                     };
                     content?: never;
                 };
-                /** @description Forbidden */
+                /** @description Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: "Partner token is being used. Use a merchant token instead." */
                 403: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        /**
-                         * @example {
-                         *       "cause": "You do not have permission to access this resource.",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "details": "You do not have permission to access this resource.",
-                         *       "documentationUrl": "https://developer.flute.com/",
-                         *       "entityId": null,
-                         *       "errorCode": "F0000",
-                         *       "exceptionType": "ForbiddenException",
-                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
-                         *       "source": "<Service>",
-                         *       "statusCode": 403,
-                         *       "title": "Access forbidden"
-                         *     }
-                         */
                         "application/json": components["schemas"]["ForbiddenExceptionExample"];
                     };
                 };
@@ -3923,27 +4110,12 @@ export interface paths {
                     };
                     content?: never;
                 };
-                /** @description Forbidden */
+                /** @description Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: "Partner token is being used. Use a merchant token instead." */
                 403: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        /**
-                         * @example {
-                         *       "cause": "You do not have permission to access this resource.",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "details": "You do not have permission to access this resource.",
-                         *       "documentationUrl": "https://developer.flute.com/",
-                         *       "entityId": null,
-                         *       "errorCode": "F0000",
-                         *       "exceptionType": "ForbiddenException",
-                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
-                         *       "source": "<Service>",
-                         *       "statusCode": 403,
-                         *       "title": "Access forbidden"
-                         *     }
-                         */
                         "application/json": components["schemas"]["ForbiddenExceptionExample"];
                     };
                 };
@@ -4150,27 +4322,12 @@ export interface paths {
                         "application/json": components["schemas"]["PaymentFailedExceptionExample"];
                     };
                 };
-                /** @description Forbidden */
+                /** @description Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: "Partner token is being used. Use a merchant token instead." */
                 403: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        /**
-                         * @example {
-                         *       "cause": "You do not have permission to access this resource.",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "details": "You do not have permission to access this resource.",
-                         *       "documentationUrl": "https://developer.flute.com/",
-                         *       "entityId": null,
-                         *       "errorCode": "F0000",
-                         *       "exceptionType": "ForbiddenException",
-                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
-                         *       "source": "<Service>",
-                         *       "statusCode": 403,
-                         *       "title": "Access forbidden"
-                         *     }
-                         */
                         "application/json": components["schemas"]["ForbiddenExceptionExample"];
                     };
                 };
@@ -4343,6 +4500,15 @@ export interface paths {
                         "application/json": components["schemas"]["ValidationExceptionExample"];
                     };
                 };
+                /** @description Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: "Partner token is being used. Use a merchant token instead." */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ForbiddenExceptionExample"];
+                    };
+                };
                 /** @description Unprocessable Content */
                 422: {
                     headers: {
@@ -4430,6 +4596,15 @@ export interface paths {
                     };
                     content: {
                         "application/json": components["schemas"]["GetPaymentSessionResponseDto"];
+                    };
+                };
+                /** @description Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: "Partner token is being used. Use a merchant token instead." */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ForbiddenExceptionExample"];
                     };
                 };
                 /** @description Not Found */
@@ -4521,6 +4696,15 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content?: never;
+                };
+                /** @description Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: "Partner token is being used. Use a merchant token instead." */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ForbiddenExceptionExample"];
+                    };
                 };
                 /** @description Not Found */
                 404: {
@@ -4904,27 +5088,12 @@ export interface paths {
                     };
                     content?: never;
                 };
-                /** @description Forbidden */
+                /** @description Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: "Partner token is being used. Use a merchant token instead." */
                 403: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        /**
-                         * @example {
-                         *       "cause": "You do not have permission to access this resource.",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "details": "You do not have permission to access this resource.",
-                         *       "documentationUrl": "https://developer.flute.com/",
-                         *       "entityId": null,
-                         *       "errorCode": "F0000",
-                         *       "exceptionType": "ForbiddenException",
-                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
-                         *       "source": "<Service>",
-                         *       "statusCode": 403,
-                         *       "title": "Access forbidden"
-                         *     }
-                         */
                         "application/json": components["schemas"]["ForbiddenExceptionExample"];
                     };
                 };
@@ -5118,27 +5287,12 @@ export interface paths {
                         "application/json": components["schemas"]["PaymentFailedExceptionExample"];
                     };
                 };
-                /** @description Forbidden */
+                /** @description Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: "Partner token is being used. Use a merchant token instead." */
                 403: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        /**
-                         * @example {
-                         *       "cause": "You do not have permission to access this resource.",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "details": "You do not have permission to access this resource.",
-                         *       "documentationUrl": "https://developer.flute.com/",
-                         *       "entityId": null,
-                         *       "errorCode": "F0000",
-                         *       "exceptionType": "ForbiddenException",
-                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
-                         *       "source": "<Service>",
-                         *       "statusCode": 403,
-                         *       "title": "Access forbidden"
-                         *     }
-                         */
                         "application/json": components["schemas"]["ForbiddenExceptionExample"];
                     };
                 };
@@ -5411,27 +5565,12 @@ export interface paths {
                         "application/json": components["schemas"]["PaymentFailedExceptionExample"];
                     };
                 };
-                /** @description Forbidden */
+                /** @description Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: "Partner token is being used. Use a merchant token instead." */
                 403: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        /**
-                         * @example {
-                         *       "cause": "You do not have permission to access this resource.",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "details": "You do not have permission to access this resource.",
-                         *       "documentationUrl": "https://developer.flute.com/",
-                         *       "entityId": null,
-                         *       "errorCode": "F0000",
-                         *       "exceptionType": "ForbiddenException",
-                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
-                         *       "source": "<Service>",
-                         *       "statusCode": 403,
-                         *       "title": "Access forbidden"
-                         *     }
-                         */
                         "application/json": components["schemas"]["ForbiddenExceptionExample"];
                     };
                 };
@@ -5622,7 +5761,15 @@ export interface paths {
                          *         "addressVerificationServiceResponse": null,
                          *         "amountBreakdown": null,
                          *         "batchId": null,
-                         *         "cardDetails": null,
+                         *         "cardDetails": {
+                         *           "cardBrand": "Visa",
+                         *           "cardDataSource": "EMV",
+                         *           "cardProcessedAsType": "Credit",
+                         *           "cardType": "Credit",
+                         *           "cardholderVerificationMethod": "ManualSignature",
+                         *           "maskedCardNumber": "411111******1111",
+                         *           "paymentMethodId": "c1a7b9d2-4e5f-4a6b-8c9d-0e1f2a3b4c5d"
+                         *         },
                          *         "cardTokenType": null,
                          *         "currencyCode": "USD",
                          *         "customerId": null,
@@ -5635,8 +5782,13 @@ export interface paths {
                          *         "processedAmount": 130.5,
                          *         "processorDetails": null,
                          *         "referenceId": "REF-12345",
-                         *         "refundDetails": null,
+                         *         "refundDetails": {
+                         *           "availableRefundAmount": 130.5,
+                         *           "isFullyRefunded": false,
+                         *           "refundedAmount": 0
+                         *         },
                          *         "source": null,
+                         *         "taxDetails": null,
                          *         "transactionDateTime": "2026-01-01T00:00:00Z",
                          *         "transactionEvents": null,
                          *         "transactionId": "7a62ba78-c4e2-4317-bc4e-c90a9d169107",
@@ -5694,27 +5846,12 @@ export interface paths {
                     };
                     content?: never;
                 };
-                /** @description Forbidden */
+                /** @description Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: "Partner token is being used. Use a merchant token instead." */
                 403: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        /**
-                         * @example {
-                         *       "cause": "You do not have permission to access this resource.",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "details": "You do not have permission to access this resource.",
-                         *       "documentationUrl": "https://developer.flute.com/",
-                         *       "entityId": null,
-                         *       "errorCode": "F0000",
-                         *       "exceptionType": "ForbiddenException",
-                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
-                         *       "source": "<Service>",
-                         *       "statusCode": 403,
-                         *       "title": "Access forbidden"
-                         *     }
-                         */
                         "application/json": components["schemas"]["ForbiddenExceptionExample"];
                     };
                 };
@@ -5924,27 +6061,12 @@ export interface paths {
                         "application/json": components["schemas"]["PaymentFailedExceptionExample"];
                     };
                 };
-                /** @description Forbidden */
+                /** @description Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: "Partner token is being used. Use a merchant token instead." */
                 403: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        /**
-                         * @example {
-                         *       "cause": "You do not have permission to access this resource.",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "details": "You do not have permission to access this resource.",
-                         *       "documentationUrl": "https://developer.flute.com/",
-                         *       "entityId": null,
-                         *       "errorCode": "F0000",
-                         *       "exceptionType": "ForbiddenException",
-                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
-                         *       "source": "<Service>",
-                         *       "statusCode": 403,
-                         *       "title": "Access forbidden"
-                         *     }
-                         */
                         "application/json": components["schemas"]["ForbiddenExceptionExample"];
                     };
                 };
@@ -6158,27 +6280,12 @@ export interface paths {
                     };
                     content?: never;
                 };
-                /** @description Forbidden */
+                /** @description Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: "Partner token is being used. Use a merchant token instead." */
                 403: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        /**
-                         * @example {
-                         *       "cause": "You do not have permission to access this resource.",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "details": "You do not have permission to access this resource.",
-                         *       "documentationUrl": "https://developer.flute.com/",
-                         *       "entityId": null,
-                         *       "errorCode": "F0000",
-                         *       "exceptionType": "ForbiddenException",
-                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
-                         *       "source": "<Service>",
-                         *       "statusCode": 403,
-                         *       "title": "Access forbidden"
-                         *     }
-                         */
                         "application/json": components["schemas"]["ForbiddenExceptionExample"];
                     };
                 };
@@ -6286,6 +6393,146 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v2/pricing-templates": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List pricing templates Required API Permission: List User Configurations
+         * @description Returns the pricing templates of your partner account, by name. Use the ids in
+         *     pricingTemplateIds when creating an application: one template puts the merchant straight
+         *     on it, several let the merchant choose. Templates marked isDefault are the ones offered
+         *     when an application is created without pricingTemplateIds. Fee values are not exposed;
+         *     pricing is managed in the dashboard.
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "items": [
+                         *         {
+                         *           "displayName": "Dual Pricing: fees paid by the cardholder",
+                         *           "id": "d9a4b9c2-6e3c-4a9f-9d4b-3c4d5e6f7081",
+                         *           "isDefault": false,
+                         *           "name": "Dual Pricing"
+                         *         },
+                         *         {
+                         *           "displayName": "Flat Rate: fees paid by the merchant",
+                         *           "id": "e0b5c0d3-7f4d-4b0a-8e5c-4d5e6f708192",
+                         *           "isDefault": true,
+                         *           "name": "Flat Rate"
+                         *         }
+                         *       ]
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ListPricingTemplatesResponseDto"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Forbidden */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "You do not have permission to access this resource.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "You do not have permission to access this resource.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "F0000",
+                         *       "exceptionType": "ForbiddenException",
+                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 403,
+                         *       "title": "Access forbidden"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ForbiddenExceptionExample"];
+                    };
+                };
+                /** @description Too Many Requests */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "Too many requests sent in a short period.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Too many requests sent in a short period.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "R0000",
+                         *       "exceptionType": "RateLimitExceededException",
+                         *       "resolution": "Wait before retrying the request. Check the Retry-After header for more information.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 429,
+                         *       "title": "Rate limit exceeded"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["RateLimitExceededExceptionExample"];
+                    };
+                };
+                /** @description Internal Server Error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "An unexpected error occurred while processing the request",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "An unexpected error occurred while processing the request.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "I0000",
+                         *       "exceptionType": "IntegrationException",
+                         *       "resolution": "Please contact support with the correlation ID if the issue persists",
+                         *       "source": "<Service>",
+                         *       "statusCode": 500,
+                         *       "title": "Internal server error"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["InternalExceptionExample"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v2/settings/contact-information": {
         parameters: {
             query?: never;
@@ -6374,27 +6621,12 @@ export interface paths {
                     };
                     content?: never;
                 };
-                /** @description Forbidden */
+                /** @description Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: "Partner token is being used. Use a merchant token instead." */
                 403: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        /**
-                         * @example {
-                         *       "cause": "You do not have permission to access this resource.",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "details": "You do not have permission to access this resource.",
-                         *       "documentationUrl": "https://developer.flute.com/",
-                         *       "entityId": null,
-                         *       "errorCode": "F0000",
-                         *       "exceptionType": "ForbiddenException",
-                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
-                         *       "source": "<Service>",
-                         *       "statusCode": 403,
-                         *       "title": "Access forbidden"
-                         *     }
-                         */
                         "application/json": components["schemas"]["ForbiddenExceptionExample"];
                     };
                 };
@@ -6573,28 +6805,37 @@ export interface paths {
                     };
                     content?: never;
                 };
-                /** @description Forbidden */
+                /** @description Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: "Partner token is being used. Use a merchant token instead." */
                 403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ForbiddenExceptionExample"];
+                    };
+                };
+                /** @description Not Found */
+                404: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
                         /**
                          * @example {
-                         *       "cause": "You do not have permission to access this resource.",
+                         *       "cause": "The requested resource does not exist or has been deleted.",
                          *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "details": "You do not have permission to access this resource.",
+                         *       "details": "Entity with ID b31fbe9f-eebb-45ce-9cae-92265389f47f does not exist or has been deleted",
                          *       "documentationUrl": "https://developer.flute.com/",
-                         *       "entityId": null,
-                         *       "errorCode": "F0000",
-                         *       "exceptionType": "ForbiddenException",
-                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
+                         *       "entityId": "b31fbe9f-eebb-45ce-9cae-92265389f47f",
+                         *       "errorCode": "N0000",
+                         *       "exceptionType": "NotFoundException",
+                         *       "resolution": "Verify the resource ID is correct or retrieve a list of available resources.",
                          *       "source": "<Service>",
-                         *       "statusCode": 403,
-                         *       "title": "Access forbidden"
+                         *       "statusCode": 404,
+                         *       "title": "Resource not found"
                          *     }
                          */
-                        "application/json": components["schemas"]["ForbiddenExceptionExample"];
+                        "application/json": components["schemas"]["NotFoundExceptionExample"];
                     };
                 };
                 /** @description Too Many Requests */
@@ -6736,27 +6977,12 @@ export interface paths {
                     };
                     content?: never;
                 };
-                /** @description Forbidden */
+                /** @description Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: "Partner token is being used. Use a merchant token instead." */
                 403: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        /**
-                         * @example {
-                         *       "cause": "You do not have permission to access this resource.",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "details": "You do not have permission to access this resource.",
-                         *       "documentationUrl": "https://developer.flute.com/",
-                         *       "entityId": null,
-                         *       "errorCode": "F0000",
-                         *       "exceptionType": "ForbiddenException",
-                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
-                         *       "source": "<Service>",
-                         *       "statusCode": 403,
-                         *       "title": "Access forbidden"
-                         *     }
-                         */
                         "application/json": components["schemas"]["ForbiddenExceptionExample"];
                     };
                 };
@@ -6918,27 +7144,12 @@ export interface paths {
                     };
                     content?: never;
                 };
-                /** @description Forbidden */
+                /** @description Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: "Partner token is being used. Use a merchant token instead." */
                 403: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        /**
-                         * @example {
-                         *       "cause": "You do not have permission to access this resource.",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "details": "You do not have permission to access this resource.",
-                         *       "documentationUrl": "https://developer.flute.com/",
-                         *       "entityId": null,
-                         *       "errorCode": "F0000",
-                         *       "exceptionType": "ForbiddenException",
-                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
-                         *       "source": "<Service>",
-                         *       "statusCode": 403,
-                         *       "title": "Access forbidden"
-                         *     }
-                         */
                         "application/json": components["schemas"]["ForbiddenExceptionExample"];
                     };
                 };
@@ -7164,27 +7375,12 @@ export interface paths {
                     };
                     content?: never;
                 };
-                /** @description Forbidden */
+                /** @description Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: "Partner token is being used. Use a merchant token instead." */
                 403: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        /**
-                         * @example {
-                         *       "cause": "You do not have permission to access this resource.",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "details": "You do not have permission to access this resource.",
-                         *       "documentationUrl": "https://developer.flute.com/",
-                         *       "entityId": null,
-                         *       "errorCode": "F0000",
-                         *       "exceptionType": "ForbiddenException",
-                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
-                         *       "source": "<Service>",
-                         *       "statusCode": 403,
-                         *       "title": "Access forbidden"
-                         *     }
-                         */
                         "application/json": components["schemas"]["ForbiddenExceptionExample"];
                     };
                 };
@@ -7356,27 +7552,12 @@ export interface paths {
                         "application/json": components["schemas"]["PaymentFailedExceptionExample"];
                     };
                 };
-                /** @description Forbidden */
+                /** @description Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: "Partner token is being used. Use a merchant token instead." */
                 403: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        /**
-                         * @example {
-                         *       "cause": "You do not have permission to access this resource.",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "details": "You do not have permission to access this resource.",
-                         *       "documentationUrl": "https://developer.flute.com/",
-                         *       "entityId": null,
-                         *       "errorCode": "F0000",
-                         *       "exceptionType": "ForbiddenException",
-                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
-                         *       "source": "<Service>",
-                         *       "statusCode": 403,
-                         *       "title": "Access forbidden"
-                         *     }
-                         */
                         "application/json": components["schemas"]["ForbiddenExceptionExample"];
                     };
                 };
@@ -7669,27 +7850,12 @@ export interface paths {
                     };
                     content?: never;
                 };
-                /** @description Forbidden */
+                /** @description Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: "Partner token is being used. Use a merchant token instead." */
                 403: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        /**
-                         * @example {
-                         *       "cause": "You do not have permission to access this resource.",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "details": "You do not have permission to access this resource.",
-                         *       "documentationUrl": "https://developer.flute.com/",
-                         *       "entityId": null,
-                         *       "errorCode": "F0000",
-                         *       "exceptionType": "ForbiddenException",
-                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
-                         *       "source": "<Service>",
-                         *       "statusCode": 403,
-                         *       "title": "Access forbidden"
-                         *     }
-                         */
                         "application/json": components["schemas"]["ForbiddenExceptionExample"];
                     };
                 };
@@ -7843,27 +8009,12 @@ export interface paths {
                     };
                     content?: never;
                 };
-                /** @description Forbidden */
+                /** @description Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: "Partner token is being used. Use a merchant token instead." */
                 403: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        /**
-                         * @example {
-                         *       "cause": "You do not have permission to access this resource.",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "details": "You do not have permission to access this resource.",
-                         *       "documentationUrl": "https://developer.flute.com/",
-                         *       "entityId": null,
-                         *       "errorCode": "F0000",
-                         *       "exceptionType": "ForbiddenException",
-                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
-                         *       "source": "<Service>",
-                         *       "statusCode": 403,
-                         *       "title": "Access forbidden"
-                         *     }
-                         */
                         "application/json": components["schemas"]["ForbiddenExceptionExample"];
                     };
                 };
@@ -8190,27 +8341,12 @@ export interface paths {
                     };
                     content?: never;
                 };
-                /** @description Forbidden */
+                /** @description Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: "Partner token is being used. Use a merchant token instead." */
                 403: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        /**
-                         * @example {
-                         *       "cause": "You do not have permission to access this resource.",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "details": "You do not have permission to access this resource.",
-                         *       "documentationUrl": "https://developer.flute.com/",
-                         *       "entityId": null,
-                         *       "errorCode": "F0000",
-                         *       "exceptionType": "ForbiddenException",
-                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
-                         *       "source": "<Service>",
-                         *       "statusCode": 403,
-                         *       "title": "Access forbidden"
-                         *     }
-                         */
                         "application/json": components["schemas"]["ForbiddenExceptionExample"];
                     };
                 };
@@ -8352,27 +8488,12 @@ export interface paths {
                         "application/json": components["schemas"]["PaymentFailedExceptionExample"];
                     };
                 };
-                /** @description Forbidden */
+                /** @description Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: "Partner token is being used. Use a merchant token instead." */
                 403: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        /**
-                         * @example {
-                         *       "cause": "You do not have permission to access this resource.",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "details": "You do not have permission to access this resource.",
-                         *       "documentationUrl": "https://developer.flute.com/",
-                         *       "entityId": null,
-                         *       "errorCode": "F0000",
-                         *       "exceptionType": "ForbiddenException",
-                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
-                         *       "source": "<Service>",
-                         *       "statusCode": 403,
-                         *       "title": "Access forbidden"
-                         *     }
-                         */
                         "application/json": components["schemas"]["ForbiddenExceptionExample"];
                     };
                 };
@@ -8532,12 +8653,12 @@ export interface paths {
                      * @example {
                      *       "baseAmount": 100,
                      *       "currencyCode": "USD",
-                     *       "discountAmount": 5,
+                     *       "discountAmount": null,
                      *       "discountRate": 5,
                      *       "pricingType": "Card",
                      *       "surchargeRate": 2.5,
                      *       "tipAmount": 15,
-                     *       "tipRate": 0
+                     *       "tipRate": null
                      *     }
                      */
                     "application/json": components["schemas"]["CalculateAmountRequestDto"];
@@ -8636,27 +8757,12 @@ export interface paths {
                     };
                     content?: never;
                 };
-                /** @description Forbidden */
+                /** @description Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: "Partner token is being used. Use a merchant token instead." */
                 403: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        /**
-                         * @example {
-                         *       "cause": "You do not have permission to access this resource.",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "details": "You do not have permission to access this resource.",
-                         *       "documentationUrl": "https://developer.flute.com/",
-                         *       "entityId": null,
-                         *       "errorCode": "F0000",
-                         *       "exceptionType": "ForbiddenException",
-                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
-                         *       "source": "<Service>",
-                         *       "statusCode": 403,
-                         *       "title": "Access forbidden"
-                         *     }
-                         */
                         "application/json": components["schemas"]["ForbiddenExceptionExample"];
                     };
                 };
@@ -8811,27 +8917,12 @@ export interface paths {
                         "application/json": components["schemas"]["PaymentFailedExceptionExample"];
                     };
                 };
-                /** @description Forbidden */
+                /** @description Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: "Partner token is being used. Use a merchant token instead." */
                 403: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        /**
-                         * @example {
-                         *       "cause": "You do not have permission to access this resource.",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "details": "You do not have permission to access this resource.",
-                         *       "documentationUrl": "https://developer.flute.com/",
-                         *       "entityId": null,
-                         *       "errorCode": "F0000",
-                         *       "exceptionType": "ForbiddenException",
-                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
-                         *       "source": "<Service>",
-                         *       "statusCode": 403,
-                         *       "title": "Access forbidden"
-                         *     }
-                         */
                         "application/json": components["schemas"]["ForbiddenExceptionExample"];
                     };
                 };
@@ -9031,27 +9122,12 @@ export interface paths {
                     };
                     content?: never;
                 };
-                /** @description Forbidden */
+                /** @description Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: "Partner token is being used. Use a merchant token instead." */
                 403: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        /**
-                         * @example {
-                         *       "cause": "You do not have permission to access this resource.",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "details": "You do not have permission to access this resource.",
-                         *       "documentationUrl": "https://developer.flute.com/",
-                         *       "entityId": null,
-                         *       "errorCode": "F0000",
-                         *       "exceptionType": "ForbiddenException",
-                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
-                         *       "source": "<Service>",
-                         *       "statusCode": 403,
-                         *       "title": "Access forbidden"
-                         *     }
-                         */
                         "application/json": components["schemas"]["ForbiddenExceptionExample"];
                     };
                 };
@@ -9234,27 +9310,12 @@ export interface paths {
                         "application/json": components["schemas"]["PaymentFailedExceptionExample"];
                     };
                 };
-                /** @description Forbidden */
+                /** @description Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: "Partner token is being used. Use a merchant token instead." */
                 403: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        /**
-                         * @example {
-                         *       "cause": "You do not have permission to access this resource.",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "details": "You do not have permission to access this resource.",
-                         *       "documentationUrl": "https://developer.flute.com/",
-                         *       "entityId": null,
-                         *       "errorCode": "F0000",
-                         *       "exceptionType": "ForbiddenException",
-                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
-                         *       "source": "<Service>",
-                         *       "statusCode": 403,
-                         *       "title": "Access forbidden"
-                         *     }
-                         */
                         "application/json": components["schemas"]["ForbiddenExceptionExample"];
                     };
                 };
@@ -9483,27 +9544,12 @@ export interface paths {
                         "application/json": components["schemas"]["PaymentFailedExceptionExample"];
                     };
                 };
-                /** @description Forbidden */
+                /** @description Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: "Partner token is being used. Use a merchant token instead." */
                 403: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        /**
-                         * @example {
-                         *       "cause": "You do not have permission to access this resource.",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "details": "You do not have permission to access this resource.",
-                         *       "documentationUrl": "https://developer.flute.com/",
-                         *       "entityId": null,
-                         *       "errorCode": "F0000",
-                         *       "exceptionType": "ForbiddenException",
-                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
-                         *       "source": "<Service>",
-                         *       "statusCode": 403,
-                         *       "title": "Access forbidden"
-                         *     }
-                         */
                         "application/json": components["schemas"]["ForbiddenExceptionExample"];
                     };
                 };
@@ -9742,27 +9788,12 @@ export interface paths {
                         "application/json": components["schemas"]["PaymentFailedExceptionExample"];
                     };
                 };
-                /** @description Forbidden */
+                /** @description Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: "Partner token is being used. Use a merchant token instead." */
                 403: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        /**
-                         * @example {
-                         *       "cause": "You do not have permission to access this resource.",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "details": "You do not have permission to access this resource.",
-                         *       "documentationUrl": "https://developer.flute.com/",
-                         *       "entityId": null,
-                         *       "errorCode": "F0000",
-                         *       "exceptionType": "ForbiddenException",
-                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
-                         *       "source": "<Service>",
-                         *       "statusCode": 403,
-                         *       "title": "Access forbidden"
-                         *     }
-                         */
                         "application/json": components["schemas"]["ForbiddenExceptionExample"];
                     };
                 };
@@ -10001,27 +10032,12 @@ export interface paths {
                         "application/json": components["schemas"]["PaymentFailedExceptionExample"];
                     };
                 };
-                /** @description Forbidden */
+                /** @description Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: "Partner token is being used. Use a merchant token instead." */
                 403: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        /**
-                         * @example {
-                         *       "cause": "You do not have permission to access this resource.",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "details": "You do not have permission to access this resource.",
-                         *       "documentationUrl": "https://developer.flute.com/",
-                         *       "entityId": null,
-                         *       "errorCode": "F0000",
-                         *       "exceptionType": "ForbiddenException",
-                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
-                         *       "source": "<Service>",
-                         *       "statusCode": 403,
-                         *       "title": "Access forbidden"
-                         *     }
-                         */
                         "application/json": components["schemas"]["ForbiddenExceptionExample"];
                     };
                 };
@@ -10233,27 +10249,12 @@ export interface paths {
                     };
                     content?: never;
                 };
-                /** @description Forbidden */
+                /** @description Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: "Partner token is being used. Use a merchant token instead." */
                 403: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        /**
-                         * @example {
-                         *       "cause": "You do not have permission to access this resource.",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "details": "You do not have permission to access this resource.",
-                         *       "documentationUrl": "https://developer.flute.com/",
-                         *       "entityId": null,
-                         *       "errorCode": "F0000",
-                         *       "exceptionType": "ForbiddenException",
-                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
-                         *       "source": "<Service>",
-                         *       "statusCode": 403,
-                         *       "title": "Access forbidden"
-                         *     }
-                         */
                         "application/json": components["schemas"]["ForbiddenExceptionExample"];
                     };
                 };
@@ -10469,27 +10470,12 @@ export interface paths {
                         "application/json": components["schemas"]["PaymentFailedExceptionExample"];
                     };
                 };
-                /** @description Forbidden */
+                /** @description Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: "Partner token is being used. Use a merchant token instead." */
                 403: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        /**
-                         * @example {
-                         *       "cause": "You do not have permission to access this resource.",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "details": "You do not have permission to access this resource.",
-                         *       "documentationUrl": "https://developer.flute.com/",
-                         *       "entityId": null,
-                         *       "errorCode": "F0000",
-                         *       "exceptionType": "ForbiddenException",
-                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
-                         *       "source": "<Service>",
-                         *       "statusCode": 403,
-                         *       "title": "Access forbidden"
-                         *     }
-                         */
                         "application/json": components["schemas"]["ForbiddenExceptionExample"];
                     };
                 };
@@ -10615,6 +10601,593 @@ export interface paths {
                 };
             };
         };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v2/users": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List users Required API Permission: List User Configurations
+         * @description Returns the people who can sign in under the accounts your key reaches, one row each, by email.
+         *     With a partner key that is your partner account's users, your merchants' users and the
+         *     applicants you invited; with a merchant key, that merchant's users. Use userType to keep to
+         *     people holding one kind of profile (Partner for those who can create onboarding invitations),
+         *     and email to find one person directly. A sandbox key sees only sandbox accounts, and no
+         *     applicants: applications exist only live.
+         */
+        get: {
+            parameters: {
+                query?: {
+                    /**
+                     * @description Zero-based page index.
+                     * @example 0
+                     */
+                    pageIndex?: number;
+                    /**
+                     * @description Number of items per page. Between 1 and 100.
+                     * @example 20
+                     */
+                    pageSize?: number;
+                    /**
+                     * @description Keep to people holding one kind of profile: Partner for your own users, Merchant for your
+                     *     merchants' users, Applicant for the applicants you invited. Omit for everyone.
+                     * @example Partner
+                     */
+                    userType?: components["schemas"]["UserType"];
+                    /**
+                     * @description Filter to the user with this email address. Letter case is ignored.
+                     * @example ada@partner.example
+                     */
+                    email?: string;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "items": [
+                         *         {
+                         *           "email": "ada@partner.example",
+                         *           "id": "3f2504e0-4f89-11d3-9a0c-0305e82c3301"
+                         *         },
+                         *         {
+                         *           "email": "grace@cornercoffee.example",
+                         *           "id": "9b2e4d3f-6c8e-4f0b-c2d4-e3f5a7b9c1d2"
+                         *         }
+                         *       ],
+                         *       "pageInfo": {
+                         *         "hasMore": false,
+                         *         "pageIndex": 0,
+                         *         "pageSize": 20,
+                         *         "totalItems": 2,
+                         *         "totalPages": 1
+                         *       }
+                         *     }
+                         */
+                        "application/json": components["schemas"]["PagedResponseDtoOfUserDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "One or more fields failed validation rules.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "One or more validation errors occurred.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "V0000",
+                         *       "errors": {
+                         *         "Email": [
+                         *           "'Email' is not a valid email address."
+                         *         ]
+                         *       },
+                         *       "exceptionType": "ValidationException",
+                         *       "resolution": "Review the errors and correct the invalid fields.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 400,
+                         *       "title": "Validation failed"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ValidationExceptionExample"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Forbidden */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "You do not have permission to access this resource.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "You do not have permission to access this resource.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "F0000",
+                         *       "exceptionType": "ForbiddenException",
+                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 403,
+                         *       "title": "Access forbidden"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ForbiddenExceptionExample"];
+                    };
+                };
+                /** @description Too Many Requests */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "Too many requests sent in a short period.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Too many requests sent in a short period.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "R0000",
+                         *       "exceptionType": "RateLimitExceededException",
+                         *       "resolution": "Wait before retrying the request. Check the Retry-After header for more information.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 429,
+                         *       "title": "Rate limit exceeded"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["RateLimitExceededExceptionExample"];
+                    };
+                };
+                /** @description Internal Server Error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "An unexpected error occurred while processing the request",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "An unexpected error occurred while processing the request.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "I0000",
+                         *       "exceptionType": "IntegrationException",
+                         *       "resolution": "Please contact support with the correlation ID if the issue persists",
+                         *       "source": "<Service>",
+                         *       "statusCode": 500,
+                         *       "title": "Internal server error"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["InternalExceptionExample"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v2/users/{userId}/schedule-as": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List a user's Schedule As Required API Permission: List User Configurations
+         * @description Returns the Schedule As (pricing schedules) one of your users can put a merchant
+         *     application on. The user must belong to your partner account; any other user id answers
+         *     404. Use the id of the Schedule A you want when creating an application for that user.
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description The partner user's identifier.
+                     * @example 3f2504e0-4f89-11d3-9a0c-0305e82c3301
+                     */
+                    userId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "items": [
+                         *         {
+                         *           "id": "8a1f3c2e-5b7d-4e9a-b1c3-d2e4f6a8b0c1",
+                         *           "name": "Fiserv Standard",
+                         *           "processorId": 123
+                         *         },
+                         *         {
+                         *           "id": "9b2e4d3f-6c8e-4f0b-c2d4-e3f5a7b9c1d2",
+                         *           "name": "Any Processor Interchange Plus",
+                         *           "processorId": null
+                         *         }
+                         *       ]
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ListScheduleAsResponseDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "One or more fields failed validation rules.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "One or more validation errors occurred.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "V0000",
+                         *       "errors": {
+                         *         "Email": [
+                         *           "'Email' is not a valid email address."
+                         *         ]
+                         *       },
+                         *       "exceptionType": "ValidationException",
+                         *       "resolution": "Review the errors and correct the invalid fields.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 400,
+                         *       "title": "Validation failed"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ValidationExceptionExample"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Forbidden */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "You do not have permission to access this resource.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "You do not have permission to access this resource.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "F0000",
+                         *       "exceptionType": "ForbiddenException",
+                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 403,
+                         *       "title": "Access forbidden"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ForbiddenExceptionExample"];
+                    };
+                };
+                /** @description Not Found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "The requested resource does not exist or has been deleted.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Entity with ID b31fbe9f-eebb-45ce-9cae-92265389f47f does not exist or has been deleted",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": "b31fbe9f-eebb-45ce-9cae-92265389f47f",
+                         *       "errorCode": "N0000",
+                         *       "exceptionType": "NotFoundException",
+                         *       "resolution": "Verify the resource ID is correct or retrieve a list of available resources.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 404,
+                         *       "title": "Resource not found"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["NotFoundExceptionExample"];
+                    };
+                };
+                /** @description Too Many Requests */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "Too many requests sent in a short period.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Too many requests sent in a short period.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "R0000",
+                         *       "exceptionType": "RateLimitExceededException",
+                         *       "resolution": "Wait before retrying the request. Check the Retry-After header for more information.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 429,
+                         *       "title": "Rate limit exceeded"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["RateLimitExceededExceptionExample"];
+                    };
+                };
+                /** @description Internal Server Error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "An unexpected error occurred while processing the request",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "An unexpected error occurred while processing the request.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "I0000",
+                         *       "exceptionType": "IntegrationException",
+                         *       "resolution": "Please contact support with the correlation ID if the issue persists",
+                         *       "source": "<Service>",
+                         *       "statusCode": 500,
+                         *       "title": "Internal server error"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["InternalExceptionExample"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v2/users/{userId}/split-profiles": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List a user's Split Profiles Required API Permission: List User Configurations
+         * @description Returns the residual Split Profiles one of your users can put a merchant application on.
+         *     The user must belong to your partner account; any other user id answers 404. Use the id of
+         *     the Split Profile you want when creating an application for that user.
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description The partner user's identifier.
+                     * @example 3f2504e0-4f89-11d3-9a0c-0305e82c3301
+                     */
+                    userId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "items": [
+                         *         {
+                         *           "id": "c3d5e7f9-1a2b-4c3d-9e4f-a5b6c7d8e9f0",
+                         *           "isDefault": true,
+                         *           "isHighRisk": false,
+                         *           "name": "Default Split"
+                         *         },
+                         *         {
+                         *           "id": "d4e6f8a0-2b3c-4d4e-af5a-b6c7d8e9f0a1",
+                         *           "isDefault": false,
+                         *           "isHighRisk": true,
+                         *           "name": "High Risk Split"
+                         *         }
+                         *       ]
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ListSplitProfilesResponseDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "One or more fields failed validation rules.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "One or more validation errors occurred.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "V0000",
+                         *       "errors": {
+                         *         "Email": [
+                         *           "'Email' is not a valid email address."
+                         *         ]
+                         *       },
+                         *       "exceptionType": "ValidationException",
+                         *       "resolution": "Review the errors and correct the invalid fields.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 400,
+                         *       "title": "Validation failed"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ValidationExceptionExample"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Forbidden */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "You do not have permission to access this resource.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "You do not have permission to access this resource.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "F0000",
+                         *       "exceptionType": "ForbiddenException",
+                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 403,
+                         *       "title": "Access forbidden"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ForbiddenExceptionExample"];
+                    };
+                };
+                /** @description Not Found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "The requested resource does not exist or has been deleted.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Entity with ID b31fbe9f-eebb-45ce-9cae-92265389f47f does not exist or has been deleted",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": "b31fbe9f-eebb-45ce-9cae-92265389f47f",
+                         *       "errorCode": "N0000",
+                         *       "exceptionType": "NotFoundException",
+                         *       "resolution": "Verify the resource ID is correct or retrieve a list of available resources.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 404,
+                         *       "title": "Resource not found"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["NotFoundExceptionExample"];
+                    };
+                };
+                /** @description Too Many Requests */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "Too many requests sent in a short period.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Too many requests sent in a short period.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "R0000",
+                         *       "exceptionType": "RateLimitExceededException",
+                         *       "resolution": "Wait before retrying the request. Check the Retry-After header for more information.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 429,
+                         *       "title": "Rate limit exceeded"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["RateLimitExceededExceptionExample"];
+                    };
+                };
+                /** @description Internal Server Error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "An unexpected error occurred while processing the request",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "An unexpected error occurred while processing the request.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "I0000",
+                         *       "exceptionType": "IntegrationException",
+                         *       "resolution": "Please contact support with the correlation ID if the issue persists",
+                         *       "source": "<Service>",
+                         *       "statusCode": 500,
+                         *       "title": "Internal server error"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["InternalExceptionExample"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -12798,6 +13371,46 @@ export interface paths {
                          *           "description": "Payment link edited (name, description, status, expiration, etc.)",
                          *           "eventType": "payment_link.updated",
                          *           "group": "Payment Links"
+                         *         },
+                         *         {
+                         *           "description": "Application started but not yet sent to the merchant",
+                         *           "eventType": "application.draft",
+                         *           "group": "Applications"
+                         *         },
+                         *         {
+                         *           "description": "Application is created via API or dashboard invitation",
+                         *           "eventType": "application.invited",
+                         *           "group": "Applications"
+                         *         },
+                         *         {
+                         *           "description": "Merchant has started filling in the application",
+                         *           "eventType": "application.in_progress",
+                         *           "group": "Applications"
+                         *         },
+                         *         {
+                         *           "description": "Application submitted and awaiting signature request",
+                         *           "eventType": "application.submitted",
+                         *           "group": "Applications"
+                         *         },
+                         *         {
+                         *           "description": "Application submitted but the merchant has not yet signed the MPA",
+                         *           "eventType": "application.awaiting_signature",
+                         *           "group": "Applications"
+                         *         },
+                         *         {
+                         *           "description": "Application is with underwriting",
+                         *           "eventType": "application.under_review",
+                         *           "group": "Applications"
+                         *         },
+                         *         {
+                         *           "description": "Underwriter has requested additional documents or clarification",
+                         *           "eventType": "application.information_needed",
+                         *           "group": "Applications"
+                         *         },
+                         *         {
+                         *           "description": "Application declined by underwriting",
+                         *           "eventType": "application.declined",
+                         *           "group": "Applications"
                          *         }
                          *       ]
                          *     }
@@ -12931,6 +13544,16 @@ export interface components {
         AccountHolderType: "Business" | "Personal";
         /** @enum {string} */
         AccountType: "Checking" | "Savings";
+        /**
+         * @description Who the merchant collects ACH payments from.<p>Possible values:</p>
+         *     <ul>
+         *     <li><b>1 - Individuals</b>: Individuals.</li>
+         *     <li><b>2 - Businesses</b>: Businesses.</li>
+         *     <li><b>3 - Both</b>: Both individuals and businesses.</li>
+         *     </ul>
+         * @enum {string}
+         */
+        AchCustomerType: "Individuals" | "Businesses" | "Both";
         AchDataDto: {
             /**
              * @description Enable same-day ACH processing for faster settlement.
@@ -12985,26 +13608,108 @@ export interface components {
          */
         AchPaymentMethodDto: {
             /**
-             * @description Whether ACH payments are accepted. Naming the method without a body offers it.
+             * @description Whether ACH payments are accepted.
              * @example true
              */
-            enabled?: boolean;
+            enabled: boolean;
             /**
              * @description Sends this resource's ACH payments in the next available window for an extra fee. Requires
              *     the merchant's ACH settings to allow faster processing, and defaults to standard processing
-             *     when not asked for. On a merge patch this field merges instead of being replaced with the
-             *     rest of the ACH configuration: leaving it out keeps the stored choice.
+             *     when not asked for. Ignored when `enabled` is false.
              * @example true
              */
             fasterProcessing?: boolean | null;
             /**
              * Format: uuid
              * @description Processor charging this resource's ACH payments; must be an active ACH processor of the
-             *     merchant. Omit to pin the merchant's current default active ACH processor. A response
-             *     carries the pinned processor, or null on a session created before pinning.
+             *     merchant. Omit to pin the merchant's default ACH processor; the request fails when there is
+             *     none. Ignored when `enabled` is false. A response carries the pinned processor, or null
+             *     when ACH is off or on a session created before pinning.
              * @example d529945e-8d10-4cb4-9dc3-718e57f3f14e
              */
             processorId?: string | null;
+        };
+        /** @description Changes to a payment link's ACH configuration. */
+        AchPaymentMethodPatchDto: {
+            /**
+             * @description Turns ACH on or off. Turning ACH off drops its processor and faster-processing choice;
+             *     turning it on without a processorId pins the merchant's default ACH processor.
+             * @example true
+             */
+            enabled?: boolean | null;
+            /**
+             * @description Sends the link's ACH payments in the next available window for an extra fee. Requires the
+             *     merchant's ACH settings to allow faster processing. Rejected while ACH is off unless sent
+             *     with `enabled: true`; ignored with `enabled: false`.
+             * @example true
+             */
+            fasterProcessing?: boolean | null;
+            /**
+             * Format: uuid
+             * @description Active ACH processor of the merchant. Sent alone it switches the processor of an ACH that is
+             *     on, and is rejected while ACH is off; send `enabled: true` with it to turn ACH on.
+             *     Ignored with `enabled: false`.
+             * @example d529945e-8d10-4cb4-9dc3-718e57f3f14e
+             */
+            processorId?: string | null;
+        };
+        /**
+         * @description The ACH processor to enrol the merchant with.<p>Possible values:</p>
+         *     <ul>
+         *     <li><b>1 - Straddle</b>: Straddle.</li>
+         *     </ul>
+         * @enum {string}
+         */
+        AchProcessor: "Straddle";
+        /** @description ACH processing volumes and the account ACH fees are billed to. */
+        AchProcessorDataDto: {
+            /** @description Billing account number, up to 17 digits. */
+            billingAccount?: string | null;
+            /** @description Name on the billing account, up to 30 characters. */
+            billingAccountName?: string | null;
+            /** @description Bank of the billing account. */
+            billingBank?: string | null;
+            /** @description Routing number of the billing account, nine digits. */
+            billingRouting?: string | null;
+            customerType?: components["schemas"]["AchCustomerType"];
+            /**
+             * Format: double
+             * @description Highest single ACH collection, in dollars.
+             */
+            highTicketAch?: number | null;
+            /**
+             * Format: double
+             * @description Highest single ACH payout, in dollars.
+             */
+            highTicketAchPayouts?: number | null;
+            /**
+             * Format: double
+             * @description Monthly ACH collection volume, in dollars.
+             */
+            monthlyVolumeAch?: number | null;
+            /**
+             * Format: double
+             * @description Monthly ACH payout volume, in dollars.
+             */
+            monthlyVolumeAchPayouts?: number | null;
+            paymentAuthorizationType?: components["schemas"]["PaymentAuthorizationType"];
+            /**
+             * @description Statement descriptor, up to 10 characters.
+             * @example MARCUSSHOP
+             */
+            statementDescriptor?: string | null;
+            /**
+             * Format: int32
+             * @description Monthly number of ACH collections.
+             */
+            ticketCountAch?: number | null;
+            /**
+             * Format: int32
+             * @description Monthly number of ACH payouts.
+             */
+            ticketCountAchPayouts?: number | null;
+            /** @description What the merchant uses ACH for, up to 1000 characters. */
+            useOfPaymentServiceDescription?: string | null;
         };
         /** @enum {string} */
         AchSECCode: "Web" | "PPD" | "CCD" | "Telephone";
@@ -13149,6 +13854,182 @@ export interface components {
             /** Format: double */
             totalAmount?: number;
         };
+        /** @description A postal address. */
+        ApplicationAddressDto: {
+            /**
+             * @description Street address, up to 50 characters.
+             * @example 412 Harbor Ave
+             */
+            addressLine1?: string | null;
+            /**
+             * @description Suite, unit or floor, up to 50 characters.
+             * @example Suite 3
+             */
+            addressLine2?: string | null;
+            /**
+             * @description City, up to 30 characters.
+             * @example Portland
+             */
+            city?: string | null;
+            /**
+             * @description Two-letter country code.
+             * @example US
+             */
+            countryCode?: string | null;
+            /**
+             * @description Postal code.
+             * @example 97201
+             */
+            postalCode?: string | null;
+            /**
+             * @description Two-letter state code.
+             * @example OR
+             */
+            regionCode?: string | null;
+        };
+        /**
+         * @description How the application link reaches the merchant.<p>Possible values:</p>
+         *     <ul>
+         *     <li><b>1 - Email</b>: We email the merchant an invitation carrying the link; applicationUrl is returned as well.</li>
+         *     <li><b>2 - PartnerDirect</b>: Nothing is sent. You deliver applicationUrl to the merchant yourself.</li>
+         *     <li><b>3 - Iframe</b>: Nothing is sent. You embed applicationUrl in an iframe on your own page; the merchant completes and signs the application there without creating a Flute account. The frame posts two messages to your page, each with { type, applicationId }: arise:application-submitted when the merchant submits, and arise:application-signed when the frame returns from signing. Check that event.origin matches the origin of applicationUrl before acting on a message, and treat the messages as a cue to refresh your UI rather than as the application's state: the webhooks and GET /isv/v2/applications remain the source of truth. The frame navigates to the signing provider and back, so do not sandbox it in a way that blocks navigation or scripts.</li>
+         *     </ul>
+         * @enum {string}
+         */
+        ApplicationDeliveryMethod: "Email" | "PartnerDirect" | "Iframe";
+        /** @description A merchant application you initiated. */
+        ApplicationDto: {
+            /**
+             * Format: int32
+             * @description Human-readable sequential application number.
+             * @example 4711
+             */
+            applicationNumber?: number | null;
+            applicationStatus?: components["schemas"]["ApplicationStatus"];
+            /**
+             * Format: date-time
+             * @description When the current status started.
+             */
+            applicationStatusStartedAt?: string | null;
+            /**
+             * @description The merchant's doing-business-as name.
+             * @example Corner Coffee
+             */
+            businessName?: string | null;
+            /**
+             * Format: date-time
+             * @description When the application was created.
+             */
+            createdOn?: string | null;
+            /**
+             * Format: uuid
+             * @description Unique identifier for the application.
+             */
+            id?: string;
+            /**
+             * @description The partner user who sent the invitation, when the application came from one.
+             * @example Jane Doe
+             */
+            invitedBy?: string | null;
+            /**
+             * Format: uuid
+             * @description The merchant's identifier for the payment APIs, present once the application has been boarded.
+             */
+            merchantId?: string | null;
+            /** @description Your own key-value pairs, as stored when you created the application. Null when you sent none. */
+            metadata?: {
+                [key: string]: string | null;
+            } | null;
+            /**
+             * @description Merchant identifier (MID) assigned by the processor, present once the application has been boarded.
+             * @example 932129304958123
+             */
+            mid?: string | null;
+            /**
+             * @description The partner the application belongs to.
+             * @example Acme Partners
+             */
+            partner?: string | null;
+            partnerUser?: components["schemas"]["ApplicationPartnerUserDto"];
+            /**
+             * @description The payment processor the application is boarding with.
+             * @example Fiserv
+             */
+            processor?: string | null;
+            /**
+             * Format: date-time
+             * @description When the invitation was most recently sent to the merchant.
+             */
+            sentAt?: string | null;
+            /**
+             * @description The sponsor bank the application is boarding under.
+             * @example Esquire
+             */
+            sponsor?: string | null;
+        };
+        /** @description The partner user an application is assigned to. */
+        ApplicationPartnerUserDto: {
+            /** @example Ada */
+            firstName?: string | null;
+            /** @example Lovelace */
+            lastName?: string | null;
+        };
+        /**
+         * @description Where a merchant application currently stands. A small, stable vocabulary giving a high-level
+         *     view of the application's lifecycle; the application lifecycle webhooks report the individual
+         *     events that move it between these states.<p>Possible values:</p>
+         *     <ul>
+         *     <li><b>1 - InProgress</b>: Started but not yet submitted, whether by the merchant (including signing) or by a partner or agent on their behalf.</li>
+         *     <li><b>2 - InReview</b>: Submitted and under review. No additional information is currently required from the merchant.</li>
+         *     <li><b>3 - InformationNeeded</b>: Additional information or documents are required from the merchant before the review can continue.</li>
+         *     <li><b>4 - Rejected</b>: Declined; the application will not move forward.</li>
+         *     <li><b>5 - AutoDeclined</b>: Automatically declined because the merchant did not respond to an information request in time.</li>
+         *     <li><b>6 - Active</b>: Approved; the merchant is able to process payments.</li>
+         *     <li><b>7 - Cancelled</b>: Withdrawn or removed before completion.</li>
+         *     </ul>
+         * @enum {string}
+         */
+        ApplicationStatus: "InProgress" | "InReview" | "InformationNeeded" | "Rejected" | "AutoDeclined" | "Active" | "Cancelled";
+        /** @description The person who signs the agreement. */
+        AuthorizedSignerDto: {
+            address?: components["schemas"]["ApplicationAddressDto"];
+            /**
+             * Format: date-time
+             * @description Date of birth.
+             * @example 1990-01-02
+             */
+            dateOfBirth?: string | null;
+            /**
+             * @description Email address.
+             * @example marcus@example.com
+             */
+            email?: string | null;
+            /**
+             * @description First name, up to 30 characters.
+             * @example Marcus
+             */
+            firstName?: string | null;
+            /**
+             * @description Last name, up to 30 characters.
+             * @example Alvarez
+             */
+            lastName?: string | null;
+            /**
+             * @description Phone number in E.164 format.
+             * @example +15550148000
+             */
+            phoneNumber?: string | null;
+            /**
+             * @description Social security number, nine digits.
+             * @example 123456789
+             */
+            ssn?: string | null;
+            /**
+             * @description Job title, up to 30 characters.
+             * @example Owner
+             */
+            title?: string | null;
+        };
         /** @enum {string} */
         AvsActions: "Allow" | "Deny";
         /**
@@ -13194,6 +14075,142 @@ export interface components {
          * @enum {string}
          */
         AvsResponseResultDto: "Passed" | "Failed";
+        /** @description The settlement bank account. */
+        BankInfoDto: {
+            /**
+             * @description Account number, up to 17 digits.
+             * @example 752111
+             */
+            account?: string | null;
+            /**
+             * @description Name on the account, up to 30 characters.
+             * @example Marcus's Pickup Shop LLC
+             */
+            accountName?: string | null;
+            /**
+             * @description Bank name.
+             * @example Texas Bank and Trust
+             */
+            bank?: string | null;
+            /**
+             * @description Routing number, nine digits.
+             * @example 123456789
+             */
+            routing?: string | null;
+        };
+        /** @description The business applying for processing. */
+        BusinessInformationDto: {
+            /**
+             * Format: int32
+             * @description Typical days between a sale and delivery of the goods.
+             */
+            avgDaysToDelivery?: number | null;
+            bankInfo?: components["schemas"]["BankInfoDto"];
+            /**
+             * @description Business email address.
+             * @example hello@marcuspickup.example
+             */
+            businessEmail?: string | null;
+            /**
+             * Format: date-time
+             * @description When the business was established.
+             * @example 2019-04-01
+             */
+            businessEstablishedDate?: string | null;
+            /**
+             * @description Business phone number in E.164 format.
+             * @example +15550148000
+             */
+            businessPhone?: string | null;
+            /**
+             * @description Customer service phone number in E.164 format.
+             * @example +15550148001
+             */
+            customerServicePhone?: string | null;
+            /**
+             * @description Doing-business-as name, 1 to 100 characters.
+             * @example Marcus's Pickup Shop
+             */
+            dbaName: string;
+            desiredLimits?: components["schemas"]["DesiredLimitsDto"];
+            /**
+             * @description What the business sells, up to 200 characters.
+             * @example Package pickup counter and shipping supplies
+             */
+            detailedExplanationWhatDoYouSell?: string | null;
+            documentationMailingAddress?: components["schemas"]["DocumentationMailingAddressType"];
+            /**
+             * Format: double
+             * @description Percentage of e-commerce volume.
+             * @example 60
+             */
+            eCommerce?: number | null;
+            /** @description Whether the merchant opts out of future commercial communication from American Express. */
+            isMerchantOptsOutReceivingFutureCommercialFromAmex?: boolean | null;
+            /**
+             * Format: double
+             * @description Percentage of keyed volume.
+             * @example 20
+             */
+            keyed?: number | null;
+            /**
+             * @description Legal name, up to 100 characters.
+             * @example Marcus's Pickup Shop LLC
+             */
+            legalName?: string | null;
+            /**
+             * Format: int32
+             * @description Most days between a sale and delivery of the goods.
+             */
+            maxDaysToDelivery?: number | null;
+            /**
+             * Format: uuid
+             * @description Merchant category code alias id. Your relationship manager provides the list.
+             */
+            mccCodeAliasId?: string | null;
+            merchantType?: components["schemas"]["MerchantType"];
+            /**
+             * Format: int32
+             * @description Fewest days between a sale and delivery of the goods.
+             */
+            minDaysToDelivery?: number | null;
+            /** @description Whether the business sells outside the United States. */
+            sellingOutsideOfUs?: boolean | null;
+            siteInspectionType?: components["schemas"]["SiteInspectionType"];
+            /**
+             * Format: double
+             * @description Percentage of card-present swiped volume. swiped, keyed and eCommerce must total 100 before the merchant submits.
+             * @example 20
+             */
+            swiped?: number | null;
+            /**
+             * @description Employer identification number, nine digits.
+             * @example 201234567
+             */
+            taxId?: string | null;
+            typeOfBusiness?: components["schemas"]["BusinessType"];
+            /**
+             * @description The business website.
+             * @example https://example.com
+             */
+            website?: string | null;
+        };
+        /**
+         * @description The legal form of the business.<p>Possible values:</p>
+         *     <ul>
+         *     <li><b>1 - SoleProprietor</b>: Sole proprietorship.</li>
+         *     <li><b>2 - LimitedLiability</b>: Limited liability company.</li>
+         *     <li><b>3 - PrivateCorporation</b>: Privately held corporation.</li>
+         *     <li><b>4 - Partnership</b>: Partnership.</li>
+         *     <li><b>5 - TrustEstate</b>: Trust or estate.</li>
+         *     <li><b>6 - TaxExempt</b>: Tax-exempt organization.</li>
+         *     <li><b>7 - Other</b>: Another legal form.</li>
+         *     <li><b>8 - PublicCorporation</b>: Publicly traded corporation.</li>
+         *     <li><b>9 - Government</b>: Government entity.</li>
+         *     </ul>
+         * @enum {string}
+         */
+        BusinessType: "SoleProprietor" | "LimitedLiability" | "PrivateCorporation" | "Partnership" | "TrustEstate" | "TaxExempt" | "Other" | "PublicCorporation" | "Government";
         /** @description Request to calculate the final transaction amount considering discounts, tips, and ZCP settings. */
         CalculateAmountRequestDto: {
             /**
@@ -13209,15 +14226,13 @@ export interface components {
             currencyCode?: string | null;
             /**
              * Format: double
-             * @description Discount as a fixed amount. Converted to a rate against Arise.IsvApiBff.Contracts.v2.Transaction.Requests.CalculateAmountRequestDto.BaseAmount before
-             *     calculation. When both Arise.IsvApiBff.Contracts.v2.Transaction.Requests.CalculateAmountRequestDto.DiscountAmount and Arise.IsvApiBff.Contracts.v2.Transaction.Requests.CalculateAmountRequestDto.DiscountRate are supplied,
-             *     Arise.IsvApiBff.Contracts.v2.Transaction.Requests.CalculateAmountRequestDto.DiscountRate takes precedence.
+             * @description Discount as a fixed dollar amount. Mutually exclusive with Arise.IsvApiBff.Contracts.v2.Transaction.Requests.CalculateAmountRequestDto.DiscountRate.
              * @example 5
              */
             discountAmount?: number | null;
             /**
              * Format: double
-             * @description Percentage-off / discount rate. Encoded as raw percentage — e.g. 10 represents 10%.
+             * @description Discount as a percent of the subtotal (e.g. 10 = 10%). Mutually exclusive with Arise.IsvApiBff.Contracts.v2.Transaction.Requests.CalculateAmountRequestDto.DiscountAmount.
              * @example 10
              */
             discountRate?: number | null;
@@ -13231,12 +14246,12 @@ export interface components {
             surchargeRate?: number | null;
             /**
              * Format: double
-             * @description Absolute tip amount to add
+             * @description Tip as a fixed dollar amount. Mutually exclusive with Arise.IsvApiBff.Contracts.v2.Transaction.Requests.CalculateAmountRequestDto.TipRate.
              */
             tipAmount?: number | null;
             /**
              * Format: double
-             * @description Tip rate to apply. Encoded as raw percentage — e.g. 15 represents 15%.
+             * @description Tip as a percent of the subtotal (e.g. 15 = 15%). Mutually exclusive with Arise.IsvApiBff.Contracts.v2.Transaction.Requests.CalculateAmountRequestDto.TipAmount.
              * @example 15
              */
             tipRate?: number | null;
@@ -13360,15 +14375,33 @@ export interface components {
         /** @description Card configuration on a payable resource. */
         CardPaymentMethodDto: {
             /**
-             * @description Whether card payments are accepted. Naming the method without a body offers it.
+             * @description Whether card payments are accepted.
              * @example true
              */
-            enabled?: boolean;
+            enabled: boolean;
             /**
              * Format: uuid
              * @description Processor charging this resource's card payments; must be an active card processor of the
-             *     merchant. Omit to pin the merchant's current default active card processor. A response
-             *     carries the pinned processor, or null on a session created before pinning.
+             *     merchant. Omit to pin the merchant's default card processor; the request fails when there
+             *     is none. Ignored when `enabled` is false. A response carries the pinned processor, or
+             *     null when card is off or on a session created before pinning.
+             * @example d529945e-8d10-4cb4-9dc3-718e57f3f14e
+             */
+            processorId?: string | null;
+        };
+        /** @description Changes to a payment link's card configuration. */
+        CardPaymentMethodPatchDto: {
+            /**
+             * @description Turns card on or off. Turning card off drops its processor; turning it on without a
+             *     processorId pins the merchant's default card processor.
+             * @example true
+             */
+            enabled?: boolean | null;
+            /**
+             * Format: uuid
+             * @description Active card processor of the merchant. Sent alone it switches the processor of a card that is
+             *     on, and is rejected while card is off; send `enabled: true` with it to turn card on.
+             *     Ignored with `enabled: false`.
              * @example d529945e-8d10-4cb4-9dc3-718e57f3f14e
              */
             processorId?: string | null;
@@ -13575,6 +14608,96 @@ export interface components {
              */
             clientSecret?: string | null;
         };
+        /**
+         * @description Invite a merchant to complete an application you have pre-filled. Send whatever you know about
+         *     the merchant; every field you leave out stays empty for the merchant to fill in.
+         */
+        CreateApplicationRequestDto: {
+            achProcessor?: components["schemas"]["AchProcessor"];
+            achProcessorData?: components["schemas"]["AchProcessorDataDto"];
+            authorizedSigner?: components["schemas"]["AuthorizedSignerDto"];
+            businessInformation: components["schemas"]["BusinessInformationDto"];
+            deliveryMethod: components["schemas"]["ApplicationDeliveryMethod"];
+            /**
+             * @description The merchant contact who owns the invitation. With Email delivery the invitation is sent
+             *     here. An address that already belongs to a partner or administrator account is rejected.
+             * @example marcus@example.com
+             */
+            email: string;
+            /** @description Whether the legal address is the location address. */
+            isLegalAddressTheSame?: boolean | null;
+            /** @description Whether the primary contact is the principal owner. */
+            isPrimaryContactTheSame?: boolean | null;
+            legalAddress?: components["schemas"]["ApplicationAddressDto"];
+            locationAddress?: components["schemas"]["LocationAddressDto"];
+            /**
+             * @description Your own key-value pairs, stored with the application and returned as-is on creation and on
+             *     GET /isv/v2/applications. At most 50 keys, keys of at most 100 characters, values of at most
+             *     500 characters, 8 KB in all. A key with a null value is not stored.
+             */
+            metadata?: {
+                [key: string]: string | null;
+            } | null;
+            owner1?: components["schemas"]["OwnerDto"];
+            owner2?: components["schemas"]["OwnerDto"];
+            owner3?: components["schemas"]["OwnerDto"];
+            owner4?: components["schemas"]["OwnerDto"];
+            /**
+             * Format: uuid
+             * @description The user in your partner account this application is attributed to; their Schedule A, Split
+             *     Profile and residuals apply. One of the ids from GET /isv/v2/users?userType=Partner.
+             * @example 3f2504e0-4f89-11d3-9a0c-0305e82c3301
+             */
+            partnerUserId: string;
+            /**
+             * @description The pricing templates offered to the merchant. Omit to offer your account's default
+             *     templates. With one template the merchant sees no pricing choice; with several they pick.
+             */
+            pricingTemplateIds?: string[] | null;
+            primaryContact?: components["schemas"]["PrimaryContactDto"];
+            /**
+             * Format: int32
+             * @description The payment processor to board with. Your relationship manager provides the id.
+             * @example 1
+             */
+            processorId: number;
+            /**
+             * Format: uuid
+             * @description One of the ids from GET /isv/v2/users/{partnerUserId}/schedule-as.
+             * @example b7e2f7a0-4c1a-4e7d-9b2f-1a2b3c4d5e6f
+             */
+            scheduleAId: string;
+            /**
+             * Format: uuid
+             * @description One of the ids from GET /isv/v2/users/{partnerUserId}/split-profiles.
+             * @example c8f3a8b1-5d2b-4f8e-8c3a-2b3c4d5e6f70
+             */
+            splitProfileId: string;
+        };
+        /** @description The application your invitation created. */
+        CreateApplicationResponseDto: {
+            /**
+             * Format: uuid
+             * @description Unique identifier for the application; the same id GET /isv/v2/applications lists.
+             */
+            applicationId?: string;
+            /**
+             * @description The link the merchant opens to complete the application. It grants access to the
+             *     application, so treat it like a password: deliver it to the merchant only and never log it.
+             * @example https://dashboard.flute.com/onboarding/register?invite_token=019c76de-cbd3-788d-8cb0-f829e90a0623&email=marcus%40example.com
+             */
+            applicationUrl?: string | null;
+            /**
+             * Format: date-time
+             * @description When the application was created.
+             */
+            createdOn?: string;
+            deliveryMethod?: components["schemas"]["ApplicationDeliveryMethod"];
+            /** @description Your own key-value pairs, as stored. Null when you sent none. */
+            metadata?: {
+                [key: string]: string | null;
+            } | null;
+        };
         CreateCardPaymentMethodRequestDto: {
             /**
              * @description The 13-19 digit card number (PAN) used for the transaction.
@@ -13663,8 +14786,9 @@ export interface components {
             currencyCode?: string | null;
             /**
              * Format: uuid
-             * @description Customer the link is issued for. Omit for an anonymous link. Not allowed when
-             *     linkType is MultiUse.
+             * @description Customer the link is issued for. Omit for an anonymous link. On a MultiUse link its
+             *     payments, and any payment method a payer saves there, are recorded under this customer,
+             *     but the payment page never shows the customer's details or saved methods.
              */
             customerId?: string | null;
             /** @description Merchant-internal notes, max 500 characters. Never shown to customers. */
@@ -13676,21 +14800,39 @@ export interface components {
             expiresOn?: string | null;
             linkType?: components["schemas"]["PaymentLinkType"];
             /**
+             * @description Your own key-value pairs, copied into every payment session the link opens and returned
+             *     with that session. At most 50 keys, keys of at most 100 characters, values of at most 500
+             *     characters, 8 KB in all. A key with a null value is not stored.
+             */
+            metadata?: {
+                [key: string]: string | null;
+            } | null;
+            mode?: components["schemas"]["SessionMode"];
+            /**
              * @description Merchant-facing label, max 80 characters. Auto-generated from the amount if omitted.
              * @example Spring campaign
              */
             name?: string | null;
-            paymentMethods: components["schemas"]["PaymentMethodsDto"];
+            paymentMethods?: components["schemas"]["PaymentMethodsDto"];
             /**
              * @description Merchant label, max 200 characters.
              * @example ORDER-1042
              */
             referenceId?: string | null;
+            /**
+             * Format: double
+             * @description Pre-calculated tax in currency units, with up to 2 decimal places, not negative. Mutually
+             *     exclusive with taxRate: send exactly one of them together with taxMode. Requires a fixed
+             *     baseAmount, and in Inclusive mode must be less than it. The transaction records the rate
+             *     derived from it.
+             * @example 2.06
+             */
+            taxAmount?: number | null;
             taxMode?: components["schemas"]["TaxMode"];
             /**
              * Format: double
-             * @description Tax rate percentage, 0 to 100, with up to 3 decimal places. Required with
-             *     taxMode; omit both for a link without tax.
+             * @description Tax rate percentage, 0 to 100, with up to 3 decimal places. Mutually exclusive with
+             *     taxAmount: send exactly one of them together with taxMode, or none of the three.
              * @example 8.25
              */
             taxRate?: number | null;
@@ -13747,11 +14889,20 @@ export interface components {
              *     Only meaningful for Payment and PaymentAndSave modes.
              */
             skipAddressVerification?: boolean | null;
+            /**
+             * Format: double
+             * @description Pre-calculated tax in currency units, with up to 2 decimal places, not negative. Mutually
+             *     exclusive with taxRate: send exactly one of them together with taxMode. Requires a fixed
+             *     amount, and in Inclusive mode must be less than it. The transaction records the rate
+             *     derived from it.
+             * @example 9
+             */
+            taxAmount?: number | null;
             taxMode?: components["schemas"]["TaxMode"];
             /**
              * Format: double
-             * @description Tax rate percentage, 0 to 100, with up to 3 decimal places. Required with
-             *     taxMode; omit both for a session without tax.
+             * @description Tax rate percentage, 0 to 100, with up to 3 decimal places. Mutually exclusive with
+             *     taxAmount: send exactly one of them together with taxMode, or none of the three.
              * @example 8.25
              */
             taxRate?: number | null;
@@ -13887,7 +15038,11 @@ export interface components {
              * @example REF-EXT-12345
              */
             referenceId?: string | null;
-            /** @description Set to true to show popup about saving customer payment method information on the terminal */
+            /**
+             * @description Set to true to ask the cardholder on the terminal whether to store the card. On consent the card is
+             *     stored under `customerId` when one is supplied, otherwise as a standalone payment method; its id
+             *     appears as `linkedTransaction.cardDetails.paymentMethodId` on the completed POS transaction.
+             */
             requestPaymentMethodStorageConsent?: boolean;
             /**
              * Format: uuid
@@ -14114,6 +15269,54 @@ export interface components {
              */
             message?: string | null;
         };
+        /** @description Expected processing volumes, in dollars. */
+        DesiredLimitsDto: {
+            /**
+             * Format: double
+             * @description Average American Express ticket.
+             * @example 100
+             */
+            avgTicketAmex?: number | null;
+            /**
+             * Format: double
+             * @description Average Visa, Mastercard and Discover ticket.
+             * @example 100
+             */
+            avgTicketVMcD?: number | null;
+            /**
+             * Format: double
+             * @description Highest American Express ticket.
+             * @example 5000
+             */
+            highTicketAmex?: number | null;
+            /**
+             * Format: double
+             * @description Highest Visa, Mastercard and Discover ticket.
+             * @example 5000
+             */
+            highTicketVMcD?: number | null;
+            /**
+             * Format: double
+             * @description Monthly American Express volume.
+             * @example 20000
+             */
+            monthlyAmex?: number | null;
+            /**
+             * Format: double
+             * @description Monthly Visa, Mastercard and Discover volume.
+             * @example 20000
+             */
+            monthlyVMcD?: number | null;
+        };
+        /**
+         * @description Which of the merchant's addresses receives paper documentation.<p>Possible values:</p>
+         *     <ul>
+         *     <li><b>1 - LegalAddress</b>: The legal address.</li>
+         *     <li><b>2 - DbaAddress</b>: The doing-business-as (location) address.</li>
+         *     </ul>
+         * @enum {string}
+         */
+        DocumentationMailingAddressType: "LegalAddress" | "DbaAddress";
         /** @description A single raw EMV tag key/value pair. */
         EmvRawTagDto: {
             /** @description EMV tag identifier. */
@@ -14356,7 +15559,7 @@ export interface components {
             pageName?: string | null;
             /** Format: uuid */
             paymentLinkId?: string | null;
-            paymentMethods?: components["schemas"]["PaymentMethodsDto"];
+            paymentMethods?: components["schemas"]["PaymentSessionPaymentMethodsDto"];
             paymentNotes?: string | null;
             referenceId?: string | null;
             returnUrl?: string | null;
@@ -14373,11 +15576,16 @@ export interface components {
             statusId?: components["schemas"]["PaymentSessionStatusDto"];
             /** Format: double */
             surchargeAmount?: number | null;
+            /**
+             * Format: double
+             * @description Fixed tax pinned on the session, when the tax was configured as an amount. Null otherwise.
+             * @example 9
+             */
+            taxAmount?: number | null;
             taxMode?: components["schemas"]["TaxMode"];
             /**
              * Format: double
-             * @description Tax rate percentage pinned on the session. Null = no tax configured; always set
-             *     and cleared with taxMode.
+             * @description Tax rate percentage pinned on the session, when the tax was configured as a rate.
              * @example 8.25
              */
             taxRate?: number | null;
@@ -14573,6 +15781,7 @@ export interface components {
             referenceId?: string | null;
             refundDetails?: components["schemas"]["RefundDetailsDto"];
             source?: components["schemas"]["TransactionSourceDto"];
+            taxDetails?: components["schemas"]["TaxDetailsDto"];
             /**
              * Format: date-time
              * @description Transaction date and time
@@ -14772,6 +15981,21 @@ export interface components {
              */
             paymentMethodsCount?: number;
         };
+        /** @description The pricing templates of your partner account. */
+        ListPricingTemplatesResponseDto: {
+            /** @description Every template you can offer, by name. */
+            items?: components["schemas"]["PricingTemplateDto"][] | null;
+        };
+        /** @description The Schedule As available to one partner user. */
+        ListScheduleAsResponseDto: {
+            /** @description Every active Schedule A the user can put an application on. */
+            items?: components["schemas"]["ScheduleADto"][] | null;
+        };
+        /** @description The Split Profiles available to one partner user. */
+        ListSplitProfilesResponseDto: {
+            /** @description Every active Split Profile the user can put an application on. */
+            items?: components["schemas"]["SplitProfileDto"][] | null;
+        };
         /** @description Response DTO for a terminal in the list. */
         ListTerminalsResponseDto: {
             connectionStatus?: components["schemas"]["TerminalConnectionStatus"];
@@ -14809,6 +16033,66 @@ export interface components {
             /** @description Subscribable webhook event types. System-only events (e.g. ping) are excluded. */
             items?: components["schemas"]["WebhookEventTypeIsvDto"][] | null;
         };
+        /** @description Where the business operates. */
+        LocationAddressDto: {
+            /**
+             * @description Street address, up to 50 characters.
+             * @example 412 Harbor Ave
+             */
+            addressLine1?: string | null;
+            /**
+             * @description Suite, unit or floor, up to 50 characters.
+             * @example Suite 3
+             */
+            addressLine2?: string | null;
+            /**
+             * @description City, up to 30 characters.
+             * @example Portland
+             */
+            city?: string | null;
+            /**
+             * @description Two-letter country code.
+             * @example US
+             */
+            countryCode?: string | null;
+            /**
+             * @description Describes the premises when typeOfLocation is Other.
+             * @example Kiosk inside a shopping mall
+             */
+            locationIfOther?: string | null;
+            /**
+             * @description Postal code.
+             * @example 97201
+             */
+            postalCode?: string | null;
+            /**
+             * @description Two-letter state code.
+             * @example OR
+             */
+            regionCode?: string | null;
+            typeOfLocation?: components["schemas"]["LocationType"];
+        };
+        /**
+         * @description The kind of premises the business operates from.<p>Possible values:</p>
+         *     <ul>
+         *     <li><b>1 - Home</b>: A private home.</li>
+         *     <li><b>2 - Apartment</b>: An apartment.</li>
+         *     <li><b>3 - StoreFront</b>: A storefront.</li>
+         *     <li><b>4 - Other</b>: Another kind of premises; describe it in locationIfOther.</li>
+         *     <li><b>5 - Office</b>: An office.</li>
+         *     </ul>
+         * @enum {string}
+         */
+        LocationType: "Home" | "Apartment" | "StoreFront" | "Other" | "Office";
+        /**
+         * @description Whether the application is for a new merchant or another location of an existing one.<p>Possible values:</p>
+         *     <ul>
+         *     <li><b>1 - New</b>: A new merchant.</li>
+         *     <li><b>2 - AdditionalLocation</b>: An additional location of a merchant that already processes with us.</li>
+         *     </ul>
+         * @enum {string}
+         */
+        MerchantType: "New" | "AdditionalLocation";
         /** @enum {string} */
         MobilePlatform: "iOS" | "Android";
         NotFoundExceptionExample: {
@@ -14827,6 +16111,52 @@ export interface components {
         };
         /** @enum {string} */
         NotificationDeliveryMethod: "None" | "Sms" | "Email";
+        /** @description An owner of the business. */
+        OwnerDto: {
+            address?: components["schemas"]["ApplicationAddressDto"];
+            /**
+             * Format: date-time
+             * @description Date of birth.
+             * @example 1990-01-02
+             */
+            dateOfBirth?: string | null;
+            /**
+             * @description Email address.
+             * @example marcus@example.com
+             */
+            email?: string | null;
+            /**
+             * @description First name, up to 30 characters.
+             * @example Marcus
+             */
+            firstName?: string | null;
+            /**
+             * @description Last name, up to 30 characters.
+             * @example Alvarez
+             */
+            lastName?: string | null;
+            /**
+             * Format: double
+             * @description Percentage of the business this person owns, 0 to 100.
+             * @example 100
+             */
+            ownership?: number | null;
+            /**
+             * @description Phone number in E.164 format.
+             * @example +15550148000
+             */
+            phoneNumber?: string | null;
+            /**
+             * @description Social security number, nine digits.
+             * @example 123456789
+             */
+            ssn?: string | null;
+            /**
+             * @description Job title, up to 30 characters.
+             * @example Owner
+             */
+            title?: string | null;
+        };
         /** @description Pagination metadata describing the current page and the full result set. */
         PageInfoDto: {
             /**
@@ -14858,6 +16188,15 @@ export interface components {
              * @example 1
              */
             totalPages?: number;
+        };
+        /**
+         * @description Standard paginated response envelope: the requested page of items plus
+         *     the Arise.IsvApiBff.Contracts.v2.Common.PageInfoDto metadata used to drive navigation.
+         */
+        PagedResponseDtoOfApplicationDto: {
+            /** @description The items on the current page. Empty when the requested page is beyond the data. */
+            items?: components["schemas"]["ApplicationDto"][] | null;
+            pageInfo?: components["schemas"]["PageInfoDto"];
         };
         /**
          * @description Standard paginated response envelope: the requested page of items plus
@@ -14935,11 +16274,30 @@ export interface components {
          * @description Standard paginated response envelope: the requested page of items plus
          *     the Arise.IsvApiBff.Contracts.v2.Common.PageInfoDto metadata used to drive navigation.
          */
+        PagedResponseDtoOfUserDto: {
+            /** @description The items on the current page. Empty when the requested page is beyond the data. */
+            items?: components["schemas"]["UserDto"][] | null;
+            pageInfo?: components["schemas"]["PageInfoDto"];
+        };
+        /**
+         * @description Standard paginated response envelope: the requested page of items plus
+         *     the Arise.IsvApiBff.Contracts.v2.Common.PageInfoDto metadata used to drive navigation.
+         */
         PagedResponseDtoOfWebhookDeliveryLogIsvSummaryDto: {
             /** @description The items on the current page. Empty when the requested page is beyond the data. */
             items?: components["schemas"]["WebhookDeliveryLogIsvSummaryDto"][] | null;
             pageInfo?: components["schemas"]["PageInfoDto"];
         };
+        /**
+         * @description How the merchant obtains authorization for ACH payments.<p>Possible values:</p>
+         *     <ul>
+         *     <li><b>1 - SignedContractOrAgreement</b>: A signed contract or agreement.</li>
+         *     <li><b>2 - OnlineOrMobileApp</b>: Online or in a mobile app.</li>
+         *     <li><b>3 - Both</b>: Both signed agreements and online authorization.</li>
+         *     </ul>
+         * @enum {string}
+         */
+        PaymentAuthorizationType: "SignedContractOrAgreement" | "OnlineOrMobileApp" | "Both";
         /** @description Payment configuration settings for the merchant */
         PaymentConfigurationResponseDto: {
             addressVerificationServiceOptions?: components["schemas"]["PaymentConfigurationResponseDtoAddressVerificationServiceOptionsDto"];
@@ -15099,6 +16457,14 @@ export interface components {
             lastPaymentOn?: string | null;
             linkType?: components["schemas"]["PaymentLinkType"];
             /**
+             * @description Your own key-value pairs, copied into every payment session the link opens. Null when the
+             *     link has none.
+             */
+            metadata?: {
+                [key: string]: string | null;
+            } | null;
+            mode?: components["schemas"]["SessionMode"];
+            /**
              * Format: date-time
              * @description UTC timestamp of the last modification.
              */
@@ -15130,10 +16496,16 @@ export interface components {
              * @example https://pay.example.com/l/abc123
              */
             shortUrl?: string | null;
+            /**
+             * Format: double
+             * @description Fixed tax in currency units, when the tax was configured as an amount. Null otherwise.
+             * @example 2.06
+             */
+            taxAmount?: number | null;
             taxMode?: components["schemas"]["TaxMode"];
             /**
              * Format: double
-             * @description Tax rate percentage. Null = no tax configured; always set and cleared with taxMode.
+             * @description Tax rate percentage, when the tax was configured as a rate. Null otherwise.
              * @example 8.25
              */
             taxRate?: number | null;
@@ -15281,8 +16653,28 @@ export interface components {
             ach?: components["schemas"]["AchPaymentMethodDto"];
             card?: components["schemas"]["CardPaymentMethodDto"];
         };
+        /**
+         * @description JSON Merge Patch (RFC 7396) of a payment link's payment methods. A method left out is
+         *     unchanged, and so is every field left out of a method that is present. A method is turned off
+         *     with `enabled: false`, which drops its configuration; explicit nulls are rejected.
+         */
+        PaymentMethodsPatchDto: {
+            ach?: components["schemas"]["AchPaymentMethodPatchDto"];
+            card?: components["schemas"]["CardPaymentMethodPatchDto"];
+        };
         /** @enum {string} */
-        PaymentProcessorType: "Tsys" | "Ach" | "SandboxCard" | "SandboxAch";
+        PaymentProcessorType: "Tsys" | "Ach" | "SandboxCard" | "SandboxAch" | "External";
+        /**
+         * @description The payment methods a payment session offers on a read: the configured card and ACH methods
+         *     plus the digital wallets derived for the session. A wallet key is absent when the session does
+         *     not offer that wallet.
+         */
+        PaymentSessionPaymentMethodsDto: {
+            ach?: components["schemas"]["AchPaymentMethodDto"];
+            applePay?: components["schemas"]["WalletPaymentMethodDto"];
+            card?: components["schemas"]["CardPaymentMethodDto"];
+            googlePay?: components["schemas"]["WalletPaymentMethodDto"];
+        };
         /**
          * @description Payment session status<p>Possible values:</p>
          *     <ul>
@@ -15513,6 +16905,29 @@ export interface components {
              */
             transactionId?: string | null;
         };
+        /** @description A pricing template you can offer on a merchant application. */
+        PricingTemplateDto: {
+            /**
+             * @description The name the merchant sees when choosing a plan.
+             * @example Simple flat rate
+             */
+            displayName?: string | null;
+            /**
+             * Format: uuid
+             * @description Unique identifier for the template. Supply it in pricingTemplateIds when creating an application.
+             */
+            id?: string;
+            /**
+             * @description Whether the template is offered when an application is created without pricingTemplateIds.
+             * @example true
+             */
+            isDefault?: boolean;
+            /**
+             * @description The template's name, as shown to you in the dashboard.
+             * @example Flat Rate
+             */
+            name?: string | null;
+        };
         /**
          * @description <p>Possible values:</p>
          *     <ul>
@@ -15522,6 +16937,34 @@ export interface components {
          * @enum {string}
          */
         PricingType: "Card" | "Cash";
+        /** @description A person at the business. */
+        PrimaryContactDto: {
+            /**
+             * @description Email address.
+             * @example marcus@example.com
+             */
+            email?: string | null;
+            /**
+             * @description First name, up to 30 characters.
+             * @example Marcus
+             */
+            firstName?: string | null;
+            /**
+             * @description Last name, up to 30 characters.
+             * @example Alvarez
+             */
+            lastName?: string | null;
+            /**
+             * @description Phone number in E.164 format.
+             * @example +15550148000
+             */
+            phoneNumber?: string | null;
+            /**
+             * @description Job title, up to 30 characters.
+             * @example Owner
+             */
+            title?: string | null;
+        };
         PrintTransactionReceiptRequestDto: {
             /**
              * Format: uuid
@@ -15610,11 +17053,18 @@ export interface components {
         RefundDetailsDto: {
             /**
              * Format: double
-             * @description Amount still refundable — authoritative, i.e. captured amount minus Arise.IsvApiBff.Contracts.v2.Transaction.SharedDtos.RefundDetailsDto.RefundedAmount,
+             * @description Amount still refundable — authoritative, i.e. captured amount minus `refundedAmount`,
              *     as reported by the gateway.
              * @example 120
              */
             availableRefundAmount?: number;
+            /**
+             * @description True once approved refunds leave nothing refundable — `refundedAmount` above 0 and
+             *     `availableRefundAmount` at 0. False for a transaction nothing was refunded from,
+             *     even when nothing is available (e.g. an authorization that was never captured).
+             * @example false
+             */
+            isFullyRefunded?: boolean;
             /**
              * Format: double
              * @description Total amount already refunded against this transaction.
@@ -15635,6 +17085,25 @@ export interface components {
              * @example 50
              */
             reversalAmount?: number | null;
+        };
+        /** @description A Schedule A (pricing schedule) a partner user can put a merchant application on. */
+        ScheduleADto: {
+            /**
+             * Format: uuid
+             * @description Unique identifier for the Schedule A. Supply it as scheduleAId when creating an application for this user.
+             */
+            id?: string;
+            /**
+             * @description The Schedule A's name, as shown in the dashboard.
+             * @example Fiserv Standard
+             */
+            name?: string | null;
+            /**
+             * Format: int32
+             * @description The processor this Schedule A is for. Absent when it applies to any processor.
+             * @example 123
+             */
+            processorId?: number | null;
         };
         /** @description Request to send a transaction receipt by SMS. */
         SendReceiptRequestDto: {
@@ -15664,12 +17133,83 @@ export interface components {
             recipient: string;
             shareBy: components["schemas"]["NotificationDeliveryMethod"];
         };
+        /**
+         * @description Who performs the site inspection.<p>Possible values:</p>
+         *     <ul>
+         *     <li><b>1 - Aurora</b>: We perform the site inspection.</li>
+         *     <li><b>2 - Agent</b>: The partner performs the site inspection.</li>
+         *     </ul>
+         * @enum {string}
+         */
+        SiteInspectionType: "Aurora" | "Agent";
+        /** @description A residual Split Profile a partner user can put a merchant application on. */
+        SplitProfileDto: {
+            /**
+             * Format: uuid
+             * @description Unique identifier for the Split Profile. Supply it as splitProfileId when creating an application for this user.
+             */
+            id?: string;
+            /**
+             * @description Whether this is the user's default Split Profile.
+             * @example true
+             */
+            isDefault?: boolean;
+            /**
+             * @description Whether this Split Profile is marked high risk. High-risk profiles are typically only assigned after underwriting flags the deal as high risk.
+             * @example false
+             */
+            isHighRisk?: boolean;
+            /**
+             * @description The Split Profile's name, as shown in the dashboard.
+             * @example Default Split
+             */
+            name?: string | null;
+        };
         /** @description Suggested tips information. */
         SuggestedTipsDto: {
             /** Format: double */
             tipAmount?: number;
             /** Format: double */
             tipPercent?: number;
+        };
+        /**
+         * @description The tax recorded on the transaction, which a checkout session or a payment link configures. Null when
+         *     the transaction carries none — including when the only tax sent was an enhanced-data (Level 2) sales
+         *     tax rate, which qualifies the transaction for interchange without being charged to the payer.
+         *     Distinct from Arise.IsvApiBff.Contracts.v2.Transaction.SharedDtos.AmountDetailsDto.TaxAmount, which is a component of the amount breakdown
+         *     and so reports only a tax that raised the total: an Inclusive tax is already inside
+         *     Arise.IsvApiBff.Contracts.v2.Transaction.SharedDtos.AmountDetailsDto.BaseAmount and is 0 there.
+         */
+        TaxDetailsDto: {
+            /**
+             * Format: double
+             * @description Tax the transaction was quoted at, whatever the mode. It describes the quote, as the amount
+             *     breakdown does: a capture or a host approval for less leaves it unchanged, and processedAmount
+             *     reports what was taken.
+             * @example 7.83
+             */
+            taxAmount?: number;
+            taxMode?: components["schemas"]["TaxMode"];
+            /**
+             * Format: double
+             * @description The rate the tax was configured at, as a percent (e.g. 8.5 = 8.5%). A resource that supplies its
+             *     own tax amount — an invoice, which taxes its line items rather than the whole amount — has this
+             *     rate recorded rather than applied, so it need not reproduce Arise.IsvApiBff.Contracts.v2.Transaction.SharedDtos.TaxDetailsDto.TaxAmount; one that
+             *     supplies only the amount has the rate derived from it.
+             * @example 8.5
+             */
+            taxRate?: number;
+            /**
+             * Format: double
+             * @description What the quote charged before the tax: its total less the tip, the surcharge and an Exclusive tax,
+             *     all charged outside the taxed amount, and less Arise.IsvApiBff.Contracts.v2.Transaction.SharedDtos.TaxDetailsDto.TaxAmount when the tax is Inclusive
+             *     and therefore already inside it. With a rate-driven tax this is the amount the rate was applied
+             *     to, to the cent: the quote's components are each rounded before they are stored, so the residual
+             *     can differ from it by 0.01. With a supplied amount it is still what was charged before tax, which
+             *     is not the narrower base that amount was computed on.
+             * @example 92.17
+             */
+            taxableAmount?: number;
         };
         /** @enum {string} */
         TaxMode: "Exclusive" | "Inclusive";
@@ -15684,7 +17224,7 @@ export interface components {
         /** @enum {string} */
         TerminalMode: "Standalone" | "SemiIntegrated";
         /** @enum {string} */
-        TerminalModel: "SunmiP2" | "SunmiP2LiteSe" | "VerifoneVictaMobile" | "VerifoneVictaPortable" | "SunmiP3H";
+        TerminalModel: "SunmiP2" | "SunmiP2LiteSe" | "VerifoneVictaMobile" | "VerifoneVictaPortable" | "SunmiP3H" | "SunmiCPadPay" | "SunmiP3Air";
         /** @enum {string} */
         TerminalPosStatus: "Ready" | "Busy" | "Offline";
         /** @enum {string} */
@@ -15753,7 +17293,8 @@ export interface components {
             maskedCardNumber?: string | null;
             /**
              * Format: uuid
-             * @description Identifier of the stored payment method, when the transaction used one.
+             * @description Identifier of the stored payment method the transaction used, or that its card was stored as afterwards
+             *     (for example after the cardholder consented on a POS terminal).
              */
             paymentMethodId?: string | null;
         };
@@ -16213,8 +17754,10 @@ export interface components {
             currencyCode?: string | null;
             /**
              * Format: uuid
-             * @description Customer the link is issued for. Explicit null detaches the customer. Not allowed
-             *     once the merged link is MultiUse.
+             * @description Customer the link is issued for. Explicit null detaches the customer; the link's mode
+             *     stays as it is. On a MultiUse link its payments, and any payment method a payer saves
+             *     there, are recorded under this customer, but the payment page never shows the
+             *     customer's details or saved methods.
              */
             customerId?: string | null;
             /** @description Merchant-internal notes, max 500 characters. Explicit null clears them. */
@@ -16226,22 +17769,39 @@ export interface components {
             expiresOn?: string | null;
             linkType?: components["schemas"]["PaymentLinkType"];
             /**
+             * @description Merged key by key: a key with a value is added or replaced, a key set to null is removed,
+             *     and keys left out are kept. Explicit null removes every key. The merged pairs must stay
+             *     within the limits of create. Only sessions the link opens afterwards carry the change.
+             */
+            metadata?: {
+                [key: string]: string | null;
+            } | null;
+            /**
              * @description Merchant-facing label, max 80 characters. Cannot be cleared.
              * @example Spring campaign
              */
             name?: string | null;
             paymentLinkStatus?: components["schemas"]["PaymentLinkStatus"];
-            paymentMethods?: components["schemas"]["PaymentMethodsDto"];
+            paymentMethods?: components["schemas"]["PaymentMethodsPatchDto"];
             /**
              * @description Merchant label, max 200 characters. Explicit null clears it.
              * @example ORDER-1042
              */
             referenceId?: string | null;
+            /**
+             * Format: double
+             * @description Pre-calculated tax in currency units, with up to 2 decimal places, not negative. Same merge
+             *     rule as taxRate; the merged link must keep a fixed baseAmount, and in Inclusive mode the
+             *     amount must stay below it.
+             * @example 2.06
+             */
+            taxAmount?: number | null;
             taxMode?: components["schemas"]["TaxMode"];
             /**
              * Format: double
-             * @description Tax rate percentage, 0 to 100, with up to 3 decimal places. The merged link
-             *     must keep taxRate and taxMode set or cleared together; explicit null clears the tax.
+             * @description Tax rate percentage, 0 to 100, with up to 3 decimal places. The merged link must keep
+             *     taxMode set together with exactly one of taxRate and taxAmount, or all three cleared;
+             *     switching a link to taxAmount therefore needs an explicit null here.
              * @example 8.25
              */
             taxRate?: number | null;
@@ -16347,6 +17907,32 @@ export interface components {
             /** @description Event types to subscribe to. Replaces the existing subscription list wholesale. */
             eventTypes?: components["schemas"]["WebhookEventType"][] | null;
         };
+        /**
+         * @description A person who can sign in under your partner account, one of your merchants, or an application
+         *     you invited. One row per person, however many of those accounts they hold a profile on.
+         */
+        UserDto: {
+            /**
+             * @description The email address the user signs in with.
+             * @example ada@partner.example
+             */
+            email?: string | null;
+            /**
+             * Format: uuid
+             * @description Unique identifier for the user. Pass it as userId to the per-user endpoints.
+             */
+            id?: string;
+        };
+        /**
+         * @description Which account a user belongs to.<p>Possible values:</p>
+         *     <ul>
+         *     <li><b>1 - Partner</b>: A user of your partner account.</li>
+         *     <li><b>2 - Merchant</b>: A user of one of your merchants.</li>
+         *     <li><b>3 - Applicant</b>: A merchant applicant you invited, still working through their application.</li>
+         *     </ul>
+         * @enum {string}
+         */
+        UserType: "Partner" | "Merchant" | "Applicant";
         ValidationExceptionExample: {
             cause?: string | null;
             correlationId?: string | null;
@@ -16363,6 +17949,20 @@ export interface components {
             /** Format: int32 */
             statusCode?: number | null;
             title?: string | null;
+        };
+        /**
+         * @description A digital wallet (Apple Pay, Google Pay) offered on a payment session. Wallets are card-network
+         *     wallets: the payment authorizes as a card payment on the session's card processor. Whether a
+         *     session offers a wallet follows from the merchant's wallet enablement, the card processor and
+         *     the merchant's pricing mode, so it is reported on reads and not configured per session.
+         */
+        WalletPaymentMethodDto: {
+            /**
+             * Format: uuid
+             * @description Card processor charging this wallet's payments: the session's pinned card processor.
+             * @example d529945e-8d10-4cb4-9dc3-718e57f3f14e
+             */
+            processorId?: string;
         };
         /** @enum {string} */
         WebhookDeliveryLogExportFormat: "Csv" | "Json";
