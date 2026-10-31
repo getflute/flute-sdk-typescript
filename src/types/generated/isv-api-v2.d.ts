@@ -4,7 +4,7 @@
  */
 
 export interface paths {
-    "/v2/api-keys": {
+    "/v2/applications": {
         parameters: {
             query?: never;
             header?: never;
@@ -12,20 +12,46 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * List API Keys Required API Permission: General Configurations
-         * @description List the API keys of the merchants managed by your affiliate account, optionally filtered to a
-         *     single merchant.
-         *
-         *     **Note:** This endpoint requires the Bearer token to be an Affiliate (ISV) token. Merchant tokens are not accepted.
+         * List applications Required API Permission: List Applications
+         * @description Returns the merchant applications initiated under your partner account, newest application
+         *     number first. Use
+         *     applicationStatus to track where each one sits in onboarding; the application lifecycle
+         *     webhooks report the individual events that move it between statuses. Cancelled
+         *     applications are left out unless you ask for them with applicationStatus=Cancelled.
+         *     Both createdFrom and createdTo are inclusive, so a calendar month is
+         *     createdFrom=2026-06-01 and createdTo=2026-06-30.
          */
         get: {
             parameters: {
                 query?: {
                     /**
-                     * @description Optional merchant identifier to filter API keys. If not provided, returns keys for all merchants belonging to the affiliate
-                     * @example 8db2ff47-b143-4adb-ab58-a4a017504db2
+                     * @description Zero-based page index.
+                     * @example 0
                      */
-                    merchantId?: string;
+                    pageIndex?: number;
+                    /**
+                     * @description Number of items per page. Between 1 and 100.
+                     * @example 20
+                     */
+                    pageSize?: number;
+                    /**
+                     * @description Filter by application status. Cancelled applications are only returned when asked for
+                     *     explicitly.
+                     * @example InReview
+                     */
+                    applicationStatus?: components["schemas"]["ApplicationStatus"];
+                    /** @description Filter to a single application. */
+                    applicationId?: string;
+                    /**
+                     * @description Created at or after this instant (ISO 8601 date-time, inclusive). A value without an offset is read as UTC; a date alone is that day's midnight.
+                     * @example 2026-01-01
+                     */
+                    createdFrom?: string;
+                    /**
+                     * @description Created at or before this instant (ISO 8601 date-time, inclusive). A value without an offset is read as UTC; a date alone, or exactly 00:00:00 without an offset, covers that whole day. Must not be earlier than createdFrom.
+                     * @example 2026-12-31
+                     */
+                    createdTo?: string;
                 };
                 header?: never;
                 path?: never;
@@ -41,21 +67,2094 @@ export interface paths {
                     content: {
                         /**
                          * @example {
-                         *       "apiKeys": [
+                         *       "items": [
+                         *         {
+                         *           "applicationId": "6e8a0c2d-4f6b-4d8e-9a1c-3e5f7a9b1c2d",
+                         *           "applicationNumber": 4711,
+                         *           "applicationStatus": "InReview",
+                         *           "applicationStatusStartedOn": "2026-01-01T00:00:00Z",
+                         *           "businessName": "Corner Coffee",
+                         *           "createdOn": "2026-01-01T00:00:00Z",
+                         *           "invitationSentOn": "2026-01-01T00:00:00Z",
+                         *           "invitedByUser": {
+                         *             "firstName": "Ada",
+                         *             "lastName": "Lovelace",
+                         *             "userId": "3f2504e0-4f89-11d3-9a0c-0305e82c3301"
+                         *           },
+                         *           "merchantId": "7c9e6679-7425-40de-944b-e07fc1f90ae7",
+                         *           "metadata": {
+                         *             "locationId": "loc_00441"
+                         *           },
+                         *           "mid": "932129304958123",
+                         *           "modifiedOn": "2026-01-01T00:00:00Z",
+                         *           "partnerName": "Acme Partners",
+                         *           "partnerUser": {
+                         *             "firstName": "Ada",
+                         *             "lastName": "Lovelace",
+                         *             "userId": "3f2504e0-4f89-11d3-9a0c-0305e82c3301"
+                         *           },
+                         *           "processor": "Tsys",
+                         *           "sponsorBankName": "Esquire"
+                         *         }
+                         *       ],
+                         *       "pageInfo": {
+                         *         "hasMore": false,
+                         *         "pageIndex": 0,
+                         *         "pageSize": 20,
+                         *         "totalItems": 1,
+                         *         "totalPages": 1
+                         *       }
+                         *     }
+                         */
+                        "application/json": components["schemas"]["PagedResponseDtoOfApplicationDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "One or more fields failed validation rules.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "One or more validation errors occurred.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "V0000",
+                         *       "errors": {
+                         *         "Email": [
+                         *           "'Email' is not a valid email address."
+                         *         ]
+                         *       },
+                         *       "exceptionType": "ValidationException",
+                         *       "resolution": "Review the errors and correct the invalid fields.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 400,
+                         *       "title": "Validation failed"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ValidationExceptionExample"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Forbidden */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "You do not have permission to access this resource.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "You do not have permission to access this resource.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "F0000",
+                         *       "exceptionType": "ForbiddenException",
+                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 403,
+                         *       "title": "Access forbidden"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ForbiddenExceptionExample"];
+                    };
+                };
+                /** @description Too Many Requests */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "Too many requests sent in a short period.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Too many requests sent in a short period.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "R0000",
+                         *       "exceptionType": "RateLimitExceededException",
+                         *       "resolution": "Wait before retrying the request. Check the Retry-After header for more information.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 429,
+                         *       "title": "Rate limit exceeded"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["RateLimitExceededExceptionExample"];
+                    };
+                };
+                /** @description Internal Server Error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "An unexpected error occurred while processing the request",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "An unexpected error occurred while processing the request.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "I0000",
+                         *       "exceptionType": "IntegrationException",
+                         *       "resolution": "Please contact support with the correlation ID if the issue persists",
+                         *       "source": "<Service>",
+                         *       "statusCode": 500,
+                         *       "title": "Internal server error"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["InternalExceptionExample"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        /**
+         * Create application Required API Permission: Create Applications
+         * @description Invites a merchant to complete an application you have pre-filled. Send as little as the
+         *     business name and the merchant's email, or as much of the application as you hold; every
+         *     field you leave out stays empty for the merchant to fill in, including sensitive ones such
+         *     as SSN and bank details. The application is attributed to partnerUserId, whose feeScheduleId
+         *     and splitProfileId must be among the ones GET /v2/users/{userId}/fee-schedules and
+         *     GET /v2/users/{userId}/split-profiles return for that user. List the owners in owners, at most 4, principal owner first.
+         *     deliveryMethod decides who hands the merchant the link: Email means
+         *     we send the invitation email; PartnerDirect means you deliver applicationUrl yourself; Iframe
+         *     means you embed applicationUrl in an iframe on your own page and the merchant completes and
+         *     signs the application there without creating a Flute account; the frame posts
+         *     flute:application-submitted and flute:application-signed to your page as it goes, and your page
+         *     should check event.origin against applicationUrl before acting on them. The link grants access to the
+         *     application, so treat it like a password. Send an Idempotency-Key to make retries safe, and
+         *     metadata to correlate the application with your own records; it is stored as sent and
+         *     returned on the response and on GET /v2/applications. The response is the created
+         *     application, as GET /v2/applications/{applicationId} returns it, plus applicationUrl and
+         *     deliveryMethod; applicationUrl is returned only here.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: {
+                    /** @description Optional client-generated key (max 255 characters) that makes this request safely retryable: a retry with the same key within the retention window returns the original response verbatim without a second side effect; a retry while the original is still processing returns 409 IdempotencyKeyInProgress; reusing a key with a different request returns 422 IdempotencyKeyConflict. Server errors (5xx) are not stored: retrying the same key after one executes the request again. */
+                    "Idempotency-Key"?: string;
+                };
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": components["schemas"]["CreateApplicationRequestDto"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "applicationId": "1d3f5a7c-9e0b-4c2d-8f4a-6b8c0d2e4f61",
+                         *       "applicationNumber": 4712,
+                         *       "applicationStatus": "Draft",
+                         *       "applicationStatusStartedOn": "2026-01-01T00:00:00Z",
+                         *       "applicationUrl": "https://dashboard.flute.com/onboarding/register?invite_token=019c76de-cbd3-788d-8cb0-f829e90a0623&email=marcus%40example.com",
+                         *       "businessName": "Marcus's Pickup Shop",
+                         *       "createdOn": "2026-01-01T00:00:00Z",
+                         *       "deliveryMethod": "PartnerDirect",
+                         *       "invitationSentOn": "2026-01-01T00:00:00Z",
+                         *       "invitedByUser": {
+                         *         "firstName": "Ada",
+                         *         "lastName": "Lovelace",
+                         *         "userId": "3f2504e0-4f89-11d3-9a0c-0305e82c3301"
+                         *       },
+                         *       "merchantId": null,
+                         *       "metadata": {
+                         *         "locationId": "loc_00441"
+                         *       },
+                         *       "mid": null,
+                         *       "modifiedOn": null,
+                         *       "partnerName": "Acme Partners",
+                         *       "partnerUser": {
+                         *         "firstName": "Ada",
+                         *         "lastName": "Lovelace",
+                         *         "userId": "3f2504e0-4f89-11d3-9a0c-0305e82c3301"
+                         *       },
+                         *       "processor": "Tsys",
+                         *       "sponsorBankName": "Esquire"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["CreateApplicationResponseDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "One or more fields failed validation rules.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "One or more validation errors occurred.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "V0000",
+                         *       "errors": {
+                         *         "Email": [
+                         *           "'Email' is not a valid email address."
+                         *         ]
+                         *       },
+                         *       "exceptionType": "ValidationException",
+                         *       "resolution": "Review the errors and correct the invalid fields.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 400,
+                         *       "title": "Validation failed"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ValidationExceptionExample"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Forbidden */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "You do not have permission to access this resource.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "You do not have permission to access this resource.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "F0000",
+                         *       "exceptionType": "ForbiddenException",
+                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 403,
+                         *       "title": "Access forbidden"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ForbiddenExceptionExample"];
+                    };
+                };
+                /** @description Conflict */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "The request conflicts with the current state of the resource.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "The request conflicts with the current state of the resource.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "C0000",
+                         *       "exceptionType": "ConflictException",
+                         *       "resolution": "Refresh the resource state and retry the operation, or use a different idempotency key.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 409,
+                         *       "title": "Resource conflict"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ConflictExceptionExample"];
+                    };
+                };
+                /** @description Unprocessable Content */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "The request is well-formed but was rejected by a business rule.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "The request is well-formed but was rejected by a business rule.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "E0000",
+                         *       "exceptionType": "UnprocessableEntityException",
+                         *       "resolution": "Correct the request so it satisfies the rule described in the details, then retry.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 422,
+                         *       "title": "Unprocessable entity"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["UnprocessableEntityExceptionExample"];
+                    };
+                };
+                /** @description Too Many Requests */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "Too many requests sent in a short period.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Too many requests sent in a short period.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "R0000",
+                         *       "exceptionType": "RateLimitExceededException",
+                         *       "resolution": "Wait before retrying the request. Check the Retry-After header for more information.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 429,
+                         *       "title": "Rate limit exceeded"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["RateLimitExceededExceptionExample"];
+                    };
+                };
+                /** @description Internal Server Error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "An unexpected error occurred while processing the request",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "An unexpected error occurred while processing the request.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "I0000",
+                         *       "exceptionType": "IntegrationException",
+                         *       "resolution": "Please contact support with the correlation ID if the issue persists",
+                         *       "source": "<Service>",
+                         *       "statusCode": 500,
+                         *       "title": "Internal server error"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["InternalExceptionExample"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v2/applications/{applicationId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get an application Required API Permission: List Applications
+         * @description Returns one merchant application you initiated, in the same shape as an item of
+         *     GET /v2/applications. A cancelled application is returned too, with
+         *     applicationStatus=Cancelled. An application outside your partner account answers 404, the
+         *     same as one that does not exist.
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    applicationId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "applicationId": "6e8a0c2d-4f6b-4d8e-9a1c-3e5f7a9b1c2d",
+                         *       "applicationNumber": 4711,
+                         *       "applicationStatus": "InReview",
+                         *       "applicationStatusStartedOn": "2026-01-01T00:00:00Z",
+                         *       "businessName": "Corner Coffee",
+                         *       "createdOn": "2026-01-01T00:00:00Z",
+                         *       "invitationSentOn": "2026-01-01T00:00:00Z",
+                         *       "invitedByUser": {
+                         *         "firstName": "Ada",
+                         *         "lastName": "Lovelace",
+                         *         "userId": "3f2504e0-4f89-11d3-9a0c-0305e82c3301"
+                         *       },
+                         *       "merchantId": "7c9e6679-7425-40de-944b-e07fc1f90ae7",
+                         *       "metadata": {
+                         *         "locationId": "loc_00441"
+                         *       },
+                         *       "mid": "932129304958123",
+                         *       "modifiedOn": "2026-01-01T00:00:00Z",
+                         *       "partnerName": "Acme Partners",
+                         *       "partnerUser": {
+                         *         "firstName": "Ada",
+                         *         "lastName": "Lovelace",
+                         *         "userId": "3f2504e0-4f89-11d3-9a0c-0305e82c3301"
+                         *       },
+                         *       "processor": "Tsys",
+                         *       "sponsorBankName": "Esquire"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ApplicationDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "One or more fields failed validation rules.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "One or more validation errors occurred.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "V0000",
+                         *       "errors": {
+                         *         "Email": [
+                         *           "'Email' is not a valid email address."
+                         *         ]
+                         *       },
+                         *       "exceptionType": "ValidationException",
+                         *       "resolution": "Review the errors and correct the invalid fields.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 400,
+                         *       "title": "Validation failed"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ValidationExceptionExample"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Forbidden */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "You do not have permission to access this resource.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "You do not have permission to access this resource.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "F0000",
+                         *       "exceptionType": "ForbiddenException",
+                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 403,
+                         *       "title": "Access forbidden"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ForbiddenExceptionExample"];
+                    };
+                };
+                /** @description Not Found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "The requested resource does not exist or has been deleted.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Entity with ID b31fbe9f-eebb-45ce-9cae-92265389f47f does not exist or has been deleted",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": "b31fbe9f-eebb-45ce-9cae-92265389f47f",
+                         *       "errorCode": "N0000",
+                         *       "exceptionType": "NotFoundException",
+                         *       "resolution": "Verify the resource ID is correct or retrieve a list of available resources.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 404,
+                         *       "title": "Resource not found"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["NotFoundExceptionExample"];
+                    };
+                };
+                /** @description Too Many Requests */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "Too many requests sent in a short period.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Too many requests sent in a short period.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "R0000",
+                         *       "exceptionType": "RateLimitExceededException",
+                         *       "resolution": "Wait before retrying the request. Check the Retry-After header for more information.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 429,
+                         *       "title": "Rate limit exceeded"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["RateLimitExceededExceptionExample"];
+                    };
+                };
+                /** @description Internal Server Error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "An unexpected error occurred while processing the request",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "An unexpected error occurred while processing the request.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "I0000",
+                         *       "exceptionType": "IntegrationException",
+                         *       "resolution": "Please contact support with the correlation ID if the issue persists",
+                         *       "source": "<Service>",
+                         *       "statusCode": 500,
+                         *       "title": "Internal server error"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["InternalExceptionExample"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v2/customers": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Customers Required API Permission: List Customers
+         * @description Newest first unless `sortBy` and `sortOrder` say otherwise. `sortBy` is one of `createdOn`, `modifiedOn`,
+         *     `firstName`, `lastName`, `companyName`, `email`, `mobilePhoneNumber`, `lastTransactionOn` or
+         *     `paymentMethodsCount`; `sortOrder` is `asc` or `desc`. `createdFrom` and `createdTo` are ISO 8601
+         *     date-times, both inclusive; a value without an offset is read as UTC, and a date alone (or exactly
+         *     00:00:00 without an offset) covers that whole day (`createdTo=2026-03-10` includes all of March 10).
+         *     `asc` and `orderBy` are not read. Answers `403` unless the token carries the `ListCustomers` permission;
+         *     a partner token is refused.
+         */
+        get: {
+            parameters: {
+                query?: {
+                    /** @description Zero-based page index. */
+                    pageIndex?: number;
+                    /** @description Items per page (1–100). */
+                    pageSize?: number;
+                    /**
+                     * @description Sort field: createdOn, modifiedOn, firstName, lastName, companyName, email, mobilePhoneNumber,
+                     *     lastTransactionOn or paymentMethodsCount. Default createdOn.
+                     * @example createdOn
+                     */
+                    sortBy?: string;
+                    /**
+                     * @description Sort direction: asc or desc. Default desc.
+                     * @example desc
+                     */
+                    sortOrder?: string;
+                    /** @description Filter by full name */
+                    fullName?: string;
+                    /** @description Filter by email */
+                    email?: string;
+                    /** @description Filter by company name */
+                    companyName?: string;
+                    /**
+                     * @description Filter by mobile phone number. Free-form search input — E.164 format is not required here
+                     *     so callers can search by partial digits or legacy formats.
+                     */
+                    mobilePhoneNumber?: string;
+                    /** @description Created at or after this instant (ISO 8601 date-time, inclusive). A value without an offset is read as UTC; a date alone is that day's midnight. */
+                    createdFrom?: string;
+                    /** @description Created at or before this instant (ISO 8601 date-time, inclusive). A value without an offset is read as UTC; a date alone, or exactly 00:00:00 without an offset, covers that whole day. Must not be earlier than createdFrom. */
+                    createdTo?: string;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "items": [
+                         *         {
+                         *           "billingAddress": {
+                         *             "addressLine1": "123 Main Street",
+                         *             "addressLine2": null,
+                         *             "city": "New York",
+                         *             "countryCode": "US",
+                         *             "postalCode": "10001",
+                         *             "stateCode": "NY"
+                         *           },
+                         *           "companyName": "Acme Corp",
+                         *           "createdOn": "2026-01-01T00:00:00Z",
+                         *           "customerId": "f81ca0b7-fa2e-4a6c-be9e-7def348c1ddf",
+                         *           "email": "john.doe@acme.com",
+                         *           "externalId": "CUST-EXT-001",
+                         *           "firstName": "John",
+                         *           "lastName": "Doe",
+                         *           "lastTransactionOn": "2026-01-01T00:00:00Z",
+                         *           "mobilePhoneNumber": "+14125553845",
+                         *           "modifiedOn": "2026-01-01T00:00:00Z",
+                         *           "paymentMethodsCount": 3
+                         *         },
+                         *         {
+                         *           "billingAddress": {
+                         *             "addressLine1": "456 Oak Avenue",
+                         *             "addressLine2": null,
+                         *             "city": "Los Angeles",
+                         *             "countryCode": "US",
+                         *             "postalCode": "90001",
+                         *             "stateCode": "CA"
+                         *           },
+                         *           "companyName": "Tech Solutions Inc",
+                         *           "createdOn": "2026-01-01T00:00:00Z",
+                         *           "customerId": "a98bbbba-40e6-4114-970a-078ebfdcbac2",
+                         *           "email": "jane.smith@techsolutions.com",
+                         *           "externalId": "CUST-EXT-002",
+                         *           "firstName": "Jane",
+                         *           "lastName": "Smith",
+                         *           "lastTransactionOn": "2026-01-01T00:00:00Z",
+                         *           "mobilePhoneNumber": "+14155557890",
+                         *           "modifiedOn": "2026-01-01T00:00:00Z",
+                         *           "paymentMethodsCount": 1
+                         *         }
+                         *       ],
+                         *       "pageInfo": {
+                         *         "hasMore": false,
+                         *         "pageIndex": 0,
+                         *         "pageSize": 20,
+                         *         "totalItems": 2,
+                         *         "totalPages": 1
+                         *       }
+                         *     }
+                         */
+                        "application/json": components["schemas"]["PagedResponseDtoOfListCustomersResponseDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "One or more fields failed validation rules.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "One or more validation errors occurred.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "V0000",
+                         *       "errors": {
+                         *         "Email": [
+                         *           "'Email' is not a valid email address."
+                         *         ]
+                         *       },
+                         *       "exceptionType": "ValidationException",
+                         *       "resolution": "Review the errors and correct the invalid fields.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 400,
+                         *       "title": "Validation failed"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ValidationExceptionExample"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: "Partner token is being used. Use a merchant token instead." */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ForbiddenExceptionExample"];
+                    };
+                };
+                /** @description Not Found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "The requested resource does not exist or has been deleted.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Entity with ID b31fbe9f-eebb-45ce-9cae-92265389f47f does not exist or has been deleted",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": "b31fbe9f-eebb-45ce-9cae-92265389f47f",
+                         *       "errorCode": "N0000",
+                         *       "exceptionType": "NotFoundException",
+                         *       "resolution": "Verify the resource ID is correct or retrieve a list of available resources.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 404,
+                         *       "title": "Resource not found"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["NotFoundExceptionExample"];
+                    };
+                };
+                /** @description Too Many Requests */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "Too many requests sent in a short period.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Too many requests sent in a short period.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "R0000",
+                         *       "exceptionType": "RateLimitExceededException",
+                         *       "resolution": "Wait before retrying the request. Check the Retry-After header for more information.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 429,
+                         *       "title": "Rate limit exceeded"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["RateLimitExceededExceptionExample"];
+                    };
+                };
+                /** @description Internal Server Error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "An unexpected error occurred while processing the request",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "An unexpected error occurred while processing the request.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "I0000",
+                         *       "exceptionType": "IntegrationException",
+                         *       "resolution": "Please contact support with the correlation ID if the issue persists",
+                         *       "source": "<Service>",
+                         *       "statusCode": 500,
+                         *       "title": "Internal server error"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["InternalExceptionExample"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        /**
+         * Create Customer Required API Permission: Manage Customers
+         * @description Each `paymentMethods[]` item carries a `paymentMethodType` of `Card` or `ACH` and only that
+         *     type's fields: a Card needs `cardNumber`, `securityCode`, `expirationMonth` and
+         *     `expirationYear`; an ACH account needs `accountRoutingNumber`, `accountNumber`,
+         *     `accountHolderType` and `accountType`, plus `taxId` when `accountHolderType` is `Business`
+         *     (which also makes the customer's `companyName` required). Every item needs a
+         *     `paymentMethodName` of at most 20 characters. `externalId` (at most 100 characters) can be
+         *     set only here, on create. `hasSmsConsent` defaults to false. `shippingAddress` is ignored
+         *     while `shouldUseBillingAsShippingAddress` is true. Address limits: `postalCode` 5 to 10
+         *     characters, `city` at most 50, each address line at most 200. Returns the full created
+         *     customer, with `paymentMethods` oldest first. Answers `403` unless the token carries the
+         *     `ManageCustomers` permission; a partner token is refused.
+         *
+         *     With an ACH item, `billingAddress` is required and must be one the account can be charged against:
+         *
+         *     - `countryCode`: `US`
+         *     - `stateCode`: required, a US state
+         *     - `city`: required
+         *     - `addressLine1`: required, at most 70 characters
+         *     - `addressLine2`: at most 40 characters
+         *     - `postalCode`: required, a ZIP code (`#####` or `#####-####`)
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    /**
+                     * @example {
+                     *       "billingAddress": {
+                     *         "addressLine1": "123 Main Street",
+                     *         "addressLine2": "Suite 400",
+                     *         "city": "New York",
+                     *         "countryCode": "US",
+                     *         "postalCode": "10001",
+                     *         "stateCode": "NY"
+                     *       },
+                     *       "companyName": "Acme Corp",
+                     *       "email": "jane.doe@example.com",
+                     *       "externalId": "CUST-EXT-12345",
+                     *       "firstName": "Jane",
+                     *       "hasSmsConsent": true,
+                     *       "lastName": "Doe",
+                     *       "mobilePhoneNumber": "+14125553845",
+                     *       "paymentMethods": [
+                     *         {
+                     *           "accountHolderType": null,
+                     *           "accountNumber": null,
+                     *           "accountRoutingNumber": null,
+                     *           "accountType": null,
+                     *           "cardNumber": "4111111111111111",
+                     *           "expirationMonth": 12,
+                     *           "expirationYear": 2030,
+                     *           "paymentMethodName": "Personal Visa",
+                     *           "paymentMethodType": "Card",
+                     *           "securityCode": "123",
+                     *           "taxId": null
+                     *         },
+                     *         {
+                     *           "accountHolderType": "Business",
+                     *           "accountNumber": "1234567890",
+                     *           "accountRoutingNumber": "021000021",
+                     *           "accountType": "Checking",
+                     *           "cardNumber": null,
+                     *           "expirationMonth": null,
+                     *           "expirationYear": null,
+                     *           "paymentMethodName": "Primary Checking",
+                     *           "paymentMethodType": "ACH",
+                     *           "securityCode": null,
+                     *           "taxId": "123456789"
+                     *         }
+                     *       ],
+                     *       "shippingAddress": {
+                     *         "addressLine1": "456 Market Street",
+                     *         "addressLine2": "Apt 7B",
+                     *         "city": "Brooklyn",
+                     *         "countryCode": "US",
+                     *         "postalCode": "11201",
+                     *         "stateCode": "NY"
+                     *       },
+                     *       "shouldUseBillingAsShippingAddress": false
+                     *     }
+                     */
+                    "application/json": components["schemas"]["CreateCustomerRequestDto"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "activeSubscriptionsCount": 2,
+                         *       "billingAddress": {
+                         *         "addressLine1": "123 Main Street",
+                         *         "addressLine2": "Suite 400",
+                         *         "city": "New York",
+                         *         "countryCode": "US",
+                         *         "postalCode": "10001",
+                         *         "stateCode": "NY"
+                         *       },
+                         *       "companyName": "Acme Corp",
+                         *       "createdOn": "2026-01-01T00:00:00Z",
+                         *       "customerId": "1edee500-535c-4210-9ca3-9e86e8f0a3ca",
+                         *       "email": "jane.doe@example.com",
+                         *       "externalId": "CUST-EXT-12345",
+                         *       "firstName": "Jane",
+                         *       "hasSmsConsent": true,
+                         *       "lastName": "Doe",
+                         *       "lastTransactionAmount": 99.99,
+                         *       "lastTransactionOn": "2026-01-01T00:00:00Z",
+                         *       "mobilePhoneNumber": "+14125553845",
+                         *       "modifiedOn": "2026-01-01T00:00:00Z",
+                         *       "paymentMethods": [
+                         *         {
+                         *           "achDetails": null,
+                         *           "cardDetails": {
+                         *             "cardBrand": "Visa",
+                         *             "cardNumberLast4": "1111",
+                         *             "cardTokenType": "Local",
+                         *             "cardType": "Credit",
+                         *             "expirationMonth": 12,
+                         *             "expirationYear": 2030,
+                         *             "maskedCardNumber": "400112******1111"
+                         *           },
+                         *           "createdOn": "2026-01-01T00:00:00Z",
+                         *           "customerId": "1edee500-535c-4210-9ca3-9e86e8f0a3ca",
+                         *           "isDefault": true,
+                         *           "paymentMethodId": "6e22f0f3-f3ed-407c-a46f-ec9cffde5d5b",
+                         *           "paymentMethodName": "Personal Visa",
+                         *           "paymentMethodType": "Card"
+                         *         },
+                         *         {
+                         *           "achDetails": {
+                         *             "accountHolderType": "Personal",
+                         *             "accountNumberLast2": "90",
+                         *             "accountRoutingNumber": "021000021",
+                         *             "accountType": "Checking",
+                         *             "companyName": null,
+                         *             "maskedAccountNumber": "****7890",
+                         *             "taxId": "*****6789"
+                         *           },
+                         *           "cardDetails": null,
+                         *           "createdOn": "2026-01-01T00:00:00Z",
+                         *           "customerId": "1edee500-535c-4210-9ca3-9e86e8f0a3ca",
+                         *           "isDefault": false,
+                         *           "paymentMethodId": "9a3f6c1e-2b7d-4e8a-b5c4-7d1e0f2a3b6c",
+                         *           "paymentMethodName": "Primary Checking",
+                         *           "paymentMethodType": "ACH"
+                         *         }
+                         *       ],
+                         *       "shippingAddress": null,
+                         *       "shouldUseBillingAsShippingAddress": false,
+                         *       "transactionsCount": 12,
+                         *       "transactionsTotalAmount": 1234.56
+                         *     }
+                         */
+                        "application/json": components["schemas"]["CustomerDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "One or more fields failed validation rules.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "One or more validation errors occurred.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "V0000",
+                         *       "errors": {
+                         *         "Email": [
+                         *           "'Email' is not a valid email address."
+                         *         ]
+                         *       },
+                         *       "exceptionType": "ValidationException",
+                         *       "resolution": "Review the errors and correct the invalid fields.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 400,
+                         *       "title": "Validation failed"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ValidationExceptionExample"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Payment Required */
+                402: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "The payment was declined by the payment processor.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "The payment was declined by the processor.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "P0000",
+                         *       "exceptionType": "PaymentFailedException",
+                         *       "resolution": "Verify payment details, check available funds, or try a different payment method.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 402,
+                         *       "title": "Payment failed"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["PaymentFailedExceptionExample"];
+                    };
+                };
+                /** @description Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: "Partner token is being used. Use a merchant token instead." */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ForbiddenExceptionExample"];
+                    };
+                };
+                /** @description Not Found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "The requested resource does not exist or has been deleted.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Entity with ID b31fbe9f-eebb-45ce-9cae-92265389f47f does not exist or has been deleted",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": "b31fbe9f-eebb-45ce-9cae-92265389f47f",
+                         *       "errorCode": "N0000",
+                         *       "exceptionType": "NotFoundException",
+                         *       "resolution": "Verify the resource ID is correct or retrieve a list of available resources.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 404,
+                         *       "title": "Resource not found"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["NotFoundExceptionExample"];
+                    };
+                };
+                /** @description Conflict */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "The request conflicts with the current state of the resource.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "The request conflicts with the current state of the resource.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "C0000",
+                         *       "exceptionType": "ConflictException",
+                         *       "resolution": "Refresh the resource state and retry the operation, or use a different idempotency key.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 409,
+                         *       "title": "Resource conflict"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ConflictExceptionExample"];
+                    };
+                };
+                /** @description Too Many Requests */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "Too many requests sent in a short period.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Too many requests sent in a short period.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "R0000",
+                         *       "exceptionType": "RateLimitExceededException",
+                         *       "resolution": "Wait before retrying the request. Check the Retry-After header for more information.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 429,
+                         *       "title": "Rate limit exceeded"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["RateLimitExceededExceptionExample"];
+                    };
+                };
+                /** @description Internal Server Error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "An unexpected error occurred while processing the request",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "An unexpected error occurred while processing the request.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "I0000",
+                         *       "exceptionType": "IntegrationException",
+                         *       "resolution": "Please contact support with the correlation ID if the issue persists",
+                         *       "source": "<Service>",
+                         *       "statusCode": 500,
+                         *       "title": "Internal server error"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["InternalExceptionExample"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v2/customers/{customerId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Customer Required API Permission: Get Customer Details
+         * @description Returns the customer with all its saved payment methods, oldest first. `shippingAddress` is null while
+         *     `shouldUseBillingAsShippingAddress` is true. A card's `cardType` is `Unknown` when the credit/debit lookup
+         *     could not tell. Answers `403` unless the token carries the `GetCustomerDetails` permission; a
+         *     partner token is refused.
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description The customer identifier.
+                     * @example 299eea56-ba50-4d8d-9bb0-89c4dfce6f73
+                     */
+                    customerId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "activeSubscriptionsCount": 2,
+                         *       "billingAddress": {
+                         *         "addressLine1": "123 Main Street",
+                         *         "addressLine2": "Suite 400",
+                         *         "city": "New York",
+                         *         "countryCode": "US",
+                         *         "postalCode": "10001",
+                         *         "stateCode": "NY"
+                         *       },
+                         *       "companyName": "Acme Corp",
+                         *       "createdOn": "2026-01-01T00:00:00Z",
+                         *       "customerId": "1edee500-535c-4210-9ca3-9e86e8f0a3ca",
+                         *       "email": "jane.doe@example.com",
+                         *       "externalId": "CUST-EXT-12345",
+                         *       "firstName": "Jane",
+                         *       "hasSmsConsent": true,
+                         *       "lastName": "Doe",
+                         *       "lastTransactionAmount": 99.99,
+                         *       "lastTransactionOn": "2026-01-01T00:00:00Z",
+                         *       "mobilePhoneNumber": "+14125553845",
+                         *       "modifiedOn": "2026-01-01T00:00:00Z",
+                         *       "paymentMethods": [
+                         *         {
+                         *           "achDetails": null,
+                         *           "cardDetails": {
+                         *             "cardBrand": "Visa",
+                         *             "cardNumberLast4": "1111",
+                         *             "cardTokenType": "Local",
+                         *             "cardType": "Credit",
+                         *             "expirationMonth": 12,
+                         *             "expirationYear": 2030,
+                         *             "maskedCardNumber": "400112******1111"
+                         *           },
+                         *           "createdOn": "2026-01-01T00:00:00Z",
+                         *           "customerId": "1edee500-535c-4210-9ca3-9e86e8f0a3ca",
+                         *           "isDefault": true,
+                         *           "paymentMethodId": "6e22f0f3-f3ed-407c-a46f-ec9cffde5d5b",
+                         *           "paymentMethodName": "Personal Visa",
+                         *           "paymentMethodType": "Card"
+                         *         },
+                         *         {
+                         *           "achDetails": {
+                         *             "accountHolderType": "Personal",
+                         *             "accountNumberLast2": "90",
+                         *             "accountRoutingNumber": "021000021",
+                         *             "accountType": "Checking",
+                         *             "companyName": null,
+                         *             "maskedAccountNumber": "****7890",
+                         *             "taxId": "*****6789"
+                         *           },
+                         *           "cardDetails": null,
+                         *           "createdOn": "2026-01-01T00:00:00Z",
+                         *           "customerId": "1edee500-535c-4210-9ca3-9e86e8f0a3ca",
+                         *           "isDefault": false,
+                         *           "paymentMethodId": "9a3f6c1e-2b7d-4e8a-b5c4-7d1e0f2a3b6c",
+                         *           "paymentMethodName": "Primary Checking",
+                         *           "paymentMethodType": "ACH"
+                         *         }
+                         *       ],
+                         *       "shippingAddress": null,
+                         *       "shouldUseBillingAsShippingAddress": false,
+                         *       "transactionsCount": 12,
+                         *       "transactionsTotalAmount": 1234.56
+                         *     }
+                         */
+                        "application/json": components["schemas"]["CustomerDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "One or more fields failed validation rules.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "One or more validation errors occurred.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "V0000",
+                         *       "errors": {
+                         *         "Email": [
+                         *           "'Email' is not a valid email address."
+                         *         ]
+                         *       },
+                         *       "exceptionType": "ValidationException",
+                         *       "resolution": "Review the errors and correct the invalid fields.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 400,
+                         *       "title": "Validation failed"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ValidationExceptionExample"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: "Partner token is being used. Use a merchant token instead." */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ForbiddenExceptionExample"];
+                    };
+                };
+                /** @description Not Found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "The requested resource does not exist or has been deleted.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Entity with ID b31fbe9f-eebb-45ce-9cae-92265389f47f does not exist or has been deleted",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": "b31fbe9f-eebb-45ce-9cae-92265389f47f",
+                         *       "errorCode": "N0000",
+                         *       "exceptionType": "NotFoundException",
+                         *       "resolution": "Verify the resource ID is correct or retrieve a list of available resources.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 404,
+                         *       "title": "Resource not found"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["NotFoundExceptionExample"];
+                    };
+                };
+                /** @description Too Many Requests */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "Too many requests sent in a short period.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Too many requests sent in a short period.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "R0000",
+                         *       "exceptionType": "RateLimitExceededException",
+                         *       "resolution": "Wait before retrying the request. Check the Retry-After header for more information.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 429,
+                         *       "title": "Rate limit exceeded"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["RateLimitExceededExceptionExample"];
+                    };
+                };
+                /** @description Internal Server Error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "An unexpected error occurred while processing the request",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "An unexpected error occurred while processing the request.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "I0000",
+                         *       "exceptionType": "IntegrationException",
+                         *       "resolution": "Please contact support with the correlation ID if the issue persists",
+                         *       "source": "<Service>",
+                         *       "statusCode": 500,
+                         *       "title": "Internal server error"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["InternalExceptionExample"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        /**
+         * Delete Customer Required API Permission: Manage Customers
+         * @description Hard delete: the customer and its vaulted payment methods are removed and cannot be recovered.
+         *     Answers `400` while the customer has an active subscription. Answers `403` unless the token
+         *     carries the `ManageCustomers` permission; a partner token is refused.
+         */
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description The customer identifier.
+                     * @example ef1f203a-2a58-45bd-9215-bda2881656ae
+                     */
+                    customerId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "One or more fields failed validation rules.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "One or more validation errors occurred.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "V0000",
+                         *       "errors": {
+                         *         "Email": [
+                         *           "'Email' is not a valid email address."
+                         *         ]
+                         *       },
+                         *       "exceptionType": "ValidationException",
+                         *       "resolution": "Review the errors and correct the invalid fields.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 400,
+                         *       "title": "Validation failed"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ValidationExceptionExample"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: "Partner token is being used. Use a merchant token instead." */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ForbiddenExceptionExample"];
+                    };
+                };
+                /** @description Not Found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "The requested resource does not exist or has been deleted.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Entity with ID b31fbe9f-eebb-45ce-9cae-92265389f47f does not exist or has been deleted",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": "b31fbe9f-eebb-45ce-9cae-92265389f47f",
+                         *       "errorCode": "N0000",
+                         *       "exceptionType": "NotFoundException",
+                         *       "resolution": "Verify the resource ID is correct or retrieve a list of available resources.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 404,
+                         *       "title": "Resource not found"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["NotFoundExceptionExample"];
+                    };
+                };
+                /** @description Conflict */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "The request conflicts with the current state of the resource.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "The request conflicts with the current state of the resource.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "C0000",
+                         *       "exceptionType": "ConflictException",
+                         *       "resolution": "Refresh the resource state and retry the operation, or use a different idempotency key.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 409,
+                         *       "title": "Resource conflict"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ConflictExceptionExample"];
+                    };
+                };
+                /** @description Too Many Requests */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "Too many requests sent in a short period.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Too many requests sent in a short period.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "R0000",
+                         *       "exceptionType": "RateLimitExceededException",
+                         *       "resolution": "Wait before retrying the request. Check the Retry-After header for more information.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 429,
+                         *       "title": "Rate limit exceeded"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["RateLimitExceededExceptionExample"];
+                    };
+                };
+                /** @description Internal Server Error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "An unexpected error occurred while processing the request",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "An unexpected error occurred while processing the request.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "I0000",
+                         *       "exceptionType": "IntegrationException",
+                         *       "resolution": "Please contact support with the correlation ID if the issue persists",
+                         *       "source": "<Service>",
+                         *       "statusCode": 500,
+                         *       "title": "Internal server error"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["InternalExceptionExample"];
+                    };
+                };
+            };
+        };
+        options?: never;
+        head?: never;
+        /**
+         * Update Customer Required API Permission: Manage Customers
+         * @description Partial update (JSON Merge Patch, RFC 7396): send only the fields you want to change.
+         *     An omitted field is left unchanged; an explicit `null` clears a clearable field; nested
+         *     addresses merge recursively, except that moving an address to `US` requires sending
+         *     `stateCode`, and moving it out of `US` clears `stateCode` when it is not sent. Returns the full updated
+         *     customer: `paymentMethods` oldest first, `shippingAddress` null while
+         *     `shouldUseBillingAsShippingAddress` is true, and a card's `cardType` may be `Unknown`.
+         *     `countryCode` cannot be cleared and `externalId` cannot be changed after create. Answers `403`
+         *     unless the token carries the `ManageCustomers` permission; a partner token is refused.
+         */
+        patch: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description The customer identifier.
+                     * @example 03a3c202-018c-43ff-b607-a912a6f00007
+                     */
+                    customerId: string;
+                };
+                cookie?: never;
+            };
+            /** @description The customer fields to update. */
+            requestBody?: {
+                content: {
+                    /**
+                     * @example {
+                     *       "billingAddress": {
+                     *         "addressLine1": "456 Oak Avenue",
+                     *         "addressLine2": "Floor 5",
+                     *         "city": "Los Angeles",
+                     *         "countryCode": "US",
+                     *         "postalCode": "90001",
+                     *         "stateCode": "CA"
+                     *       },
+                     *       "companyName": "Tech Solutions Inc",
+                     *       "email": "jane.smith@techsolutions.com",
+                     *       "firstName": "Jane",
+                     *       "hasSmsConsent": false,
+                     *       "lastName": "Smith",
+                     *       "mobilePhoneNumber": "+15559876543",
+                     *       "shippingAddress": {
+                     *         "addressLine1": "789 Pine Road",
+                     *         "city": "San Francisco",
+                     *         "countryCode": "US",
+                     *         "postalCode": "94102",
+                     *         "stateCode": "CA"
+                     *       },
+                     *       "shouldUseBillingAsShippingAddress": false
+                     *     }
+                     */
+                    "application/json": components["schemas"]["UpdateCustomerRequestDto"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "activeSubscriptionsCount": 2,
+                         *       "billingAddress": {
+                         *         "addressLine1": "123 Main Street",
+                         *         "addressLine2": "Suite 400",
+                         *         "city": "New York",
+                         *         "countryCode": "US",
+                         *         "postalCode": "10001",
+                         *         "stateCode": "NY"
+                         *       },
+                         *       "companyName": "Acme Corp",
+                         *       "createdOn": "2026-01-01T00:00:00Z",
+                         *       "customerId": "1edee500-535c-4210-9ca3-9e86e8f0a3ca",
+                         *       "email": "jane.doe@example.com",
+                         *       "externalId": "CUST-EXT-12345",
+                         *       "firstName": "Jane",
+                         *       "hasSmsConsent": true,
+                         *       "lastName": "Doe",
+                         *       "lastTransactionAmount": 99.99,
+                         *       "lastTransactionOn": "2026-01-01T00:00:00Z",
+                         *       "mobilePhoneNumber": "+14125553845",
+                         *       "modifiedOn": "2026-01-01T00:00:00Z",
+                         *       "paymentMethods": [
+                         *         {
+                         *           "achDetails": null,
+                         *           "cardDetails": {
+                         *             "cardBrand": "Visa",
+                         *             "cardNumberLast4": "1111",
+                         *             "cardTokenType": "Local",
+                         *             "cardType": "Credit",
+                         *             "expirationMonth": 12,
+                         *             "expirationYear": 2030,
+                         *             "maskedCardNumber": "400112******1111"
+                         *           },
+                         *           "createdOn": "2026-01-01T00:00:00Z",
+                         *           "customerId": "1edee500-535c-4210-9ca3-9e86e8f0a3ca",
+                         *           "isDefault": true,
+                         *           "paymentMethodId": "6e22f0f3-f3ed-407c-a46f-ec9cffde5d5b",
+                         *           "paymentMethodName": "Personal Visa",
+                         *           "paymentMethodType": "Card"
+                         *         },
+                         *         {
+                         *           "achDetails": {
+                         *             "accountHolderType": "Personal",
+                         *             "accountNumberLast2": "90",
+                         *             "accountRoutingNumber": "021000021",
+                         *             "accountType": "Checking",
+                         *             "companyName": null,
+                         *             "maskedAccountNumber": "****7890",
+                         *             "taxId": "*****6789"
+                         *           },
+                         *           "cardDetails": null,
+                         *           "createdOn": "2026-01-01T00:00:00Z",
+                         *           "customerId": "1edee500-535c-4210-9ca3-9e86e8f0a3ca",
+                         *           "isDefault": false,
+                         *           "paymentMethodId": "9a3f6c1e-2b7d-4e8a-b5c4-7d1e0f2a3b6c",
+                         *           "paymentMethodName": "Primary Checking",
+                         *           "paymentMethodType": "ACH"
+                         *         }
+                         *       ],
+                         *       "shippingAddress": null,
+                         *       "shouldUseBillingAsShippingAddress": false,
+                         *       "transactionsCount": 12,
+                         *       "transactionsTotalAmount": 1234.56
+                         *     }
+                         */
+                        "application/json": components["schemas"]["CustomerDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "One or more fields failed validation rules.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "One or more validation errors occurred.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "V0000",
+                         *       "errors": {
+                         *         "Email": [
+                         *           "'Email' is not a valid email address."
+                         *         ]
+                         *       },
+                         *       "exceptionType": "ValidationException",
+                         *       "resolution": "Review the errors and correct the invalid fields.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 400,
+                         *       "title": "Validation failed"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ValidationExceptionExample"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: "Partner token is being used. Use a merchant token instead." */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ForbiddenExceptionExample"];
+                    };
+                };
+                /** @description Not Found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "The requested resource does not exist or has been deleted.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Entity with ID b31fbe9f-eebb-45ce-9cae-92265389f47f does not exist or has been deleted",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": "b31fbe9f-eebb-45ce-9cae-92265389f47f",
+                         *       "errorCode": "N0000",
+                         *       "exceptionType": "NotFoundException",
+                         *       "resolution": "Verify the resource ID is correct or retrieve a list of available resources.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 404,
+                         *       "title": "Resource not found"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["NotFoundExceptionExample"];
+                    };
+                };
+                /** @description Conflict */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "The request conflicts with the current state of the resource.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "The request conflicts with the current state of the resource.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "C0000",
+                         *       "exceptionType": "ConflictException",
+                         *       "resolution": "Refresh the resource state and retry the operation, or use a different idempotency key.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 409,
+                         *       "title": "Resource conflict"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ConflictExceptionExample"];
+                    };
+                };
+                /** @description Too Many Requests */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "Too many requests sent in a short period.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Too many requests sent in a short period.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "R0000",
+                         *       "exceptionType": "RateLimitExceededException",
+                         *       "resolution": "Wait before retrying the request. Check the Retry-After header for more information.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 429,
+                         *       "title": "Rate limit exceeded"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["RateLimitExceededExceptionExample"];
+                    };
+                };
+                /** @description Internal Server Error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "An unexpected error occurred while processing the request",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "An unexpected error occurred while processing the request.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "I0000",
+                         *       "exceptionType": "IntegrationException",
+                         *       "resolution": "Please contact support with the correlation ID if the issue persists",
+                         *       "source": "<Service>",
+                         *       "statusCode": 500,
+                         *       "title": "Internal server error"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["InternalExceptionExample"];
+                    };
+                };
+            };
+        };
+        trace?: never;
+    };
+    "/v2/mcc-codes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List MCC codes Required API Permission: List User Configurations
+         * @description Lists the merchant category codes an application can declare, one row per code alias: a
+         *     code can appear more than once, each time with a different description.
+         *     Supply the mccCodeId of the row that best describes the business as
+         *     businessInformation.mccCodeId when creating an application. The list is the same for every
+         *     partner account.
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "items": [
+                         *         {
+                         *           "mccCode": "5814",
+                         *           "mccCodeId": "4b1d2c3e-5f60-4718-9a2b-3c4d5e6f7a8b",
+                         *           "mccDescription": "Fast food restaurants"
+                         *         },
+                         *         {
+                         *           "mccCode": "5999",
+                         *           "mccCodeId": "5c2e3d4f-6071-4829-8b3c-4d5e6f7a8b9c",
+                         *           "mccDescription": "Miscellaneous retail stores"
+                         *         },
+                         *         {
+                         *           "mccCode": "5999",
+                         *           "mccCodeId": "6d3f4e50-7182-493a-9c4d-5e6f7a8b9cad",
+                         *           "mccDescription": "Vape and e-cigarette shops"
+                         *         }
+                         *       ]
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ListResponseDtoOfMccCodeDto"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Forbidden */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "You do not have permission to access this resource.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "You do not have permission to access this resource.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "F0000",
+                         *       "exceptionType": "ForbiddenException",
+                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 403,
+                         *       "title": "Access forbidden"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ForbiddenExceptionExample"];
+                    };
+                };
+                /** @description Too Many Requests */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "Too many requests sent in a short period.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Too many requests sent in a short period.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "R0000",
+                         *       "exceptionType": "RateLimitExceededException",
+                         *       "resolution": "Wait before retrying the request. Check the Retry-After header for more information.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 429,
+                         *       "title": "Rate limit exceeded"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["RateLimitExceededExceptionExample"];
+                    };
+                };
+                /** @description Internal Server Error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "An unexpected error occurred while processing the request",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "An unexpected error occurred while processing the request.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "I0000",
+                         *       "exceptionType": "IntegrationException",
+                         *       "resolution": "Please contact support with the correlation ID if the issue persists",
+                         *       "source": "<Service>",
+                         *       "statusCode": 500,
+                         *       "title": "Internal server error"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["InternalExceptionExample"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v2/partner/api-keys": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List API Keys Required API Permission: General Configurations
+         * @description Returns a paginated list of the API keys of the merchants managed by your partner account,
+         *     optionally filtered to one merchant with `merchantId`. Revoked keys do not appear. Sort by
+         *     `createdOn` (default, newest first), `apiKeyName` or `lastUsedOn`; `lastUsedOn`
+         *     is the last time the key obtained or refreshed an access token.
+         *
+         *     **Note:** Requires a partner API key. Merchant keys are refused with 403.
+         */
+        get: {
+            parameters: {
+                query?: {
+                    /**
+                     * @description Zero-based page index.
+                     * @example 0
+                     */
+                    pageIndex?: number;
+                    /**
+                     * @description Number of items per page. Minimum 1, maximum 100.
+                     * @example 20
+                     */
+                    pageSize?: number;
+                    /**
+                     * @description Lists only the keys of this merchant. Omit to list the keys of every merchant under your partner account.
+                     * @example 8db2ff47-b143-4adb-ab58-a4a017504db2
+                     */
+                    merchantId?: string;
+                    /**
+                     * @description Field to sort by: `createdOn` (default), `apiKeyName` or `lastUsedOn`. A key that
+                     *     never obtained a token sorts as older than any key that has.
+                     * @example createdOn
+                     */
+                    sortBy?: string;
+                    /**
+                     * @description Sort direction: `asc` or `desc` (default).
+                     * @example desc
+                     */
+                    sortOrder?: string;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "items": [
                          *         {
                          *           "apiKeyName": "Production API Key",
-                         *           "clientId": "80bb3659-9a62-470b-92f5-d8c5d16d47b0",
+                         *           "clientId": "97e7c13c-059c-4734-b017-2a20847a79d0",
+                         *           "createdOn": "2026-01-01T00:00:00Z",
+                         *           "lastUsedOn": "2026-01-01T00:00:00Z",
                          *           "merchantId": "886e77d0-e86f-4710-92f6-e2b84b29bd9e"
                          *         },
                          *         {
                          *           "apiKeyName": "Staging API Key",
                          *           "clientId": "7f191870-7de7-495a-9037-fabeefbdd089",
+                         *           "createdOn": "2026-01-01T00:00:00Z",
+                         *           "lastUsedOn": null,
                          *           "merchantId": "9040dc53-46e3-4816-b3b3-c83d885c2b07"
                          *         }
-                         *       ]
+                         *       ],
+                         *       "pageInfo": {
+                         *         "hasMore": false,
+                         *         "pageIndex": 0,
+                         *         "pageSize": 20,
+                         *         "totalItems": 2,
+                         *         "totalPages": 1
+                         *       }
                          *     }
                          */
-                        "application/json": components["schemas"]["GetApiKeysResponseDto"];
+                        "application/json": components["schemas"]["PagedResponseDtoOfApiKeyDto"];
                     };
                 };
                 /** @description Bad Request */
@@ -195,15 +2294,11 @@ export interface paths {
         put?: never;
         /**
          * Create API Key Required API Permission: General Configurations
-         * @description Create a new API key for a merchant managed by your affiliate account.
+         * @description Creates an API key for a merchant managed by your partner account. The response is the only place
+         *     the `clientSecret` is ever shown — store it securely. If it is lost, revoke the key and create a
+         *     new one.
          *
-         *     Provide the Merchant ID and a name to generate a unique API key ID and secret for the merchant.
-         *
-         *     Use the returned credentials to authenticate as the merchant for API operations.
-         *
-         *     **Note:** The API key secret is only returned once during creation. Store it securely.
-         *
-         *     **Note:** This endpoint requires the Bearer token to be an Affiliate (ISV) token. Merchant tokens are not accepted.
+         *     **Note:** Requires a partner API key. Merchant keys are refused with 403.
          */
         post: {
             parameters: {
@@ -232,8 +2327,11 @@ export interface paths {
                     content: {
                         /**
                          * @example {
+                         *       "apiKeyName": "Production API Key",
                          *       "clientId": "97e7c13c-059c-4734-b017-2a20847a79d0",
-                         *       "clientSecret": "1f80d6e1-9901-48b6-a862-6cfad1612e99"
+                         *       "clientSecret": "1f80d6e1-9901-48b6-a862-6cfad1612e99",
+                         *       "createdOn": "2026-01-01T00:00:00Z",
+                         *       "merchantId": "0b627967-4204-4d7a-aa13-e6eb0d58f543"
                          *     }
                          */
                         "application/json": components["schemas"]["CreateApiKeyResponseDto"];
@@ -403,7 +2501,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/v2/api-keys/{clientId}": {
+    "/v2/partner/api-keys/{clientId}": {
         parameters: {
             query?: never;
             header?: never;
@@ -415,10 +2513,10 @@ export interface paths {
         post?: never;
         /**
          * Revoke API Key Required API Permission: General Configurations
-         * @description Revoke an API key managed by your affiliate account. The clientId
-         *     uniquely identifies the key — no additional filters are required.
+         * @description Permanently revokes an API key of a merchant managed by your partner account. The key stops
+         *     authenticating immediately and cannot be reactivated; create a new key to restore access.
          *
-         *     **Note:** This endpoint requires the Bearer token to be an Affiliate (ISV) token. Merchant tokens are not accepted.
+         *     **Note:** Requires a partner API key. Merchant keys are refused with 403.
          */
         delete: {
             parameters: {
@@ -426,7 +2524,7 @@ export interface paths {
                 header?: never;
                 path: {
                     /**
-                     * @description The API key client identifier (also referred to as the API key ID). Returned by the Create API Key response and listed by GET /api-keys.
+                     * @description The API key identifier returned by Create API Key and listed by List API Keys.
                      * @example aa98aa89-07ae-4a23-b441-48725f0386e6
                      */
                     clientId: string;
@@ -435,8 +2533,8 @@ export interface paths {
             };
             requestBody?: never;
             responses: {
-                /** @description OK */
-                200: {
+                /** @description No Content */
+                204: {
                     headers: {
                         [name: string]: unknown;
                     };
@@ -605,46 +2703,85 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/v2/customers": {
+    "/v2/partner/merchants": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** List Customers Required API Permission: List Customers */
+        /**
+         * List Merchants Required API Permission: General Configurations
+         * @description Returns a paginated list of the merchants managed by your partner account, with their status, MCC,
+         *     main contact, API key count and last-30-days transaction figures. Supports free-text search across
+         *     company name, contact first/last name, contact email and merchant id, and filtering by status, MCC code
+         *     and date ranges. Date bounds are ISO 8601 date-times, both inclusive; a value without an offset is read as UTC, and
+         *     a `…To` date alone covers that whole day (`createdTo=2026-03-10` includes all of March 10).
+         *
+         *     **Note:** Requires a partner API key. Merchant keys are refused with 403.
+         */
         get: {
             parameters: {
                 query?: {
-                    /** @description Zero-based page index. */
+                    /**
+                     * @description Zero-based page index.
+                     * @example 0
+                     */
                     pageIndex?: number;
-                    /** @description Page size */
+                    /**
+                     * @description Number of items per page. Minimum 1, maximum 100.
+                     * @example 20
+                     */
                     pageSize?: number;
                     /**
-                     * @description Sort ascending when true. Defaults to false (descending).
-                     * @example false
+                     * @description Field to sort by: `merchantCompanyName` (default), `createdOn`, `lastTransactionOn`,
+                     *     `merchantStatus`, `contactFirstName`, `contactLastName`, `transactionCount30Days` or
+                     *     `transactionVolume30Days`. Merchants that never transacted sort as the oldest on
+                     *     `lastTransactionOn`; `merchantStatus` sorts by the status name.
+                     * @example merchantCompanyName
                      */
-                    asc?: boolean;
+                    sortBy?: string;
                     /**
-                     * @description Field to order by. Defaults to `createdOn` (newest first).
-                     * @example createdOn
+                     * @description Sort direction: `asc` (default) or `desc`.
+                     * @example asc
                      */
-                    orderBy?: string;
-                    /** @description Filter by full name */
-                    fullName?: string;
-                    /** @description Filter by email */
-                    email?: string;
-                    /** @description Filter by company name */
-                    companyName?: string;
+                    sortOrder?: string;
                     /**
-                     * @description Filter by mobile phone number. Free-form search input — E.164 format is not required here
-                     *     so callers can search by partial digits or legacy formats.
+                     * @description Free-text, case-insensitive match on `merchantCompanyName`, `contactFirstName`,
+                     *     `contactLastName` (also "first last"), the main contact's email, and `merchantId`.
+                     * @example acme
                      */
-                    mobilePhoneNumber?: string;
-                    /** @description Created date from (ISO 8601) */
+                    search?: string;
+                    /**
+                     * @description Only merchants in this status: Active, Suspended or Closed.
+                     * @example Active
+                     */
+                    merchantStatus?: components["schemas"]["MerchantStatus"];
+                    /**
+                     * @description Only merchants with this MCC code.
+                     * @example 5411
+                     */
+                    mccCode?: string;
+                    /**
+                     * @description Only merchants created at or after this instant (ISO 8601 date-time, inclusive). A value without an offset is read as UTC; a date alone is that day's midnight.
+                     * @example 2026-01-01T00:00:00Z
+                     */
                     createdFrom?: string;
-                    /** @description Created date to (ISO 8601) */
+                    /**
+                     * @description Only merchants created at or before this instant (ISO 8601 date-time, inclusive). A value without an offset is read as UTC; a date alone, or exactly 00:00:00 without an offset, covers that whole day. Must not be earlier than createdFrom.
+                     * @example 2026-01-31
+                     */
                     createdTo?: string;
+                    /**
+                     * @description Only merchants whose latest transaction is at or after this instant (ISO 8601 date-time, inclusive). A value without an offset is read as UTC; a date alone is that day's midnight.
+                     * @example 2026-01-01T00:00:00Z
+                     */
+                    lastTransactionFrom?: string;
+                    /**
+                     * @description Only merchants whose latest transaction is at or before this instant (ISO 8601 date-time, inclusive). A value without an offset is read as UTC; a date alone, or exactly 00:00:00 without an offset, covers that whole day. Must not be earlier than lastTransactionFrom.
+                     * @example 2026-06-30
+                     */
+                    lastTransactionTo?: string;
                 };
                 header?: never;
                 path?: never;
@@ -662,522 +2799,30 @@ export interface paths {
                          * @example {
                          *       "items": [
                          *         {
-                         *           "billingAddress": {
-                         *             "addressLine1": "123 Main Street",
-                         *             "addressLine2": null,
-                         *             "city": "New York",
-                         *             "countryCode": "US",
-                         *             "postalCode": "10001",
-                         *             "stateCode": "NY"
-                         *           },
-                         *           "companyName": "Acme Corp",
-                         *           "customerId": "f81ca0b7-fa2e-4a6c-be9e-7def348c1ddf",
-                         *           "email": "john.doe@acme.com",
-                         *           "externalId": "CUST-EXT-001",
-                         *           "firstName": "John",
-                         *           "lastName": "Doe",
-                         *           "lastTransactionDate": "2026-01-01T00:00:00Z",
-                         *           "mobilePhoneNumber": "+14125553845",
-                         *           "paymentMethodsCount": 3
-                         *         },
-                         *         {
-                         *           "billingAddress": {
-                         *             "addressLine1": "456 Oak Avenue",
-                         *             "addressLine2": null,
-                         *             "city": "Los Angeles",
-                         *             "countryCode": "US",
-                         *             "postalCode": "90001",
-                         *             "stateCode": "CA"
-                         *           },
-                         *           "companyName": "Tech Solutions Inc",
-                         *           "customerId": "a98bbbba-40e6-4114-970a-078ebfdcbac2",
-                         *           "email": "jane.smith@techsolutions.com",
-                         *           "externalId": "CUST-EXT-002",
-                         *           "firstName": "Jane",
-                         *           "lastName": "Smith",
-                         *           "lastTransactionDate": "2026-01-01T00:00:00Z",
-                         *           "mobilePhoneNumber": "+14155557890",
-                         *           "paymentMethodsCount": 1
+                         *           "apiKeyCount": 1,
+                         *           "contactFirstName": "John",
+                         *           "contactLastName": "Doe",
+                         *           "createdOn": "2026-01-01T00:00:00Z",
+                         *           "lastTransactionOn": "2026-01-01T00:00:00Z",
+                         *           "mccCode": "5411",
+                         *           "mccDescription": "Grocery Stores and Supermarkets",
+                         *           "merchantCompanyName": "Acme Inc",
+                         *           "merchantId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                         *           "merchantStatus": "Active",
+                         *           "transactionCount30Days": 142,
+                         *           "transactionVolume30Days": 18500
                          *         }
                          *       ],
                          *       "pageInfo": {
-                         *         "hasMore": false,
+                         *         "hasMore": true,
                          *         "pageIndex": 0,
                          *         "pageSize": 20,
-                         *         "totalItems": 2,
-                         *         "totalPages": 1
+                         *         "totalItems": 150,
+                         *         "totalPages": 8
                          *       }
                          *     }
                          */
-                        "application/json": components["schemas"]["PagedResponseDtoOfListCustomersResponseDto"];
-                    };
-                };
-                /** @description Bad Request */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        /**
-                         * @example {
-                         *       "cause": "One or more fields failed validation rules.",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "details": "One or more validation errors occurred.",
-                         *       "documentationUrl": "https://developer.flute.com/",
-                         *       "entityId": null,
-                         *       "errorCode": "V0000",
-                         *       "errors": {
-                         *         "Email": [
-                         *           "'Email' is not a valid email address."
-                         *         ]
-                         *       },
-                         *       "exceptionType": "ValidationException",
-                         *       "resolution": "Review the errors and correct the invalid fields.",
-                         *       "source": "<Service>",
-                         *       "statusCode": 400,
-                         *       "title": "Validation failed"
-                         *     }
-                         */
-                        "application/json": components["schemas"]["ValidationExceptionExample"];
-                    };
-                };
-                /** @description Unauthorized */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Forbidden */
-                403: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        /**
-                         * @example {
-                         *       "cause": "You do not have permission to access this resource.",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "details": "You do not have permission to access this resource.",
-                         *       "documentationUrl": "https://developer.flute.com/",
-                         *       "entityId": null,
-                         *       "errorCode": "F0000",
-                         *       "exceptionType": "ForbiddenException",
-                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
-                         *       "source": "<Service>",
-                         *       "statusCode": 403,
-                         *       "title": "Access forbidden"
-                         *     }
-                         */
-                        "application/json": components["schemas"]["ForbiddenExceptionExample"];
-                    };
-                };
-                /** @description Not Found */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        /**
-                         * @example {
-                         *       "cause": "The requested resource does not exist or has been deleted.",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "details": "Entity with ID b31fbe9f-eebb-45ce-9cae-92265389f47f does not exist or has been deleted",
-                         *       "documentationUrl": "https://developer.flute.com/",
-                         *       "entityId": "b31fbe9f-eebb-45ce-9cae-92265389f47f",
-                         *       "errorCode": "N0000",
-                         *       "exceptionType": "NotFoundException",
-                         *       "resolution": "Verify the resource ID is correct or retrieve a list of available resources.",
-                         *       "source": "<Service>",
-                         *       "statusCode": 404,
-                         *       "title": "Resource not found"
-                         *     }
-                         */
-                        "application/json": components["schemas"]["NotFoundExceptionExample"];
-                    };
-                };
-                /** @description Too Many Requests */
-                429: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        /**
-                         * @example {
-                         *       "cause": "Too many requests sent in a short period.",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "details": "Too many requests sent in a short period.",
-                         *       "documentationUrl": "https://developer.flute.com/",
-                         *       "entityId": null,
-                         *       "errorCode": "R0000",
-                         *       "exceptionType": "RateLimitExceededException",
-                         *       "resolution": "Wait before retrying the request. Check the Retry-After header for more information.",
-                         *       "source": "<Service>",
-                         *       "statusCode": 429,
-                         *       "title": "Rate limit exceeded"
-                         *     }
-                         */
-                        "application/json": components["schemas"]["RateLimitExceededExceptionExample"];
-                    };
-                };
-                /** @description Internal Server Error */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        /**
-                         * @example {
-                         *       "cause": "An unexpected error occurred while processing the request",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "details": "An unexpected error occurred while processing the request.",
-                         *       "documentationUrl": "https://developer.flute.com/",
-                         *       "entityId": null,
-                         *       "errorCode": "I0000",
-                         *       "exceptionType": "IntegrationException",
-                         *       "resolution": "Please contact support with the correlation ID if the issue persists",
-                         *       "source": "<Service>",
-                         *       "statusCode": 500,
-                         *       "title": "Internal server error"
-                         *     }
-                         */
-                        "application/json": components["schemas"]["InternalExceptionExample"];
-                    };
-                };
-            };
-        };
-        put?: never;
-        /** Create Customer Required API Permission: Manage Customers */
-        post: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody?: {
-                content: {
-                    /**
-                     * @example {
-                     *       "billingAddress": {
-                     *         "addressLine1": "123 Main Street",
-                     *         "addressLine2": "Suite 100",
-                     *         "city": "New York",
-                     *         "countryCode": "US",
-                     *         "postalCode": "10001",
-                     *         "stateCode": "NY"
-                     *       },
-                     *       "companyName": "Acme Corp",
-                     *       "email": "john.doe@acme.com",
-                     *       "firstName": "John",
-                     *       "hasSmsConsent": true,
-                     *       "lastName": "Doe",
-                     *       "mobilePhoneNumber": "+14125553845",
-                     *       "paymentMethodsAchAccounts": [
-                     *         {
-                     *           "accountHolderType": "Personal",
-                     *           "accountNumber": "123456789",
-                     *           "accountType": "Checking",
-                     *           "paymentName": "Business Checking",
-                     *           "routingNumber": "021000021",
-                     *           "taxId": "123456789"
-                     *         }
-                     *       ],
-                     *       "paymentMethodsCards": [
-                     *         {
-                     *           "cardNumber": "4111111111111111",
-                     *           "expirationMonth": 12,
-                     *           "expirationYear": 2026,
-                     *           "paymentName": "My Visa Card",
-                     *           "securityCode": "123"
-                     *         }
-                     *       ],
-                     *       "shippingAddress": {
-                     *         "addressLine1": "456 Market Street",
-                     *         "addressLine2": "Apt 7B",
-                     *         "city": "Brooklyn",
-                     *         "countryCode": "US",
-                     *         "postalCode": "11201",
-                     *         "stateCode": "NY"
-                     *       },
-                     *       "shouldUseBillingAsShippingAddress": false
-                     *     }
-                     */
-                    "application/json": components["schemas"]["CreateCustomerRequestDto"];
-                };
-            };
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        /**
-                         * @example {
-                         *       "customerId": "e0bfe4be-c02a-4ded-bbdf-07a8bf8544c8"
-                         *     }
-                         */
-                        "application/json": components["schemas"]["CreateCustomerResponseDto"];
-                    };
-                };
-                /** @description Bad Request */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        /**
-                         * @example {
-                         *       "cause": "One or more fields failed validation rules.",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "details": "One or more validation errors occurred.",
-                         *       "documentationUrl": "https://developer.flute.com/",
-                         *       "entityId": null,
-                         *       "errorCode": "V0000",
-                         *       "errors": {
-                         *         "Email": [
-                         *           "'Email' is not a valid email address."
-                         *         ]
-                         *       },
-                         *       "exceptionType": "ValidationException",
-                         *       "resolution": "Review the errors and correct the invalid fields.",
-                         *       "source": "<Service>",
-                         *       "statusCode": 400,
-                         *       "title": "Validation failed"
-                         *     }
-                         */
-                        "application/json": components["schemas"]["ValidationExceptionExample"];
-                    };
-                };
-                /** @description Unauthorized */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Forbidden */
-                403: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        /**
-                         * @example {
-                         *       "cause": "You do not have permission to access this resource.",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "details": "You do not have permission to access this resource.",
-                         *       "documentationUrl": "https://developer.flute.com/",
-                         *       "entityId": null,
-                         *       "errorCode": "F0000",
-                         *       "exceptionType": "ForbiddenException",
-                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
-                         *       "source": "<Service>",
-                         *       "statusCode": 403,
-                         *       "title": "Access forbidden"
-                         *     }
-                         */
-                        "application/json": components["schemas"]["ForbiddenExceptionExample"];
-                    };
-                };
-                /** @description Not Found */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        /**
-                         * @example {
-                         *       "cause": "The requested resource does not exist or has been deleted.",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "details": "Entity with ID b31fbe9f-eebb-45ce-9cae-92265389f47f does not exist or has been deleted",
-                         *       "documentationUrl": "https://developer.flute.com/",
-                         *       "entityId": "b31fbe9f-eebb-45ce-9cae-92265389f47f",
-                         *       "errorCode": "N0000",
-                         *       "exceptionType": "NotFoundException",
-                         *       "resolution": "Verify the resource ID is correct or retrieve a list of available resources.",
-                         *       "source": "<Service>",
-                         *       "statusCode": 404,
-                         *       "title": "Resource not found"
-                         *     }
-                         */
-                        "application/json": components["schemas"]["NotFoundExceptionExample"];
-                    };
-                };
-                /** @description Conflict */
-                409: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        /**
-                         * @example {
-                         *       "cause": "The request conflicts with the current state of the resource.",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "details": "The request conflicts with the current state of the resource.",
-                         *       "documentationUrl": "https://developer.flute.com/",
-                         *       "entityId": null,
-                         *       "errorCode": "C0000",
-                         *       "exceptionType": "ConflictException",
-                         *       "resolution": "Refresh the resource state and retry the operation, or use a different idempotency key.",
-                         *       "source": "<Service>",
-                         *       "statusCode": 409,
-                         *       "title": "Resource conflict"
-                         *     }
-                         */
-                        "application/json": components["schemas"]["ConflictExceptionExample"];
-                    };
-                };
-                /** @description Too Many Requests */
-                429: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        /**
-                         * @example {
-                         *       "cause": "Too many requests sent in a short period.",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "details": "Too many requests sent in a short period.",
-                         *       "documentationUrl": "https://developer.flute.com/",
-                         *       "entityId": null,
-                         *       "errorCode": "R0000",
-                         *       "exceptionType": "RateLimitExceededException",
-                         *       "resolution": "Wait before retrying the request. Check the Retry-After header for more information.",
-                         *       "source": "<Service>",
-                         *       "statusCode": 429,
-                         *       "title": "Rate limit exceeded"
-                         *     }
-                         */
-                        "application/json": components["schemas"]["RateLimitExceededExceptionExample"];
-                    };
-                };
-                /** @description Internal Server Error */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        /**
-                         * @example {
-                         *       "cause": "An unexpected error occurred while processing the request",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "details": "An unexpected error occurred while processing the request.",
-                         *       "documentationUrl": "https://developer.flute.com/",
-                         *       "entityId": null,
-                         *       "errorCode": "I0000",
-                         *       "exceptionType": "IntegrationException",
-                         *       "resolution": "Please contact support with the correlation ID if the issue persists",
-                         *       "source": "<Service>",
-                         *       "statusCode": 500,
-                         *       "title": "Internal server error"
-                         *     }
-                         */
-                        "application/json": components["schemas"]["InternalExceptionExample"];
-                    };
-                };
-            };
-        };
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v2/customers/{customerId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get Customer Required API Permission: Get Customer Details */
-        get: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    /**
-                     * @description The customer identifier.
-                     * @example 299eea56-ba50-4d8d-9bb0-89c4dfce6f73
-                     */
-                    customerId: string;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        /**
-                         * @example {
-                         *       "achAccounts": [
-                         *         {
-                         *           "accountHolderType": "Personal",
-                         *           "accountNumber": "****6789",
-                         *           "accountType": "Checking",
-                         *           "isDefault": false,
-                         *           "paymentMethodId": "a7402e6f-7b52-4884-9214-b68dcd7b80bf",
-                         *           "paymentName": "Business Checking",
-                         *           "routingNumber": "021000021",
-                         *           "taxId": "*****6789"
-                         *         }
-                         *       ],
-                         *       "billingAddress": {
-                         *         "addressLine1": "123 Main Street",
-                         *         "addressLine2": "Suite 100",
-                         *         "city": "New York",
-                         *         "countryCode": "US",
-                         *         "postalCode": "10001",
-                         *         "stateCode": "NY"
-                         *       },
-                         *       "cards": [
-                         *         {
-                         *           "cardMask": "************1111",
-                         *           "cardTokenType": null,
-                         *           "cardType": "Visa",
-                         *           "creditDebitType": "Credit",
-                         *           "expirationMonth": 12,
-                         *           "expirationYear": 2026,
-                         *           "isDefault": true,
-                         *           "paymentMethodId": "e5348db9-85cf-4d9d-a27c-88013f8944be",
-                         *           "paymentName": "My Visa Card"
-                         *         },
-                         *         {
-                         *           "cardMask": "************5555",
-                         *           "cardTokenType": null,
-                         *           "cardType": "MasterCard",
-                         *           "creditDebitType": "Debit",
-                         *           "expirationMonth": 6,
-                         *           "expirationYear": 2027,
-                         *           "isDefault": false,
-                         *           "paymentMethodId": "911e5ed6-95db-4ceb-8c49-5dc997ce0b3d",
-                         *           "paymentName": "Personal MasterCard"
-                         *         }
-                         *       ],
-                         *       "companyName": "Acme Corp",
-                         *       "customerId": "61e5435f-7cec-4a7b-8523-64358cac7fac",
-                         *       "email": "john.doe@acme.com",
-                         *       "externalId": "CUST-EXT-12345",
-                         *       "firstName": "John",
-                         *       "hasSmsConsent": true,
-                         *       "lastName": "Doe",
-                         *       "lastTransactionAmount": 150,
-                         *       "lastTransactionDate": "2026-01-01T00:00:00Z",
-                         *       "mobilePhoneNumber": "+14125553845",
-                         *       "numberOfSubscriptions": 2,
-                         *       "shippingAddress": null,
-                         *       "shouldUseBillingAsShippingAddress": true,
-                         *       "transactionsCount": 25,
-                         *       "transactionsVolume": 12500
-                         *     }
-                         */
-                        "application/json": components["schemas"]["GetCustomerResponseDto"];
+                        "application/json": components["schemas"]["PagedResponseDtoOfPartnerMerchantDto"];
                     };
                 };
                 /** @description Bad Request */
@@ -1316,471 +2961,10 @@ export interface paths {
         };
         put?: never;
         post?: never;
-        /** Delete Customer Required API Permission: Manage Customers */
-        delete: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    /**
-                     * @description The customer identifier.
-                     * @example ef1f203a-2a58-45bd-9215-bda2881656ae
-                     */
-                    customerId: string;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Bad Request */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        /**
-                         * @example {
-                         *       "cause": "One or more fields failed validation rules.",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "details": "One or more validation errors occurred.",
-                         *       "documentationUrl": "https://developer.flute.com/",
-                         *       "entityId": null,
-                         *       "errorCode": "V0000",
-                         *       "errors": {
-                         *         "Email": [
-                         *           "'Email' is not a valid email address."
-                         *         ]
-                         *       },
-                         *       "exceptionType": "ValidationException",
-                         *       "resolution": "Review the errors and correct the invalid fields.",
-                         *       "source": "<Service>",
-                         *       "statusCode": 400,
-                         *       "title": "Validation failed"
-                         *     }
-                         */
-                        "application/json": components["schemas"]["ValidationExceptionExample"];
-                    };
-                };
-                /** @description Unauthorized */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Forbidden */
-                403: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        /**
-                         * @example {
-                         *       "cause": "You do not have permission to access this resource.",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "details": "You do not have permission to access this resource.",
-                         *       "documentationUrl": "https://developer.flute.com/",
-                         *       "entityId": null,
-                         *       "errorCode": "F0000",
-                         *       "exceptionType": "ForbiddenException",
-                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
-                         *       "source": "<Service>",
-                         *       "statusCode": 403,
-                         *       "title": "Access forbidden"
-                         *     }
-                         */
-                        "application/json": components["schemas"]["ForbiddenExceptionExample"];
-                    };
-                };
-                /** @description Not Found */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        /**
-                         * @example {
-                         *       "cause": "The requested resource does not exist or has been deleted.",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "details": "Entity with ID b31fbe9f-eebb-45ce-9cae-92265389f47f does not exist or has been deleted",
-                         *       "documentationUrl": "https://developer.flute.com/",
-                         *       "entityId": "b31fbe9f-eebb-45ce-9cae-92265389f47f",
-                         *       "errorCode": "N0000",
-                         *       "exceptionType": "NotFoundException",
-                         *       "resolution": "Verify the resource ID is correct or retrieve a list of available resources.",
-                         *       "source": "<Service>",
-                         *       "statusCode": 404,
-                         *       "title": "Resource not found"
-                         *     }
-                         */
-                        "application/json": components["schemas"]["NotFoundExceptionExample"];
-                    };
-                };
-                /** @description Conflict */
-                409: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        /**
-                         * @example {
-                         *       "cause": "The request conflicts with the current state of the resource.",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "details": "The request conflicts with the current state of the resource.",
-                         *       "documentationUrl": "https://developer.flute.com/",
-                         *       "entityId": null,
-                         *       "errorCode": "C0000",
-                         *       "exceptionType": "ConflictException",
-                         *       "resolution": "Refresh the resource state and retry the operation, or use a different idempotency key.",
-                         *       "source": "<Service>",
-                         *       "statusCode": 409,
-                         *       "title": "Resource conflict"
-                         *     }
-                         */
-                        "application/json": components["schemas"]["ConflictExceptionExample"];
-                    };
-                };
-                /** @description Too Many Requests */
-                429: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        /**
-                         * @example {
-                         *       "cause": "Too many requests sent in a short period.",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "details": "Too many requests sent in a short period.",
-                         *       "documentationUrl": "https://developer.flute.com/",
-                         *       "entityId": null,
-                         *       "errorCode": "R0000",
-                         *       "exceptionType": "RateLimitExceededException",
-                         *       "resolution": "Wait before retrying the request. Check the Retry-After header for more information.",
-                         *       "source": "<Service>",
-                         *       "statusCode": 429,
-                         *       "title": "Rate limit exceeded"
-                         *     }
-                         */
-                        "application/json": components["schemas"]["RateLimitExceededExceptionExample"];
-                    };
-                };
-                /** @description Internal Server Error */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        /**
-                         * @example {
-                         *       "cause": "An unexpected error occurred while processing the request",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "details": "An unexpected error occurred while processing the request.",
-                         *       "documentationUrl": "https://developer.flute.com/",
-                         *       "entityId": null,
-                         *       "errorCode": "I0000",
-                         *       "exceptionType": "IntegrationException",
-                         *       "resolution": "Please contact support with the correlation ID if the issue persists",
-                         *       "source": "<Service>",
-                         *       "statusCode": 500,
-                         *       "title": "Internal server error"
-                         *     }
-                         */
-                        "application/json": components["schemas"]["InternalExceptionExample"];
-                    };
-                };
-            };
-        };
+        delete?: never;
         options?: never;
         head?: never;
-        /**
-         * Update Customer Required API Permission: Manage Customers
-         * @description Partial update (JSON Merge Patch, RFC 7396): send only the fields you want to change.
-         *     An omitted field is left unchanged; an explicit `null` clears a clearable field; nested
-         *     addresses merge recursively. Returns the full updated customer.
-         */
-        patch: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    /**
-                     * @description The customer identifier.
-                     * @example 03a3c202-018c-43ff-b607-a912a6f00007
-                     */
-                    customerId: string;
-                };
-                cookie?: never;
-            };
-            /** @description The customer fields to update. */
-            requestBody?: {
-                content: {
-                    /**
-                     * @example {
-                     *       "billingAddress": {
-                     *         "addressLine1": "456 Oak Avenue",
-                     *         "addressLine2": "Floor 5",
-                     *         "city": "Los Angeles",
-                     *         "countryCode": "US",
-                     *         "postalCode": "90001",
-                     *         "stateCode": "CA"
-                     *       },
-                     *       "companyName": "Tech Solutions Inc",
-                     *       "email": "jane.smith@techsolutions.com",
-                     *       "firstName": "Jane",
-                     *       "hasSmsConsent": false,
-                     *       "lastName": "Smith",
-                     *       "mobilePhoneNumber": "+15559876543",
-                     *       "shippingAddress": {
-                     *         "addressLine1": "789 Pine Road",
-                     *         "city": "San Francisco",
-                     *         "countryCode": "US",
-                     *         "postalCode": "94102",
-                     *         "stateCode": "CA"
-                     *       },
-                     *       "shouldUseBillingAsShippingAddress": false
-                     *     }
-                     */
-                    "application/json": components["schemas"]["UpdateCustomerRequestDto"];
-                };
-            };
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        /**
-                         * @example {
-                         *       "achAccounts": [
-                         *         {
-                         *           "accountHolderType": "Personal",
-                         *           "accountNumber": "****6789",
-                         *           "accountType": "Checking",
-                         *           "isDefault": false,
-                         *           "paymentMethodId": "a7402e6f-7b52-4884-9214-b68dcd7b80bf",
-                         *           "paymentName": "Business Checking",
-                         *           "routingNumber": "021000021",
-                         *           "taxId": "*****6789"
-                         *         }
-                         *       ],
-                         *       "billingAddress": {
-                         *         "addressLine1": "123 Main Street",
-                         *         "addressLine2": "Suite 100",
-                         *         "city": "New York",
-                         *         "countryCode": "US",
-                         *         "postalCode": "10001",
-                         *         "stateCode": "NY"
-                         *       },
-                         *       "cards": [
-                         *         {
-                         *           "cardMask": "************1111",
-                         *           "cardTokenType": null,
-                         *           "cardType": "Visa",
-                         *           "creditDebitType": "Credit",
-                         *           "expirationMonth": 12,
-                         *           "expirationYear": 2026,
-                         *           "isDefault": true,
-                         *           "paymentMethodId": "e5348db9-85cf-4d9d-a27c-88013f8944be",
-                         *           "paymentName": "My Visa Card"
-                         *         },
-                         *         {
-                         *           "cardMask": "************5555",
-                         *           "cardTokenType": null,
-                         *           "cardType": "MasterCard",
-                         *           "creditDebitType": "Debit",
-                         *           "expirationMonth": 6,
-                         *           "expirationYear": 2027,
-                         *           "isDefault": false,
-                         *           "paymentMethodId": "911e5ed6-95db-4ceb-8c49-5dc997ce0b3d",
-                         *           "paymentName": "Personal MasterCard"
-                         *         }
-                         *       ],
-                         *       "companyName": "Acme Corp",
-                         *       "customerId": "61e5435f-7cec-4a7b-8523-64358cac7fac",
-                         *       "email": "john.doe@acme.com",
-                         *       "externalId": "CUST-EXT-12345",
-                         *       "firstName": "John",
-                         *       "hasSmsConsent": true,
-                         *       "lastName": "Doe",
-                         *       "lastTransactionAmount": 150,
-                         *       "lastTransactionDate": "2026-01-01T00:00:00Z",
-                         *       "mobilePhoneNumber": "+14125553845",
-                         *       "numberOfSubscriptions": 2,
-                         *       "shippingAddress": null,
-                         *       "shouldUseBillingAsShippingAddress": true,
-                         *       "transactionsCount": 25,
-                         *       "transactionsVolume": 12500
-                         *     }
-                         */
-                        "application/json": components["schemas"]["GetCustomerResponseDto"];
-                    };
-                };
-                /** @description Bad Request */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        /**
-                         * @example {
-                         *       "cause": "One or more fields failed validation rules.",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "details": "One or more validation errors occurred.",
-                         *       "documentationUrl": "https://developer.flute.com/",
-                         *       "entityId": null,
-                         *       "errorCode": "V0000",
-                         *       "errors": {
-                         *         "Email": [
-                         *           "'Email' is not a valid email address."
-                         *         ]
-                         *       },
-                         *       "exceptionType": "ValidationException",
-                         *       "resolution": "Review the errors and correct the invalid fields.",
-                         *       "source": "<Service>",
-                         *       "statusCode": 400,
-                         *       "title": "Validation failed"
-                         *     }
-                         */
-                        "application/json": components["schemas"]["ValidationExceptionExample"];
-                    };
-                };
-                /** @description Unauthorized */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Forbidden */
-                403: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        /**
-                         * @example {
-                         *       "cause": "You do not have permission to access this resource.",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "details": "You do not have permission to access this resource.",
-                         *       "documentationUrl": "https://developer.flute.com/",
-                         *       "entityId": null,
-                         *       "errorCode": "F0000",
-                         *       "exceptionType": "ForbiddenException",
-                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
-                         *       "source": "<Service>",
-                         *       "statusCode": 403,
-                         *       "title": "Access forbidden"
-                         *     }
-                         */
-                        "application/json": components["schemas"]["ForbiddenExceptionExample"];
-                    };
-                };
-                /** @description Not Found */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        /**
-                         * @example {
-                         *       "cause": "The requested resource does not exist or has been deleted.",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "details": "Entity with ID b31fbe9f-eebb-45ce-9cae-92265389f47f does not exist or has been deleted",
-                         *       "documentationUrl": "https://developer.flute.com/",
-                         *       "entityId": "b31fbe9f-eebb-45ce-9cae-92265389f47f",
-                         *       "errorCode": "N0000",
-                         *       "exceptionType": "NotFoundException",
-                         *       "resolution": "Verify the resource ID is correct or retrieve a list of available resources.",
-                         *       "source": "<Service>",
-                         *       "statusCode": 404,
-                         *       "title": "Resource not found"
-                         *     }
-                         */
-                        "application/json": components["schemas"]["NotFoundExceptionExample"];
-                    };
-                };
-                /** @description Conflict */
-                409: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        /**
-                         * @example {
-                         *       "cause": "The request conflicts with the current state of the resource.",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "details": "The request conflicts with the current state of the resource.",
-                         *       "documentationUrl": "https://developer.flute.com/",
-                         *       "entityId": null,
-                         *       "errorCode": "C0000",
-                         *       "exceptionType": "ConflictException",
-                         *       "resolution": "Refresh the resource state and retry the operation, or use a different idempotency key.",
-                         *       "source": "<Service>",
-                         *       "statusCode": 409,
-                         *       "title": "Resource conflict"
-                         *     }
-                         */
-                        "application/json": components["schemas"]["ConflictExceptionExample"];
-                    };
-                };
-                /** @description Too Many Requests */
-                429: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        /**
-                         * @example {
-                         *       "cause": "Too many requests sent in a short period.",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "details": "Too many requests sent in a short period.",
-                         *       "documentationUrl": "https://developer.flute.com/",
-                         *       "entityId": null,
-                         *       "errorCode": "R0000",
-                         *       "exceptionType": "RateLimitExceededException",
-                         *       "resolution": "Wait before retrying the request. Check the Retry-After header for more information.",
-                         *       "source": "<Service>",
-                         *       "statusCode": 429,
-                         *       "title": "Rate limit exceeded"
-                         *     }
-                         */
-                        "application/json": components["schemas"]["RateLimitExceededExceptionExample"];
-                    };
-                };
-                /** @description Internal Server Error */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        /**
-                         * @example {
-                         *       "cause": "An unexpected error occurred while processing the request",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "details": "An unexpected error occurred while processing the request.",
-                         *       "documentationUrl": "https://developer.flute.com/",
-                         *       "entityId": null,
-                         *       "errorCode": "I0000",
-                         *       "exceptionType": "IntegrationException",
-                         *       "resolution": "Please contact support with the correlation ID if the issue persists",
-                         *       "source": "<Service>",
-                         *       "statusCode": 500,
-                         *       "title": "Internal server error"
-                         *     }
-                         */
-                        "application/json": components["schemas"]["InternalExceptionExample"];
-                    };
-                };
-            };
-        };
+        patch?: never;
         trace?: never;
     };
     "/v2/payment-links": {
@@ -1860,27 +3044,12 @@ export interface paths {
                     };
                     content?: never;
                 };
-                /** @description Forbidden */
+                /** @description Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: "Partner token is being used. Use a merchant token instead." */
                 403: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        /**
-                         * @example {
-                         *       "cause": "You do not have permission to access this resource.",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "details": "You do not have permission to access this resource.",
-                         *       "documentationUrl": "https://developer.flute.com/",
-                         *       "entityId": null,
-                         *       "errorCode": "F0000",
-                         *       "exceptionType": "ForbiddenException",
-                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
-                         *       "source": "<Service>",
-                         *       "statusCode": 403,
-                         *       "title": "Access forbidden"
-                         *     }
-                         */
                         "application/json": components["schemas"]["ForbiddenExceptionExample"];
                     };
                 };
@@ -2002,27 +3171,12 @@ export interface paths {
                     };
                     content?: never;
                 };
-                /** @description Forbidden */
+                /** @description Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: "Partner token is being used. Use a merchant token instead." */
                 403: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        /**
-                         * @example {
-                         *       "cause": "You do not have permission to access this resource.",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "details": "You do not have permission to access this resource.",
-                         *       "documentationUrl": "https://developer.flute.com/",
-                         *       "entityId": null,
-                         *       "errorCode": "F0000",
-                         *       "exceptionType": "ForbiddenException",
-                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
-                         *       "source": "<Service>",
-                         *       "statusCode": 403,
-                         *       "title": "Access forbidden"
-                         *     }
-                         */
                         "application/json": components["schemas"]["ForbiddenExceptionExample"];
                     };
                 };
@@ -2171,27 +3325,12 @@ export interface paths {
                     };
                     content?: never;
                 };
-                /** @description Forbidden */
+                /** @description Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: "Partner token is being used. Use a merchant token instead." */
                 403: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        /**
-                         * @example {
-                         *       "cause": "You do not have permission to access this resource.",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "details": "You do not have permission to access this resource.",
-                         *       "documentationUrl": "https://developer.flute.com/",
-                         *       "entityId": null,
-                         *       "errorCode": "F0000",
-                         *       "exceptionType": "ForbiddenException",
-                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
-                         *       "source": "<Service>",
-                         *       "statusCode": 403,
-                         *       "title": "Access forbidden"
-                         *     }
-                         */
                         "application/json": components["schemas"]["ForbiddenExceptionExample"];
                     };
                 };
@@ -2327,27 +3466,12 @@ export interface paths {
                     };
                     content?: never;
                 };
-                /** @description Forbidden */
+                /** @description Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: "Partner token is being used. Use a merchant token instead." */
                 403: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        /**
-                         * @example {
-                         *       "cause": "You do not have permission to access this resource.",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "details": "You do not have permission to access this resource.",
-                         *       "documentationUrl": "https://developer.flute.com/",
-                         *       "entityId": null,
-                         *       "errorCode": "F0000",
-                         *       "exceptionType": "ForbiddenException",
-                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
-                         *       "source": "<Service>",
-                         *       "statusCode": 403,
-                         *       "title": "Access forbidden"
-                         *     }
-                         */
                         "application/json": components["schemas"]["ForbiddenExceptionExample"];
                     };
                 };
@@ -2497,27 +3621,12 @@ export interface paths {
                     };
                     content?: never;
                 };
-                /** @description Forbidden */
+                /** @description Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: "Partner token is being used. Use a merchant token instead." */
                 403: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        /**
-                         * @example {
-                         *       "cause": "You do not have permission to access this resource.",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "details": "You do not have permission to access this resource.",
-                         *       "documentationUrl": "https://developer.flute.com/",
-                         *       "entityId": null,
-                         *       "errorCode": "F0000",
-                         *       "exceptionType": "ForbiddenException",
-                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
-                         *       "source": "<Service>",
-                         *       "statusCode": 403,
-                         *       "title": "Access forbidden"
-                         *     }
-                         */
                         "application/json": components["schemas"]["ForbiddenExceptionExample"];
                     };
                 };
@@ -2698,27 +3807,12 @@ export interface paths {
                     };
                     content?: never;
                 };
-                /** @description Forbidden */
+                /** @description Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: "Partner token is being used. Use a merchant token instead." */
                 403: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        /**
-                         * @example {
-                         *       "cause": "You do not have permission to access this resource.",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "details": "You do not have permission to access this resource.",
-                         *       "documentationUrl": "https://developer.flute.com/",
-                         *       "entityId": null,
-                         *       "errorCode": "F0000",
-                         *       "exceptionType": "ForbiddenException",
-                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
-                         *       "source": "<Service>",
-                         *       "statusCode": 403,
-                         *       "title": "Access forbidden"
-                         *     }
-                         */
                         "application/json": components["schemas"]["ForbiddenExceptionExample"];
                     };
                 };
@@ -2835,28 +3929,34 @@ export interface paths {
         };
         /**
          * List payment methods Required API Permission: Get Customer Details
-         * @description Returns the merchant's payment methods. Use the optional `customerId` query parameter
-         *     to filter to a specific customer's PMs. Without it, the response includes orphan PMs
-         *     alongside customer-linked PMs.
+         * @description Returns the merchant's payment methods, newest first. `customerId` narrows the list to one
+         *     customer; without it orphans are included. `paymentMethodType` keeps only Card or only ACH.
+         *     `sortBy` accepts createdOn (default) or paymentMethodName; `sortOrder` is asc or desc
+         *     (default). `createdFrom` and `createdTo` are ISO 8601 date-times, both inclusive; a value without
+         *     an offset is read as UTC, and a date alone (or exactly 00:00:00 without an offset) covers that
+         *     whole day (`createdTo=2026-03-10` includes all of March 10).
          */
         get: {
             parameters: {
                 query?: {
+                    /** @description Only this customer's payment methods. Omit for every method of the merchant, orphans included. */
+                    customerId?: string;
+                    /** @description Only Card or only ACH. */
+                    paymentMethodType?: components["schemas"]["PaymentMethodType"];
+                    /** @description Partial match on paymentMethodName. */
+                    search?: string;
+                    /** @description Created at or after this instant (ISO 8601 date-time, inclusive). A value without an offset is read as UTC; a date alone is that day's midnight. */
+                    createdFrom?: string;
+                    /** @description Created at or before this instant (ISO 8601 date-time, inclusive). A value without an offset is read as UTC; a date alone, or exactly 00:00:00 without an offset, covers that whole day. Must not be earlier than createdFrom. */
+                    createdTo?: string;
                     /** @description Zero-based page index. */
                     pageIndex?: number;
-                    /** @description Page size */
+                    /** @description Items per page (1–100). */
                     pageSize?: number;
-                    /** @description Order by field */
-                    orderBy?: string;
-                    /** @description Sort ascending */
-                    asc?: boolean;
-                    /** @description Search string */
-                    search?: string;
-                    /** @description Created date from (ISO 8601) */
-                    createdFrom?: string;
-                    /** @description Created date to (ISO 8601) */
-                    createdTo?: string;
-                    customerId?: string;
+                    /** @description Sort field: createdOn or paymentMethodName. Default createdOn. */
+                    sortBy?: string;
+                    /** @description Sort direction: asc or desc. Default desc. */
+                    sortOrder?: string;
                 };
                 header?: never;
                 path?: never;
@@ -2874,36 +3974,40 @@ export interface paths {
                          * @example {
                          *       "items": [
                          *         {
-                         *           "ach": null,
-                         *           "card": {
-                         *             "cardMask": "************1111",
+                         *           "achDetails": null,
+                         *           "cardDetails": {
+                         *             "cardBrand": "Visa",
+                         *             "cardNumberLast4": "1111",
                          *             "cardTokenType": "Local",
+                         *             "cardType": "Credit",
                          *             "expirationMonth": 12,
-                         *             "expirationYear": 2027
+                         *             "expirationYear": 2030,
+                         *             "maskedCardNumber": "400112******1111"
                          *           },
                          *           "createdOn": "2026-01-01T00:00:00Z",
-                         *           "customerId": "4f7d41f8-1d45-4cb7-a1e8-788fea6a2b11",
+                         *           "customerId": "588f57a5-fe6a-4844-851e-e98914e81980",
                          *           "isDefault": true,
-                         *           "name": "My Visa Card",
-                         *           "paymentMethodId": "8a06469f-25da-4763-990d-11a4bbc74ecb",
-                         *           "type": "Card"
+                         *           "paymentMethodId": "6e22f0f3-f3ed-407c-a46f-ec9cffde5d5b",
+                         *           "paymentMethodName": "Personal Visa",
+                         *           "paymentMethodType": "Card"
                          *         },
                          *         {
-                         *           "ach": {
+                         *           "achDetails": {
                          *             "accountHolderType": "Business",
-                         *             "accountNumber": "****6789",
+                         *             "accountNumberLast2": "90",
+                         *             "accountRoutingNumber": "021000021",
                          *             "accountType": "Checking",
-                         *             "companyName": "Acme Corp Inc",
-                         *             "routingNumber": "021000021",
+                         *             "companyName": "Acme Corp",
+                         *             "maskedAccountNumber": "****7890",
                          *             "taxId": "*****6789"
                          *           },
-                         *           "card": null,
+                         *           "cardDetails": null,
                          *           "createdOn": "2026-01-01T00:00:00Z",
                          *           "customerId": null,
                          *           "isDefault": false,
-                         *           "name": "Acme Bus Savings",
-                         *           "paymentMethodId": "7ada26ab-308a-4d2b-abb2-f0f69711ea38",
-                         *           "type": "ACH"
+                         *           "paymentMethodId": "6bbfbe3e-04dd-41cd-82bf-1466e0159007",
+                         *           "paymentMethodName": "Business Checking",
+                         *           "paymentMethodType": "ACH"
                          *         }
                          *       ],
                          *       "pageInfo": {
@@ -2954,27 +4058,12 @@ export interface paths {
                     };
                     content?: never;
                 };
-                /** @description Forbidden */
+                /** @description Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: "Partner token is being used. Use a merchant token instead." */
                 403: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        /**
-                         * @example {
-                         *       "cause": "You do not have permission to access this resource.",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "details": "You do not have permission to access this resource.",
-                         *       "documentationUrl": "https://developer.flute.com/",
-                         *       "entityId": null,
-                         *       "errorCode": "F0000",
-                         *       "exceptionType": "ForbiddenException",
-                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
-                         *       "source": "<Service>",
-                         *       "statusCode": 403,
-                         *       "title": "Access forbidden"
-                         *     }
-                         */
                         "application/json": components["schemas"]["ForbiddenExceptionExample"];
                     };
                 };
@@ -3071,10 +4160,13 @@ export interface paths {
         put?: never;
         /**
          * Add an ACH payment method Required API Permission: Manage Customers
-         * @description Tokenizes the bank account and stores it under the merchant. Provide CustomerId in
-         *     the body to link the ACH to a customer; omit it to create an orphan payment method.
-         *     For Business ACH where the orphan caller will not supply ContactInfo on transactions,
-         *     set CompanyName so the legal entity name is available at transaction time.
+         * @description Tokenizes and vaults the bank account under the merchant and answers the full payment
+         *     method. Pass `customerId` to link it to a customer; omit it for a merchant-level orphan.
+         *     A Business orphan needs `companyName` so a transaction that omits ContactInfo still has
+         *     the legal entity name. If the same customer already holds an account with the same
+         *     routing and account number (for an orphan: if another of the merchant's orphans does), it
+         *     is not vaulted twice: the response is that existing record, including its label, and no
+         *     new verification runs.
          */
         post: {
             parameters: {
@@ -3089,11 +4181,11 @@ export interface paths {
                      * @example {
                      *       "accountHolderType": "Business",
                      *       "accountNumber": "1234567890",
+                     *       "accountRoutingNumber": "021000021",
                      *       "accountType": "Checking",
-                     *       "companyName": "Acme Corp Inc",
-                     *       "customerId": "3ad6a05a-48b4-4c77-9601-fdad2963b92b",
-                     *       "name": "Business Checking",
-                     *       "routingNumber": "021000021",
+                     *       "companyName": "Acme Corp",
+                     *       "customerId": null,
+                     *       "paymentMethodName": "Primary Checking",
                      *       "taxId": "123456789"
                      *     }
                      */
@@ -3107,12 +4199,7 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        /**
-                         * @example {
-                         *       "paymentMethodId": "83eed29d-849d-4aff-8ff7-02783bfe97d5"
-                         *     }
-                         */
-                        "application/json": components["schemas"]["CreatePaymentMethodResponseDto"];
+                        "application/json": components["schemas"]["PaymentMethodResponseDto"];
                     };
                 };
                 /** @description Bad Request */
@@ -3151,27 +4238,12 @@ export interface paths {
                     };
                     content?: never;
                 };
-                /** @description Forbidden */
+                /** @description Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: "Partner token is being used. Use a merchant token instead." */
                 403: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        /**
-                         * @example {
-                         *       "cause": "You do not have permission to access this resource.",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "details": "You do not have permission to access this resource.",
-                         *       "documentationUrl": "https://developer.flute.com/",
-                         *       "entityId": null,
-                         *       "errorCode": "F0000",
-                         *       "exceptionType": "ForbiddenException",
-                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
-                         *       "source": "<Service>",
-                         *       "statusCode": 403,
-                         *       "title": "Access forbidden"
-                         *     }
-                         */
                         "application/json": components["schemas"]["ForbiddenExceptionExample"];
                     };
                 };
@@ -3279,7 +4351,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/v2/payment-methods/cards": {
+    "/v2/payment-methods/card": {
         parameters: {
             query?: never;
             header?: never;
@@ -3290,8 +4362,15 @@ export interface paths {
         put?: never;
         /**
          * Add a card payment method Required API Permission: Manage Customers
-         * @description Tokenizes the card and stores it under the merchant. Provide CustomerId in the body
-         *     to link the card to a customer; omit it to create an orphan payment method.
+         * @description Tokenizes and vaults the card under the merchant and answers the full payment method.
+         *     Pass `customerId` to link it to a customer; omit it for a merchant-level orphan. If the
+         *     same customer already holds a card with the same number and expiry (for an orphan: if
+         *     another of the merchant's orphans does), it is not vaulted twice: the response is that
+         *     existing record, including its label, and no new verification runs. The cardholder name
+         *     and billing address feed address verification: a name given replaces the customer's name,
+         *     each billing field given replaces that field of the customer's billing address, and none
+         *     of it is stored. A card the processor declines during verification is not vaulted: the
+         *     response is a 402 carrying the processor's decline code and message.
          */
         post: {
             parameters: {
@@ -3304,11 +4383,18 @@ export interface paths {
                 content: {
                     /**
                      * @example {
+                     *       "billingAddress": {
+                     *         "addressLine1": "123 Main Street",
+                     *         "countryCode": "US",
+                     *         "postalCode": "10001"
+                     *       },
                      *       "cardNumber": "4111111111111111",
-                     *       "customerId": "098290e9-49cd-4613-a885-db61a29f80f7",
+                     *       "cardholderFirstName": "Jane",
+                     *       "cardholderLastName": "Doe",
+                     *       "customerId": null,
                      *       "expirationMonth": 12,
                      *       "expirationYear": 2030,
-                     *       "paymentName": "My Visa Card",
+                     *       "paymentMethodName": "Personal Visa",
                      *       "securityCode": "123"
                      *     }
                      */
@@ -3322,12 +4408,7 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        /**
-                         * @example {
-                         *       "paymentMethodId": "83eed29d-849d-4aff-8ff7-02783bfe97d5"
-                         *     }
-                         */
-                        "application/json": components["schemas"]["CreatePaymentMethodResponseDto"];
+                        "application/json": components["schemas"]["PaymentMethodResponseDto"];
                     };
                 };
                 /** @description Bad Request */
@@ -3366,27 +4447,36 @@ export interface paths {
                     };
                     content?: never;
                 };
-                /** @description Forbidden */
-                403: {
+                /** @description Payment Required */
+                402: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
                         /**
                          * @example {
-                         *       "cause": "You do not have permission to access this resource.",
+                         *       "cause": "The payment was declined by the payment processor.",
                          *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "details": "You do not have permission to access this resource.",
+                         *       "details": "The payment was declined by the processor.",
                          *       "documentationUrl": "https://developer.flute.com/",
                          *       "entityId": null,
-                         *       "errorCode": "F0000",
-                         *       "exceptionType": "ForbiddenException",
-                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
+                         *       "errorCode": "P0000",
+                         *       "exceptionType": "PaymentFailedException",
+                         *       "resolution": "Verify payment details, check available funds, or try a different payment method.",
                          *       "source": "<Service>",
-                         *       "statusCode": 403,
-                         *       "title": "Access forbidden"
+                         *       "statusCode": 402,
+                         *       "title": "Payment failed"
                          *     }
                          */
+                        "application/json": components["schemas"]["PaymentFailedExceptionExample"];
+                    };
+                };
+                /** @description Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: "Partner token is being used. Use a merchant token instead." */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
                         "application/json": components["schemas"]["ForbiddenExceptionExample"];
                     };
                 };
@@ -3562,27 +4652,12 @@ export interface paths {
                     };
                     content?: never;
                 };
-                /** @description Forbidden */
+                /** @description Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: "Partner token is being used. Use a merchant token instead." */
                 403: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        /**
-                         * @example {
-                         *       "cause": "You do not have permission to access this resource.",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "details": "You do not have permission to access this resource.",
-                         *       "documentationUrl": "https://developer.flute.com/",
-                         *       "entityId": null,
-                         *       "errorCode": "F0000",
-                         *       "exceptionType": "ForbiddenException",
-                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
-                         *       "source": "<Service>",
-                         *       "statusCode": 403,
-                         *       "title": "Access forbidden"
-                         *     }
-                         */
                         "application/json": components["schemas"]["ForbiddenExceptionExample"];
                     };
                 };
@@ -3662,7 +4737,11 @@ export interface paths {
         };
         put?: never;
         post?: never;
-        /** Delete a payment method Required API Permission: Manage Customers */
+        /**
+         * Delete a payment method Required API Permission: Manage Customers
+         * @description Permanently removes the payment method. Irreversible. A method with an active subscription
+         *     cannot be deleted. Answers an empty 200.
+         */
         delete: {
             parameters: {
                 query?: never;
@@ -3721,27 +4800,12 @@ export interface paths {
                     };
                     content?: never;
                 };
-                /** @description Forbidden */
+                /** @description Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: "Partner token is being used. Use a merchant token instead." */
                 403: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        /**
-                         * @example {
-                         *       "cause": "You do not have permission to access this resource.",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "details": "You do not have permission to access this resource.",
-                         *       "documentationUrl": "https://developer.flute.com/",
-                         *       "entityId": null,
-                         *       "errorCode": "F0000",
-                         *       "exceptionType": "ForbiddenException",
-                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
-                         *       "source": "<Service>",
-                         *       "statusCode": 403,
-                         *       "title": "Access forbidden"
-                         *     }
-                         */
                         "application/json": components["schemas"]["ForbiddenExceptionExample"];
                     };
                 };
@@ -3847,11 +4911,10 @@ export interface paths {
         head?: never;
         /**
          * Update a payment method Required API Permission: Manage Customers
-         * @description Partial update (JSON Merge Patch, RFC 7396): send only the fields you want to change; an
-         *     omitted field is left unchanged and an explicit `null` clears the field. Renames the
-         *     payment method. The PM is identified by `paymentMethodId` within the merchant; the
-         *     operation works the same for orphan and customer-linked PMs. Returns the full updated
-         *     payment method.
+         * @description Partial update (JSON Merge Patch, RFC 7396): send only `paymentMethodName`; an omitted
+         *     field is left unchanged. The name cannot be cleared. Card and bank details are immutable
+         *     once vaulted. Works the same for orphan and customer-linked methods and answers the full
+         *     updated payment method.
          */
         patch: {
             parameters: {
@@ -3871,7 +4934,7 @@ export interface paths {
                 content: {
                     /**
                      * @example {
-                     *       "paymentName": "My Updated Card"
+                     *       "paymentMethodName": "Work Visa"
                      *     }
                      */
                     "application/json": components["schemas"]["UpdatePaymentMethodRequestDto"];
@@ -3923,27 +4986,12 @@ export interface paths {
                     };
                     content?: never;
                 };
-                /** @description Forbidden */
+                /** @description Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: "Partner token is being used. Use a merchant token instead." */
                 403: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        /**
-                         * @example {
-                         *       "cause": "You do not have permission to access this resource.",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "details": "You do not have permission to access this resource.",
-                         *       "documentationUrl": "https://developer.flute.com/",
-                         *       "entityId": null,
-                         *       "errorCode": "F0000",
-                         *       "exceptionType": "ForbiddenException",
-                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
-                         *       "source": "<Service>",
-                         *       "statusCode": 403,
-                         *       "title": "Access forbidden"
-                         *     }
-                         */
                         "application/json": components["schemas"]["ForbiddenExceptionExample"];
                     };
                 };
@@ -4058,9 +5106,9 @@ export interface paths {
         put?: never;
         /**
          * Set a payment method as default Required API Permission: Manage Customers
-         * @description Only customer-linked payment methods can be made default; CustomerId is therefore
-         *     required. Orphan PMs (no linked customer) have no concept of default and cannot
-         *     reach this endpoint without a customer scope.
+         * @description Marks the payment method as the default for the customer named by `customerId`, which is
+         *     required: only customer-linked payment methods have a default, so an orphan is rejected.
+         *     Answers an empty 200.
          */
         post: {
             parameters: {
@@ -4126,51 +5174,12 @@ export interface paths {
                     };
                     content?: never;
                 };
-                /** @description Payment Required */
-                402: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        /**
-                         * @example {
-                         *       "cause": "The payment was declined by the payment processor.",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "details": "The payment was declined by the processor.",
-                         *       "documentationUrl": "https://developer.flute.com/",
-                         *       "entityId": null,
-                         *       "errorCode": "P0000",
-                         *       "exceptionType": "PaymentFailedException",
-                         *       "resolution": "Verify payment details, check available funds, or try a different payment method.",
-                         *       "source": "<Service>",
-                         *       "statusCode": 402,
-                         *       "title": "Payment failed"
-                         *     }
-                         */
-                        "application/json": components["schemas"]["PaymentFailedExceptionExample"];
-                    };
-                };
-                /** @description Forbidden */
+                /** @description Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: "Partner token is being used. Use a merchant token instead." */
                 403: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        /**
-                         * @example {
-                         *       "cause": "You do not have permission to access this resource.",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "details": "You do not have permission to access this resource.",
-                         *       "documentationUrl": "https://developer.flute.com/",
-                         *       "entityId": null,
-                         *       "errorCode": "F0000",
-                         *       "exceptionType": "ForbiddenException",
-                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
-                         *       "source": "<Service>",
-                         *       "statusCode": 403,
-                         *       "title": "Access forbidden"
-                         *     }
-                         */
                         "application/json": components["schemas"]["ForbiddenExceptionExample"];
                     };
                 };
@@ -4278,7 +5287,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/v2/payment-sessions": {
+    "/v2/payment-sessions/checkout": {
         parameters: {
             query?: never;
             header?: never;
@@ -4287,7 +5296,13 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Creates a new payment session. Required API Permission: Hosted Web Components */
+        /**
+         * Create a Checkout session Required API Permission: Hosted Web Components
+         * @description Flute hosts the payment page: redirect the customer to the returned `checkoutUrl`, which is
+         *     fully formed for the environment you are calling. The response is the full session object, the
+         *     same one `GET /v2/payment-sessions/{paymentSessionId}` returns; `paymentSessionResult`
+         *     is null until the session is Completed.
+         */
         post: {
             parameters: {
                 query?: never;
@@ -4298,10 +5313,48 @@ export interface paths {
                 path?: never;
                 cookie?: never;
             };
-            /** @description Payment session creation request. */
             requestBody?: {
                 content: {
-                    "application/json": components["schemas"]["CreatePaymentSessionRequestDto"];
+                    /**
+                     * @example {
+                     *       "baseAmount": 100,
+                     *       "customerHandling": "CreateCustomer",
+                     *       "customerId": "2d3f4a6b-1c2d-4e5f-8a9b-0c1d2e3f4a5b",
+                     *       "expiresOn": "2026-01-01T00:00:00Z",
+                     *       "extraFields": [
+                     *         {
+                     *           "description": null,
+                     *           "isRequired": true,
+                     *           "name": "Order number"
+                     *         }
+                     *       ],
+                     *       "metadata": {
+                     *         "orderId": "ORD-9876",
+                     *         "source": "web"
+                     *       },
+                     *       "pageName": "Order #1234",
+                     *       "paymentMethods": {
+                     *         "ach": {
+                     *           "enabled": false,
+                     *           "fasterProcessing": null,
+                     *           "processorId": null
+                     *         },
+                     *         "card": {
+                     *           "enabled": true,
+                     *           "processorId": "36e0e61e-3614-4c68-a919-1bffc8bdb7b6"
+                     *         }
+                     *       },
+                     *       "paymentSessionMode": "Payment",
+                     *       "referenceId": "order_123",
+                     *       "returnUrl": "https://myapp.com/payment/complete",
+                     *       "skipAddressVerification": false,
+                     *       "taxAmount": null,
+                     *       "taxMode": "Exclusive",
+                     *       "taxRate": 8.25,
+                     *       "tipAmount": 10
+                     *     }
+                     */
+                    "application/json": components["schemas"]["CreateCheckoutSessionRequestDto"];
                 };
             };
             responses: {
@@ -4311,7 +5364,52 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/json": components["schemas"]["CreatePaymentSessionResponseDto"];
+                        /**
+                         * @example {
+                         *       "baseAmount": 100,
+                         *       "checkoutUrl": "https://pay.flute.com/checkout/ebece8ac-a375-4bd1-bce7-dd352a00650c",
+                         *       "createdOn": "2026-01-01T00:00:00Z",
+                         *       "currencyCode": "USD",
+                         *       "customerHandling": "CreateCustomer",
+                         *       "customerId": "2d3f4a6b-1c2d-4e5f-8a9b-0c1d2e3f4a5b",
+                         *       "expiresOn": "2026-01-01T00:00:00Z",
+                         *       "extraFields": [
+                         *         {
+                         *           "description": null,
+                         *           "extraFieldId": "8b3e4c74-ac73-4f40-9c70-3d4e5f607182",
+                         *           "isRequired": true,
+                         *           "name": "Order number"
+                         *         }
+                         *       ],
+                         *       "metadata": {
+                         *         "orderId": "ORD-9876",
+                         *         "source": "web"
+                         *       },
+                         *       "modifiedOn": "2026-01-01T00:00:00Z",
+                         *       "pageName": "Order #1234",
+                         *       "paymentLinkId": null,
+                         *       "paymentMethods": {
+                         *         "ach": null,
+                         *         "card": {
+                         *           "enabled": true,
+                         *           "processorId": "36e0e61e-3614-4c68-a919-1bffc8bdb7b6"
+                         *         }
+                         *       },
+                         *       "paymentSessionId": "ebece8ac-a375-4bd1-bce7-dd352a00650c",
+                         *       "paymentSessionMode": "Payment",
+                         *       "paymentSessionResult": null,
+                         *       "paymentSessionStatus": "Created",
+                         *       "paymentSessionType": "Checkout",
+                         *       "referenceId": "order_123",
+                         *       "returnUrl": "https://myapp.com/payment/complete",
+                         *       "skipAddressVerification": false,
+                         *       "taxAmount": null,
+                         *       "taxMode": "Exclusive",
+                         *       "taxRate": 8.25,
+                         *       "tipAmount": 10
+                         *     }
+                         */
+                        "application/json": components["schemas"]["PaymentSessionResponseDto"];
                     };
                 };
                 /** @description Bad Request */
@@ -4341,6 +5439,219 @@ export interface paths {
                          *     }
                          */
                         "application/json": components["schemas"]["ValidationExceptionExample"];
+                    };
+                };
+                /** @description Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: "Partner token is being used. Use a merchant token instead." */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ForbiddenExceptionExample"];
+                    };
+                };
+                /** @description Unprocessable Content */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "The request is well-formed but was rejected by a business rule.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "The request is well-formed but was rejected by a business rule.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "E0000",
+                         *       "exceptionType": "UnprocessableEntityException",
+                         *       "resolution": "Correct the request so it satisfies the rule described in the details, then retry.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 422,
+                         *       "title": "Unprocessable entity"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["UnprocessableEntityExceptionExample"];
+                    };
+                };
+                /** @description Internal Server Error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "An unexpected error occurred while processing the request",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "An unexpected error occurred while processing the request.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "I0000",
+                         *       "exceptionType": "IntegrationException",
+                         *       "resolution": "Please contact support with the correlation ID if the issue persists",
+                         *       "source": "<Service>",
+                         *       "statusCode": 500,
+                         *       "title": "Internal server error"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["InternalExceptionExample"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v2/payment-sessions/elements": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Create an Elements session Required API Permission: Hosted Web Components
+         * @description You build the payment UI with the Flute Elements SDK and initialise it with the returned
+         *     `paymentSessionId`; Flute provides the secure input components only. Accepts the Checkout
+         *     fields except `returnUrl`, `pageName` and `extraFields`, which belong to the hosted
+         *     page. The response is the full session object with `checkoutUrl`, `returnUrl` and
+         *     `pageName` null and `extraFields` empty.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: {
+                    /** @description Optional client-generated key (max 255 characters) that makes this request safely retryable: a retry with the same key within the retention window returns the original response verbatim without a second side effect; a retry while the original is still processing returns 409 IdempotencyKeyInProgress; reusing a key with a different request returns 422 IdempotencyKeyConflict. Server errors (5xx) are not stored: retrying the same key after one executes the request again. */
+                    "Idempotency-Key"?: string;
+                };
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    /**
+                     * @example {
+                     *       "baseAmount": 100,
+                     *       "customerHandling": "CreateCustomer",
+                     *       "customerId": "2d3f4a6b-1c2d-4e5f-8a9b-0c1d2e3f4a5b",
+                     *       "expiresOn": "2026-01-01T00:00:00Z",
+                     *       "metadata": {
+                     *         "orderId": "ORD-9876",
+                     *         "source": "web"
+                     *       },
+                     *       "paymentMethods": {
+                     *         "ach": {
+                     *           "enabled": false,
+                     *           "fasterProcessing": null,
+                     *           "processorId": null
+                     *         },
+                     *         "card": {
+                     *           "enabled": true,
+                     *           "processorId": "36e0e61e-3614-4c68-a919-1bffc8bdb7b6"
+                     *         }
+                     *       },
+                     *       "paymentSessionMode": "Payment",
+                     *       "referenceId": "order_123",
+                     *       "skipAddressVerification": false,
+                     *       "taxAmount": null,
+                     *       "taxMode": "Exclusive",
+                     *       "taxRate": 8.25,
+                     *       "tipAmount": 10
+                     *     }
+                     */
+                    "application/json": components["schemas"]["CreateElementsSessionRequestDto"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "baseAmount": 100,
+                         *       "checkoutUrl": null,
+                         *       "createdOn": "2026-01-01T00:00:00Z",
+                         *       "currencyCode": "USD",
+                         *       "customerHandling": "CreateCustomer",
+                         *       "customerId": "2d3f4a6b-1c2d-4e5f-8a9b-0c1d2e3f4a5b",
+                         *       "expiresOn": "2026-01-01T00:00:00Z",
+                         *       "extraFields": [],
+                         *       "metadata": {
+                         *         "orderId": "ORD-9876",
+                         *         "source": "web"
+                         *       },
+                         *       "modifiedOn": "2026-01-01T00:00:00Z",
+                         *       "pageName": null,
+                         *       "paymentLinkId": null,
+                         *       "paymentMethods": {
+                         *         "ach": null,
+                         *         "card": {
+                         *           "enabled": true,
+                         *           "processorId": "36e0e61e-3614-4c68-a919-1bffc8bdb7b6"
+                         *         }
+                         *       },
+                         *       "paymentSessionId": "8c2f6a1d-3e4b-4f5a-9b6c-7d8e9f0a1b2c",
+                         *       "paymentSessionMode": "Payment",
+                         *       "paymentSessionResult": null,
+                         *       "paymentSessionStatus": "Created",
+                         *       "paymentSessionType": "Elements",
+                         *       "referenceId": "order_123",
+                         *       "returnUrl": null,
+                         *       "skipAddressVerification": false,
+                         *       "taxAmount": null,
+                         *       "taxMode": "Exclusive",
+                         *       "taxRate": 8.25,
+                         *       "tipAmount": 10
+                         *     }
+                         */
+                        "application/json": components["schemas"]["PaymentSessionResponseDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "One or more fields failed validation rules.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "One or more validation errors occurred.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "V0000",
+                         *       "errors": {
+                         *         "Email": [
+                         *           "'Email' is not a valid email address."
+                         *         ]
+                         *       },
+                         *       "exceptionType": "ValidationException",
+                         *       "resolution": "Review the errors and correct the invalid fields.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 400,
+                         *       "title": "Validation failed"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ValidationExceptionExample"];
+                    };
+                };
+                /** @description Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: "Partner token is being used. Use a merchant token instead." */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ForbiddenExceptionExample"];
                     };
                 };
                 /** @description Unprocessable Content */
@@ -4407,9 +5718,10 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * Get payment session details by Id. Required API Permission: Hosted Web Components
-         * @description Returns the details of a payment session, including its current status.
-         *     The `mode` field is returned as a string enum value (e.g. `"Payment"`).
+         * Get a payment session Required API Permission: Hosted Web Components
+         * @description Works for Checkout and Elements sessions. `paymentSessionResult` is null until
+         *     `paymentSessionStatus` is Completed; for SaveMethod and TokenOnly sessions its
+         *     `paymentMethod.paymentMethodId` is the only source of the saved payment method id.
          */
         get: {
             parameters: {
@@ -4429,7 +5741,16 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/json": components["schemas"]["GetPaymentSessionResponseDto"];
+                        "application/json": components["schemas"]["PaymentSessionResponseDto"];
+                    };
+                };
+                /** @description Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: "Partner token is being used. Use a merchant token instead." */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ForbiddenExceptionExample"];
                     };
                 };
                 /** @description Not Found */
@@ -4499,7 +5820,12 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Cancels a payment session. Required API Permission: Hosted Web Components */
+        /**
+         * Cancel a payment session Required API Permission: Hosted Web Components
+         * @description Only a session whose `paymentSessionStatus` is Created can be cancelled; any other status
+         *     answers 409 Conflict, as does a Created session past its `expiresOn`, which still reads
+         *     Created but can no longer be paid.
+         */
         post: {
             parameters: {
                 query?: never;
@@ -4508,19 +5834,28 @@ export interface paths {
                     "Idempotency-Key"?: string;
                 };
                 path: {
-                    /** @description The unique identifier of the payment session. */
+                    /** @description Unique identifier of the payment session. */
                     paymentSessionId: string;
                 };
                 cookie?: never;
             };
             requestBody?: never;
             responses: {
-                /** @description Payment session cancelled successfully */
-                200: {
+                /** @description Payment session cancelled */
+                204: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content?: never;
+                };
+                /** @description Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: "Partner token is being used. Use a merchant token instead." */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ForbiddenExceptionExample"];
+                    };
                 };
                 /** @description Not Found */
                 404: {
@@ -4544,6 +5879,30 @@ export interface paths {
                          *     }
                          */
                         "application/json": components["schemas"]["NotFoundExceptionExample"];
+                    };
+                };
+                /** @description Conflict */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "The request conflicts with the current state of the resource.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "The request conflicts with the current state of the resource.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "C0000",
+                         *       "exceptionType": "ConflictException",
+                         *       "resolution": "Refresh the resource state and retry the operation, or use a different idempotency key.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 409,
+                         *       "title": "Resource conflict"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ConflictExceptionExample"];
                     };
                 };
                 /** @description Unprocessable Content */
@@ -4610,8 +5969,11 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * Ping. Required API Permission: General Ping
-         * @description Health check endpoint. Returns 200 OK when the service is reachable. No response body.
+         * Ping Required API Permission: General Ping
+         * @description Confirms the service is reachable and the API key is valid, and tells you which account and
+         *     environment the key resolves to. Use it during onboarding, integration testing and start-up checks
+         *     to make sure the right environment and merchant account are being targeted. Invalid credentials are
+         *     answered 401 before reaching this endpoint, so `authenticated` is always true.
          */
         get: {
             parameters: {
@@ -4622,12 +5984,23 @@ export interface paths {
             };
             requestBody?: never;
             responses: {
-                /** @description Service is available */
+                /** @description OK */
                 200: {
                     headers: {
                         [name: string]: unknown;
                     };
-                    content?: never;
+                    content: {
+                        /**
+                         * @example {
+                         *       "accountId": "3f2504e0-4f89-11d3-9a0c-0305e82c3301",
+                         *       "accountType": "Merchant",
+                         *       "authenticated": true,
+                         *       "clientId": "e8b93550-4dd9-4f1a-9254-ac5de0686cee",
+                         *       "isSandbox": true
+                         *     }
+                         */
+                        "application/json": components["schemas"]["PingResponseDto"];
+                    };
                 };
                 /** @description Bad Request */
                 400: {
@@ -4784,12 +6157,12 @@ export interface paths {
                      */
                     terminalId?: string;
                     /**
-                     * @description Only return transactions created on or after this date/time (inclusive). ISO 8601 (UTC).
+                     * @description Created at or after this instant (ISO 8601 date-time, inclusive). A value without an offset is read as UTC; a date alone is that day's midnight.
                      * @example 2026-01-01T00:00:00Z
                      */
                     fromDate?: string;
                     /**
-                     * @description Only return transactions created on or before this date/time (inclusive). ISO 8601 (UTC).
+                     * @description Created at or before this instant (ISO 8601 date-time, inclusive). A value without an offset is read as UTC; a date alone, or exactly 00:00:00 without an offset, covers that whole day. Must not be earlier than fromDate.
                      * @example 2026-01-01T00:00:00Z
                      */
                     toDate?: string;
@@ -4904,27 +6277,12 @@ export interface paths {
                     };
                     content?: never;
                 };
-                /** @description Forbidden */
+                /** @description Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: "Partner token is being used. Use a merchant token instead." */
                 403: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        /**
-                         * @example {
-                         *       "cause": "You do not have permission to access this resource.",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "details": "You do not have permission to access this resource.",
-                         *       "documentationUrl": "https://developer.flute.com/",
-                         *       "entityId": null,
-                         *       "errorCode": "F0000",
-                         *       "exceptionType": "ForbiddenException",
-                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
-                         *       "source": "<Service>",
-                         *       "statusCode": 403,
-                         *       "title": "Access forbidden"
-                         *     }
-                         */
                         "application/json": components["schemas"]["ForbiddenExceptionExample"];
                     };
                 };
@@ -5118,27 +6476,12 @@ export interface paths {
                         "application/json": components["schemas"]["PaymentFailedExceptionExample"];
                     };
                 };
-                /** @description Forbidden */
+                /** @description Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: "Partner token is being used. Use a merchant token instead." */
                 403: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        /**
-                         * @example {
-                         *       "cause": "You do not have permission to access this resource.",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "details": "You do not have permission to access this resource.",
-                         *       "documentationUrl": "https://developer.flute.com/",
-                         *       "entityId": null,
-                         *       "errorCode": "F0000",
-                         *       "exceptionType": "ForbiddenException",
-                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
-                         *       "source": "<Service>",
-                         *       "statusCode": 403,
-                         *       "title": "Access forbidden"
-                         *     }
-                         */
                         "application/json": components["schemas"]["ForbiddenExceptionExample"];
                     };
                 };
@@ -5411,27 +6754,12 @@ export interface paths {
                         "application/json": components["schemas"]["PaymentFailedExceptionExample"];
                     };
                 };
-                /** @description Forbidden */
+                /** @description Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: "Partner token is being used. Use a merchant token instead." */
                 403: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        /**
-                         * @example {
-                         *       "cause": "You do not have permission to access this resource.",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "details": "You do not have permission to access this resource.",
-                         *       "documentationUrl": "https://developer.flute.com/",
-                         *       "entityId": null,
-                         *       "errorCode": "F0000",
-                         *       "exceptionType": "ForbiddenException",
-                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
-                         *       "source": "<Service>",
-                         *       "statusCode": 403,
-                         *       "title": "Access forbidden"
-                         *     }
-                         */
                         "application/json": components["schemas"]["ForbiddenExceptionExample"];
                     };
                 };
@@ -5622,11 +6950,20 @@ export interface paths {
                          *         "addressVerificationServiceResponse": null,
                          *         "amountBreakdown": null,
                          *         "batchId": null,
-                         *         "cardDetails": null,
+                         *         "cardDetails": {
+                         *           "cardBrand": "Visa",
+                         *           "cardDataSource": "EMV",
+                         *           "cardProcessedAsType": "Credit",
+                         *           "cardType": "Credit",
+                         *           "cardholderVerificationMethod": "ManualSignature",
+                         *           "maskedCardNumber": "411111******1111",
+                         *           "paymentMethodId": "c1a7b9d2-4e5f-4a6b-8c9d-0e1f2a3b4c5d"
+                         *         },
                          *         "cardTokenType": null,
                          *         "currencyCode": "USD",
                          *         "customerId": null,
                          *         "declineDetails": null,
+                         *         "extraFields": [],
                          *         "merchantId": "00000000-0000-0000-0000-000000000000",
                          *         "originalTransactionId": null,
                          *         "paymentMethodType": "Card",
@@ -5635,8 +6972,13 @@ export interface paths {
                          *         "processedAmount": 130.5,
                          *         "processorDetails": null,
                          *         "referenceId": "REF-12345",
-                         *         "refundDetails": null,
+                         *         "refundDetails": {
+                         *           "availableRefundAmount": 130.5,
+                         *           "isFullyRefunded": false,
+                         *           "refundedAmount": 0
+                         *         },
                          *         "source": null,
+                         *         "taxDetails": null,
                          *         "transactionDateTime": "2026-01-01T00:00:00Z",
                          *         "transactionEvents": null,
                          *         "transactionId": "7a62ba78-c4e2-4317-bc4e-c90a9d169107",
@@ -5694,27 +7036,12 @@ export interface paths {
                     };
                     content?: never;
                 };
-                /** @description Forbidden */
+                /** @description Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: "Partner token is being used. Use a merchant token instead." */
                 403: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        /**
-                         * @example {
-                         *       "cause": "You do not have permission to access this resource.",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "details": "You do not have permission to access this resource.",
-                         *       "documentationUrl": "https://developer.flute.com/",
-                         *       "entityId": null,
-                         *       "errorCode": "F0000",
-                         *       "exceptionType": "ForbiddenException",
-                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
-                         *       "source": "<Service>",
-                         *       "statusCode": 403,
-                         *       "title": "Access forbidden"
-                         *     }
-                         */
                         "application/json": components["schemas"]["ForbiddenExceptionExample"];
                     };
                 };
@@ -5924,27 +7251,12 @@ export interface paths {
                         "application/json": components["schemas"]["PaymentFailedExceptionExample"];
                     };
                 };
-                /** @description Forbidden */
+                /** @description Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: "Partner token is being used. Use a merchant token instead." */
                 403: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        /**
-                         * @example {
-                         *       "cause": "You do not have permission to access this resource.",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "details": "You do not have permission to access this resource.",
-                         *       "documentationUrl": "https://developer.flute.com/",
-                         *       "entityId": null,
-                         *       "errorCode": "F0000",
-                         *       "exceptionType": "ForbiddenException",
-                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
-                         *       "source": "<Service>",
-                         *       "statusCode": 403,
-                         *       "title": "Access forbidden"
-                         *     }
-                         */
                         "application/json": components["schemas"]["ForbiddenExceptionExample"];
                     };
                 };
@@ -6115,8 +7427,8 @@ export interface paths {
                 };
             };
             responses: {
-                /** @description OK */
-                200: {
+                /** @description No Content */
+                204: {
                     headers: {
                         [name: string]: unknown;
                     };
@@ -6158,27 +7470,12 @@ export interface paths {
                     };
                     content?: never;
                 };
-                /** @description Forbidden */
+                /** @description Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: "Partner token is being used. Use a merchant token instead." */
                 403: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        /**
-                         * @example {
-                         *       "cause": "You do not have permission to access this resource.",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "details": "You do not have permission to access this resource.",
-                         *       "documentationUrl": "https://developer.flute.com/",
-                         *       "entityId": null,
-                         *       "errorCode": "F0000",
-                         *       "exceptionType": "ForbiddenException",
-                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
-                         *       "source": "<Service>",
-                         *       "statusCode": 403,
-                         *       "title": "Access forbidden"
-                         *     }
-                         */
                         "application/json": components["schemas"]["ForbiddenExceptionExample"];
                     };
                 };
@@ -6286,7 +7583,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/v2/settings/contact-information": {
+    "/v2/pricing-templates": {
         parameters: {
             query?: never;
             header?: never;
@@ -6294,11 +7591,12 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * Get contact information Required API Permission: General Configurations
-         * @description The "Contact Information" endpoint allows ISV applications to retrieve the merchant's contact information.
-         *     By accessing this endpoint, developers can obtain a list of contact information records for the merchant,
-         *     including address, phone, etc. This information can be integrated with other endpoints of the application,
-         *     such as the invoice creation functionality.
+         * List pricing templates Required API Permission: List User Configurations
+         * @description Lists pricing templates: the merchant-facing plans of your partner account you can offer on
+         *     an application. Supply pricingTemplateId values in pricingTemplateIds when creating an
+         *     application: one template puts the merchant straight on it, several let the merchant choose.
+         *     Templates marked isDefault are the ones offered when an application is created without
+         *     pricingTemplateIds. Fee values are not exposed; pricing is managed in Flute.
          */
         get: {
             parameters: {
@@ -6317,54 +7615,27 @@ export interface paths {
                     content: {
                         /**
                          * @example {
-                         *       "contactInfos": [
+                         *       "items": [
                          *         {
-                         *           "addressLine1": "123 Main St",
-                         *           "addressLine2": "Suite 100",
-                         *           "addressName": "Main Office",
-                         *           "city": "New York",
-                         *           "contactInfoId": "8d638f27-1a16-4f1b-92fe-0ea16d4a6461",
-                         *           "countryCode": "US",
-                         *           "email": "contact@company.com",
-                         *           "isDefaultAddress": true,
-                         *           "isMainAddress": true,
-                         *           "mobilePhoneNumber": "+12125550100",
-                         *           "postalCode": "10001",
-                         *           "stateCode": "NY"
+                         *           "createdOn": "2026-01-01T00:00:00Z",
+                         *           "displayName": "Dual Pricing: fees paid by the cardholder",
+                         *           "isDefault": false,
+                         *           "modifiedOn": "2026-01-01T00:00:00Z",
+                         *           "pricingTemplateId": "d9a4b9c2-6e3c-4a9f-9d4b-3c4d5e6f7081",
+                         *           "pricingTemplateName": "Dual Pricing"
+                         *         },
+                         *         {
+                         *           "createdOn": "2026-01-01T00:00:00Z",
+                         *           "displayName": "Flat Rate: fees paid by the merchant",
+                         *           "isDefault": true,
+                         *           "modifiedOn": "2026-01-01T00:00:00Z",
+                         *           "pricingTemplateId": "e0b5c0d3-7f4d-4b0a-8e5c-4d5e6f708192",
+                         *           "pricingTemplateName": "Flat Rate"
                          *         }
                          *       ]
                          *     }
                          */
-                        "application/json": components["schemas"]["ContactInfoResponseDto"];
-                    };
-                };
-                /** @description Bad Request */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        /**
-                         * @example {
-                         *       "cause": "One or more fields failed validation rules.",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "details": "One or more validation errors occurred.",
-                         *       "documentationUrl": "https://developer.flute.com/",
-                         *       "entityId": null,
-                         *       "errorCode": "V0000",
-                         *       "errors": {
-                         *         "Email": [
-                         *           "'Email' is not a valid email address."
-                         *         ]
-                         *       },
-                         *       "exceptionType": "ValidationException",
-                         *       "resolution": "Review the errors and correct the invalid fields.",
-                         *       "source": "<Service>",
-                         *       "statusCode": 400,
-                         *       "title": "Validation failed"
-                         *     }
-                         */
-                        "application/json": components["schemas"]["ValidationExceptionExample"];
+                        "application/json": components["schemas"]["ListResponseDtoOfPricingTemplateDto"];
                     };
                 };
                 /** @description Unauthorized */
@@ -6456,14 +7727,21 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/v2/settings/payment-config": {
+    "/v2/settings/locations": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** Get payment configuration Required API Permission: General Configurations */
+        /**
+         * Get merchant locations Required API Permission: General Configurations
+         * @description Returns every physical location configured for the authenticated merchant. Most merchants have
+         *     fewer than five, so the list is not paginated. `isMainAddress` marks the address captured during
+         *     onboarding, which is managed by Flute and cannot be edited or removed by the merchant;
+         *     `isDefaultAddress` marks the merchant's preferred default location, used for example to
+         *     pre-populate invoice addresses.
+         */
         get: {
             parameters: {
                 query?: never;
@@ -6481,7 +7759,163 @@ export interface paths {
                     content: {
                         /**
                          * @example {
-                         *       "addressVerificationServiceOptions": {
+                         *       "items": [
+                         *         {
+                         *           "addressLine1": "123 Main St",
+                         *           "addressLine2": "Suite 100",
+                         *           "addressName": "Main Office",
+                         *           "city": "New York",
+                         *           "countryCode": "US",
+                         *           "email": "contact@company.com",
+                         *           "isDefaultAddress": true,
+                         *           "isMainAddress": true,
+                         *           "locationId": "8d638f27-1a16-4f1b-92fe-0ea16d4a6461",
+                         *           "phoneNumber": "+12125550100",
+                         *           "postalCode": "10001",
+                         *           "stateCode": "NY"
+                         *         }
+                         *       ]
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ListResponseDtoOfLocationDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "One or more fields failed validation rules.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "One or more validation errors occurred.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "V0000",
+                         *       "errors": {
+                         *         "Email": [
+                         *           "'Email' is not a valid email address."
+                         *         ]
+                         *       },
+                         *       "exceptionType": "ValidationException",
+                         *       "resolution": "Review the errors and correct the invalid fields.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 400,
+                         *       "title": "Validation failed"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ValidationExceptionExample"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: "Partner token is being used. Use a merchant token instead." */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ForbiddenExceptionExample"];
+                    };
+                };
+                /** @description Too Many Requests */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "Too many requests sent in a short period.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Too many requests sent in a short period.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "R0000",
+                         *       "exceptionType": "RateLimitExceededException",
+                         *       "resolution": "Wait before retrying the request. Check the Retry-After header for more information.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 429,
+                         *       "title": "Rate limit exceeded"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["RateLimitExceededExceptionExample"];
+                    };
+                };
+                /** @description Internal Server Error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "An unexpected error occurred while processing the request",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "An unexpected error occurred while processing the request.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "I0000",
+                         *       "exceptionType": "IntegrationException",
+                         *       "resolution": "Please contact support with the correlation ID if the issue persists",
+                         *       "source": "<Service>",
+                         *       "statusCode": 500,
+                         *       "title": "Internal server error"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["InternalExceptionExample"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v2/settings/payment-configuration": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get payment configuration Required API Permission: General Configurations
+         * @description Returns the merchant's payment configuration: processor setup, zero cost processing options,
+         *     tip settings, supported card types and terminal profile identifiers. Call it at startup to
+         *     learn which payment features are available for the authenticated merchant. `pricingType` is
+         *     only relevant for merchants configured for Dual Pricing and tells whether they price in card
+         *     or cash terms.
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "addressVerification": {
                          *         "isEnabled": true,
                          *         "profile": "Strict"
                          *       },
@@ -6498,15 +7932,15 @@ export interface paths {
                          *         {
                          *           "isDefault": true,
                          *           "paymentProcessorId": "ecd7c87b-7165-4a67-a067-24c9c9e1bbf4",
-                         *           "processorName": "TSYS",
-                         *           "settlementBatchTimeSlots": [
+                         *           "processorName": "Downtown Store",
+                         *           "processorType": "Tsys",
+                         *           "settlementBatchSchedule": [
                          *             {
-                         *               "hours": 2,
-                         *               "minutes": 10,
-                         *               "timezoneName": "America/New_York"
+                         *               "scheduledHour": 2,
+                         *               "scheduledMinute": 10,
+                         *               "timezoneId": "America/New_York"
                          *             }
-                         *           ],
-                         *           "type": "Tsys"
+                         *           ]
                          *         }
                          *       ],
                          *       "availableTransactionTypes": [
@@ -6515,23 +7949,24 @@ export interface paths {
                          *         "Refund",
                          *         "Void"
                          *       ],
-                         *       "companyName": "Test Company",
-                         *       "currency": "USD",
+                         *       "currencyCode": "USD",
                          *       "defaultCashDiscountRate": 2,
                          *       "defaultDualPricingRate": 1.8,
                          *       "defaultSurchargeRate": 1.5,
-                         *       "defaultTipsOptions": [
+                         *       "defaultTipOptions": [
                          *         10,
                          *         15,
                          *         20
                          *       ],
-                         *       "isCustomerCardSavingByTerminalEnabled": true,
                          *       "isTipsEnabled": true,
                          *       "maxTransactionAmount": 10000,
                          *       "mccCode": "5411",
-                         *       "mccCodeDescription": "Grocery Stores, Supermarkets",
-                         *       "ttpIosTerminalProfileId": "ios-terminal-profile-id",
-                         *       "zeroCostProcessingOption": "None"
+                         *       "mccDescription": "Grocery Stores, Supermarkets",
+                         *       "merchantCompanyName": "Acme Grocery",
+                         *       "merchantId": "195c89de-b0f8-4768-a421-da07f71b1a7f",
+                         *       "pricingType": "Card",
+                         *       "tapToPayAppleProfileId": "ios-terminal-profile-id",
+                         *       "zeroCostProcessingOption": "Surcharge"
                          *     }
                          */
                         "application/json": components["schemas"]["PaymentConfigurationResponseDto"];
@@ -6573,28 +8008,37 @@ export interface paths {
                     };
                     content?: never;
                 };
-                /** @description Forbidden */
+                /** @description Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: "Partner token is being used. Use a merchant token instead." */
                 403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ForbiddenExceptionExample"];
+                    };
+                };
+                /** @description Not Found */
+                404: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
                         /**
                          * @example {
-                         *       "cause": "You do not have permission to access this resource.",
+                         *       "cause": "The requested resource does not exist or has been deleted.",
                          *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "details": "You do not have permission to access this resource.",
+                         *       "details": "Entity with ID b31fbe9f-eebb-45ce-9cae-92265389f47f does not exist or has been deleted",
                          *       "documentationUrl": "https://developer.flute.com/",
-                         *       "entityId": null,
-                         *       "errorCode": "F0000",
-                         *       "exceptionType": "ForbiddenException",
-                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
+                         *       "entityId": "b31fbe9f-eebb-45ce-9cae-92265389f47f",
+                         *       "errorCode": "N0000",
+                         *       "exceptionType": "NotFoundException",
+                         *       "resolution": "Verify the resource ID is correct or retrieve a list of available resources.",
                          *       "source": "<Service>",
-                         *       "statusCode": 403,
-                         *       "title": "Access forbidden"
+                         *       "statusCode": 404,
+                         *       "title": "Resource not found"
                          *     }
                          */
-                        "application/json": components["schemas"]["ForbiddenExceptionExample"];
+                        "application/json": components["schemas"]["NotFoundExceptionExample"];
                     };
                 };
                 /** @description Too Many Requests */
@@ -6686,9 +8130,9 @@ export interface paths {
                          *       "level3Settings": {
                          *         "dutyChargeRate": 2.5,
                          *         "product": {
-                         *           "code": "OFF-001",
-                         *           "discountPercentage": 5,
+                         *           "discountRate": 5,
                          *           "measurementUnit": "pcs",
+                         *           "productCode": "OFF001",
                          *           "productName": "Office Supplies",
                          *           "quantity": 10,
                          *           "unitPrice": 25
@@ -6736,27 +8180,12 @@ export interface paths {
                     };
                     content?: never;
                 };
-                /** @description Forbidden */
+                /** @description Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: "Partner token is being used. Use a merchant token instead." */
                 403: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        /**
-                         * @example {
-                         *       "cause": "You do not have permission to access this resource.",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "details": "You do not have permission to access this resource.",
-                         *       "documentationUrl": "https://developer.flute.com/",
-                         *       "entityId": null,
-                         *       "errorCode": "F0000",
-                         *       "exceptionType": "ForbiddenException",
-                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
-                         *       "source": "<Service>",
-                         *       "statusCode": 403,
-                         *       "title": "Access forbidden"
-                         *     }
-                         */
                         "application/json": components["schemas"]["ForbiddenExceptionExample"];
                     };
                 };
@@ -6839,9 +8268,9 @@ export interface paths {
                      *       "level3Settings": {
                      *         "dutyChargeRate": 2.5,
                      *         "product": {
-                     *           "code": "OFF-001",
-                     *           "discountPercentage": 5,
+                     *           "discountRate": 5,
                      *           "measurementUnit": "pcs",
+                     *           "productCode": "OFF001",
                      *           "productName": "Office Supplies",
                      *           "quantity": 10,
                      *           "unitPrice": 25
@@ -6868,9 +8297,9 @@ export interface paths {
                          *       "level3Settings": {
                          *         "dutyChargeRate": 2.5,
                          *         "product": {
-                         *           "code": "OFF-001",
-                         *           "discountPercentage": 5,
+                         *           "discountRate": 5,
                          *           "measurementUnit": "pcs",
+                         *           "productCode": "OFF001",
                          *           "productName": "Office Supplies",
                          *           "quantity": 10,
                          *           "unitPrice": 25
@@ -6918,27 +8347,12 @@ export interface paths {
                     };
                     content?: never;
                 };
-                /** @description Forbidden */
+                /** @description Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: "Partner token is being used. Use a merchant token instead." */
                 403: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        /**
-                         * @example {
-                         *       "cause": "You do not have permission to access this resource.",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "details": "You do not have permission to access this resource.",
-                         *       "documentationUrl": "https://developer.flute.com/",
-                         *       "entityId": null,
-                         *       "errorCode": "F0000",
-                         *       "exceptionType": "ForbiddenException",
-                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
-                         *       "source": "<Service>",
-                         *       "statusCode": 403,
-                         *       "title": "Access forbidden"
-                         *     }
-                         */
                         "application/json": components["schemas"]["ForbiddenExceptionExample"];
                     };
                 };
@@ -7069,12 +8483,12 @@ export interface paths {
                      */
                     sortOrder?: string;
                     /**
-                     * @description Filter batches created on or after this date (inclusive)
+                     * @description Filter batches created on or after this date (inclusive, whole-day granularity).
                      * @example 2026-01-01
                      */
                     fromDate?: string;
                     /**
-                     * @description Filter batches created on or before this date (inclusive)
+                     * @description Filter batches created on or before this date (inclusive, whole-day granularity). Must not be earlier than fromDate.
                      * @example 2026-12-31
                      */
                     toDate?: string;
@@ -7164,27 +8578,12 @@ export interface paths {
                     };
                     content?: never;
                 };
-                /** @description Forbidden */
+                /** @description Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: "Partner token is being used. Use a merchant token instead." */
                 403: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        /**
-                         * @example {
-                         *       "cause": "You do not have permission to access this resource.",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "details": "You do not have permission to access this resource.",
-                         *       "documentationUrl": "https://developer.flute.com/",
-                         *       "entityId": null,
-                         *       "errorCode": "F0000",
-                         *       "exceptionType": "ForbiddenException",
-                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
-                         *       "source": "<Service>",
-                         *       "statusCode": 403,
-                         *       "title": "Access forbidden"
-                         *     }
-                         */
                         "application/json": components["schemas"]["ForbiddenExceptionExample"];
                     };
                 };
@@ -7356,27 +8755,12 @@ export interface paths {
                         "application/json": components["schemas"]["PaymentFailedExceptionExample"];
                     };
                 };
-                /** @description Forbidden */
+                /** @description Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: "Partner token is being used. Use a merchant token instead." */
                 403: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        /**
-                         * @example {
-                         *       "cause": "You do not have permission to access this resource.",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "details": "You do not have permission to access this resource.",
-                         *       "documentationUrl": "https://developer.flute.com/",
-                         *       "entityId": null,
-                         *       "errorCode": "F0000",
-                         *       "exceptionType": "ForbiddenException",
-                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
-                         *       "source": "<Service>",
-                         *       "statusCode": 403,
-                         *       "title": "Access forbidden"
-                         *     }
-                         */
                         "application/json": components["schemas"]["ForbiddenExceptionExample"];
                     };
                 };
@@ -7669,27 +9053,12 @@ export interface paths {
                     };
                     content?: never;
                 };
-                /** @description Forbidden */
+                /** @description Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: "Partner token is being used. Use a merchant token instead." */
                 403: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        /**
-                         * @example {
-                         *       "cause": "You do not have permission to access this resource.",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "details": "You do not have permission to access this resource.",
-                         *       "documentationUrl": "https://developer.flute.com/",
-                         *       "entityId": null,
-                         *       "errorCode": "F0000",
-                         *       "exceptionType": "ForbiddenException",
-                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
-                         *       "source": "<Service>",
-                         *       "statusCode": 403,
-                         *       "title": "Access forbidden"
-                         *     }
-                         */
                         "application/json": components["schemas"]["ForbiddenExceptionExample"];
                     };
                 };
@@ -7843,27 +9212,12 @@ export interface paths {
                     };
                     content?: never;
                 };
-                /** @description Forbidden */
+                /** @description Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: "Partner token is being used. Use a merchant token instead." */
                 403: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        /**
-                         * @example {
-                         *       "cause": "You do not have permission to access this resource.",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "details": "You do not have permission to access this resource.",
-                         *       "documentationUrl": "https://developer.flute.com/",
-                         *       "entityId": null,
-                         *       "errorCode": "F0000",
-                         *       "exceptionType": "ForbiddenException",
-                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
-                         *       "source": "<Service>",
-                         *       "statusCode": 403,
-                         *       "title": "Access forbidden"
-                         *     }
-                         */
                         "application/json": components["schemas"]["ForbiddenExceptionExample"];
                     };
                 };
@@ -7985,7 +9339,7 @@ export interface paths {
                      */
                     fromDate?: string;
                     /**
-                     * @description Filter transactions created on or before this date (inclusive, whole-day granularity).
+                     * @description Filter transactions created on or before this date (inclusive, whole-day granularity). Must not be earlier than fromDate.
                      * @example 2025-12-31
                      */
                     toDate?: string;
@@ -8190,27 +9544,12 @@ export interface paths {
                     };
                     content?: never;
                 };
-                /** @description Forbidden */
+                /** @description Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: "Partner token is being used. Use a merchant token instead." */
                 403: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        /**
-                         * @example {
-                         *       "cause": "You do not have permission to access this resource.",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "details": "You do not have permission to access this resource.",
-                         *       "documentationUrl": "https://developer.flute.com/",
-                         *       "entityId": null,
-                         *       "errorCode": "F0000",
-                         *       "exceptionType": "ForbiddenException",
-                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
-                         *       "source": "<Service>",
-                         *       "statusCode": 403,
-                         *       "title": "Access forbidden"
-                         *     }
-                         */
                         "application/json": components["schemas"]["ForbiddenExceptionExample"];
                     };
                 };
@@ -8265,7 +9604,26 @@ export interface paths {
             };
         };
         put?: never;
-        /** Process transaction using unified transaction endpoint */
+        /**
+         * Process transaction using unified transaction endpoint
+         * @description An ACH `billingAddress` is required for a new account (`transactionDetails.achData.paymentMethodDetails`).
+         *     With a saved account (`transactionDetails.achData.paymentMethodId`) that belongs to a customer it may be
+         *     omitted, and the customer's stored billing address is used instead. When sent, it must be one
+         *     the account can be charged against:
+         *
+         *     - `countryCode`: `US`
+         *     - `stateCode`: required, a US state
+         *     - `city`: required, at most 70 characters
+         *     - `addressLine1`: required, at most 70 characters
+         *     - `addressLine2`: at most 40 characters
+         *     - `postalCode`: required, a ZIP code (`#####` or `#####-####`)
+         *
+         *     A card payment's `billingAddress`, and every `shippingAddress`, is checked field by field when sent:
+         *
+         *     - `countryCode`: an ISO 3166-1 alpha-2 code
+         *     - `stateCode`: a state of that country
+         *     - `postalCode`: 5 to 12 characters
+         */
         post: {
             parameters: {
                 query?: never;
@@ -8352,27 +9710,12 @@ export interface paths {
                         "application/json": components["schemas"]["PaymentFailedExceptionExample"];
                     };
                 };
-                /** @description Forbidden */
+                /** @description Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: "Partner token is being used. Use a merchant token instead." */
                 403: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        /**
-                         * @example {
-                         *       "cause": "You do not have permission to access this resource.",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "details": "You do not have permission to access this resource.",
-                         *       "documentationUrl": "https://developer.flute.com/",
-                         *       "entityId": null,
-                         *       "errorCode": "F0000",
-                         *       "exceptionType": "ForbiddenException",
-                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
-                         *       "source": "<Service>",
-                         *       "statusCode": 403,
-                         *       "title": "Access forbidden"
-                         *     }
-                         */
                         "application/json": components["schemas"]["ForbiddenExceptionExample"];
                     };
                 };
@@ -8515,7 +9858,7 @@ export interface paths {
         put?: never;
         /**
          * Calculate transaction amount Required API Permission: Calculate Transaction Amount
-         * @description Determines the final amount to be charged considering applicable discounts, tips,
+         * @description Determines the final amount to be charged considering applicable discounts, tips, tax,
          *     and any Zero Cost Processing (ZCP) mode enabled for the merchant account
          *     (Dual Pricing, Cash Discount, or Credit Card Surcharge).
          */
@@ -8532,12 +9875,15 @@ export interface paths {
                      * @example {
                      *       "baseAmount": 100,
                      *       "currencyCode": "USD",
-                     *       "discountAmount": 5,
+                     *       "discountAmount": null,
                      *       "discountRate": 5,
                      *       "pricingType": "Card",
                      *       "surchargeRate": 2.5,
-                     *       "tipAmount": 15,
-                     *       "tipRate": 0
+                     *       "taxAmount": null,
+                     *       "taxMode": "Exclusive",
+                     *       "taxRate": 8.25,
+                     *       "tipAmount": null,
+                     *       "tipRate": 15
                      *     }
                      */
                     "application/json": components["schemas"]["CalculateAmountRequestDto"];
@@ -8554,47 +9900,56 @@ export interface paths {
                          * @example {
                          *       "ach": {
                          *         "baseAmount": 100,
-                         *         "discountAmount": 5,
+                         *         "discountAmount": -5,
                          *         "discountRate": 5,
                          *         "surchargeAmount": 0,
                          *         "surchargeRate": 0,
-                         *         "tipAmount": 15,
-                         *         "tipRate": 0,
-                         *         "totalAmount": 110
+                         *         "taxAmount": 7.84,
+                         *         "taxRate": 8.25,
+                         *         "tipAmount": 14.25,
+                         *         "tipRate": 15,
+                         *         "totalAmount": 117.09
                          *       },
                          *       "cash": {
                          *         "baseAmount": 100,
-                         *         "discountAmount": 5,
+                         *         "discountAmount": -5,
                          *         "discountRate": 5,
                          *         "surchargeAmount": 0,
                          *         "surchargeRate": 0,
-                         *         "tipAmount": 15,
-                         *         "tipRate": 0,
-                         *         "totalAmount": 110
+                         *         "taxAmount": 7.84,
+                         *         "taxRate": 8.25,
+                         *         "tipAmount": 14.25,
+                         *         "tipRate": 15,
+                         *         "totalAmount": 117.09
                          *       },
                          *       "creditCard": {
                          *         "baseAmount": 100,
-                         *         "discountAmount": 5,
+                         *         "discountAmount": -5,
                          *         "discountRate": 5,
-                         *         "surchargeAmount": 2.5,
+                         *         "surchargeAmount": 2.38,
                          *         "surchargeRate": 2.5,
-                         *         "tipAmount": 15,
-                         *         "tipRate": 0,
-                         *         "totalAmount": 112.5
+                         *         "taxAmount": 7.84,
+                         *         "taxRate": 8.25,
+                         *         "tipAmount": 14.25,
+                         *         "tipRate": 15,
+                         *         "totalAmount": 119.47
                          *       },
                          *       "currencyCode": "USD",
                          *       "debitCard": {
                          *         "baseAmount": 100,
-                         *         "discountAmount": 5,
+                         *         "discountAmount": -5,
                          *         "discountRate": 5,
                          *         "surchargeAmount": 0,
                          *         "surchargeRate": 0,
-                         *         "tipAmount": 15,
-                         *         "tipRate": 0,
-                         *         "totalAmount": 110
+                         *         "taxAmount": 7.84,
+                         *         "taxRate": 8.25,
+                         *         "tipAmount": 14.25,
+                         *         "tipRate": 15,
+                         *         "totalAmount": 117.09
                          *       },
                          *       "pricingType": "Card",
-                         *       "zeroCostProcessingOption": "Surcharge"
+                         *       "zeroCostProcessingOption": "Surcharge",
+                         *       "zeroCostProcessingRate": 2.5
                          *     }
                          */
                         "application/json": components["schemas"]["CalculateAmountResponseDto"];
@@ -8636,27 +9991,12 @@ export interface paths {
                     };
                     content?: never;
                 };
-                /** @description Forbidden */
+                /** @description Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: "Partner token is being used. Use a merchant token instead." */
                 403: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        /**
-                         * @example {
-                         *       "cause": "You do not have permission to access this resource.",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "details": "You do not have permission to access this resource.",
-                         *       "documentationUrl": "https://developer.flute.com/",
-                         *       "entityId": null,
-                         *       "errorCode": "F0000",
-                         *       "exceptionType": "ForbiddenException",
-                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
-                         *       "source": "<Service>",
-                         *       "statusCode": 403,
-                         *       "title": "Access forbidden"
-                         *     }
-                         */
                         "application/json": components["schemas"]["ForbiddenExceptionExample"];
                     };
                 };
@@ -8725,7 +10065,26 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Create an unreferenced credit (card unreferenced refund or ACH credit). */
+        /**
+         * Create an unreferenced credit (card unreferenced refund or ACH credit).
+         * @description An ACH `billingAddress` is required for a new account (`creditDetails.achData.paymentMethodDetails`).
+         *     With a saved account (`creditDetails.achData.paymentMethodId`) that belongs to a customer it may be
+         *     omitted, and the customer's stored billing address is used instead. When sent, it must be one
+         *     the account can be charged against:
+         *
+         *     - `countryCode`: `US`
+         *     - `stateCode`: required, a US state
+         *     - `city`: required, at most 70 characters
+         *     - `addressLine1`: required, at most 70 characters
+         *     - `addressLine2`: at most 40 characters
+         *     - `postalCode`: required, a ZIP code (`#####` or `#####-####`)
+         *
+         *     A card payment's `billingAddress`, and every `shippingAddress`, is checked field by field when sent:
+         *
+         *     - `countryCode`: an ISO 3166-1 alpha-2 code
+         *     - `stateCode`: a state of that country
+         *     - `postalCode`: 5 to 12 characters
+         */
         post: {
             parameters: {
                 query?: never;
@@ -8811,27 +10170,12 @@ export interface paths {
                         "application/json": components["schemas"]["PaymentFailedExceptionExample"];
                     };
                 };
-                /** @description Forbidden */
+                /** @description Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: "Partner token is being used. Use a merchant token instead." */
                 403: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        /**
-                         * @example {
-                         *       "cause": "You do not have permission to access this resource.",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "details": "You do not have permission to access this resource.",
-                         *       "documentationUrl": "https://developer.flute.com/",
-                         *       "entityId": null,
-                         *       "errorCode": "F0000",
-                         *       "exceptionType": "ForbiddenException",
-                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
-                         *       "source": "<Service>",
-                         *       "statusCode": 403,
-                         *       "title": "Access forbidden"
-                         *     }
-                         */
                         "application/json": components["schemas"]["ForbiddenExceptionExample"];
                     };
                 };
@@ -9031,27 +10375,12 @@ export interface paths {
                     };
                     content?: never;
                 };
-                /** @description Forbidden */
+                /** @description Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: "Partner token is being used. Use a merchant token instead." */
                 403: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        /**
-                         * @example {
-                         *       "cause": "You do not have permission to access this resource.",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "details": "You do not have permission to access this resource.",
-                         *       "documentationUrl": "https://developer.flute.com/",
-                         *       "entityId": null,
-                         *       "errorCode": "F0000",
-                         *       "exceptionType": "ForbiddenException",
-                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
-                         *       "source": "<Service>",
-                         *       "statusCode": 403,
-                         *       "title": "Access forbidden"
-                         *     }
-                         */
                         "application/json": components["schemas"]["ForbiddenExceptionExample"];
                     };
                 };
@@ -9234,27 +10563,12 @@ export interface paths {
                         "application/json": components["schemas"]["PaymentFailedExceptionExample"];
                     };
                 };
-                /** @description Forbidden */
+                /** @description Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: "Partner token is being used. Use a merchant token instead." */
                 403: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        /**
-                         * @example {
-                         *       "cause": "You do not have permission to access this resource.",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "details": "You do not have permission to access this resource.",
-                         *       "documentationUrl": "https://developer.flute.com/",
-                         *       "entityId": null,
-                         *       "errorCode": "F0000",
-                         *       "exceptionType": "ForbiddenException",
-                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
-                         *       "source": "<Service>",
-                         *       "statusCode": 403,
-                         *       "title": "Access forbidden"
-                         *     }
-                         */
                         "application/json": components["schemas"]["ForbiddenExceptionExample"];
                     };
                 };
@@ -9483,27 +10797,12 @@ export interface paths {
                         "application/json": components["schemas"]["PaymentFailedExceptionExample"];
                     };
                 };
-                /** @description Forbidden */
+                /** @description Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: "Partner token is being used. Use a merchant token instead." */
                 403: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        /**
-                         * @example {
-                         *       "cause": "You do not have permission to access this resource.",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "details": "You do not have permission to access this resource.",
-                         *       "documentationUrl": "https://developer.flute.com/",
-                         *       "entityId": null,
-                         *       "errorCode": "F0000",
-                         *       "exceptionType": "ForbiddenException",
-                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
-                         *       "source": "<Service>",
-                         *       "statusCode": 403,
-                         *       "title": "Access forbidden"
-                         *     }
-                         */
                         "application/json": components["schemas"]["ForbiddenExceptionExample"];
                     };
                 };
@@ -9742,27 +11041,12 @@ export interface paths {
                         "application/json": components["schemas"]["PaymentFailedExceptionExample"];
                     };
                 };
-                /** @description Forbidden */
+                /** @description Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: "Partner token is being used. Use a merchant token instead." */
                 403: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        /**
-                         * @example {
-                         *       "cause": "You do not have permission to access this resource.",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "details": "You do not have permission to access this resource.",
-                         *       "documentationUrl": "https://developer.flute.com/",
-                         *       "entityId": null,
-                         *       "errorCode": "F0000",
-                         *       "exceptionType": "ForbiddenException",
-                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
-                         *       "source": "<Service>",
-                         *       "statusCode": 403,
-                         *       "title": "Access forbidden"
-                         *     }
-                         */
                         "application/json": components["schemas"]["ForbiddenExceptionExample"];
                     };
                 };
@@ -10001,27 +11285,12 @@ export interface paths {
                         "application/json": components["schemas"]["PaymentFailedExceptionExample"];
                     };
                 };
-                /** @description Forbidden */
+                /** @description Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: "Partner token is being used. Use a merchant token instead." */
                 403: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        /**
-                         * @example {
-                         *       "cause": "You do not have permission to access this resource.",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "details": "You do not have permission to access this resource.",
-                         *       "documentationUrl": "https://developer.flute.com/",
-                         *       "entityId": null,
-                         *       "errorCode": "F0000",
-                         *       "exceptionType": "ForbiddenException",
-                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
-                         *       "source": "<Service>",
-                         *       "statusCode": 403,
-                         *       "title": "Access forbidden"
-                         *     }
-                         */
                         "application/json": components["schemas"]["ForbiddenExceptionExample"];
                     };
                 };
@@ -10233,27 +11502,12 @@ export interface paths {
                     };
                     content?: never;
                 };
-                /** @description Forbidden */
+                /** @description Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: "Partner token is being used. Use a merchant token instead." */
                 403: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        /**
-                         * @example {
-                         *       "cause": "You do not have permission to access this resource.",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "details": "You do not have permission to access this resource.",
-                         *       "documentationUrl": "https://developer.flute.com/",
-                         *       "entityId": null,
-                         *       "errorCode": "F0000",
-                         *       "exceptionType": "ForbiddenException",
-                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
-                         *       "source": "<Service>",
-                         *       "statusCode": 403,
-                         *       "title": "Access forbidden"
-                         *     }
-                         */
                         "application/json": components["schemas"]["ForbiddenExceptionExample"];
                     };
                 };
@@ -10469,27 +11723,12 @@ export interface paths {
                         "application/json": components["schemas"]["PaymentFailedExceptionExample"];
                     };
                 };
-                /** @description Forbidden */
+                /** @description Forbidden. Also returned when the request is made with a partner API key: only merchant API keys can call this endpoint. Details: "Partner token is being used. Use a merchant token instead." */
                 403: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        /**
-                         * @example {
-                         *       "cause": "You do not have permission to access this resource.",
-                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
-                         *       "details": "You do not have permission to access this resource.",
-                         *       "documentationUrl": "https://developer.flute.com/",
-                         *       "entityId": null,
-                         *       "errorCode": "F0000",
-                         *       "exceptionType": "ForbiddenException",
-                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
-                         *       "source": "<Service>",
-                         *       "statusCode": 403,
-                         *       "title": "Access forbidden"
-                         *     }
-                         */
                         "application/json": components["schemas"]["ForbiddenExceptionExample"];
                     };
                 };
@@ -10615,6 +11854,606 @@ export interface paths {
                 };
             };
         };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v2/users": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List users Required API Permission: List User Configurations
+         * @description Returns the people who can sign in under the accounts your key reaches, one row each, by email.
+         *     With a partner key that is your partner account's users, your merchants' users and the
+         *     applicants you invited; with a merchant key, that merchant's users. Use userType to keep to
+         *     people holding one kind of profile (Partner for those who can create onboarding invitations),
+         *     and email to find one person directly. A sandbox key sees only sandbox accounts, and no
+         *     applicants: applications exist only live.
+         */
+        get: {
+            parameters: {
+                query?: {
+                    /**
+                     * @description Zero-based page index.
+                     * @example 0
+                     */
+                    pageIndex?: number;
+                    /**
+                     * @description Number of items per page. Between 1 and 100.
+                     * @example 20
+                     */
+                    pageSize?: number;
+                    /**
+                     * @description Keep to people holding one kind of profile: Partner for your own users, Merchant for your
+                     *     merchants' users, Applicant for the applicants you invited. Omit for everyone.
+                     * @example Partner
+                     */
+                    userType?: components["schemas"]["UserType"];
+                    /**
+                     * @description Filter to the user with this email address. Letter case is ignored.
+                     * @example ada@partner.example
+                     */
+                    email?: string;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "items": [
+                         *         {
+                         *           "email": "ada@partner.example",
+                         *           "userId": "3f2504e0-4f89-11d3-9a0c-0305e82c3301"
+                         *         },
+                         *         {
+                         *           "email": "grace@cornercoffee.example",
+                         *           "userId": "5a7c9e1b-3d4f-4a6b-8c9d-0e1f2a3b4c5e"
+                         *         }
+                         *       ],
+                         *       "pageInfo": {
+                         *         "hasMore": false,
+                         *         "pageIndex": 0,
+                         *         "pageSize": 20,
+                         *         "totalItems": 2,
+                         *         "totalPages": 1
+                         *       }
+                         *     }
+                         */
+                        "application/json": components["schemas"]["PagedResponseDtoOfUserDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "One or more fields failed validation rules.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "One or more validation errors occurred.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "V0000",
+                         *       "errors": {
+                         *         "Email": [
+                         *           "'Email' is not a valid email address."
+                         *         ]
+                         *       },
+                         *       "exceptionType": "ValidationException",
+                         *       "resolution": "Review the errors and correct the invalid fields.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 400,
+                         *       "title": "Validation failed"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ValidationExceptionExample"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Forbidden */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "You do not have permission to access this resource.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "You do not have permission to access this resource.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "F0000",
+                         *       "exceptionType": "ForbiddenException",
+                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 403,
+                         *       "title": "Access forbidden"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ForbiddenExceptionExample"];
+                    };
+                };
+                /** @description Too Many Requests */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "Too many requests sent in a short period.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Too many requests sent in a short period.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "R0000",
+                         *       "exceptionType": "RateLimitExceededException",
+                         *       "resolution": "Wait before retrying the request. Check the Retry-After header for more information.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 429,
+                         *       "title": "Rate limit exceeded"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["RateLimitExceededExceptionExample"];
+                    };
+                };
+                /** @description Internal Server Error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "An unexpected error occurred while processing the request",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "An unexpected error occurred while processing the request.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "I0000",
+                         *       "exceptionType": "IntegrationException",
+                         *       "resolution": "Please contact support with the correlation ID if the issue persists",
+                         *       "source": "<Service>",
+                         *       "statusCode": 500,
+                         *       "title": "Internal server error"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["InternalExceptionExample"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v2/users/{userId}/fee-schedules": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List a user's fee schedules Required API Permission: List User Configurations
+         * @description Lists a user's fee schedules: the partner's cost schedules this partner user can place a
+         *     merchant application on, distinct from the pricing templates the merchant sees. The user must
+         *     belong to your partner account or to a partner account under it; any other user id answers 404. Supply the feeScheduleId you
+         *     want when creating an application for that user. A fee schedule whose processor an
+         *     application cannot be placed on is listed without a processor.
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description The partner user's identifier.
+                     * @example 3f2504e0-4f89-11d3-9a0c-0305e82c3301
+                     */
+                    userId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "items": [
+                         *         {
+                         *           "createdOn": "2026-01-01T00:00:00Z",
+                         *           "feeScheduleId": "8a1f3c2e-5b7d-4e9a-b1c3-d2e4f6a8b0c1",
+                         *           "feeScheduleName": "TSYS Standard",
+                         *           "isDefault": true,
+                         *           "modifiedOn": "2026-01-01T00:00:00Z",
+                         *           "processor": "Tsys"
+                         *         },
+                         *         {
+                         *           "createdOn": "2026-01-01T00:00:00Z",
+                         *           "feeScheduleId": "9b2e4d3f-6c8e-4f0b-c2d4-e3f5a7b9c1d2",
+                         *           "feeScheduleName": "Any Processor Interchange Plus",
+                         *           "isDefault": false,
+                         *           "modifiedOn": "2026-01-01T00:00:00Z",
+                         *           "processor": null
+                         *         }
+                         *       ]
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ListResponseDtoOfFeeScheduleDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "One or more fields failed validation rules.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "One or more validation errors occurred.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "V0000",
+                         *       "errors": {
+                         *         "Email": [
+                         *           "'Email' is not a valid email address."
+                         *         ]
+                         *       },
+                         *       "exceptionType": "ValidationException",
+                         *       "resolution": "Review the errors and correct the invalid fields.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 400,
+                         *       "title": "Validation failed"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ValidationExceptionExample"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Forbidden */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "You do not have permission to access this resource.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "You do not have permission to access this resource.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "F0000",
+                         *       "exceptionType": "ForbiddenException",
+                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 403,
+                         *       "title": "Access forbidden"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ForbiddenExceptionExample"];
+                    };
+                };
+                /** @description Not Found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "The requested resource does not exist or has been deleted.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Entity with ID b31fbe9f-eebb-45ce-9cae-92265389f47f does not exist or has been deleted",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": "b31fbe9f-eebb-45ce-9cae-92265389f47f",
+                         *       "errorCode": "N0000",
+                         *       "exceptionType": "NotFoundException",
+                         *       "resolution": "Verify the resource ID is correct or retrieve a list of available resources.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 404,
+                         *       "title": "Resource not found"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["NotFoundExceptionExample"];
+                    };
+                };
+                /** @description Too Many Requests */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "Too many requests sent in a short period.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Too many requests sent in a short period.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "R0000",
+                         *       "exceptionType": "RateLimitExceededException",
+                         *       "resolution": "Wait before retrying the request. Check the Retry-After header for more information.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 429,
+                         *       "title": "Rate limit exceeded"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["RateLimitExceededExceptionExample"];
+                    };
+                };
+                /** @description Internal Server Error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "An unexpected error occurred while processing the request",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "An unexpected error occurred while processing the request.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "I0000",
+                         *       "exceptionType": "IntegrationException",
+                         *       "resolution": "Please contact support with the correlation ID if the issue persists",
+                         *       "source": "<Service>",
+                         *       "statusCode": 500,
+                         *       "title": "Internal server error"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["InternalExceptionExample"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v2/users/{userId}/split-profiles": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List a user's split profiles Required API Permission: List User Configurations
+         * @description Lists a user's split profiles: how residuals on a merchant application are divided; the ones
+         *     this partner user can place an application on. The user must belong to your partner account
+         *     or to a partner account under it; any other user id answers 404. Supply the splitProfileId you want when creating an
+         *     application for that user.
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description The partner user's identifier.
+                     * @example 3f2504e0-4f89-11d3-9a0c-0305e82c3301
+                     */
+                    userId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "items": [
+                         *         {
+                         *           "createdOn": "2026-01-01T00:00:00Z",
+                         *           "isDefault": true,
+                         *           "isHighRisk": false,
+                         *           "modifiedOn": "2026-01-01T00:00:00Z",
+                         *           "splitProfileId": "c3d5e7f9-1a2b-4c3d-9e4f-a5b6c7d8e9f0",
+                         *           "splitProfileName": "Default Split"
+                         *         },
+                         *         {
+                         *           "createdOn": "2026-01-01T00:00:00Z",
+                         *           "isDefault": false,
+                         *           "isHighRisk": true,
+                         *           "modifiedOn": "2026-01-01T00:00:00Z",
+                         *           "splitProfileId": "d4e6f8a0-2b3c-4d4e-af5a-b6c7d8e9f0a1",
+                         *           "splitProfileName": "High Risk Split"
+                         *         }
+                         *       ]
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ListResponseDtoOfSplitProfileDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "One or more fields failed validation rules.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "One or more validation errors occurred.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "V0000",
+                         *       "errors": {
+                         *         "Email": [
+                         *           "'Email' is not a valid email address."
+                         *         ]
+                         *       },
+                         *       "exceptionType": "ValidationException",
+                         *       "resolution": "Review the errors and correct the invalid fields.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 400,
+                         *       "title": "Validation failed"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ValidationExceptionExample"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Forbidden */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "You do not have permission to access this resource.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "You do not have permission to access this resource.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "F0000",
+                         *       "exceptionType": "ForbiddenException",
+                         *       "resolution": "Verify your credentials and permissions or contact your administrator.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 403,
+                         *       "title": "Access forbidden"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["ForbiddenExceptionExample"];
+                    };
+                };
+                /** @description Not Found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "The requested resource does not exist or has been deleted.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Entity with ID b31fbe9f-eebb-45ce-9cae-92265389f47f does not exist or has been deleted",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": "b31fbe9f-eebb-45ce-9cae-92265389f47f",
+                         *       "errorCode": "N0000",
+                         *       "exceptionType": "NotFoundException",
+                         *       "resolution": "Verify the resource ID is correct or retrieve a list of available resources.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 404,
+                         *       "title": "Resource not found"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["NotFoundExceptionExample"];
+                    };
+                };
+                /** @description Too Many Requests */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "Too many requests sent in a short period.",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "Too many requests sent in a short period.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "R0000",
+                         *       "exceptionType": "RateLimitExceededException",
+                         *       "resolution": "Wait before retrying the request. Check the Retry-After header for more information.",
+                         *       "source": "<Service>",
+                         *       "statusCode": 429,
+                         *       "title": "Rate limit exceeded"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["RateLimitExceededExceptionExample"];
+                    };
+                };
+                /** @description Internal Server Error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        /**
+                         * @example {
+                         *       "cause": "An unexpected error occurred while processing the request",
+                         *       "correlationId": "aa6cfcd0-0295-4a4c-b074-8c901f114fee",
+                         *       "details": "An unexpected error occurred while processing the request.",
+                         *       "documentationUrl": "https://developer.flute.com/",
+                         *       "entityId": null,
+                         *       "errorCode": "I0000",
+                         *       "exceptionType": "IntegrationException",
+                         *       "resolution": "Please contact support with the correlation ID if the issue persists",
+                         *       "source": "<Service>",
+                         *       "statusCode": 500,
+                         *       "title": "Internal server error"
+                         *     }
+                         */
+                        "application/json": components["schemas"]["InternalExceptionExample"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -12615,7 +14454,10 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** List available webhook event types. Required API Permission: Webhooks */
+        /**
+         * List available webhook event types. Required API Permission: Webhooks
+         * @description Returns the subscribable webhook event types. System-only events (e.g. ping) are excluded.
+         */
         get: {
             parameters: {
                 query?: never;
@@ -12798,11 +14640,56 @@ export interface paths {
                          *           "description": "Payment link edited (name, description, status, expiration, etc.)",
                          *           "eventType": "payment_link.updated",
                          *           "group": "Payment Links"
+                         *         },
+                         *         {
+                         *           "description": "Application started but not yet sent to the merchant",
+                         *           "eventType": "application.draft",
+                         *           "group": "Applications"
+                         *         },
+                         *         {
+                         *           "description": "Application is created via API or dashboard invitation",
+                         *           "eventType": "application.invited",
+                         *           "group": "Applications"
+                         *         },
+                         *         {
+                         *           "description": "Merchant has started filling in the application",
+                         *           "eventType": "application.in_progress",
+                         *           "group": "Applications"
+                         *         },
+                         *         {
+                         *           "description": "Application submitted and awaiting signature request",
+                         *           "eventType": "application.submitted",
+                         *           "group": "Applications"
+                         *         },
+                         *         {
+                         *           "description": "Application submitted but the merchant has not yet signed the MPA",
+                         *           "eventType": "application.awaiting_signature",
+                         *           "group": "Applications"
+                         *         },
+                         *         {
+                         *           "description": "Application is with underwriting",
+                         *           "eventType": "application.under_review",
+                         *           "group": "Applications"
+                         *         },
+                         *         {
+                         *           "description": "Underwriter has requested additional documents or clarification",
+                         *           "eventType": "application.information_needed",
+                         *           "group": "Applications"
+                         *         },
+                         *         {
+                         *           "description": "Application declined by underwriting",
+                         *           "eventType": "application.declined",
+                         *           "group": "Applications"
+                         *         },
+                         *         {
+                         *           "description": "Application deleted",
+                         *           "eventType": "application.deleted",
+                         *           "group": "Applications"
                          *         }
                          *       ]
                          *     }
                          */
-                        "application/json": components["schemas"]["ListWebhookEventTypesIsvResponseDto"];
+                        "application/json": components["schemas"]["ListResponseDtoOfWebhookEventTypeIsvDto"];
                     };
                 };
                 /** @description Bad Request */
@@ -12931,6 +14818,16 @@ export interface components {
         AccountHolderType: "Business" | "Personal";
         /** @enum {string} */
         AccountType: "Checking" | "Savings";
+        /**
+         * @description Who the merchant collects ACH payments from.<p>Possible values:</p>
+         *     <ul>
+         *     <li><b>1 - Individuals</b>: Individuals.</li>
+         *     <li><b>2 - Businesses</b>: Businesses.</li>
+         *     <li><b>3 - Both</b>: Both individuals and businesses.</li>
+         *     </ul>
+         * @enum {string}
+         */
+        AchCustomerType: "Individuals" | "Businesses" | "Both";
         AchDataDto: {
             /**
              * @description Enable same-day ACH processing for faster settlement.
@@ -12985,37 +14882,118 @@ export interface components {
          */
         AchPaymentMethodDto: {
             /**
-             * @description Whether ACH payments are accepted. Naming the method without a body offers it.
+             * @description Whether ACH payments are accepted.
              * @example true
              */
-            enabled?: boolean;
+            enabled: boolean;
             /**
              * @description Sends this resource's ACH payments in the next available window for an extra fee. Requires
              *     the merchant's ACH settings to allow faster processing, and defaults to standard processing
-             *     when not asked for. On a merge patch this field merges instead of being replaced with the
-             *     rest of the ACH configuration: leaving it out keeps the stored choice.
+             *     when not asked for. Ignored when `enabled` is false.
              * @example true
              */
             fasterProcessing?: boolean | null;
             /**
              * Format: uuid
              * @description Processor charging this resource's ACH payments; must be an active ACH processor of the
-             *     merchant. Omit to pin the merchant's current default active ACH processor. A response
-             *     carries the pinned processor, or null on a session created before pinning.
+             *     merchant. Omit to pin the merchant's default ACH processor; the request fails when there is
+             *     none. Ignored when `enabled` is false. A response carries the pinned processor, or null
+             *     when ACH is off or on a session created before pinning.
              * @example d529945e-8d10-4cb4-9dc3-718e57f3f14e
              */
             processorId?: string | null;
         };
+        /** @description Changes to a payment link's ACH configuration. */
+        AchPaymentMethodPatchDto: {
+            /**
+             * @description Turns ACH on or off. Turning ACH off drops its processor and faster-processing choice;
+             *     turning it on without a processorId pins the merchant's default ACH processor.
+             * @example true
+             */
+            enabled?: boolean | null;
+            /**
+             * @description Sends the link's ACH payments in the next available window for an extra fee. Requires the
+             *     merchant's ACH settings to allow faster processing. Rejected while ACH is off unless sent
+             *     with `enabled: true`; ignored with `enabled: false`.
+             * @example true
+             */
+            fasterProcessing?: boolean | null;
+            /**
+             * Format: uuid
+             * @description Active ACH processor of the merchant. Sent alone it switches the processor of an ACH that is
+             *     on, and is rejected while ACH is off; send `enabled: true` with it to turn ACH on.
+             *     Ignored with `enabled: false`.
+             * @example d529945e-8d10-4cb4-9dc3-718e57f3f14e
+             */
+            processorId?: string | null;
+        };
+        /**
+         * @description The ACH processor to enrol the merchant with.<p>Possible values:</p>
+         *     <ul>
+         *     <li><b>1 - Straddle</b>: Straddle.</li>
+         *     </ul>
+         * @enum {string}
+         */
+        AchProcessor: "Straddle";
+        /** @description ACH processing volumes and the account ACH fees are billed to. */
+        AchProcessorDataDto: {
+            achCustomerType?: components["schemas"]["AchCustomerType"];
+            /** @description Name on the billing account, up to 30 characters. */
+            billingAccountName?: string | null;
+            /** @description Billing account number, up to 17 digits. */
+            billingAccountNumber?: string | null;
+            /** @description Bank of the billing account. */
+            billingBankName?: string | null;
+            /** @description Routing number of the billing account, nine digits. */
+            billingRoutingNumber?: string | null;
+            /**
+             * Format: double
+             * @description Highest single ACH payout, in dollars.
+             */
+            highestAchPayoutAmount?: number | null;
+            /**
+             * Format: double
+             * @description Highest single ACH collection, in dollars.
+             */
+            highestAchTicketAmount?: number | null;
+            /**
+             * Format: int32
+             * @description Monthly number of ACH payouts.
+             */
+            monthlyAchPayoutTransactionCount?: number | null;
+            /**
+             * Format: double
+             * @description Monthly ACH payout volume, in dollars.
+             */
+            monthlyAchPayoutVolumeAmount?: number | null;
+            /**
+             * Format: int32
+             * @description Monthly number of ACH collections.
+             */
+            monthlyAchTransactionCount?: number | null;
+            /**
+             * Format: double
+             * @description Monthly ACH collection volume, in dollars.
+             */
+            monthlyAchVolumeAmount?: number | null;
+            paymentAuthorizationType?: components["schemas"]["PaymentAuthorizationType"];
+            /**
+             * @description Statement descriptor, up to 10 characters.
+             * @example MARCUSSHOP
+             */
+            statementDescriptor?: string | null;
+            /** @description What the merchant uses ACH for, up to 1000 characters. */
+            useOfPaymentServiceDescription?: string | null;
+        };
         /** @enum {string} */
         AchSECCode: "Web" | "PPD" | "CCD" | "Telephone";
         /**
-         * @description Address information.
-         *     Uses ISO format strings for country and state.
-         *     ACH transactions apply stricter rules than card transactions — see the per-field notes.
+         * @description Address information, with ISO codes for the country and state.
+         *     Each endpoint that accepts an address states the limits it applies.
          */
         AddressDto: {
             /**
-             * @description Address line 1. At most 70 characters for ACH transactions.
+             * @description Address line 1.
              * @example 123 Main Street
              */
             addressLine1?: string | null;
@@ -13025,26 +15003,23 @@ export interface components {
              */
             addressLine2?: string | null;
             /**
-             * @description City name. Required for ACH transactions; at most 70 characters.
+             * @description City name.
              * @example New York
              */
             city?: string | null;
             /**
              * @description Country code in ISO 3166-1 alpha-2 format (e.g., "US", "CA").
-             *     For ACH transactions, required and must be "US", "CA" or "PR".
              * @example US
              */
             countryCode?: string | null;
             /**
-             * @description Postal/ZIP code. For card transactions: between 5 and 12 characters.
-             *     For ACH transactions: a US ZIP code in ##### or #####-#### format.
+             * @description Postal or ZIP code.
              * @example 10001
              */
             postalCode?: string | null;
             /**
              * @description ISO 3166-2 subdivision code; must belong to Arise.IsvApiBff.Contracts.v2.Common.AddressDto.CountryCode.
              *     For US states, the USPS two-letter abbreviation is used (e.g., "NY", "CA", "TX").
-             *     Required for US ACH addresses.
              *     See: https://en.wikipedia.org/wiki/ISO_3166-2:US
              * @example NY
              */
@@ -13122,78 +15097,379 @@ export interface components {
              */
             tipRate?: number;
         };
-        /** @description Transaction amount information. */
-        AmountDto: {
-            /** Format: double */
-            baseAmount?: number;
-            /** Format: double */
-            cashDiscountAmount?: number;
-            /** Format: double */
-            cashDiscountRate?: number;
-            /** Format: double */
-            percentageOffAmount?: number;
-            /** Format: double */
-            percentageOffRate?: number;
-            /** Format: double */
-            surchargeAmount?: number;
-            /** Format: double */
-            surchargeRate?: number;
-            /** Format: double */
-            taxAmount?: number;
-            /** Format: double */
-            taxRate?: number;
-            /** Format: double */
-            tipAmount?: number;
-            /** Format: double */
-            tipRate?: number;
-            /** Format: double */
-            totalAmount?: number;
+        ApiKeyDto: {
+            /**
+             * @description Display name given when the key was created.
+             * @example Production API Key
+             */
+            apiKeyName?: string | null;
+            /**
+             * Format: uuid
+             * @description API key identifier: the OAuth client id.
+             * @example 97e7c13c-059c-4734-b017-2a20847a79d0
+             */
+            clientId?: string;
+            /**
+             * Format: date-time
+             * @description When the key was created (UTC).
+             * @example 2026-01-01T00:00:00Z
+             */
+            createdOn?: string;
+            /**
+             * Format: date-time
+             * @description When the key last obtained or refreshed an access token (UTC); null when it never has.
+             * @example 2026-01-01T00:00:00Z
+             */
+            lastUsedOn?: string | null;
+            /**
+             * Format: uuid
+             * @description Merchant the key authenticates as.
+             * @example 886e77d0-e86f-4710-92f6-e2b84b29bd9e
+             */
+            merchantId?: string;
+        };
+        /** @description A postal address. */
+        ApplicationAddressDto: {
+            /**
+             * @description Street address, up to 50 characters.
+             * @example 412 Harbor Ave
+             */
+            addressLine1?: string | null;
+            /**
+             * @description Suite, unit or floor, up to 50 characters.
+             * @example Suite 3
+             */
+            addressLine2?: string | null;
+            /**
+             * @description City, up to 30 characters.
+             * @example Portland
+             */
+            city?: string | null;
+            /**
+             * @description Two-letter country code.
+             * @example US
+             */
+            countryCode?: string | null;
+            /**
+             * @description Postal code.
+             * @example 97201
+             */
+            postalCode?: string | null;
+            /**
+             * @description Two-letter state code.
+             * @example OR
+             */
+            stateCode?: string | null;
+        };
+        /**
+         * @description How the application link reaches the merchant.<p>Possible values:</p>
+         *     <ul>
+         *     <li><b>1 - Email</b>: We email the merchant an invitation carrying the link; applicationUrl is returned as well.</li>
+         *     <li><b>2 - PartnerDirect</b>: Nothing is sent. You deliver applicationUrl to the merchant yourself.</li>
+         *     <li><b>3 - Iframe</b>: Nothing is sent. You embed applicationUrl in an iframe on your own page; the merchant completes and signs the application there without creating a Flute account. The frame posts two messages to your page, each with { type, applicationId }: flute:application-submitted when the merchant submits, and flute:application-signed when the frame returns from signing. Check that event.origin matches the origin of applicationUrl before acting on a message, and treat the messages as a cue to refresh your UI rather than as the application's state: the webhooks and GET /v2/applications remain the source of truth. The frame navigates to the signing provider and back, so do not sandbox it in a way that blocks navigation or scripts.</li>
+         *     </ul>
+         * @enum {string}
+         */
+        ApplicationDeliveryMethod: "Email" | "PartnerDirect" | "Iframe";
+        /** @description A merchant application you initiated. */
+        ApplicationDto: {
+            /**
+             * Format: uuid
+             * @description Unique identifier for the application.
+             */
+            applicationId?: string;
+            /**
+             * Format: int32
+             * @description Human-readable sequential application number.
+             * @example 4711
+             */
+            applicationNumber?: number | null;
+            applicationStatus?: components["schemas"]["ApplicationStatus"];
+            /**
+             * Format: date-time
+             * @description When the current status started.
+             */
+            applicationStatusStartedOn?: string | null;
+            /**
+             * @description The merchant's doing-business-as name.
+             * @example Corner Coffee
+             */
+            businessName?: string | null;
+            /**
+             * Format: date-time
+             * @description When the application was created.
+             */
+            createdOn?: string | null;
+            /**
+             * Format: date-time
+             * @description When the invitation was most recently sent to the merchant.
+             */
+            invitationSentOn?: string | null;
+            invitedByUser?: components["schemas"]["ApplicationUserDto"];
+            /**
+             * Format: uuid
+             * @description The merchant's identifier for the payment APIs, present once the application has been boarded.
+             */
+            merchantId?: string | null;
+            /** @description Your own key-value pairs, as stored when you created the application. Null when you sent none. */
+            metadata?: {
+                [key: string]: string | null;
+            } | null;
+            /**
+             * @description Merchant identifier (MID) assigned by the processor, present once the application has been boarded.
+             * @example 932129304958123
+             */
+            mid?: string | null;
+            /**
+             * Format: date-time
+             * @description When the application was last modified; the creation time until it is modified.
+             */
+            modifiedOn?: string | null;
+            /**
+             * @description The partner the application belongs to.
+             * @example Acme Partners
+             */
+            partnerName?: string | null;
+            partnerUser?: components["schemas"]["ApplicationUserDto"];
+            processor?: components["schemas"]["ApplicationProcessor"];
+            /**
+             * @description The sponsor bank the application is boarding under.
+             * @example Esquire
+             */
+            sponsorBankName?: string | null;
+        };
+        /**
+         * @description The card processor a merchant application is boarded on.<p>Possible values:</p>
+         *     <ul>
+         *     <li><b>1 - FiservOmahaFsp</b>: Fiserv Omaha FSP.</li>
+         *     <li><b>2 - FiservOmahaRetail</b>: Fiserv Omaha Retail.</li>
+         *     <li><b>3 - FiservNorth</b>: Fiserv North.</li>
+         *     <li><b>4 - FiservConcord</b>: Fiserv Concord.</li>
+         *     <li><b>5 - FiservCanada</b>: Fiserv Canada.</li>
+         *     <li><b>6 - Tsys</b>: TSYS.</li>
+         *     <li><b>7 - Elavon</b>: Elavon.</li>
+         *     <li><b>8 - Evo</b>: Evo.</li>
+         *     <li><b>9 - Nab</b>: North America Bankcard (NAB).</li>
+         *     <li><b>10 - Payments360</b>: 360 Payments.</li>
+         *     <li><b>11 - BankcardUsa</b>: Bankcard USA.</li>
+         *     <li><b>12 - Cardflex</b>: Cardflex.</li>
+         *     <li><b>13 - Mbn</b>: MBN.</li>
+         *     <li><b>14 - PaymentAdvisors</b>: Payment Advisors.</li>
+         *     <li><b>15 - Powerpay</b>: Powerpay.</li>
+         *     <li><b>16 - Transfirst</b>: Transfirst.</li>
+         *     </ul>
+         * @enum {string}
+         */
+        ApplicationProcessor: "FiservOmahaFsp" | "FiservOmahaRetail" | "FiservNorth" | "FiservConcord" | "FiservCanada" | "Tsys" | "Elavon" | "Evo" | "Nab" | "Payments360" | "BankcardUsa" | "Cardflex" | "Mbn" | "PaymentAdvisors" | "Powerpay" | "Transfirst";
+        /**
+         * @description Where a merchant application currently stands. A small, stable vocabulary giving a high-level
+         *     view of the application's lifecycle; the application lifecycle webhooks report the individual
+         *     events that move it between these states.<p>Possible values:</p>
+         *     <ul>
+         *     <li><b>1 - InProgress</b>: Started but not yet submitted, whether by the merchant (including signing) or by a partner or agent on their behalf.</li>
+         *     <li><b>2 - InReview</b>: Submitted and under review. No additional information is currently required from the merchant.</li>
+         *     <li><b>3 - InformationNeeded</b>: Additional information or documents are required from the merchant before the review can continue.</li>
+         *     <li><b>4 - Rejected</b>: Declined; the application will not move forward.</li>
+         *     <li><b>5 - AutoDeclined</b>: Automatically declined because the merchant did not respond to an information request in time.</li>
+         *     <li><b>6 - Active</b>: Approved; the merchant is able to process payments.</li>
+         *     <li><b>7 - Cancelled</b>: Withdrawn or removed before completion.</li>
+         *     <li><b>8 - Draft</b>: Created by the partner; the merchant has not been invited to it yet.</li>
+         *     </ul>
+         * @enum {string}
+         */
+        ApplicationStatus: "InProgress" | "InReview" | "InformationNeeded" | "Rejected" | "AutoDeclined" | "Active" | "Cancelled" | "Draft";
+        /** @description One of your partner users, as named on an application. */
+        ApplicationUserDto: {
+            /** @example Ada */
+            firstName?: string | null;
+            /** @example Lovelace */
+            lastName?: string | null;
+            /**
+             * Format: uuid
+             * @description The user's identifier; the same userId GET /v2/users returns.
+             */
+            userId?: string;
+        };
+        /** @description The person who signs the agreement. */
+        AuthorizedSignerDto: {
+            address?: components["schemas"]["ApplicationAddressDto"];
+            /**
+             * Format: date-time
+             * @description Date of birth.
+             * @example 1990-01-02
+             */
+            dateOfBirth?: string | null;
+            /**
+             * @description Email address.
+             * @example marcus@example.com
+             */
+            email?: string | null;
+            /**
+             * @description First name, up to 30 characters.
+             * @example Marcus
+             */
+            firstName?: string | null;
+            /**
+             * @description Last name, up to 30 characters.
+             * @example Alvarez
+             */
+            lastName?: string | null;
+            /**
+             * @description Phone number in E.164 format.
+             * @example +15550148000
+             */
+            phoneNumber?: string | null;
+            /**
+             * @description Social security number, nine digits.
+             * @example 123456789
+             */
+            socialSecurityNumber?: string | null;
+            /**
+             * @description Job title, up to 30 characters.
+             * @example Owner
+             */
+            title?: string | null;
         };
         /** @enum {string} */
         AvsActions: "Allow" | "Deny";
-        /**
-         * @description <p>Possible values:</p>
-         *     <ul>
-         *     <li><b>1 - Allow</b>: </li>
-         *     <li><b>2 - Deny</b>: </li>
-         *     </ul>
-         * @enum {string}
-         */
-        AvsActionsDto: "Allow" | "Deny";
-        /**
-         * @description <p>Possible values:</p>
-         *     <ul>
-         *     <li><b>1 - NoMatch</b>: </li>
-         *     <li><b>2 - PartialMatch</b>: </li>
-         *     <li><b>3 - Incompatible</b>: </li>
-         *     <li><b>4 - Unavailable</b>: </li>
-         *     <li><b>5 - ValidGroup</b>: </li>
-         *     </ul>
-         * @enum {string}
-         */
-        AvsCodeGroupTypeDto: "NoMatch" | "PartialMatch" | "Incompatible" | "Unavailable" | "ValidGroup";
         /** @enum {string} */
         AvsMerchantProfile: "Strict" | "Moderate" | "Tolerant";
-        /** @description Address Verification Service response. */
-        AvsResponseDto: {
-            action?: string | null;
-            actionId?: components["schemas"]["AvsActionsDto"];
-            codeDescription?: string | null;
-            group?: string | null;
-            groupId?: components["schemas"]["AvsCodeGroupTypeDto"];
-            responseCode?: string | null;
-            result?: string | null;
-            resultId?: components["schemas"]["AvsResponseResultDto"];
+        /** @description The settlement bank account. */
+        BankInfoDto: {
+            /**
+             * @description Name on the account, up to 30 characters.
+             * @example Marcus's Pickup Shop LLC
+             */
+            accountName?: string | null;
+            /**
+             * @description Account number, up to 17 digits.
+             * @example 752111
+             */
+            accountNumber?: string | null;
+            /**
+             * @description Bank name.
+             * @example Texas Bank and Trust
+             */
+            bankName?: string | null;
+            /**
+             * @description Routing number, nine digits.
+             * @example 123456789
+             */
+            routingNumber?: string | null;
+        };
+        /** @description The business applying for processing. */
+        BusinessInformationDto: {
+            /**
+             * Format: int32
+             * @description Typical days between a sale and delivery of the goods.
+             */
+            averageDaysToDelivery?: number | null;
+            bankInfo?: components["schemas"]["BankInfoDto"];
+            /**
+             * @description Business email address.
+             * @example hello@marcuspickup.example
+             */
+            businessEmail?: string | null;
+            /**
+             * Format: date-time
+             * @description When the business was established.
+             * @example 2019-04-01
+             */
+            businessEstablishedDate?: string | null;
+            /**
+             * @description Business phone number in E.164 format.
+             * @example +15550148000
+             */
+            businessPhoneNumber?: string | null;
+            businessType?: components["schemas"]["BusinessType"];
+            /**
+             * @description Customer service phone number in E.164 format.
+             * @example +15550148001
+             */
+            customerServicePhoneNumber?: string | null;
+            /**
+             * @description Doing-business-as name, 1 to 100 characters.
+             * @example Marcus's Pickup Shop
+             */
+            dbaName: string;
+            desiredLimits?: components["schemas"]["DesiredLimitsDto"];
+            documentationMailingAddressType?: components["schemas"]["DocumentationMailingAddressType"];
+            /**
+             * Format: double
+             * @description Percentage of e-commerce volume.
+             * @example 60
+             */
+            eCommerceRate?: number | null;
+            /** @description Whether the merchant opts out of future commercial communication from American Express. */
+            hasOptedOutOfAmexMarketing?: boolean | null;
+            /** @description Whether the business sells outside the United States. */
+            isSellingOutsideUs?: boolean | null;
+            /**
+             * Format: double
+             * @description Percentage of keyed volume.
+             * @example 20
+             */
+            keyedRate?: number | null;
+            /**
+             * @description Legal name, up to 100 characters.
+             * @example Marcus's Pickup Shop LLC
+             */
+            legalName?: string | null;
+            /**
+             * Format: int32
+             * @description Most days between a sale and delivery of the goods.
+             */
+            maximumDaysToDelivery?: number | null;
+            /**
+             * Format: uuid
+             * @description The merchant category code. One of the ids from GET /v2/mcc-codes.
+             */
+            mccCodeId?: string | null;
+            merchantType?: components["schemas"]["MerchantType"];
+            /**
+             * Format: int32
+             * @description Fewest days between a sale and delivery of the goods.
+             */
+            minimumDaysToDelivery?: number | null;
+            /**
+             * @description What the business sells, up to 200 characters.
+             * @example Package pickup counter and shipping supplies
+             */
+            productsDescription?: string | null;
+            siteInspectionType?: components["schemas"]["SiteInspectionType"];
+            /**
+             * Format: double
+             * @description Percentage of card-present swiped volume. swipedRate, keyedRate and eCommerceRate must total 100 before the merchant submits.
+             * @example 20
+             */
+            swipedRate?: number | null;
+            /**
+             * @description Employer identification number, nine digits.
+             * @example 201234567
+             */
+            taxId?: string | null;
+            /**
+             * @description The business website.
+             * @example https://example.com
+             */
+            website?: string | null;
         };
         /**
-         * @description <p>Possible values:</p>
+         * @description The legal form of the business.<p>Possible values:</p>
          *     <ul>
-         *     <li><b>1 - Passed</b>: </li>
-         *     <li><b>2 - Failed</b>: </li>
+         *     <li><b>1 - SoleProprietor</b>: Sole proprietorship.</li>
+         *     <li><b>2 - LimitedLiability</b>: Limited liability company.</li>
+         *     <li><b>3 - PrivateCorporation</b>: Privately held corporation.</li>
+         *     <li><b>4 - Partnership</b>: Partnership.</li>
+         *     <li><b>5 - TrustEstate</b>: Trust or estate.</li>
+         *     <li><b>6 - TaxExempt</b>: Tax-exempt organization.</li>
+         *     <li><b>7 - Other</b>: Another legal form.</li>
+         *     <li><b>8 - PublicCorporation</b>: Publicly traded corporation.</li>
+         *     <li><b>9 - Government</b>: Government entity.</li>
          *     </ul>
          * @enum {string}
          */
-        AvsResponseResultDto: "Passed" | "Failed";
+        BusinessType: "SoleProprietor" | "LimitedLiability" | "PrivateCorporation" | "Partnership" | "TrustEstate" | "TaxExempt" | "Other" | "PublicCorporation" | "Government";
         /** @description Request to calculate the final transaction amount considering discounts, tips, and ZCP settings. */
         CalculateAmountRequestDto: {
             /**
@@ -13209,15 +15485,13 @@ export interface components {
             currencyCode?: string | null;
             /**
              * Format: double
-             * @description Discount as a fixed amount. Converted to a rate against Arise.IsvApiBff.Contracts.v2.Transaction.Requests.CalculateAmountRequestDto.BaseAmount before
-             *     calculation. When both Arise.IsvApiBff.Contracts.v2.Transaction.Requests.CalculateAmountRequestDto.DiscountAmount and Arise.IsvApiBff.Contracts.v2.Transaction.Requests.CalculateAmountRequestDto.DiscountRate are supplied,
-             *     Arise.IsvApiBff.Contracts.v2.Transaction.Requests.CalculateAmountRequestDto.DiscountRate takes precedence.
+             * @description Discount as a fixed dollar amount. Mutually exclusive with Arise.IsvApiBff.Contracts.v2.Transaction.Requests.CalculateAmountRequestDto.DiscountRate.
              * @example 5
              */
             discountAmount?: number | null;
             /**
              * Format: double
-             * @description Percentage-off / discount rate. Encoded as raw percentage — e.g. 10 represents 10%.
+             * @description Discount as a percent of the subtotal (e.g. 10 = 10%). Mutually exclusive with Arise.IsvApiBff.Contracts.v2.Transaction.Requests.CalculateAmountRequestDto.DiscountAmount.
              * @example 10
              */
             discountRate?: number | null;
@@ -13231,12 +15505,28 @@ export interface components {
             surchargeRate?: number | null;
             /**
              * Format: double
-             * @description Absolute tip amount to add
+             * @description Pre-calculated tax in currency units, with up to 2 decimal places, not negative. Mutually
+             *     exclusive with taxRate: send exactly one of them together with taxMode. In Inclusive mode
+             *     must be less than baseAmount.
+             * @example 9
+             */
+            taxAmount?: number | null;
+            taxMode?: components["schemas"]["TaxMode"];
+            /**
+             * Format: double
+             * @description Tax rate percentage, 0 to 100, with up to 3 decimal places. Mutually exclusive with
+             *     taxAmount: send exactly one of them together with taxMode, or none of the three.
+             * @example 8.25
+             */
+            taxRate?: number | null;
+            /**
+             * Format: double
+             * @description Tip as a fixed dollar amount. Mutually exclusive with Arise.IsvApiBff.Contracts.v2.Transaction.Requests.CalculateAmountRequestDto.TipRate.
              */
             tipAmount?: number | null;
             /**
              * Format: double
-             * @description Tip rate to apply. Encoded as raw percentage — e.g. 15 represents 15%.
+             * @description Tip as a percent of the subtotal (e.g. 15 = 15%). Mutually exclusive with Arise.IsvApiBff.Contracts.v2.Transaction.Requests.CalculateAmountRequestDto.TipAmount.
              * @example 15
              */
             tipRate?: number | null;
@@ -13255,6 +15545,13 @@ export interface components {
             debitCard?: components["schemas"]["CalculatedAmountDto"];
             pricingType?: components["schemas"]["PricingType"];
             zeroCostProcessingOption?: components["schemas"]["ZeroCostProcessingOptionDto"];
+            /**
+             * Format: double
+             * @description Rate, as a raw percentage, that the merchant's Zero Cost Processing option applied to this quote.
+             *     Null when the option is None.
+             * @example 2.5
+             */
+            zeroCostProcessingRate?: number | null;
         };
         /** @description Amount breakdown for a specific payment method */
         CalculatedAmountDto: {
@@ -13288,6 +15585,18 @@ export interface components {
              * @example 2.5
              */
             surchargeRate?: number;
+            /**
+             * Format: double
+             * @description Tax for this payment method. Added to the total when the tax mode is Exclusive and contained in it when Inclusive. 0 when no tax was sent.
+             * @example 7.84
+             */
+            taxAmount?: number;
+            /**
+             * Format: double
+             * @description Tax rate applied, as a raw percentage. Derived from taxAmount when a fixed tax was sent. 0 when no tax was sent.
+             * @example 8.25
+             */
+            taxRate?: number;
             /**
              * Format: double
              * @description Tip amount
@@ -13329,6 +15638,30 @@ export interface components {
              */
             captureAmount?: number | null;
         };
+        /**
+         * @description Billing address used for address verification (AVS). Each field given replaces that field of a
+         *     linked customer's billing address; a street or ZIP with no linked address builds one that
+         *     defaults to US; never stored.
+         */
+        CardBillingAddressDto: {
+            /**
+             * @description Street address line 1.
+             * @example 123 Main Street
+             */
+            addressLine1?: string | null;
+            /**
+             * @description Country code in ISO 3166-1 alpha-2 format. Replaces the country of the linked customer's
+             *     billing address, or of the address built from the street or ZIP, which otherwise defaults
+             *     to US.
+             * @example US
+             */
+            countryCode?: string | null;
+            /**
+             * @description Postal or ZIP code, 5 to 12 characters.
+             * @example 10001
+             */
+            postalCode?: string | null;
+        };
         CardDataDto: {
             captureMethod?: components["schemas"]["CaptureMethod"];
             paymentMethodDetails?: components["schemas"]["PaymentMethodCardDetailsDto"];
@@ -13343,32 +15676,36 @@ export interface components {
         };
         /** @enum {string} */
         CardDataSource: "Internet" | "Swipe" | "NFC" | "EMV" | "EMVContactless" | "FallbackSwipe" | "Manual";
-        /**
-         * @description <p>Possible values:</p>
-         *     <ul>
-         *     <li><b>1 - Internet</b>: Virtual Terminal, ISV API</li>
-         *     <li><b>2 - Swipe</b>: Track1, Track2</li>
-         *     <li><b>3 - NFC</b>: EMV Tags, Track2</li>
-         *     <li><b>4 - EMV</b>: EMV Tags</li>
-         *     <li><b>5 - EMVContactless</b>: EMV Tags</li>
-         *     <li><b>6 - FallbackSwipe</b>: Track 2</li>
-         *     <li><b>7 - Manual</b>: Card present keyed transaction.</li>
-         *     </ul>
-         * @enum {string}
-         */
-        CardDataSourceDto: "Internet" | "Swipe" | "NFC" | "EMV" | "EMVContactless" | "FallbackSwipe" | "Manual";
         /** @description Card configuration on a payable resource. */
         CardPaymentMethodDto: {
             /**
-             * @description Whether card payments are accepted. Naming the method without a body offers it.
+             * @description Whether card payments are accepted.
              * @example true
              */
-            enabled?: boolean;
+            enabled: boolean;
             /**
              * Format: uuid
              * @description Processor charging this resource's card payments; must be an active card processor of the
-             *     merchant. Omit to pin the merchant's current default active card processor. A response
-             *     carries the pinned processor, or null on a session created before pinning.
+             *     merchant. Omit to pin the merchant's default card processor; the request fails when there
+             *     is none. Ignored when `enabled` is false. A response carries the pinned processor, or
+             *     null when card is off or on a session created before pinning.
+             * @example d529945e-8d10-4cb4-9dc3-718e57f3f14e
+             */
+            processorId?: string | null;
+        };
+        /** @description Changes to a payment link's card configuration. */
+        CardPaymentMethodPatchDto: {
+            /**
+             * @description Turns card on or off. Turning card off drops its processor; turning it on without a
+             *     processorId pins the merchant's default card processor.
+             * @example true
+             */
+            enabled?: boolean | null;
+            /**
+             * Format: uuid
+             * @description Active card processor of the merchant. Sent alone it switches the processor of a card that is
+             *     on, and is rejected while card is off; send `enabled: true` with it to turn card on.
+             *     Ignored with `enabled: false`.
              * @example d529945e-8d10-4cb4-9dc3-718e57f3f14e
              */
             processorId?: string | null;
@@ -13377,22 +15714,6 @@ export interface components {
         CardType: "Unknown" | "Visa" | "MasterCard" | "AmericanExpress" | "DinersClub" | "Discover" | "JCB";
         /** @enum {string} */
         CardholderAuthenticationMethod: "NotAuthenticated" | "PIN" | "ElectronicSignatureAnalysis" | "ManualSignature" | "ManualOther" | "Unknown" | "SystematicOther" | "ETicketEnvAmex" | "OfflinePin";
-        /**
-         * @description <p>Possible values:</p>
-         *     <ul>
-         *     <li><b>0 - NotAuthenticated</b>: </li>
-         *     <li><b>1 - PIN</b>: </li>
-         *     <li><b>2 - ElectronicSignatureAnalysis</b>: </li>
-         *     <li><b>3 - ManualSignature</b>: </li>
-         *     <li><b>4 - ManualOther</b>: </li>
-         *     <li><b>5 - Unknown</b>: </li>
-         *     <li><b>6 - SystematicOther</b>: </li>
-         *     <li><b>7 - ETicketEnvAmex</b>: </li>
-         *     <li><b>8 - OfflinePin</b>: </li>
-         *     </ul>
-         * @enum {string}
-         */
-        CardholderAuthenticationMethodDto: "NotAuthenticated" | "PIN" | "ElectronicSignatureAnalysis" | "ManualSignature" | "ManualOther" | "Unknown" | "SystematicOther" | "ETicketEnvAmex" | "OfflinePin";
         /** @description Request to close the current open batch and submit it for settlement with a payment processor */
         CloseBatchRequestDto: {
             /**
@@ -13444,107 +15765,39 @@ export interface components {
              */
             mobilePhoneNumber?: string | null;
         };
-        /** @description Merchant contact information */
-        ContactInfoResponseDto: {
-            /** @description Contact information entries */
-            contactInfos?: components["schemas"]["ContactInfoResponseDtoMerchantContactInfoDto"][] | null;
-        };
-        /** @description Single contact information record */
-        ContactInfoResponseDtoMerchantContactInfoDto: {
-            /**
-             * @description Address line 1. At most 70 characters for ACH transactions.
-             * @example 123 Main Street
-             */
-            addressLine1?: string | null;
-            /**
-             * @description Address line 2.
-             * @example Suite 400
-             */
-            addressLine2?: string | null;
-            /**
-             * @description Name or label of the address
-             * @example Main office
-             */
-            addressName?: string | null;
-            /**
-             * @description City name. Required for ACH transactions; at most 70 characters.
-             * @example New York
-             */
-            city?: string | null;
-            /**
-             * Format: uuid
-             * @description Unique identifier of the contact information record
-             * @example 91e0278b-02e8-4963-8710-fe3dfca39d51
-             */
-            contactInfoId?: string;
-            /**
-             * @description Country code in ISO 3166-1 alpha-2 format (e.g., "US", "CA").
-             *     For ACH transactions, required and must be "US", "CA" or "PR".
-             * @example US
-             */
-            countryCode?: string | null;
-            /**
-             * @description Email address
-             * @example jane.doe@example.com
-             */
-            email?: string | null;
-            /** @description Whether this is the default address */
-            isDefaultAddress?: boolean;
-            /** @description Whether this is the main address */
-            isMainAddress?: boolean;
-            /**
-             * @description Business phone number
-             * @example +14125553845
-             */
-            mobilePhoneNumber?: string | null;
-            /**
-             * @description Postal/ZIP code. For card transactions: between 5 and 12 characters.
-             *     For ACH transactions: a US ZIP code in ##### or #####-#### format.
-             * @example 10001
-             */
-            postalCode?: string | null;
-            /**
-             * @description ISO 3166-2 subdivision code; must belong to Arise.IsvApiBff.Contracts.v2.Common.AddressDto.CountryCode.
-             *     For US states, the USPS two-letter abbreviation is used (e.g., "NY", "CA", "TX").
-             *     Required for US ACH addresses.
-             *     See: https://en.wikipedia.org/wiki/ISO_3166-2:US
-             * @example NY
-             */
-            stateCode?: string | null;
-        };
         CreateAchPaymentMethodRequestDto: {
-            accountHolderType?: components["schemas"]["AccountHolderType"];
+            accountHolderType: components["schemas"]["AccountHolderType"];
             /**
-             * @description Account number
+             * @description Bank account number, 5 to 17 digits.
              * @example 1234567890
              */
-            accountNumber?: string | null;
-            accountType?: components["schemas"]["AccountType"];
+            accountNumber: string;
             /**
-             * @description Legal entity name. Required for orphan Business ACH transactions when the request
-             *     does not supply it on the transaction's ContactInfo.
-             * @example Acme Corp Inc
+             * @description ABA routing number, 9 digits.
+             * @example 021000021
+             */
+            accountRoutingNumber: string;
+            accountType: components["schemas"]["AccountType"];
+            /**
+             * @description Legal entity name. Required for a Business orphan, so a transaction that omits
+             *     ContactInfo still has the company name to send; ignored for a customer-linked account,
+             *     which uses the customer's company name.
+             * @example Acme Corp
              */
             companyName?: string | null;
             /**
              * Format: uuid
-             * @description The customer to link this payment method to. Omit to create an orphan payment
-             *     method that belongs to the merchant only.
+             * @description The customer to link this payment method to. Omit to create a merchant-level orphan.
              * @example 8fa8e727-73c6-436e-b56f-6f55aabf3b1c
              */
             customerId?: string | null;
             /**
-             * @description A friendly name for the payment method shown in the UI.
-             * @example Business Checking
+             * @description Display label. Required, at most 20 characters.
+             * @example Primary Checking
              */
-            name?: string | null;
+            paymentMethodName: string;
             /**
-             * @description Routing number
-             * @example 021000021
-             */
-            routingNumber?: string | null;
-            /**
-             * @description Tax ID
+             * @description Tax ID. Required for Business accounts.
              * @example 123456789
              */
             taxId?: string | null;
@@ -13564,52 +15817,363 @@ export interface components {
         };
         CreateApiKeyResponseDto: {
             /**
+             * @description Display name of the API key, as sent in the request.
+             * @example Production API Key
+             */
+            apiKeyName?: string | null;
+            /**
              * Format: uuid
-             * @description Client identifier
+             * @description API key identifier: the OAuth client id used at the token endpoint and in
+             *     `DELETE /v2/partner/api-keys/{clientId}`.
              * @example 919c19ac-09cf-40c1-b093-413b9cabde43
              */
             clientId?: string;
             /**
-             * @description Client secret (only shown once during creation). GUID-formatted string.
+             * @description Client secret, returned only in this response. It cannot be retrieved again: if lost, revoke the key
+             *     and create a new one.
              * @example bcaa0840-2872-44ea-9122-552a804a054a
              */
             clientSecret?: string | null;
-        };
-        CreateCardPaymentMethodRequestDto: {
             /**
-             * @description The 13-19 digit card number (PAN) used for the transaction.
-             * @example 4111111111111111
+             * Format: date-time
+             * @description When the key was created (UTC).
+             * @example 2026-01-01T00:00:00Z
              */
-            cardNumber?: string | null;
+            createdOn?: string;
             /**
              * Format: uuid
-             * @description The customer to link this payment method to. Omit to create an orphan payment
-             *     method that belongs to the merchant only.
+             * @description Merchant the key authenticates as.
+             * @example 0b627967-4204-4d7a-aa13-e6eb0d58f543
+             */
+            merchantId?: string;
+        };
+        /**
+         * @description Invite a merchant to complete an application you have pre-filled. Send whatever you know about
+         *     the merchant; every field you leave out stays empty for the merchant to fill in.
+         */
+        CreateApplicationRequestDto: {
+            achProcessor?: components["schemas"]["AchProcessor"];
+            achProcessorData?: components["schemas"]["AchProcessorDataDto"];
+            authorizedSigner?: components["schemas"]["AuthorizedSignerDto"];
+            businessInformation: components["schemas"]["BusinessInformationDto"];
+            deliveryMethod: components["schemas"]["ApplicationDeliveryMethod"];
+            /**
+             * @description The merchant contact who owns the invitation. With Email delivery the invitation is sent
+             *     here. An address that already belongs to a partner or administrator account is rejected.
+             * @example marcus@example.com
+             */
+            email: string;
+            /**
+             * Format: uuid
+             * @description The fee schedule the merchant is priced on. One of the ids from
+             *     GET /v2/users/{userId}/fee-schedules for the partnerUserId.
+             * @example 8a1f3c2e-5b7d-4e9a-b1c3-d2e4f6a8b0c1
+             */
+            feeScheduleId: string;
+            /** @description Whether the legal address is the location address. */
+            isLegalAddressSameAsLocation?: boolean | null;
+            /** @description Whether the primary contact is the principal owner. */
+            isPrimaryContactSameAsPrincipalOwner?: boolean | null;
+            legalAddress?: components["schemas"]["ApplicationAddressDto"];
+            locationAddress?: components["schemas"]["LocationAddressDto"];
+            /**
+             * @description Your own key-value pairs, stored with the application and returned as-is on creation and on
+             *     GET /v2/applications. At most 50 keys, keys of at most 100 characters, values of at most
+             *     500 characters, 8 KB in all. A key with a null value is not stored.
+             */
+            metadata?: {
+                [key: string]: string | null;
+            } | null;
+            /** @description The owners of the business, at most 4. The first is the principal owner. */
+            owners?: components["schemas"]["OwnerDto"][] | null;
+            /**
+             * Format: uuid
+             * @description The user in your partner account this application is attributed to; the user must hold a
+             *     Partner profile, and their fee schedule, split profile and residuals apply. One of the ids
+             *     from GET /v2/users?userType=Partner.
+             * @example 3f2504e0-4f89-11d3-9a0c-0305e82c3301
+             */
+            partnerUserId: string;
+            /**
+             * @description The pricing templates offered to the merchant. Omit to offer your account's default
+             *     templates. With one template the merchant sees no pricing choice; with several they pick.
+             */
+            pricingTemplateIds?: string[] | null;
+            primaryContact?: components["schemas"]["PrimaryContactDto"];
+            processor: components["schemas"]["ApplicationProcessor"];
+            /**
+             * Format: uuid
+             * @description One of the ids from GET /v2/users/{userId}/split-profiles for the partnerUserId.
+             * @example c3d5e7f9-1a2b-4c3d-9e4f-a5b6c7d8e9f0
+             */
+            splitProfileId: string;
+        };
+        /**
+         * @description The application your invitation created, as GET /v2/applications/{applicationId} returns
+         *     it, plus the link the merchant opens and how it is being delivered.
+         */
+        CreateApplicationResponseDto: {
+            /**
+             * Format: uuid
+             * @description Unique identifier for the application.
+             */
+            applicationId?: string;
+            /**
+             * Format: int32
+             * @description Human-readable sequential application number.
+             * @example 4711
+             */
+            applicationNumber?: number | null;
+            applicationStatus?: components["schemas"]["ApplicationStatus"];
+            /**
+             * Format: date-time
+             * @description When the current status started.
+             */
+            applicationStatusStartedOn?: string | null;
+            /**
+             * @description The link the merchant opens to complete the application. Returned only here, when the
+             *     application is created. It grants access to the application, so treat it like a password:
+             *     deliver it to the merchant only and never log it.
+             * @example https://dashboard.flute.com/onboarding/register?invite_token=019c76de-cbd3-788d-8cb0-f829e90a0623&email=marcus%40example.com
+             */
+            applicationUrl?: string | null;
+            /**
+             * @description The merchant's doing-business-as name.
+             * @example Corner Coffee
+             */
+            businessName?: string | null;
+            /**
+             * Format: date-time
+             * @description When the application was created.
+             */
+            createdOn?: string | null;
+            deliveryMethod?: components["schemas"]["ApplicationDeliveryMethod"];
+            /**
+             * Format: date-time
+             * @description When the invitation was most recently sent to the merchant.
+             */
+            invitationSentOn?: string | null;
+            invitedByUser?: components["schemas"]["ApplicationUserDto"];
+            /**
+             * Format: uuid
+             * @description The merchant's identifier for the payment APIs, present once the application has been boarded.
+             */
+            merchantId?: string | null;
+            /** @description Your own key-value pairs, as stored when you created the application. Null when you sent none. */
+            metadata?: {
+                [key: string]: string | null;
+            } | null;
+            /**
+             * @description Merchant identifier (MID) assigned by the processor, present once the application has been boarded.
+             * @example 932129304958123
+             */
+            mid?: string | null;
+            /**
+             * Format: date-time
+             * @description When the application was last modified; the creation time until it is modified.
+             */
+            modifiedOn?: string | null;
+            /**
+             * @description The partner the application belongs to.
+             * @example Acme Partners
+             */
+            partnerName?: string | null;
+            partnerUser?: components["schemas"]["ApplicationUserDto"];
+            processor?: components["schemas"]["ApplicationProcessor"];
+            /**
+             * @description The sponsor bank the application is boarding under.
+             * @example Esquire
+             */
+            sponsorBankName?: string | null;
+        };
+        CreateCardPaymentMethodRequestDto: {
+            billingAddress?: components["schemas"]["CardBillingAddressDto"];
+            /**
+             * @description The 13-19 digit card number (PAN) to vault.
+             * @example 4111111111111111
+             */
+            cardNumber: string;
+            /**
+             * @description Cardholder first name, used by AVS. Replaces a linked customer's name; never stored.
+             * @example Jane
+             */
+            cardholderFirstName?: string | null;
+            /**
+             * @description Cardholder last name, used by AVS. Replaces a linked customer's name; never stored.
+             * @example Doe
+             */
+            cardholderLastName?: string | null;
+            /**
+             * Format: uuid
+             * @description The customer to link this payment method to. Omit to create a merchant-level orphan.
              * @example 7ea38505-f0b3-41eb-a2ef-96161d7e7443
              */
             customerId?: string | null;
             /**
              * Format: int32
-             * @description The expiration month of the card (2-digit format: 01-12)
+             * @description Expiration month, 1 to 12.
+             * @example 12
+             */
+            expirationMonth: number;
+            /**
+             * Format: int32
+             * @description Expiration year, four digits (YYYY).
+             * @example 2030
+             */
+            expirationYear: number;
+            /**
+             * @description Display label. Required, at most 20 characters.
+             * @example Personal Visa
+             */
+            paymentMethodName: string;
+            /**
+             * @description The three or four digit security code on the card.
+             * @example 123
+             */
+            securityCode: string;
+        };
+        /**
+         * @description Creates a Checkout session: Flute hosts the payment page and the partner redirects the customer
+         *     to the returned checkoutUrl. Accepts every Elements field plus the ones the hosted page uses.
+         */
+        CreateCheckoutSessionRequestDto: {
+            /**
+             * Format: double
+             * @description Amount to charge, greater than 0. Null creates a flexible-amount session where the customer
+             *     enters the amount. A SaveMethod session charges nothing and must send 0.
+             * @example 100
+             */
+            baseAmount?: number | null;
+            customerHandling?: components["schemas"]["CustomerHandling"];
+            /**
+             * Format: uuid
+             * @description An existing customer to attach, so their saved payment methods can be offered.
+             */
+            customerId?: string | null;
+            /**
+             * Format: date-time
+             * @description When the session stops accepting payment (UTC, must be in the future). Null = never expires.
+             * @example 2026-01-01T00:00:00Z
+             */
+            expiresOn?: string | null;
+            /**
+             * @description Questions the customer answers on the hosted page before paying, in the order shown, at
+             *     most 10. Not allowed for SaveMethod.
+             */
+            extraFields?: components["schemas"]["CreateExtraFieldDto"][] | null;
+            /**
+             * @description Free-form string-to-string pairs stored with the session and returned on every read. At most
+             *     50 keys, 100-character keys, 500-character values, 8 KB in all. Not allowed for SaveMethod.
+             */
+            metadata?: {
+                [key: string]: string | null;
+            } | null;
+            /**
+             * @description Customer-facing name shown as the subtitle of the hosted page and used as its document title,
+             *     at most 200 characters. When omitted the page shows the merchant name only.
+             * @example Order #1234
+             */
+            pageName?: string | null;
+            paymentMethods?: components["schemas"]["PaymentMethodsDto"];
+            paymentSessionMode?: components["schemas"]["SessionMode"];
+            /**
+             * @description Your own label for the session, at most 100 characters. Stored and returned on every read;
+             *     a value wider than an ACH processor accepts is shortened only for the wire.
+             * @example order_123
+             */
+            referenceId?: string | null;
+            /**
+             * @description HTTPS URL the hosted page sends the customer to after a successful payment, at most 2000
+             *     characters. A {{paymentSessionId}} placeholder is replaced with the session id.
+             * @example https://myapp.com/payment/complete
+             */
+            returnUrl?: string | null;
+            /**
+             * @description When true, bypasses address verification (AVS) at the gateway. Defaults to false. Only
+             *     meaningful for Payment and PaymentAndSave.
+             */
+            skipAddressVerification?: boolean | null;
+            /**
+             * Format: double
+             * @description Pre-calculated tax in currency units, with up to 2 decimal places, not negative. Mutually
+             *     exclusive with taxRate: send exactly one of them together with taxMode. Requires a fixed
+             *     baseAmount, and in Inclusive mode must be less than it.
+             * @example 9
+             */
+            taxAmount?: number | null;
+            taxMode?: components["schemas"]["TaxMode"];
+            /**
+             * Format: double
+             * @description Tax rate percentage, 0 to 100, with up to 3 decimal places. Mutually exclusive with
+             *     taxAmount: send exactly one of them together with taxMode, or none of the three.
+             * @example 8.25
+             */
+            taxRate?: number | null;
+            /**
+             * Format: double
+             * @description Pre-set tip added on top of baseAmount: greater than 0, at most baseAmount when the amount
+             *     is fixed, and not accepted for SaveMethod sessions.
+             * @example 10
+             */
+            tipAmount?: number | null;
+        };
+        /**
+         * @description A payment method to save with a new customer. paymentMethodType selects which of the
+         *     type-specific fields apply; the other type's fields must be omitted.
+         */
+        CreateCustomerPaymentMethodDto: {
+            accountHolderType?: components["schemas"]["AccountHolderType"];
+            /**
+             * @description Bank account number, 4 to 17 digits. Required when paymentMethodType is ACH; must be
+             *     omitted otherwise.
+             * @example 1234567890
+             */
+            accountNumber?: string | null;
+            /**
+             * @description ABA routing number, 9 digits. Required when paymentMethodType is ACH; must be omitted
+             *     otherwise.
+             * @example 021000021
+             */
+            accountRoutingNumber?: string | null;
+            accountType?: components["schemas"]["AccountType"];
+            /**
+             * @description The 13-19 digit card number (PAN) to vault. Required when paymentMethodType is Card; must
+             *     be omitted otherwise.
+             * @example 4111111111111111
+             */
+            cardNumber?: string | null;
+            /**
+             * Format: int32
+             * @description Expiration month, 1 to 12. Required when paymentMethodType is Card; must be omitted
+             *     otherwise.
              * @example 12
              */
             expirationMonth?: number | null;
             /**
              * Format: int32
-             * @description The expiration year of the card (4-digit format: YYYY)
+             * @description Expiration year, four digits (YYYY). Required when paymentMethodType is Card; must be
+             *     omitted otherwise.
              * @example 2030
              */
             expirationYear?: number | null;
             /**
-             * @description A friendly name for the payment method shown in the UI.
-             * @example My Visa Card
+             * @description Display label. Required, at most 20 characters.
+             * @example Personal Visa
              */
-            paymentName?: string | null;
+            paymentMethodName: string;
+            paymentMethodType: components["schemas"]["PaymentMethodType"];
             /**
-             * @description The three or four digit security code on the card.
+             * @description The three or four digit security code on the card. Required when paymentMethodType is
+             *     Card; must be omitted otherwise.
              * @example 123
              */
             securityCode?: string | null;
+            /**
+             * @description Tax ID, at most 80 characters. Required when paymentMethodType is ACH and
+             *     accountHolderType is Business; must be omitted for a Card.
+             * @example 123456789
+             */
+            taxId?: string | null;
         };
         CreateCustomerRequestDto: {
             billingAddress?: components["schemas"]["AddressDto"];
@@ -13620,9 +16184,14 @@ export interface components {
              * @example jane.doe@example.com
              */
             email?: string | null;
+            /**
+             * @description Your own reference for the customer, at most 100 characters. Set on create only.
+             * @example CUST-EXT-12345
+             */
+            externalId?: string | null;
             /** @description First name. */
             firstName: string;
-            /** @description Whether SMS notifications are enabled for the customer. */
+            /** @description Whether SMS notifications are enabled for the customer. Defaults to false. */
             hasSmsConsent?: boolean | null;
             /** @description Last name. */
             lastName: string;
@@ -13631,21 +16200,103 @@ export interface components {
              * @example +14125553845
              */
             mobilePhoneNumber?: string | null;
-            /** @description Payment methods (ACH accounts) */
-            paymentMethodsAchAccounts?: components["schemas"]["CustomerPaymentMethodAchDto"][] | null;
-            /** @description Payment methods (cards) */
-            paymentMethodsCards?: components["schemas"]["CustomerPaymentMethodCardDto"][] | null;
+            /** @description Payment methods to save with the customer, each a Card or an ACH account. */
+            paymentMethods?: components["schemas"]["CreateCustomerPaymentMethodDto"][] | null;
             shippingAddress?: components["schemas"]["AddressDto"];
             /** @description Use billing address as shipping address */
             shouldUseBillingAsShippingAddress?: boolean;
         };
-        CreateCustomerResponseDto: {
+        /**
+         * @description Creates an Elements session: the partner builds the payment UI with the Flute Elements SDK and
+         *     hands it the returned paymentSessionId. The fields here are the ones every session type shares;
+         *     a Checkout session adds the hosted-page ones.
+         */
+        CreateElementsSessionRequestDto: {
+            /**
+             * Format: double
+             * @description Amount to charge, greater than 0. Null creates a flexible-amount session where the customer
+             *     enters the amount. A SaveMethod session charges nothing and must send 0.
+             * @example 100
+             */
+            baseAmount?: number | null;
+            customerHandling?: components["schemas"]["CustomerHandling"];
             /**
              * Format: uuid
-             * @description Customer ID
-             * @example 4ffde452-716e-4619-9c8c-9b462158d011
+             * @description An existing customer to attach, so their saved payment methods can be offered.
              */
-            customerId?: string;
+            customerId?: string | null;
+            /**
+             * Format: date-time
+             * @description When the session stops accepting payment (UTC, must be in the future). Null = never expires.
+             * @example 2026-01-01T00:00:00Z
+             */
+            expiresOn?: string | null;
+            /**
+             * @description Free-form string-to-string pairs stored with the session and returned on every read. At most
+             *     50 keys, 100-character keys, 500-character values, 8 KB in all. Not allowed for SaveMethod.
+             */
+            metadata?: {
+                [key: string]: string | null;
+            } | null;
+            paymentMethods?: components["schemas"]["PaymentMethodsDto"];
+            paymentSessionMode?: components["schemas"]["SessionMode"];
+            /**
+             * @description Your own label for the session, at most 100 characters. Stored and returned on every read;
+             *     a value wider than an ACH processor accepts is shortened only for the wire.
+             * @example order_123
+             */
+            referenceId?: string | null;
+            /**
+             * @description When true, bypasses address verification (AVS) at the gateway. Defaults to false. Only
+             *     meaningful for Payment and PaymentAndSave.
+             */
+            skipAddressVerification?: boolean | null;
+            /**
+             * Format: double
+             * @description Pre-calculated tax in currency units, with up to 2 decimal places, not negative. Mutually
+             *     exclusive with taxRate: send exactly one of them together with taxMode. Requires a fixed
+             *     baseAmount, and in Inclusive mode must be less than it.
+             * @example 9
+             */
+            taxAmount?: number | null;
+            taxMode?: components["schemas"]["TaxMode"];
+            /**
+             * Format: double
+             * @description Tax rate percentage, 0 to 100, with up to 3 decimal places. Mutually exclusive with
+             *     taxAmount: send exactly one of them together with taxMode, or none of the three.
+             * @example 8.25
+             */
+            taxRate?: number | null;
+            /**
+             * Format: double
+             * @description Pre-set tip added on top of baseAmount: greater than 0, at most baseAmount when the amount
+             *     is fixed, and not accepted for SaveMethod sessions.
+             * @example 10
+             */
+            tipAmount?: number | null;
+        };
+        /**
+         * @description A question the customer answers on the hosted page before paying. Do not send an extraFieldId:
+         *     the server generates it and returns it in the response.
+         */
+        CreateExtraFieldDto: {
+            /**
+             * @description Helper text shown below the field, at most 255 characters and without the null character (U+0000).
+             * @example Printed at the top of your bill
+             */
+            description?: string | null;
+            /**
+             * @description true: the customer must answer before paying. false: the field is shown as optional and can
+             *     be left empty.
+             * @example true
+             */
+            isRequired: boolean;
+            /**
+             * @description Label shown to the customer, 1 to 255 characters, not blank, and without control characters
+             *     such as tabs or line breaks. Duplicate names are allowed.
+             * @example Invoice number
+             */
+            name: string;
         };
         /** @description Request to create a payment link. */
         CreatePaymentLinkRequestDto: {
@@ -13660,11 +16311,12 @@ export interface components {
              * @description ISO 4217 uppercase currency code.
              * @example USD
              */
-            currencyCode?: string | null;
+            currencyCode: string;
             /**
              * Format: uuid
-             * @description Customer the link is issued for. Omit for an anonymous link. Not allowed when
-             *     linkType is MultiUse.
+             * @description Customer the link is issued for. Omit for an anonymous link. On a MultiUse link its
+             *     payments, and any payment method a payer saves there, are recorded under this customer,
+             *     but the payment page never shows the customer's details or saved methods.
              */
             customerId?: string | null;
             /** @description Merchant-internal notes, max 500 characters. Never shown to customers. */
@@ -13674,101 +16326,50 @@ export interface components {
              * @description UTC expiration; must not be in the past. Omit for a link that never expires.
              */
             expiresOn?: string | null;
+            /**
+             * @description Questions the customer answers on the hosted page before paying, in the order shown, at
+             *     most 10. Copied into every payment session the link opens. Omit or send an empty list for
+             *     none.
+             */
+            extraFields?: components["schemas"]["CreateExtraFieldDto"][] | null;
             linkType?: components["schemas"]["PaymentLinkType"];
+            /**
+             * @description Your own key-value pairs, copied into every payment session the link opens and returned
+             *     with that session. At most 50 keys, keys of at most 100 characters, values of at most 500
+             *     characters, 8 KB in all. A key with a null value is not stored.
+             */
+            metadata?: {
+                [key: string]: string | null;
+            } | null;
+            mode?: components["schemas"]["SessionMode"];
             /**
              * @description Merchant-facing label, max 80 characters. Auto-generated from the amount if omitted.
              * @example Spring campaign
              */
             name?: string | null;
-            paymentMethods: components["schemas"]["PaymentMethodsDto"];
+            paymentMethods?: components["schemas"]["PaymentMethodsDto"];
             /**
              * @description Merchant label, max 200 characters.
              * @example ORDER-1042
              */
             referenceId?: string | null;
+            /**
+             * Format: double
+             * @description Pre-calculated tax in currency units, with up to 2 decimal places, not negative. Mutually
+             *     exclusive with taxRate: send exactly one of them together with taxMode. Requires a fixed
+             *     baseAmount, and in Inclusive mode must be less than it. The transaction records the rate
+             *     derived from it.
+             * @example 2.06
+             */
+            taxAmount?: number | null;
             taxMode?: components["schemas"]["TaxMode"];
             /**
              * Format: double
-             * @description Tax rate percentage, 0 to 100, with up to 3 decimal places. Required with
-             *     taxMode; omit both for a link without tax.
+             * @description Tax rate percentage, 0 to 100, with up to 3 decimal places. Mutually exclusive with
+             *     taxAmount: send exactly one of them together with taxMode, or none of the three.
              * @example 8.25
              */
             taxRate?: number | null;
-        };
-        CreatePaymentMethodResponseDto: {
-            /**
-             * Format: uuid
-             * @description Payment method Id
-             * @example ce81372a-3b32-4564-af1d-6e4d33129978
-             */
-            paymentMethodId?: string;
-        };
-        /** @description Request DTO for creating a payment session (v2). */
-        CreatePaymentSessionRequestDto: {
-            /** @description Message shown to the payer after the session completes. */
-            afterCompletionMessage?: string | null;
-            /**
-             * Format: double
-             * @description Amount should be greater than 0. Required for payment sessions. For vault-only sessions, set to 0.
-             *     Null creates a flexible-amount session where the amount is set at checkout.
-             */
-            amount?: number | null;
-            customerHandling?: components["schemas"]["CustomerHandling"];
-            /**
-             * Format: uuid
-             * @description Customer ID to associate the vault entry with.
-             */
-            customerId?: string | null;
-            /**
-             * Format: date-time
-             * @description Optional expiration date/time for the session (UTC). Must be in the future.
-             */
-            expiresAt?: string | null;
-            /** @description Arbitrary key-value pairs stored with the session and returned on GET. */
-            metadata?: {
-                [key: string]: string | null;
-            } | null;
-            mode?: components["schemas"]["SessionMode"];
-            /** @description Display name shown on the checkout page. */
-            pageName?: string | null;
-            paymentMethods?: components["schemas"]["PaymentMethodsDto"];
-            /** @description Additional notes shown to the payer on the checkout page. */
-            paymentNotes?: string | null;
-            /**
-             * @description Optional reference ID provided by the ISV, at most 100 characters. It is stored and
-             *     reported back whole; a value wider than an ACH processor accepts is shortened only for
-             *     the wire.
-             */
-            referenceId?: string | null;
-            /** @description URL to redirect the payer to after a successful payment. */
-            returnUrl?: string | null;
-            /**
-             * @description When true, bypasses AVS (address verification) in the payment gateway. Defaults to false.
-             *     Only meaningful for Payment and PaymentAndSave modes.
-             */
-            skipAddressVerification?: boolean | null;
-            taxMode?: components["schemas"]["TaxMode"];
-            /**
-             * Format: double
-             * @description Tax rate percentage, 0 to 100, with up to 3 decimal places. Required with
-             *     taxMode; omit both for a session without tax.
-             * @example 8.25
-             */
-            taxRate?: number | null;
-            /**
-             * Format: double
-             * @description Optional tip amount to be charged on top of the base amount.
-             */
-            tipAmount?: number | null;
-        };
-        /** @description Response DTO for creating a payment session (v2). */
-        CreatePaymentSessionResponseDto: {
-            /**
-             * Format: uuid
-             * @description The unique identifier of the created payment session.
-             */
-            id?: string;
-            paymentMethods?: components["schemas"]["PaymentMethodsDto"];
         };
         /**
          * @description Request to create a reversal from POS. With `originalTransactionId` the backend picks the
@@ -13887,7 +16488,11 @@ export interface components {
              * @example REF-EXT-12345
              */
             referenceId?: string | null;
-            /** @description Set to true to show popup about saving customer payment method information on the terminal */
+            /**
+             * @description Set to true to ask the cardholder on the terminal whether to store the card. On consent the card is
+             *     stored under `customerId` when one is supplied, otherwise as a standalone payment method; its id
+             *     appears as `linkedTransaction.cardDetails.paymentMethodId` on the completed POS transaction.
+             */
             requestPaymentMethodStorageConsent?: boolean;
             /**
              * Format: uuid
@@ -14046,61 +16651,103 @@ export interface components {
         };
         /** @enum {string} */
         Currency: "USD";
-        /** @enum {string} */
-        CustomerHandling: "CreateCustomer" | "TokenOnly";
-        CustomerPaymentMethodAchDto: {
-            accountHolderType?: components["schemas"]["AccountHolderType"];
-            /**
-             * @description Account number
-             * @example 1234567890
-             */
-            accountNumber?: string | null;
-            accountType?: components["schemas"]["AccountType"];
-            /**
-             * @description Payment method name
-             * @example Primary Checking
-             */
-            paymentName?: string | null;
-            /**
-             * @description Routing number
-             * @example 021000021
-             */
-            routingNumber?: string | null;
-            /**
-             * @description Tax ID
-             * @example 123456789
-             */
-            taxId?: string | null;
-        };
-        CustomerPaymentMethodCardDto: {
-            /**
-             * @description The 13-19 digit card number (PAN) used for the transaction.
-             * @example 4111111111111111
-             */
-            cardNumber?: string | null;
+        /** @description A customer with its saved payment methods, answered by create, get and update. */
+        CustomerDto: {
             /**
              * Format: int32
-             * @description The expiration month of the card (2-digit format: 01-12)
+             * @description Number of subscriptions in Active status.
+             * @example 2
+             */
+            activeSubscriptionsCount?: number;
+            billingAddress?: components["schemas"]["AddressDto"];
+            /**
+             * @description Company name. Null if not set.
+             * @example Acme Corp
+             */
+            companyName?: string | null;
+            /**
+             * Format: date-time
+             * @description When the customer was created, in UTC.
+             * @example 2026-01-01T00:00:00Z
+             */
+            createdOn?: string;
+            /**
+             * Format: uuid
+             * @description Customer Id
+             * @example 1edee500-535c-4210-9ca3-9e86e8f0a3ca
+             */
+            customerId?: string;
+            /**
+             * @description Email address. Null if not set.
+             * @example jane.doe@example.com
+             */
+            email?: string | null;
+            /**
+             * @description ISV-assigned external reference, e.g. an Id from the ISV's own system. Null if not set.
+             * @example CUST-EXT-12345
+             */
+            externalId?: string | null;
+            /**
+             * @description First name
+             * @example Jane
+             */
+            firstName?: string | null;
+            /**
+             * @description Whether the customer has given SMS consent.
+             * @example true
+             */
+            hasSmsConsent?: boolean;
+            /**
+             * @description Last name
+             * @example Doe
+             */
+            lastName?: string | null;
+            /**
+             * Format: double
+             * @description Amount of the most recent transaction. Null if there are no transactions yet.
+             * @example 99.99
+             */
+            lastTransactionAmount?: number | null;
+            /**
+             * Format: date-time
+             * @description When the most recent transaction happened, in UTC. Null if there are no transactions yet.
+             * @example 2026-01-01T00:00:00Z
+             */
+            lastTransactionOn?: string | null;
+            /**
+             * @description Mobile phone number in E.164 format. Null if not set.
+             * @example +14125553845
+             */
+            mobilePhoneNumber?: string | null;
+            /**
+             * Format: date-time
+             * @description When the customer was last modified, in UTC.
+             * @example 2026-01-01T00:00:00Z
+             */
+            modifiedOn?: string;
+            /** @description All saved payment methods, oldest first. Empty if there are none. */
+            paymentMethods?: components["schemas"]["PaymentMethodResponseDto"][] | null;
+            shippingAddress?: components["schemas"]["AddressDto"];
+            /**
+             * @description Whether the billing address is also the shipping address.
+             * @example false
+             */
+            shouldUseBillingAsShippingAddress?: boolean;
+            /**
+             * Format: int32
+             * @description Total number of transactions.
              * @example 12
              */
-            expirationMonth?: number | null;
+            transactionsCount?: number;
             /**
-             * Format: int32
-             * @description The expiration year of the card (4-digit format: YYYY)
-             * @example 2030
+             * Format: double
+             * @description Sum of all transaction amounts.
+             * @example 1234.56
              */
-            expirationYear?: number | null;
-            /**
-             * @description Payment method name
-             * @example Personal Visa
-             */
-            paymentName?: string | null;
-            /**
-             * @description The three or four digit security code on the card.
-             * @example 123
-             */
-            securityCode?: string | null;
+            transactionsTotalAmount?: number;
         };
+        /** @enum {string} */
+        CustomerHandling: "CreateCustomer" | "TokenOnly";
         /** @description Details for a declined or failed transaction. Null when the transaction was approved or is pending. */
         DeclineDetailsDto: {
             /**
@@ -14114,6 +16761,54 @@ export interface components {
              */
             message?: string | null;
         };
+        /** @description Expected processing volumes, in dollars. */
+        DesiredLimitsDto: {
+            /**
+             * Format: double
+             * @description Average American Express ticket.
+             * @example 100
+             */
+            averageAmexTicketAmount?: number | null;
+            /**
+             * Format: double
+             * @description Average Visa, Mastercard and Discover ticket.
+             * @example 100
+             */
+            averageCardTicketAmount?: number | null;
+            /**
+             * Format: double
+             * @description Highest American Express ticket.
+             * @example 5000
+             */
+            highestAmexTicketAmount?: number | null;
+            /**
+             * Format: double
+             * @description Highest Visa, Mastercard and Discover ticket.
+             * @example 5000
+             */
+            highestCardTicketAmount?: number | null;
+            /**
+             * Format: double
+             * @description Monthly American Express volume.
+             * @example 20000
+             */
+            monthlyAmexVolumeAmount?: number | null;
+            /**
+             * Format: double
+             * @description Monthly Visa, Mastercard and Discover volume.
+             * @example 20000
+             */
+            monthlyCardVolumeAmount?: number | null;
+        };
+        /**
+         * @description Which of the merchant's addresses receives paper documentation.<p>Possible values:</p>
+         *     <ul>
+         *     <li><b>1 - LegalAddress</b>: The legal address.</li>
+         *     <li><b>2 - DbaAddress</b>: The doing-business-as (location) address.</li>
+         *     </ul>
+         * @enum {string}
+         */
+        DocumentationMailingAddressType: "LegalAddress" | "DbaAddress";
         /** @description A single raw EMV tag key/value pair. */
         EmvRawTagDto: {
             /** @description EMV tag identifier. */
@@ -14136,6 +16831,11 @@ export interface components {
             /** @description Terminal Verification Results (tag 95). */
             tvr?: string | null;
         };
+        /**
+         * @description Tip and discount inputs for a new transaction. A card transaction applies the tip and the discount;
+         *     an ACH debit applies only the discount and ignores the tip. A discount applies only when the merchant
+         *     has percentage off enabled.
+         */
         ExtraAmountsDto: {
             /**
              * Format: double
@@ -14151,7 +16851,7 @@ export interface components {
             discountRate?: number | null;
             /**
              * Format: double
-             * @description Credit card surcharge as a percent of the base amount, applied after any discount.
+             * @description Has no effect when creating a transaction: the surcharge, if any, comes from the merchant's settings.
              *     Encoded as raw percentage — e.g. 2.5 represents 2.5%.
              * @example 2.5
              */
@@ -14169,6 +16869,63 @@ export interface components {
              */
             tipRate?: number | null;
         };
+        /** @description A question the customer answers on the hosted page before paying. */
+        ExtraFieldDto: {
+            /**
+             * @description Helper text shown below the field. Null when not set.
+             * @example Printed at the top of your bill
+             */
+            description?: string | null;
+            /**
+             * Format: uuid
+             * @description Stable id of the field. A session opened from a payment link carries the link's ids, and a
+             *     payment-link PATCH that sends the id keeps it.
+             * @example 6f1c2a52-8a51-4d2e-9a5e-1b2c3d4e5f60
+             */
+            extraFieldId?: string;
+            /**
+             * @description Whether the customer must answer before paying.
+             * @example true
+             */
+            isRequired?: boolean;
+            /**
+             * @description Label shown to the customer.
+             * @example Invoice number
+             */
+            name?: string | null;
+        };
+        /**
+         * @description A fee schedule a partner user can place a merchant application on: the partner's own cost
+         *     schedule for the merchant, distinct from the pricing templates the merchant sees.
+         */
+        FeeScheduleDto: {
+            /**
+             * Format: date-time
+             * @description When the fee schedule was created.
+             */
+            createdOn?: string;
+            /**
+             * Format: uuid
+             * @description Unique identifier for the fee schedule. Supply it as feeScheduleId when creating an application for this user.
+             */
+            feeScheduleId?: string;
+            /**
+             * @description The fee schedule's name, as shown in Flute.
+             * @example TSYS Standard
+             */
+            feeScheduleName?: string | null;
+            /**
+             * @description Whether this is the user's default fee schedule.
+             * @example true
+             */
+            isDefault?: boolean;
+            /**
+             * Format: date-time
+             * @description When the fee schedule was last changed; the creation time until it changes.
+             */
+            modifiedOn?: string;
+            processor?: components["schemas"]["ApplicationProcessor"];
+        };
         ForbiddenExceptionExample: {
             cause?: string | null;
             correlationId?: string | null;
@@ -14182,285 +16939,6 @@ export interface components {
             /** Format: int32 */
             statusCode?: number | null;
             title?: string | null;
-        };
-        GetApiKeysResponseDto: {
-            /** @description List of API keys */
-            apiKeys?: components["schemas"]["GetApiKeysResponseDtoApiKeyDto"][] | null;
-        };
-        GetApiKeysResponseDtoApiKeyDto: {
-            /**
-             * @description Display name for the API key
-             * @example Production integration key
-             */
-            apiKeyName?: string | null;
-            /**
-             * Format: uuid
-             * @description Client identifier
-             * @example 5c0f39f6-02a8-4053-9e72-56d9d5947c1c
-             */
-            clientId?: string;
-            /**
-             * Format: uuid
-             * @description Merchant identifier
-             * @example cf03c41f-d797-447a-b4e8-aadd99f4deb2
-             */
-            merchantId?: string;
-        };
-        GetCustomerResponseDto: {
-            /** @description Payment methods (ACH accounts) */
-            achAccounts?: components["schemas"]["GetCustomerResponseDtoAchAccountDto"][] | null;
-            billingAddress?: components["schemas"]["AddressDto"];
-            /** @description Payment methods (cards) */
-            cards?: components["schemas"]["GetCustomerResponseDtoCardDto"][] | null;
-            /** @description Company name */
-            companyName?: string | null;
-            /**
-             * Format: uuid
-             * @description Customer ID
-             * @example 1edee500-535c-4210-9ca3-9e86e8f0a3ca
-             */
-            customerId?: string;
-            /**
-             * @description Email address
-             * @example jane.doe@example.com
-             */
-            email?: string | null;
-            /**
-             * @description External ID
-             * @example CUST-EXT-12345
-             */
-            externalId?: string | null;
-            /** @description First name */
-            firstName?: string | null;
-            /** @description SMS notifications are enabled. */
-            hasSmsConsent?: boolean;
-            /** @description Last name */
-            lastName?: string | null;
-            /**
-             * Format: double
-             * @description Last transaction amount
-             * @example 99.99
-             */
-            lastTransactionAmount?: number | null;
-            /**
-             * Format: date-time
-             * @description Last transaction date
-             * @example 2026-01-01T00:00:00Z
-             */
-            lastTransactionDate?: string | null;
-            /**
-             * @description The customer's mobile phone number.
-             * @example +14125553845
-             */
-            mobilePhoneNumber?: string | null;
-            /**
-             * Format: int32
-             * @description Number of active subscriptions
-             */
-            numberOfSubscriptions?: number;
-            shippingAddress?: components["schemas"]["AddressDto"];
-            /** @description Use billing address as shipping */
-            shouldUseBillingAsShippingAddress?: boolean;
-            /**
-             * Format: int32
-             * @description Transactions count
-             */
-            transactionsCount?: number;
-            /**
-             * Format: double
-             * @description Transactions volume
-             * @example 1234.56
-             */
-            transactionsVolume?: number;
-        };
-        GetCustomerResponseDtoAchAccountDto: {
-            accountHolderType?: components["schemas"]["AccountHolderType"];
-            /**
-             * @description Account number (masked)
-             * @example ************7890
-             */
-            accountNumber?: string | null;
-            accountType?: components["schemas"]["AccountType"];
-            /** @description Is payment method default */
-            isDefault?: boolean;
-            /**
-             * Format: uuid
-             * @description Payment method Id
-             * @example 39a95e35-6d50-45ec-884b-c2417edf005d
-             */
-            paymentMethodId?: string;
-            /**
-             * @description Payment method name
-             * @example Personal Visa
-             */
-            paymentName?: string | null;
-            /**
-             * @description Routing number
-             * @example 021000021
-             */
-            routingNumber?: string | null;
-            /**
-             * @description Tax ID (masked)
-             * @example *****6789
-             */
-            taxId?: string | null;
-        };
-        GetCustomerResponseDtoCardDto: {
-            /**
-             * @description Masked card number
-             * @example ************1111
-             */
-            cardMask?: string | null;
-            cardTokenType?: components["schemas"]["TokenType"];
-            cardType?: components["schemas"]["CardType"];
-            creditDebitType?: components["schemas"]["CreditDebitType"];
-            /**
-             * Format: int32
-             * @description Expiration month
-             * @example 12
-             */
-            expirationMonth?: number;
-            /**
-             * Format: int32
-             * @description Expiration year
-             * @example 2030
-             */
-            expirationYear?: number;
-            /** @description Is payment method default */
-            isDefault?: boolean;
-            /**
-             * Format: uuid
-             * @description Payment method Id
-             * @example 39a95e35-6d50-45ec-884b-c2417edf005d
-             */
-            paymentMethodId?: string;
-            /**
-             * @description Payment method name
-             * @example Personal Visa
-             */
-            paymentName?: string | null;
-        };
-        /** @description Response DTO for getting payment session details (v2). */
-        GetPaymentSessionResponseDto: {
-            achAccountLast2?: string | null;
-            achRoutingLast2?: string | null;
-            afterCompletionMessage?: string | null;
-            /** Format: uuid */
-            customerId?: string | null;
-            /** Format: date-time */
-            expiresAt?: string | null;
-            metadata?: {
-                [key: string]: string | null;
-            } | null;
-            mode?: components["schemas"]["SessionMode"];
-            pageName?: string | null;
-            /** Format: uuid */
-            paymentLinkId?: string | null;
-            paymentMethods?: components["schemas"]["PaymentMethodsDto"];
-            paymentNotes?: string | null;
-            referenceId?: string | null;
-            returnUrl?: string | null;
-            skipAddressVerification?: boolean;
-            /**
-             * @description Payment Session Status
-             *     - Created: Payment session was initialized but not yet processed.
-             *     - Cancelled: Payment session was cancelled before completion.
-             *     - Completed: Payment session was completed. Check transaction details to verify if the payment was approved or not.
-             *     - Failed: Payment was attempted but did not succeed. A new session must be created for a new payment tentative.
-             *     - Expired: Payment session expired before being completed.
-             */
-            readonly status?: string | null;
-            statusId?: components["schemas"]["PaymentSessionStatusDto"];
-            /** Format: double */
-            surchargeAmount?: number | null;
-            taxMode?: components["schemas"]["TaxMode"];
-            /**
-             * Format: double
-             * @description Tax rate percentage pinned on the session. Null = no tax configured; always set
-             *     and cleared with taxMode.
-             * @example 8.25
-             */
-            taxRate?: number | null;
-            /** Format: double */
-            tipAmount?: number | null;
-            transactionDetails?: components["schemas"]["GetPaymentSessionTransactionDetailsDto"];
-            /** Format: uuid */
-            vaultedPaymentMethodId?: string | null;
-        };
-        /** @description Contains information about the processed transaction. */
-        GetPaymentSessionTransactionDetailsDto: {
-            amount?: components["schemas"]["AmountDto"];
-            authCode?: string | null;
-            availableOperations?: components["schemas"]["TransactionOperationDto"][] | null;
-            availableStates?: string[] | null;
-            avsResponse?: components["schemas"]["AvsResponseDto"];
-            avsResponseCode?: string | null;
-            cardType?: string | null;
-            createdBy?: string | null;
-            /** Format: int32 */
-            creditDebitTypeId?: number | null;
-            creditDebitTypeType?: string | null;
-            currencyCode?: string | null;
-            /** Format: int32 */
-            currencyId?: number | null;
-            customerCompany?: string | null;
-            customerEmail?: string | null;
-            /** Format: uuid */
-            customerId?: string | null;
-            customerName?: string | null;
-            customerPan?: string | null;
-            customerPhone?: string | null;
-            /** Format: date-time */
-            date?: string | null;
-            histories?: components["schemas"]["GetPaymentSessionTransactionDetailsDtoTransactionHistoryDto"][] | null;
-            /** Format: uuid */
-            id?: string;
-            merchant?: string | null;
-            /** Format: uuid */
-            merchantId?: string;
-            mid?: string | null;
-            operationMode?: string | null;
-            paymentMethodName?: string | null;
-            paymentMethodType?: string | null;
-            /** Format: int32 */
-            paymentMethodTypeId?: number;
-            /** Format: uuid */
-            paymentProcessorId?: string;
-            processor?: string | null;
-            /** Format: uuid */
-            processorId?: string;
-            referenceId?: string | null;
-            refunded?: boolean;
-            responseCode?: string | null;
-            responseDescription?: string | null;
-            responseMessage?: string | null;
-            source?: components["schemas"]["TransactionSourceResponseDto"];
-            status?: string | null;
-            /** Format: int32 */
-            statusId?: number;
-            tid?: string | null;
-            transactionReceipt?: components["schemas"]["TransactionReceiptDto"];
-            /** @description Shortened URL to access the transaction receipt. */
-            transactionReceiptShortUrl?: string | null;
-            /** @description Direct link to the transaction receipt. */
-            transactionReceiptUrl?: string | null;
-            type?: string | null;
-            /** Format: int32 */
-            typeId?: number;
-        };
-        GetPaymentSessionTransactionDetailsDtoTransactionHistoryDto: {
-            /** Format: uuid */
-            id?: string;
-            /** Format: double */
-            transactionAmount?: number | null;
-            /** Format: date-time */
-            transactionDateTime?: string;
-            transactionStatus?: string | null;
-            /** Format: int32 */
-            transactionStatusId?: number;
-            transactionType?: string | null;
-            /** Format: int32 */
-            transactionTypeId?: number;
         };
         GetTerminalStatusResponseDto: {
             /**
@@ -14539,6 +17017,12 @@ export interface components {
             customerId?: string | null;
             declineDetails?: components["schemas"]["DeclineDetailsDto"];
             /**
+             * @description The customer's answers to the extra fields of the payment link or checkout session that produced
+             *     this transaction, in the order shown to the customer. Optional fields left blank are omitted;
+             *     empty when there are none.
+             */
+            extraFields?: components["schemas"]["TransactionExtraFieldDto"][] | null;
+            /**
              * Format: uuid
              * @description The merchant the transaction belongs to.
              * @example 746ba4dd-b1b4-47c3-a034-72aa55007e86
@@ -14573,6 +17057,7 @@ export interface components {
             referenceId?: string | null;
             refundDetails?: components["schemas"]["RefundDetailsDto"];
             source?: components["schemas"]["TransactionSourceDto"];
+            taxDetails?: components["schemas"]["TaxDetailsDto"];
             /**
              * Format: date-time
              * @description Transaction date and time
@@ -14638,10 +17123,6 @@ export interface components {
             /** Format: int32 */
             statusCode?: number | null;
             title?: string | null;
-        };
-        KeyValuePairOfStringAndString: {
-            key?: string | null;
-            value?: string | null;
         };
         Level2SettingsDto: {
             /**
@@ -14736,6 +17217,12 @@ export interface components {
             /** @description Company name */
             companyName?: string | null;
             /**
+             * Format: date-time
+             * @description When the customer was created, in UTC.
+             * @example 2026-01-01T00:00:00Z
+             */
+            createdOn?: string;
+            /**
              * Format: uuid
              * @description Customer ID
              * @example 65dd7e1c-8b72-40ca-ba5e-8e318a6da907
@@ -14757,20 +17244,56 @@ export interface components {
             lastName?: string | null;
             /**
              * Format: date-time
-             * @description Last transaction date
+             * @description When the most recent transaction happened, in UTC. Null if there are no transactions yet.
              * @example 2026-01-01T00:00:00Z
              */
-            lastTransactionDate?: string | null;
+            lastTransactionOn?: string | null;
             /**
              * @description The customer's mobile phone number.
              * @example +14125553845
              */
             mobilePhoneNumber?: string | null;
             /**
+             * Format: date-time
+             * @description When the customer was last modified, in UTC.
+             * @example 2026-01-01T00:00:00Z
+             */
+            modifiedOn?: string;
+            /**
              * Format: int32
              * @description Number of payment methods
              */
             paymentMethodsCount?: number;
+        };
+        /** @description Standard envelope for a short, unpaginated list: every item in one response. */
+        ListResponseDtoOfFeeScheduleDto: {
+            /** @description Every item of the list. Empty when there are none. */
+            items?: components["schemas"]["FeeScheduleDto"][] | null;
+        };
+        /** @description Standard envelope for a short, unpaginated list: every item in one response. */
+        ListResponseDtoOfLocationDto: {
+            /** @description Every item of the list. Empty when there are none. */
+            items?: components["schemas"]["LocationDto"][] | null;
+        };
+        /** @description Standard envelope for a short, unpaginated list: every item in one response. */
+        ListResponseDtoOfMccCodeDto: {
+            /** @description Every item of the list. Empty when there are none. */
+            items?: components["schemas"]["MccCodeDto"][] | null;
+        };
+        /** @description Standard envelope for a short, unpaginated list: every item in one response. */
+        ListResponseDtoOfPricingTemplateDto: {
+            /** @description Every item of the list. Empty when there are none. */
+            items?: components["schemas"]["PricingTemplateDto"][] | null;
+        };
+        /** @description Standard envelope for a short, unpaginated list: every item in one response. */
+        ListResponseDtoOfSplitProfileDto: {
+            /** @description Every item of the list. Empty when there are none. */
+            items?: components["schemas"]["SplitProfileDto"][] | null;
+        };
+        /** @description Standard envelope for a short, unpaginated list: every item in one response. */
+        ListResponseDtoOfWebhookEventTypeIsvDto: {
+            /** @description Every item of the list. Empty when there are none. */
+            items?: components["schemas"]["WebhookEventTypeIsvDto"][] | null;
         };
         /** @description Response DTO for a terminal in the list. */
         ListTerminalsResponseDto: {
@@ -14805,10 +17328,148 @@ export interface components {
             terminalModel?: components["schemas"]["TerminalModel"];
             terminalStatus?: components["schemas"]["TerminalPosStatus"];
         };
-        ListWebhookEventTypesIsvResponseDto: {
-            /** @description Subscribable webhook event types. System-only events (e.g. ping) are excluded. */
-            items?: components["schemas"]["WebhookEventTypeIsvDto"][] | null;
+        /** @description Where the business operates. */
+        LocationAddressDto: {
+            /**
+             * @description Street address, up to 50 characters.
+             * @example 412 Harbor Ave
+             */
+            addressLine1?: string | null;
+            /**
+             * @description Suite, unit or floor, up to 50 characters.
+             * @example Suite 3
+             */
+            addressLine2?: string | null;
+            /**
+             * @description City, up to 30 characters.
+             * @example Portland
+             */
+            city?: string | null;
+            /**
+             * @description Two-letter country code.
+             * @example US
+             */
+            countryCode?: string | null;
+            locationType?: components["schemas"]["LocationType"];
+            /**
+             * @description Describes the premises when locationType is Other.
+             * @example Kiosk inside a shopping mall
+             */
+            locationTypeDescription?: string | null;
+            /**
+             * @description Postal code.
+             * @example 97201
+             */
+            postalCode?: string | null;
+            /**
+             * @description Two-letter state code.
+             * @example OR
+             */
+            stateCode?: string | null;
         };
+        /** @description A merchant location. */
+        LocationDto: {
+            /**
+             * @description Address line 1.
+             * @example 123 Main Street
+             */
+            addressLine1?: string | null;
+            /**
+             * @description Address line 2.
+             * @example Suite 400
+             */
+            addressLine2?: string | null;
+            /**
+             * @description Merchant-facing label for this location.
+             * @example Main Office
+             */
+            addressName?: string | null;
+            /**
+             * @description City name.
+             * @example New York
+             */
+            city?: string | null;
+            /**
+             * @description Country code in ISO 3166-1 alpha-2 format (e.g., "US", "CA").
+             * @example US
+             */
+            countryCode?: string | null;
+            /**
+             * @description Contact email for this location.
+             * @example contact@company.com
+             */
+            email?: string | null;
+            /** @description True for the location the merchant chose as their default, used for example to pre-populate invoice addresses. */
+            isDefaultAddress?: boolean;
+            /** @description True for the address captured during merchant onboarding. It is managed by Flute and cannot be edited or removed by the merchant. */
+            isMainAddress?: boolean;
+            /**
+             * Format: uuid
+             * @description Unique identifier of the location.
+             * @example 8d638f27-1a16-4f1b-92fe-0ea16d4a6461
+             */
+            locationId?: string;
+            /**
+             * @description Contact phone number for this location (landline or mobile).
+             * @example +12125550100
+             */
+            phoneNumber?: string | null;
+            /**
+             * @description Postal or ZIP code.
+             * @example 10001
+             */
+            postalCode?: string | null;
+            /**
+             * @description ISO 3166-2 subdivision code; must belong to Arise.IsvApiBff.Contracts.v2.Common.AddressDto.CountryCode.
+             *     For US states, the USPS two-letter abbreviation is used (e.g., "NY", "CA", "TX").
+             *     See: https://en.wikipedia.org/wiki/ISO_3166-2:US
+             * @example NY
+             */
+            stateCode?: string | null;
+        };
+        /**
+         * @description The kind of premises the business operates from.<p>Possible values:</p>
+         *     <ul>
+         *     <li><b>1 - Home</b>: A private home.</li>
+         *     <li><b>2 - Apartment</b>: An apartment.</li>
+         *     <li><b>3 - StoreFront</b>: A storefront.</li>
+         *     <li><b>4 - Other</b>: Another kind of premises; describe it in locationTypeDescription.</li>
+         *     <li><b>5 - Office</b>: An office.</li>
+         *     </ul>
+         * @enum {string}
+         */
+        LocationType: "Home" | "Apartment" | "StoreFront" | "Other" | "Office";
+        /** @description A merchant category code an application can declare, under one of its descriptions. */
+        MccCodeDto: {
+            /**
+             * @description The four-digit merchant category code. The same code can appear on several rows, each with
+             *     its own description.
+             * @example 5814
+             */
+            mccCode?: string | null;
+            /**
+             * Format: uuid
+             * @description Unique identifier for this code and description. Supply it as businessInformation.mccCodeId
+             *     when creating an application.
+             */
+            mccCodeId?: string;
+            /**
+             * @description What businesses under this code and description sell.
+             * @example Fast food restaurants
+             */
+            mccDescription?: string | null;
+        };
+        /** @enum {string} */
+        MerchantStatus: "Active" | "Suspended" | "Closed";
+        /**
+         * @description Whether the application is for a new merchant or another location of an existing one.<p>Possible values:</p>
+         *     <ul>
+         *     <li><b>1 - New</b>: A new merchant.</li>
+         *     <li><b>2 - AdditionalLocation</b>: An additional location of a merchant that already processes with us.</li>
+         *     </ul>
+         * @enum {string}
+         */
+        MerchantType: "New" | "AdditionalLocation";
         /** @enum {string} */
         MobilePlatform: "iOS" | "Android";
         NotFoundExceptionExample: {
@@ -14827,6 +17488,52 @@ export interface components {
         };
         /** @enum {string} */
         NotificationDeliveryMethod: "None" | "Sms" | "Email";
+        /** @description An owner of the business. */
+        OwnerDto: {
+            address?: components["schemas"]["ApplicationAddressDto"];
+            /**
+             * Format: date-time
+             * @description Date of birth.
+             * @example 1990-01-02
+             */
+            dateOfBirth?: string | null;
+            /**
+             * @description Email address.
+             * @example marcus@example.com
+             */
+            email?: string | null;
+            /**
+             * @description First name, up to 30 characters.
+             * @example Marcus
+             */
+            firstName?: string | null;
+            /**
+             * @description Last name, up to 30 characters.
+             * @example Alvarez
+             */
+            lastName?: string | null;
+            /**
+             * Format: double
+             * @description Percentage of the business this person owns, 0 to 100.
+             * @example 100
+             */
+            ownershipRate?: number | null;
+            /**
+             * @description Phone number in E.164 format.
+             * @example +15550148000
+             */
+            phoneNumber?: string | null;
+            /**
+             * @description Social security number, nine digits.
+             * @example 123456789
+             */
+            socialSecurityNumber?: string | null;
+            /**
+             * @description Job title, up to 30 characters.
+             * @example Owner
+             */
+            title?: string | null;
+        };
         /** @description Pagination metadata describing the current page and the full result set. */
         PageInfoDto: {
             /**
@@ -14861,7 +17568,25 @@ export interface components {
         };
         /**
          * @description Standard paginated response envelope: the requested page of items plus
-         *     the Arise.IsvApiBff.Contracts.v2.Common.PageInfoDto metadata used to drive navigation.
+         *     the pagination metadata used to drive navigation.
+         */
+        PagedResponseDtoOfApiKeyDto: {
+            /** @description The items on the current page. Empty when the requested page is beyond the data. */
+            items?: components["schemas"]["ApiKeyDto"][] | null;
+            pageInfo?: components["schemas"]["PageInfoDto"];
+        };
+        /**
+         * @description Standard paginated response envelope: the requested page of items plus
+         *     the pagination metadata used to drive navigation.
+         */
+        PagedResponseDtoOfApplicationDto: {
+            /** @description The items on the current page. Empty when the requested page is beyond the data. */
+            items?: components["schemas"]["ApplicationDto"][] | null;
+            pageInfo?: components["schemas"]["PageInfoDto"];
+        };
+        /**
+         * @description Standard paginated response envelope: the requested page of items plus
+         *     the pagination metadata used to drive navigation.
          */
         PagedResponseDtoOfGetWebhookEndpointIsvResponseDto: {
             /** @description The items on the current page. Empty when the requested page is beyond the data. */
@@ -14870,7 +17595,7 @@ export interface components {
         };
         /**
          * @description Standard paginated response envelope: the requested page of items plus
-         *     the Arise.IsvApiBff.Contracts.v2.Common.PageInfoDto metadata used to drive navigation.
+         *     the pagination metadata used to drive navigation.
          */
         PagedResponseDtoOfListBatchesResponseDto: {
             /** @description The items on the current page. Empty when the requested page is beyond the data. */
@@ -14879,7 +17604,7 @@ export interface components {
         };
         /**
          * @description Standard paginated response envelope: the requested page of items plus
-         *     the Arise.IsvApiBff.Contracts.v2.Common.PageInfoDto metadata used to drive navigation.
+         *     the pagination metadata used to drive navigation.
          */
         PagedResponseDtoOfListCustomersResponseDto: {
             /** @description The items on the current page. Empty when the requested page is beyond the data. */
@@ -14888,7 +17613,7 @@ export interface components {
         };
         /**
          * @description Standard paginated response envelope: the requested page of items plus
-         *     the Arise.IsvApiBff.Contracts.v2.Common.PageInfoDto metadata used to drive navigation.
+         *     the pagination metadata used to drive navigation.
          */
         PagedResponseDtoOfListTerminalsResponseDto: {
             /** @description The items on the current page. Empty when the requested page is beyond the data. */
@@ -14897,7 +17622,16 @@ export interface components {
         };
         /**
          * @description Standard paginated response envelope: the requested page of items plus
-         *     the Arise.IsvApiBff.Contracts.v2.Common.PageInfoDto metadata used to drive navigation.
+         *     the pagination metadata used to drive navigation.
+         */
+        PagedResponseDtoOfPartnerMerchantDto: {
+            /** @description The items on the current page. Empty when the requested page is beyond the data. */
+            items?: components["schemas"]["PartnerMerchantDto"][] | null;
+            pageInfo?: components["schemas"]["PageInfoDto"];
+        };
+        /**
+         * @description Standard paginated response envelope: the requested page of items plus
+         *     the pagination metadata used to drive navigation.
          */
         PagedResponseDtoOfPaymentLinkResponseDto: {
             /** @description The items on the current page. Empty when the requested page is beyond the data. */
@@ -14906,7 +17640,7 @@ export interface components {
         };
         /**
          * @description Standard paginated response envelope: the requested page of items plus
-         *     the Arise.IsvApiBff.Contracts.v2.Common.PageInfoDto metadata used to drive navigation.
+         *     the pagination metadata used to drive navigation.
          */
         PagedResponseDtoOfPaymentMethodResponseDto: {
             /** @description The items on the current page. Empty when the requested page is beyond the data. */
@@ -14915,7 +17649,7 @@ export interface components {
         };
         /**
          * @description Standard paginated response envelope: the requested page of items plus
-         *     the Arise.IsvApiBff.Contracts.v2.Common.PageInfoDto metadata used to drive navigation.
+         *     the pagination metadata used to drive navigation.
          */
         PagedResponseDtoOfPosTransactionSummaryResponseDto: {
             /** @description The items on the current page. Empty when the requested page is beyond the data. */
@@ -14924,7 +17658,7 @@ export interface components {
         };
         /**
          * @description Standard paginated response envelope: the requested page of items plus
-         *     the Arise.IsvApiBff.Contracts.v2.Common.PageInfoDto metadata used to drive navigation.
+         *     the pagination metadata used to drive navigation.
          */
         PagedResponseDtoOfTransactionSummaryResponseDto: {
             /** @description The items on the current page. Empty when the requested page is beyond the data. */
@@ -14933,30 +17667,100 @@ export interface components {
         };
         /**
          * @description Standard paginated response envelope: the requested page of items plus
-         *     the Arise.IsvApiBff.Contracts.v2.Common.PageInfoDto metadata used to drive navigation.
+         *     the pagination metadata used to drive navigation.
+         */
+        PagedResponseDtoOfUserDto: {
+            /** @description The items on the current page. Empty when the requested page is beyond the data. */
+            items?: components["schemas"]["UserDto"][] | null;
+            pageInfo?: components["schemas"]["PageInfoDto"];
+        };
+        /**
+         * @description Standard paginated response envelope: the requested page of items plus
+         *     the pagination metadata used to drive navigation.
          */
         PagedResponseDtoOfWebhookDeliveryLogIsvSummaryDto: {
             /** @description The items on the current page. Empty when the requested page is beyond the data. */
             items?: components["schemas"]["WebhookDeliveryLogIsvSummaryDto"][] | null;
             pageInfo?: components["schemas"]["PageInfoDto"];
         };
-        /** @description Payment configuration settings for the merchant */
-        PaymentConfigurationResponseDto: {
-            addressVerificationServiceOptions?: components["schemas"]["PaymentConfigurationResponseDtoAddressVerificationServiceOptionsDto"];
-            /** @description Available card types */
-            availableCardTypes?: components["schemas"]["CardType"][] | null;
-            /** @description Available currencies */
-            availableCurrencies?: components["schemas"]["Currency"][] | null;
-            /** @description Available payment processors */
-            availablePaymentProcessors?: components["schemas"]["PaymentConfigurationResponseDtoPaymentProcessorDto"][] | null;
-            /** @description Available transaction types */
-            availableTransactionTypes?: components["schemas"]["TransactionType"][] | null;
+        /** @description A merchant managed by the partner account, as listed by GET /v2/partner/merchants. */
+        PartnerMerchantDto: {
             /**
-             * @description Company name
-             * @example Acme Inc.
+             * Format: int32
+             * @description Number of API keys the merchant has, counted the same way List API Keys lists them.
+             * @example 1
              */
-            companyName?: string | null;
-            currency?: components["schemas"]["Currency"];
+            apiKeyCount?: number;
+            /**
+             * @description First name of the merchant's main contact; null when none is set.
+             * @example John
+             */
+            contactFirstName?: string | null;
+            /** @example Doe */
+            contactLastName?: string | null;
+            /**
+             * Format: date-time
+             * @description When the merchant was created (UTC).
+             * @example 2026-01-01T00:00:00Z
+             */
+            createdOn?: string;
+            /**
+             * Format: date-time
+             * @description When the merchant's latest transaction that moved money happened (UTC); null when it has none. Declined, voided and cancelled attempts and sandbox transactions are not transactions here.
+             * @example 2026-01-01T00:00:00Z
+             */
+            lastTransactionOn?: string | null;
+            /**
+             * @description Merchant category code.
+             * @example 5411
+             */
+            mccCode?: string | null;
+            /** @example Grocery Stores and Supermarkets */
+            mccDescription?: string | null;
+            /** @example Acme Inc */
+            merchantCompanyName?: string | null;
+            /**
+             * Format: uuid
+             * @description Merchant identifier; the `merchantId` to create API keys for.
+             * @example 3fa85f64-5717-4562-b3fc-2c963f66afa6
+             */
+            merchantId?: string;
+            merchantStatus?: components["schemas"]["MerchantStatus"];
+            /**
+             * Format: int32
+             * @description Number of approved card sales and authorizations, ACH debits and refunds over the last 30 completed days in the merchant's time zone; today is not included. Sandbox transactions are included. Declined attempts are not counted, and later voids, ACH returns and chargebacks are not deducted.
+             * @example 142
+             */
+            transactionCount30Days?: number;
+            /**
+             * Format: double
+             * @description Approved sales, authorizations and ACH debits minus refunds over the same days, in the merchant's currency. Later voids, ACH returns and chargebacks are not deducted.
+             * @example 18500
+             */
+            transactionVolume30Days?: number;
+        };
+        /**
+         * @description How the merchant obtains authorization for ACH payments.<p>Possible values:</p>
+         *     <ul>
+         *     <li><b>1 - SignedContractOrAgreement</b>: A signed contract or agreement.</li>
+         *     <li><b>2 - OnlineOrMobileApp</b>: Online or in a mobile app.</li>
+         *     <li><b>3 - Both</b>: Both signed agreements and online authorization.</li>
+         *     </ul>
+         * @enum {string}
+         */
+        PaymentAuthorizationType: "SignedContractOrAgreement" | "OnlineOrMobileApp" | "Both";
+        /** @description Payment configuration of the merchant: processors, zero cost processing, tips, accepted card types and terminal profile identifiers. */
+        PaymentConfigurationResponseDto: {
+            addressVerification?: components["schemas"]["PaymentConfigurationResponseDtoAddressVerificationDto"];
+            /** @description Card brands accepted by the merchant. */
+            availableCardTypes?: components["schemas"]["CardType"][] | null;
+            /** @description ISO 4217 currency codes supported by the merchant. */
+            availableCurrencies?: components["schemas"]["Currency"][] | null;
+            /** @description Payment processors configured for this merchant. */
+            availablePaymentProcessors?: components["schemas"]["PaymentConfigurationResponseDtoPaymentProcessorDto"][] | null;
+            /** @description Transaction types available to the merchant. */
+            availableTransactionTypes?: components["schemas"]["TransactionType"][] | null;
+            currencyCode?: components["schemas"]["Currency"];
             /**
              * Format: double
              * @description Default cash discount rate. Encoded as raw percentage — e.g. 2.0 represents 2%.
@@ -14975,74 +17779,93 @@ export interface components {
              * @example 1.5
              */
             defaultSurchargeRate?: number | null;
-            /** @description Default tip percentage options */
-            defaultTipsOptions?: number[] | null;
-            /** @description Whether terminal can save customer card after transaction */
-            isCustomerCardSavingByTerminalEnabled?: boolean;
-            /** @description Whether tips are enabled */
+            /**
+             * @description Default tip percentage options shown to customers.
+             * @example [
+             *       10,
+             *       15,
+             *       20
+             *     ]
+             */
+            defaultTipOptions?: number[] | null;
+            /** @description Whether tip collection is enabled for this merchant. */
             isTipsEnabled?: boolean;
             /**
              * Format: double
-             * @description Maximum transaction amount limit
+             * @description Maximum allowed transaction amount.
              * @example 10000
              */
             maxTransactionAmount?: number | null;
             /**
-             * @description Merchant Category Code
+             * @description Merchant Category Code.
              * @example 5411
              */
             mccCode?: string | null;
             /**
-             * @description MCC code description
+             * @description Human-readable MCC description.
              * @example Grocery Stores, Supermarkets
              */
-            mccCodeDescription?: string | null;
+            mccDescription?: string | null;
             /**
-             * @description Tap to Pay Terminal Profile Id for iOS devices
-             * @example ttp-ios-profile-123
+             * @description Merchant's registered company name.
+             * @example Acme Grocery
              */
-            ttpIosTerminalProfileId?: string | null;
+            merchantCompanyName?: string | null;
+            /**
+             * Format: uuid
+             * @description UUID of the authenticated merchant.
+             * @example 195c89de-b0f8-4768-a421-da07f71b1a7f
+             */
+            merchantId?: string;
+            pricingType?: components["schemas"]["PricingType"];
+            /**
+             * @description Apple Tap to Pay terminal profile identifier, used by the Flute Mobile SDK for iOS.
+             * @example ios-terminal-profile-id
+             */
+            tapToPayAppleProfileId?: string | null;
             zeroCostProcessingOption?: components["schemas"]["ZeroCostProcessingOption"];
         };
-        PaymentConfigurationResponseDtoAddressVerificationServiceOptionsDto: {
-            /** @description Whether Address Verification Service is enabled */
+        PaymentConfigurationResponseDtoAddressVerificationDto: {
+            /** @description Whether Address Verification Service is enabled. */
             isEnabled?: boolean;
             profile?: components["schemas"]["AvsMerchantProfile"];
         };
         PaymentConfigurationResponseDtoPaymentProcessorDto: {
-            /** @description Whether this is the default payment processor */
+            /** @description Whether this is the merchant's default processor. */
             isDefault?: boolean;
             /**
              * Format: uuid
-             * @description Payment processor identifier
-             * @example d529945e-8d10-4cb4-9dc3-718e57f3f14e
+             * @description Processor identifier.
+             * @example ecd7c87b-7165-4a67-a067-24c9c9e1bbf4
              */
             paymentProcessorId?: string;
             /**
-             * @description Payment processor name
-             * @example TSYS
+             * @description Ops-configured processor label, typically the merchant's DBA name.
+             * @example Downtown Store
              */
             processorName?: string | null;
-            /** @description Settlement batch time slots */
-            settlementBatchTimeSlots?: components["schemas"]["PaymentConfigurationResponseDtoSettlementBatchTimeSlotDto"][] | null;
-            type?: components["schemas"]["PaymentProcessorType"];
+            processorType?: components["schemas"]["PaymentProcessorType"];
+            /** @description Scheduled settlement times for this processor. Empty for processors that do not settle on a schedule. */
+            settlementBatchSchedule?: components["schemas"]["PaymentConfigurationResponseDtoSettlementBatchScheduleDto"][] | null;
         };
-        PaymentConfigurationResponseDtoSettlementBatchTimeSlotDto: {
+        PaymentConfigurationResponseDtoSettlementBatchScheduleDto: {
             /**
              * Format: int32
-             * @description Hours component of the time slot
+             * @description Hour of the scheduled settlement (0–23) in the time zone given by timezoneId.
+             * @example 2
              */
-            hours?: number;
+            scheduledHour?: number;
             /**
              * Format: int32
-             * @description Minutes component of the time slot
+             * @description Minute of the scheduled settlement (0–59).
+             * @example 10
              */
-            minutes?: number;
+            scheduledMinute?: number;
             /**
-             * @description Timezone name (e.g. America/New_York)
+             * @description IANA time zone identifier.
              * @example America/New_York
              */
-            timezoneName?: string | null;
+            timezoneId?: string | null;
         };
         PaymentFailedExceptionExample: {
             cause?: string | null;
@@ -15093,11 +17916,24 @@ export interface components {
              */
             expiresOn?: string | null;
             /**
+             * @description Questions the customer answers on the hosted page, in the order shown. Empty when the link
+             *     has none.
+             */
+            extraFields?: components["schemas"]["ExtraFieldDto"][] | null;
+            /**
              * Format: date-time
              * @description Timestamp of the newest successful payment; null when none exist.
              */
             lastPaymentOn?: string | null;
             linkType?: components["schemas"]["PaymentLinkType"];
+            /**
+             * @description Your own key-value pairs, copied into every payment session the link opens. Null when the
+             *     link has none.
+             */
+            metadata?: {
+                [key: string]: string | null;
+            } | null;
+            mode?: components["schemas"]["SessionMode"];
             /**
              * Format: date-time
              * @description UTC timestamp of the last modification.
@@ -15130,10 +17966,16 @@ export interface components {
              * @example https://pay.example.com/l/abc123
              */
             shortUrl?: string | null;
+            /**
+             * Format: double
+             * @description Fixed tax in currency units, when the tax was configured as an amount. Null otherwise.
+             * @example 2.06
+             */
+            taxAmount?: number | null;
             taxMode?: components["schemas"]["TaxMode"];
             /**
              * Format: double
-             * @description Tax rate percentage. Null = no tax configured; always set and cleared with taxMode.
+             * @description Tax rate percentage, when the tax was configured as a rate. Null otherwise.
              * @example 8.25
              */
             taxRate?: number | null;
@@ -15190,86 +18032,99 @@ export interface components {
              */
             securityCode?: string | null;
         };
+        /**
+         * @description A saved card or ACH account, vaulted for reuse. `paymentMethodType` says which of
+         *     `cardDetails` and `achDetails` is populated; the other is null.
+         */
         PaymentMethodResponseDto: {
-            ach?: components["schemas"]["PaymentMethodResponseDtoAchDetails"];
-            card?: components["schemas"]["PaymentMethodResponseDtoCardDetails"];
+            achDetails?: components["schemas"]["PaymentMethodResponseDtoAchDetailsDto"];
+            cardDetails?: components["schemas"]["PaymentMethodResponseDtoCardDetailsDto"];
             /**
              * Format: date-time
-             * @description When the payment method was created
+             * @description When the payment method was created, in UTC.
              * @example 2026-01-01T00:00:00Z
              */
             createdOn?: string;
             /**
              * Format: uuid
-             * @description Linked customer Id, or null when this payment method is an orphan
-             *     owned by the merchant directly.
+             * @description Linked customer Id. Null for a merchant-level orphan payment method.
              * @example 44a9341f-1a69-4707-a2f5-acf46ffa31b0
              */
             customerId?: string | null;
             /**
-             * @description True when this is the customer's default payment method.
-             *     Always false for orphan payment methods.
+             * @description Default for the linked customer. Always false for orphans.
              * @example true
              */
             isDefault?: boolean;
-            /**
-             * @description Display name
-             * @example My Visa Card
-             */
-            name?: string | null;
             /**
              * Format: uuid
              * @description Payment method Id
              * @example c905b13a-dcb1-4148-85e1-a92cad3e0f31
              */
             paymentMethodId?: string;
-            type?: components["schemas"]["PaymentMethodType"];
+            /**
+             * @description Display label. Null for methods saved through a checkout session, a payment link or an
+             *     invoice, which carry no label.
+             * @example Personal Visa
+             */
+            paymentMethodName?: string | null;
+            paymentMethodType?: components["schemas"]["PaymentMethodType"];
         };
-        PaymentMethodResponseDtoAchDetails: {
+        PaymentMethodResponseDtoAchDetailsDto: {
             accountHolderType?: components["schemas"]["AccountHolderType"];
             /**
-             * @description ACH account number (masked)
-             * @example ****6789
+             * @description Last 2 digits of the bank account number.
+             * @example 90
              */
-            accountNumber?: string | null;
+            accountNumberLast2?: string | null;
+            /**
+             * @description ABA routing number.
+             * @example 021000021
+             */
+            accountRoutingNumber?: string | null;
             accountType?: components["schemas"]["AccountType"];
             /**
-             * @description ACH legal-entity name. Set on Business orphan PMs at create time
-             *     so it's available at transaction time when ContactInfo.CompanyName
-             *     is omitted on the request.
-             * @example Acme Corp Inc
+             * @description Legal entity name, set on Business orphan ACH accounts only.
+             * @example Acme Corp
              */
             companyName?: string | null;
             /**
-             * @description ACH routing number
-             * @example 021000021
+             * @description Masked bank account number.
+             * @example ****7890
              */
-            routingNumber?: string | null;
+            maskedAccountNumber?: string | null;
             /**
-             * @description ACH tax id (masked)
+             * @description Masked tax Id. Null if not set.
              * @example *****6789
              */
             taxId?: string | null;
         };
-        PaymentMethodResponseDtoCardDetails: {
+        PaymentMethodResponseDtoCardDetailsDto: {
+            cardBrand?: components["schemas"]["CardType"];
             /**
-             * @description Masked card number
-             * @example ************1111
+             * @description Last 4 digits of the card number.
+             * @example 1111
              */
-            cardMask?: string | null;
+            cardNumberLast4?: string | null;
             cardTokenType?: components["schemas"]["TokenType"];
+            cardType?: components["schemas"]["CreditDebitType"];
             /**
              * Format: int32
-             * @description Card expiration month
+             * @description Expiration month, 1 to 12.
              * @example 12
              */
-            expirationMonth?: number;
+            expirationMonth?: number | null;
             /**
              * Format: int32
-             * @description Card expiration year
-             * @example 2027
+             * @description Expiration year, four digits.
+             * @example 2030
              */
-            expirationYear?: number;
+            expirationYear?: number | null;
+            /**
+             * @description Card number with the first 6 and last 4 digits visible.
+             * @example 400112******1111
+             */
+            maskedCardNumber?: string | null;
         };
         /** @enum {string} */
         PaymentMethodType: "Card" | "ACH" | "Cash";
@@ -15281,20 +18136,151 @@ export interface components {
             ach?: components["schemas"]["AchPaymentMethodDto"];
             card?: components["schemas"]["CardPaymentMethodDto"];
         };
-        /** @enum {string} */
-        PaymentProcessorType: "Tsys" | "Ach" | "SandboxCard" | "SandboxAch";
         /**
-         * @description Payment session status<p>Possible values:</p>
-         *     <ul>
-         *     <li><b>1 - Created</b>: </li>
-         *     <li><b>2 - Cancelled</b>: </li>
-         *     <li><b>3 - Completed</b>: </li>
-         *     <li><b>4 - Failed</b>: </li>
-         *     <li><b>5 - Expired</b>: </li>
-         *     </ul>
-         * @enum {string}
+         * @description JSON Merge Patch (RFC 7396) of a payment link's payment methods. A method left out is
+         *     unchanged, and so is every field left out of a method that is present. A method is turned off
+         *     with `enabled: false`, which drops its configuration; explicit nulls are rejected.
          */
-        PaymentSessionStatusDto: "Created" | "Cancelled" | "Completed" | "Failed" | "Expired";
+        PaymentMethodsPatchDto: {
+            ach?: components["schemas"]["AchPaymentMethodPatchDto"];
+            card?: components["schemas"]["CardPaymentMethodPatchDto"];
+        };
+        /** @enum {string} */
+        PaymentProcessorType: "Tsys" | "Ach" | "SandboxCard" | "SandboxAch" | "External";
+        /**
+         * @description The payment methods a payment session offers on a read: the configured card and ACH methods
+         *     plus the digital wallets derived for the session. A wallet key is absent when the session does
+         *     not offer that wallet.
+         */
+        PaymentSessionPaymentMethodsDto: {
+            ach?: components["schemas"]["AchPaymentMethodDto"];
+            applePay?: components["schemas"]["WalletPaymentMethodDto"];
+            card?: components["schemas"]["CardPaymentMethodDto"];
+            googlePay?: components["schemas"]["WalletPaymentMethodDto"];
+        };
+        /**
+         * @description A payment session. Create and Get return this same object; paymentSessionResult is null until
+         *     the session is Completed.
+         */
+        PaymentSessionResponseDto: {
+            /**
+             * Format: double
+             * @description Null for a flexible-amount session.
+             * @example 100
+             */
+            baseAmount?: number | null;
+            /**
+             * @description The hosted page to send the customer to. Checkout sessions only; null for Elements.
+             * @example https://pay.flute.com/checkout/ebece8ac-a375-4bd1-bce7-dd352a00650c
+             */
+            checkoutUrl?: string | null;
+            /**
+             * Format: date-time
+             * @example 2026-01-01T00:00:00Z
+             */
+            createdOn?: string;
+            /**
+             * @description ISO 4217, pinned from the merchant configuration at creation.
+             * @example USD
+             */
+            currencyCode?: string | null;
+            customerHandling?: components["schemas"]["CustomerHandling"];
+            /** Format: uuid */
+            customerId?: string | null;
+            /**
+             * Format: date-time
+             * @description Null = the session never expires.
+             * @example 2026-01-01T00:00:00Z
+             */
+            expiresOn?: string | null;
+            /**
+             * @description Questions the customer answers on the hosted page, in the order shown. A session opened from
+             *     a payment link carries the link's fields as they were when it opened, with the same ids.
+             *     Checkout sessions only; empty for Elements and when there are none.
+             */
+            extraFields?: components["schemas"]["ExtraFieldDto"][] | null;
+            metadata?: {
+                [key: string]: string | null;
+            } | null;
+            /**
+             * Format: date-time
+             * @example 2026-01-01T00:00:00Z
+             */
+            modifiedOn?: string;
+            /**
+             * @description Checkout sessions only; null for Elements.
+             * @example Order #1234
+             */
+            pageName?: string | null;
+            /**
+             * Format: uuid
+             * @description Set when the session was generated from a payment link.
+             */
+            paymentLinkId?: string | null;
+            paymentMethods?: components["schemas"]["PaymentSessionPaymentMethodsDto"];
+            /**
+             * Format: uuid
+             * @example ebece8ac-a375-4bd1-bce7-dd352a00650c
+             */
+            paymentSessionId?: string;
+            paymentSessionMode?: components["schemas"]["SessionMode"];
+            paymentSessionResult?: components["schemas"]["PaymentSessionResultDto"];
+            paymentSessionStatus?: components["schemas"]["PaymentSessionStatus"];
+            paymentSessionType?: components["schemas"]["PaymentSessionType"];
+            /** @example order_123 */
+            referenceId?: string | null;
+            /**
+             * @description Checkout sessions only; null for Elements.
+             * @example https://myapp.com/payment/complete
+             */
+            returnUrl?: string | null;
+            skipAddressVerification?: boolean;
+            /**
+             * Format: double
+             * @description Fixed tax as set at creation; null when the tax was not configured as an amount.
+             * @example 9
+             */
+            taxAmount?: number | null;
+            taxMode?: components["schemas"]["TaxMode"];
+            /**
+             * Format: double
+             * @description Tax rate as set at creation; null when the tax was not configured as a rate.
+             * @example 8.25
+             */
+            taxRate?: number | null;
+            /**
+             * Format: double
+             * @example 10
+             */
+            tipAmount?: number | null;
+        };
+        /** @description What a Completed session produced: the payment method it saved and the transaction it charged. */
+        PaymentSessionResultDto: {
+            linkedTransaction?: components["schemas"]["GetTransactionResponseDto"];
+            paymentMethod?: components["schemas"]["PaymentMethodResponseDto"];
+        };
+        /** @enum {string} */
+        PaymentSessionStatus: "Created" | "Cancelled" | "Completed" | "Failed" | "Expired";
+        /** @enum {string} */
+        PaymentSessionType: "Checkout" | "Elements";
+        /** @description The account and environment the API key used for the request resolves to. */
+        PingResponseDto: {
+            /**
+             * Format: uuid
+             * @description The merchant's identifier when accountType is Merchant, the partner's identifier when it is Partner.
+             */
+            accountId?: string;
+            accountType?: components["schemas"]["UserType"];
+            /** @description Always true on a successful response; invalid credentials are answered 401 before this endpoint runs. */
+            authenticated?: boolean;
+            /**
+             * Format: uuid
+             * @description The identifier of the API key used to authenticate.
+             */
+            clientId?: string;
+            /** @description True when the API key belongs to a sandbox account, false for a production account. */
+            isSandbox?: boolean;
+        };
         PingWebhookIsvResponseDto: {
             /**
              * Format: int32
@@ -15514,6 +18500,42 @@ export interface components {
             transactionId?: string | null;
         };
         /**
+         * @description A pricing template you can offer on a merchant application: a merchant-facing plan of your
+         *     partner account.
+         */
+        PricingTemplateDto: {
+            /**
+             * Format: date-time
+             * @description When the pricing template was created.
+             */
+            createdOn?: string;
+            /**
+             * @description The name the merchant sees when choosing a plan.
+             * @example Simple flat rate
+             */
+            displayName?: string | null;
+            /**
+             * @description Whether the pricing template is offered when an application is created without pricingTemplateIds.
+             * @example true
+             */
+            isDefault?: boolean;
+            /**
+             * Format: date-time
+             * @description When the pricing template was last changed.
+             */
+            modifiedOn?: string;
+            /**
+             * Format: uuid
+             * @description Unique identifier for the pricing template. Supply it in pricingTemplateIds when creating an application.
+             */
+            pricingTemplateId?: string;
+            /**
+             * @description The pricing template's name, as shown to you in Flute.
+             * @example Flat Rate
+             */
+            pricingTemplateName?: string | null;
+        };
+        /**
          * @description <p>Possible values:</p>
          *     <ul>
          *     <li><b>1 - Card</b>: </li>
@@ -15522,6 +18544,34 @@ export interface components {
          * @enum {string}
          */
         PricingType: "Card" | "Cash";
+        /** @description A person at the business. */
+        PrimaryContactDto: {
+            /**
+             * @description Email address.
+             * @example marcus@example.com
+             */
+            email?: string | null;
+            /**
+             * @description First name, up to 30 characters.
+             * @example Marcus
+             */
+            firstName?: string | null;
+            /**
+             * @description Last name, up to 30 characters.
+             * @example Alvarez
+             */
+            lastName?: string | null;
+            /**
+             * @description Phone number in E.164 format.
+             * @example +15550148000
+             */
+            phoneNumber?: string | null;
+            /**
+             * @description Job title, up to 30 characters.
+             * @example Owner
+             */
+            title?: string | null;
+        };
         PrintTransactionReceiptRequestDto: {
             /**
              * Format: uuid
@@ -15556,21 +18606,21 @@ export interface components {
         };
         ProductDto: {
             /**
-             * @description The merchant assigned unique product identification code.
-             * @example SKU-12345
-             */
-            code?: string | null;
-            /**
              * Format: double
-             * @description Product discount percentage. Encoded as raw percentage — e.g. 10 represents 10%.
+             * @description Product discount rate. Encoded as raw percentage — e.g. 10 represents 10%.
              * @example 10
              */
-            discountPercentage?: number | null;
+            discountRate?: number | null;
             /**
              * @description The unit of measurement for the product.
              * @example EA
              */
             measurementUnit?: string | null;
+            /**
+             * @description The merchant assigned unique product identification code.
+             * @example SKU12345
+             */
+            productCode?: string | null;
             /**
              * @description The name of the product.
              * @example Widget
@@ -15610,11 +18660,18 @@ export interface components {
         RefundDetailsDto: {
             /**
              * Format: double
-             * @description Amount still refundable — authoritative, i.e. captured amount minus Arise.IsvApiBff.Contracts.v2.Transaction.SharedDtos.RefundDetailsDto.RefundedAmount,
+             * @description Amount still refundable — authoritative, i.e. captured amount minus `refundedAmount`,
              *     as reported by the gateway.
              * @example 120
              */
             availableRefundAmount?: number;
+            /**
+             * @description True once approved refunds leave nothing refundable — `refundedAmount` above 0 and
+             *     `availableRefundAmount` at 0. False for a transaction nothing was refunded from,
+             *     even when nothing is available (e.g. an authorization that was never captured).
+             * @example false
+             */
+            isFullyRefunded?: boolean;
             /**
              * Format: double
              * @description Total amount already refunded against this transaction.
@@ -15664,12 +18721,89 @@ export interface components {
             recipient: string;
             shareBy: components["schemas"]["NotificationDeliveryMethod"];
         };
-        /** @description Suggested tips information. */
-        SuggestedTipsDto: {
-            /** Format: double */
-            tipAmount?: number;
-            /** Format: double */
-            tipPercent?: number;
+        /**
+         * @description Who performs the site inspection.<p>Possible values:</p>
+         *     <ul>
+         *     <li><b>1 - Flute</b>: We perform the site inspection.</li>
+         *     <li><b>2 - Agent</b>: The partner performs the site inspection.</li>
+         *     </ul>
+         * @enum {string}
+         */
+        SiteInspectionType: "Flute" | "Agent";
+        /**
+         * @description A split profile a partner user can place a merchant application on: how residuals on the
+         *     application are divided.
+         */
+        SplitProfileDto: {
+            /**
+             * Format: date-time
+             * @description When the split profile was created.
+             */
+            createdOn?: string;
+            /**
+             * @description Whether this is the user's default split profile.
+             * @example true
+             */
+            isDefault?: boolean;
+            /**
+             * @description Whether this split profile is marked high risk. High-risk profiles are typically only assigned after underwriting flags the deal as high risk.
+             * @example false
+             */
+            isHighRisk?: boolean;
+            /**
+             * Format: date-time
+             * @description When the split profile was last changed; the creation time until it changes.
+             */
+            modifiedOn?: string;
+            /**
+             * Format: uuid
+             * @description Unique identifier for the split profile. Supply it as splitProfileId when creating an application for this user.
+             */
+            splitProfileId?: string;
+            /**
+             * @description The split profile's name, as shown in Flute.
+             * @example Default Split
+             */
+            splitProfileName?: string | null;
+        };
+        /**
+         * @description The tax recorded on the transaction, which a checkout session or a payment link configures. Null when
+         *     the transaction carries none — including when the only tax sent was an enhanced-data (Level 2) sales
+         *     tax rate, which qualifies the transaction for interchange without being charged to the payer.
+         *     Distinct from Arise.IsvApiBff.Contracts.v2.Transaction.SharedDtos.AmountDetailsDto.TaxAmount, which is a component of the amount breakdown
+         *     and so reports only a tax that raised the total: an Inclusive tax is already inside
+         *     Arise.IsvApiBff.Contracts.v2.Transaction.SharedDtos.AmountDetailsDto.BaseAmount and is 0 there.
+         */
+        TaxDetailsDto: {
+            /**
+             * Format: double
+             * @description Tax the transaction was quoted at, whatever the mode. It describes the quote, as the amount
+             *     breakdown does: a capture or a host approval for less leaves it unchanged, and processedAmount
+             *     reports what was taken.
+             * @example 7.83
+             */
+            taxAmount?: number;
+            taxMode?: components["schemas"]["TaxMode"];
+            /**
+             * Format: double
+             * @description The rate the tax was configured at, as a percent (e.g. 8.5 = 8.5%). A resource that supplies its
+             *     own tax amount — an invoice, which taxes its line items rather than the whole amount — has this
+             *     rate recorded rather than applied, so it need not reproduce Arise.IsvApiBff.Contracts.v2.Transaction.SharedDtos.TaxDetailsDto.TaxAmount; one that
+             *     supplies only the amount has the rate derived from it.
+             * @example 8.5
+             */
+            taxRate?: number;
+            /**
+             * Format: double
+             * @description What the quote charged before the tax: its total less the tip, the surcharge and an Exclusive tax,
+             *     all charged outside the taxed amount, and less Arise.IsvApiBff.Contracts.v2.Transaction.SharedDtos.TaxDetailsDto.TaxAmount when the tax is Inclusive
+             *     and therefore already inside it. With a rate-driven tax this is the amount the rate was applied
+             *     to, to the cent: the quote's components are each rounded before they are stored, so the residual
+             *     can differ from it by 0.01. With a supplied amount it is still what was charged before tax, which
+             *     is not the narrower base that amount was computed on.
+             * @example 92.17
+             */
+            taxableAmount?: number;
         };
         /** @enum {string} */
         TaxMode: "Exclusive" | "Inclusive";
@@ -15684,7 +18818,7 @@ export interface components {
         /** @enum {string} */
         TerminalMode: "Standalone" | "SemiIntegrated";
         /** @enum {string} */
-        TerminalModel: "SunmiP2" | "SunmiP2LiteSe" | "VerifoneVictaMobile" | "VerifoneVictaPortable" | "SunmiP3H";
+        TerminalModel: "SunmiP2" | "SunmiP2LiteSe" | "VerifoneVictaMobile" | "VerifoneVictaPortable" | "SunmiP3H" | "SunmiCPadPay" | "SunmiP3Air";
         /** @enum {string} */
         TerminalPosStatus: "Ready" | "Busy" | "Offline";
         /** @enum {string} */
@@ -15710,15 +18844,6 @@ export interface components {
         };
         /** @enum {string} */
         TokenType: "Local" | "Network";
-        /**
-         * @description Card Token type<p>Possible values:</p>
-         *     <ul>
-         *     <li><b>1 - Local</b>: Regular</li>
-         *     <li><b>2 - Network</b>: Network</li>
-         *     </ul>
-         * @enum {string}
-         */
-        TokenTypeDto: "Local" | "Network";
         /** @description Address Verification Service (AVS) response for card payments. */
         TransactionAddressVerificationServiceResponseDto: {
             action?: components["schemas"]["AvsActions"];
@@ -15753,7 +18878,8 @@ export interface components {
             maskedCardNumber?: string | null;
             /**
              * Format: uuid
-             * @description Identifier of the stored payment method, when the transaction used one.
+             * @description Identifier of the stored payment method the transaction used, or that its card was stored as afterwards
+             *     (for example after the cardholder consented on a POS terminal).
              */
             paymentMethodId?: string | null;
         };
@@ -15822,13 +18948,28 @@ export interface components {
             status?: components["schemas"]["TransactionStatus"];
             type?: components["schemas"]["TransactionDetailEventType"];
         };
-        /** @description Transaction operation information. */
-        TransactionOperationDto: {
-            /** Format: double */
-            availableAmount?: number | null;
-            suggestedTips?: components["schemas"]["SuggestedTipsDto"][] | null;
-            type?: string | null;
-            typeId?: components["schemas"]["TransactionTypeDto"];
+        /**
+         * @description The customer's answer to one extra field of the payment link or checkout session that produced the
+         *     transaction.
+         */
+        TransactionExtraFieldDto: {
+            /**
+             * Format: uuid
+             * @description The field's id on the payment link or checkout session; answers to the same link field share it
+             *     across payments.
+             * @example 3f2b8c1e-7a4d-4e9b-9c2a-1d5e6f7a8b9c
+             */
+            extraFieldId?: string;
+            /**
+             * @description The field label at the time of payment; later renames do not change it.
+             * @example Invoice number
+             */
+            name?: string | null;
+            /**
+             * @description The answer as plain text, exactly as entered.
+             * @example INV-1042
+             */
+            value?: string | null;
         };
         /** @description A product line item in Level 3 enhanced transaction data. */
         TransactionProductDto: {
@@ -15877,120 +19018,6 @@ export interface components {
              */
             unitPrice?: number | null;
         };
-        /** @description Transaction receipt information. */
-        TransactionReceiptDto: {
-            achProcessingDetails?: components["schemas"]["TransactionReceiptDtoElectronicCheckDetails"];
-            amount?: components["schemas"]["TransactionReceiptDtoTransactionReceiptAmountDto"];
-            authCode?: string | null;
-            availableOperations?: components["schemas"]["TransactionOperationDto"][] | null;
-            avsResponse?: components["schemas"]["AvsResponseDto"];
-            cardDataSource?: string | null;
-            cardDataSourceId?: components["schemas"]["CardDataSourceDto"];
-            cardProcessingDetails?: components["schemas"]["TransactionReceiptDtoCardDetailsDto"];
-            cardTokenType?: components["schemas"]["TokenTypeDto"];
-            cardholderAuthenticationMethod?: string | null;
-            cardholderAuthenticationMethodId?: components["schemas"]["CardholderAuthenticationMethodDto"];
-            currency?: string | null;
-            /** Format: int32 */
-            currencyId?: number;
-            /** Format: uuid */
-            customerId?: string | null;
-            customerPan?: string | null;
-            cvmResultMsg?: string | null;
-            emvTags?: components["schemas"]["TransactionReceiptDtoEmvTagsDto"];
-            merchantAddress?: string | null;
-            merchantEmailAddress?: string | null;
-            merchantName?: string | null;
-            merchantPhoneNumber?: string | null;
-            merchantWebsite?: string | null;
-            operationType?: string | null;
-            /** Format: int32 */
-            operationTypeId?: number;
-            orderNumber?: string | null;
-            paymentMethodType?: string | null;
-            /** Format: int32 */
-            paymentMethodTypeId?: number;
-            processor?: string | null;
-            /** Format: uuid */
-            processorId?: string;
-            responseCode?: string | null;
-            responseDescription?: string | null;
-            source?: components["schemas"]["TransactionReceiptDtoTransactionReceiptSourceResponseDto"];
-            status?: string | null;
-            /** Format: int32 */
-            statusId?: number;
-            /** Format: date-time */
-            transactionDateTime?: string;
-            /** Format: uuid */
-            transactionId?: string;
-            transactionType?: string | null;
-            /** Format: int32 */
-            transactionTypeId?: number;
-        };
-        TransactionReceiptDtoCardDetailsDto: {
-            authCode?: string | null;
-            cardCreditDebitType?: string | null;
-            /** Format: int32 */
-            cardCreditDebitTypeId?: number;
-            cardType?: string | null;
-            /** Format: int32 */
-            cardTypeId?: number;
-            mid?: string | null;
-            processCreditDebitType?: string | null;
-            /** Format: int32 */
-            processCreditDebitTypeId?: number;
-            rrn?: string | null;
-            tid?: string | null;
-        };
-        TransactionReceiptDtoElectronicCheckDetails: {
-            accountHolderType?: string | null;
-            /** Format: int32 */
-            accountHolderTypeId?: number;
-            accountType?: string | null;
-            /** Format: int32 */
-            accountTypeId?: number;
-            customerAccountNumber?: string | null;
-            customerRoutingNumber?: string | null;
-            taxId?: string | null;
-        };
-        TransactionReceiptDtoEmvTagsDto: {
-            ac?: string | null;
-            aid?: string | null;
-            applicationLabel?: string | null;
-            rawTags?: components["schemas"]["KeyValuePairOfStringAndString"][] | null;
-            tsi?: string | null;
-            tvr?: string | null;
-        };
-        TransactionReceiptDtoTransactionReceiptAmountDto: {
-            /** Format: double */
-            baseAmount?: number;
-            /** Format: double */
-            cashDiscountAmount?: number;
-            /** Format: double */
-            cashDiscountRate?: number;
-            /** Format: double */
-            percentageOffAmount?: number;
-            /** Format: double */
-            percentageOffRate?: number;
-            /** Format: double */
-            surchargeAmount?: number;
-            /** Format: double */
-            surchargeRate?: number;
-            /** Format: double */
-            tipAmount?: number;
-            /** Format: double */
-            tipRate?: number;
-            /** Format: double */
-            totalAmount?: number;
-        };
-        TransactionReceiptDtoTransactionReceiptSourceResponseDto: {
-            /** Format: uuid */
-            id?: string | null;
-            name?: string | null;
-            type?: string | null;
-            /** Format: int32 */
-            typeId?: number | null;
-        };
         /** @description Describes what originated the transaction (portal, API key, terminal, invoice, etc.). */
         TransactionSourceDto: {
             /**
@@ -16005,16 +19032,6 @@ export interface components {
              */
             sourceName?: string | null;
             sourceType?: components["schemas"]["IdentityType"];
-        };
-        /** @description Transaction source information. */
-        TransactionSourceResponseDto: {
-            /** Format: uuid */
-            id?: string | null;
-            name?: string | null;
-            type?: string | null;
-            /** Format: int32 */
-            typeId?: number | null;
-            version?: string | null;
         };
         /** @enum {string} */
         TransactionStatus: "Pending" | "Approved" | "Declined" | "Failed" | "UnknownOutcome";
@@ -16089,28 +19106,6 @@ export interface components {
         };
         /** @enum {string} */
         TransactionType: "Authorization" | "Sale" | "Capture" | "Void" | "Refund" | "CardAuthentication" | "RefundWORef" | "TipAdjustment" | "Settle" | "AchDebit" | "AchRefund" | "AchHold" | "AchUnHold" | "AchCancel" | "AchCredit";
-        /**
-         * @description <p>Possible values:</p>
-         *     <ul>
-         *     <li><b>1 - Authorization</b>: </li>
-         *     <li><b>2 - Sale</b>: </li>
-         *     <li><b>3 - Capture</b>: </li>
-         *     <li><b>4 - Void</b>: </li>
-         *     <li><b>5 - Refund</b>: </li>
-         *     <li><b>6 - CardAuthentication</b>: </li>
-         *     <li><b>7 - RefundWORef</b>: </li>
-         *     <li><b>8 - TipAdjustment</b>: </li>
-         *     <li><b>10 - Settle</b>: </li>
-         *     <li><b>11 - AchDebit</b>: </li>
-         *     <li><b>12 - AchRefund</b>: </li>
-         *     <li><b>13 - AchHold</b>: </li>
-         *     <li><b>14 - AchUnHold</b>: </li>
-         *     <li><b>15 - AchCancel</b>: </li>
-         *     <li><b>16 - AchCredit</b>: </li>
-         *     </ul>
-         * @enum {string}
-         */
-        TransactionTypeDto: "Authorization" | "Sale" | "Capture" | "Void" | "Refund" | "CardAuthentication" | "RefundWORef" | "TipAdjustment" | "Settle" | "AchDebit" | "AchRefund" | "AchHold" | "AchUnHold" | "AchCancel" | "AchCredit";
         UnprocessableEntityExceptionExample: {
             cause?: string | null;
             correlationId?: string | null;
@@ -16158,7 +19153,9 @@ export interface components {
         };
         /**
          * @description Presence-tracked address for merge-patch: each field is RiseOsV2.Rest.MergePatch.Optional`1 so an
-         *     omitted field is left unchanged while an explicit null clears it.
+         *     omitted field is left unchanged while an explicit null clears it. The exception is the state:
+         *     moving the address to US requires sending stateCode, and moving it out of US clears stateCode
+         *     when it is not sent.
          */
         UpdateCustomerRequestDtoUpdateAddressDto: {
             /**
@@ -16193,6 +19190,33 @@ export interface components {
              */
             stateCode?: string | null;
         };
+        /** @description An item of the list that replaces a payment link's extra fields. */
+        UpdateExtraFieldDto: {
+            /**
+             * @description Helper text shown below the field, at most 255 characters and without the null character (U+0000).
+             * @example Printed at the top of your bill
+             */
+            description?: string | null;
+            /**
+             * Format: uuid
+             * @description Id of one of this link's fields, to update that field and keep its id. Omit for a new
+             *     field. An id that does not belong to this link is rejected.
+             * @example 6f1c2a52-8a51-4d2e-9a5e-1b2c3d4e5f60
+             */
+            extraFieldId?: string | null;
+            /**
+             * @description true: the customer must answer before paying. false: the field is shown as optional and can
+             *     be left empty.
+             * @example true
+             */
+            isRequired: boolean;
+            /**
+             * @description Label shown to the customer, 1 to 255 characters, not blank, and without control characters
+             *     such as tabs or line breaks. Duplicate names are allowed.
+             * @example Invoice number
+             */
+            name: string;
+        };
         /**
          * @description JSON Merge Patch (RFC 7396) body for a payment link. An omitted field is left unchanged;
          *     an explicit `null` clears a clearable field.
@@ -16213,8 +19237,10 @@ export interface components {
             currencyCode?: string | null;
             /**
              * Format: uuid
-             * @description Customer the link is issued for. Explicit null detaches the customer. Not allowed
-             *     once the merged link is MultiUse.
+             * @description Customer the link is issued for. Explicit null detaches the customer; the link's mode
+             *     stays as it is. On a MultiUse link its payments, and any payment method a payer saves
+             *     there, are recorded under this customer, but the payment page never shows the
+             *     customer's details or saved methods.
              */
             customerId?: string | null;
             /** @description Merchant-internal notes, max 500 characters. Explicit null clears them. */
@@ -16224,38 +19250,61 @@ export interface components {
              * @description UTC expiration; must be a future date. Explicit null = the link never expires.
              */
             expiresOn?: string | null;
+            /**
+             * @description Replaces the whole list; arrays are not merged. Include an extraFieldId to keep that field,
+             *     leave it out for a new field. An empty list or explicit null removes every field. Only
+             *     sessions the link opens afterwards carry the change.
+             */
+            extraFields?: components["schemas"]["UpdateExtraFieldDto"][] | null;
             linkType?: components["schemas"]["PaymentLinkType"];
+            /**
+             * @description Merged key by key: a key with a value is added or replaced, a key set to null is removed,
+             *     and keys left out are kept. Explicit null removes every key. The merged pairs must stay
+             *     within the limits of create. Only sessions the link opens afterwards carry the change.
+             */
+            metadata?: {
+                [key: string]: string | null;
+            } | null;
             /**
              * @description Merchant-facing label, max 80 characters. Cannot be cleared.
              * @example Spring campaign
              */
             name?: string | null;
             paymentLinkStatus?: components["schemas"]["PaymentLinkStatus"];
-            paymentMethods?: components["schemas"]["PaymentMethodsDto"];
+            paymentMethods?: components["schemas"]["PaymentMethodsPatchDto"];
             /**
              * @description Merchant label, max 200 characters. Explicit null clears it.
              * @example ORDER-1042
              */
             referenceId?: string | null;
+            /**
+             * Format: double
+             * @description Pre-calculated tax in currency units, with up to 2 decimal places, not negative. Same merge
+             *     rule as taxRate; the merged link must keep a fixed baseAmount, and in Inclusive mode the
+             *     amount must stay below it.
+             * @example 2.06
+             */
+            taxAmount?: number | null;
             taxMode?: components["schemas"]["TaxMode"];
             /**
              * Format: double
-             * @description Tax rate percentage, 0 to 100, with up to 3 decimal places. The merged link
-             *     must keep taxRate and taxMode set or cleared together; explicit null clears the tax.
+             * @description Tax rate percentage, 0 to 100, with up to 3 decimal places. The merged link must keep
+             *     taxMode set together with exactly one of taxRate and taxAmount, or all three cleared;
+             *     switching a link to taxAmount therefore needs an explicit null here.
              * @example 8.25
              */
             taxRate?: number | null;
         };
         /**
-         * @description JSON Merge Patch (RFC 7396) body for a payment method. Only the name is patchable: an
-         *     omitted Arise.IsvApiBff.Contracts.v2.Customers.PaymentMethods.Requests.UpdatePaymentMethodRequestDto.PaymentName leaves it unchanged; a value overwrites it.
+         * @description JSON Merge Patch (RFC 7396) body for a payment method. Only the name is patchable: an omitted
+         *     Arise.IsvApiBff.Contracts.v2.PaymentMethods.Requests.UpdatePaymentMethodRequestDto.PaymentMethodName leaves it unchanged; a value overwrites it; it cannot be cleared.
          */
         UpdatePaymentMethodRequestDto: {
             /**
-             * @description Payment method name
-             * @example Personal Visa
+             * @description Display label, at most 20 characters.
+             * @example Work Visa
              */
-            paymentName?: string | null;
+            paymentMethodName?: string | null;
         };
         /**
          * @description JSON Merge Patch (RFC 7396) body for a merchant's transaction autofill (L2/L3) settings.
@@ -16294,21 +19343,21 @@ export interface components {
         };
         UpdateTransactionAutofillRequestDtoProductPatchDto: {
             /**
-             * @description The merchant assigned unique product identification code.
-             * @example SKU-12345
-             */
-            code?: string | null;
-            /**
              * Format: double
-             * @description Product discount percentage. Encoded as raw percentage — e.g. 10 represents 10%.
+             * @description Product discount rate. Encoded as raw percentage — e.g. 10 represents 10%.
              * @example 10
              */
-            discountPercentage?: number | null;
+            discountRate?: number | null;
             /**
              * @description The unit of measurement for the product.
              * @example EA
              */
             measurementUnit?: string | null;
+            /**
+             * @description The merchant assigned unique product identification code.
+             * @example SKU12345
+             */
+            productCode?: string | null;
             /**
              * @description The name of the product.
              * @example Widget
@@ -16347,6 +19396,32 @@ export interface components {
             /** @description Event types to subscribe to. Replaces the existing subscription list wholesale. */
             eventTypes?: components["schemas"]["WebhookEventType"][] | null;
         };
+        /**
+         * @description A person who can sign in under your partner account, one of your merchants, or an application
+         *     you invited. One row per person, however many of those accounts they hold a profile on.
+         */
+        UserDto: {
+            /**
+             * @description The email address the user signs in with.
+             * @example ada@partner.example
+             */
+            email?: string | null;
+            /**
+             * Format: uuid
+             * @description Unique identifier for the user. Pass it as userId to the per-user endpoints.
+             */
+            userId?: string;
+        };
+        /**
+         * @description Which account a user belongs to.<p>Possible values:</p>
+         *     <ul>
+         *     <li><b>1 - Partner</b>: A user of your partner account.</li>
+         *     <li><b>2 - Merchant</b>: A user of one of your merchants.</li>
+         *     <li><b>3 - Applicant</b>: A merchant applicant you invited, still working through their application.</li>
+         *     </ul>
+         * @enum {string}
+         */
+        UserType: "Partner" | "Merchant" | "Applicant";
         ValidationExceptionExample: {
             cause?: string | null;
             correlationId?: string | null;
@@ -16363,6 +19438,22 @@ export interface components {
             /** Format: int32 */
             statusCode?: number | null;
             title?: string | null;
+        };
+        /**
+         * @description A digital wallet (Apple Pay, Google Pay) offered on a payment session. Wallets are card-network
+         *     wallets: the payment authorizes as a card payment on the session's card processor. Whether a
+         *     session offers a wallet follows from the merchant's wallet enablement, the card processor and
+         *     the merchant's pricing mode, so it is reported on reads and not configured per session.
+         *     A wallet payment never saves the payment method, so a SaveMethod session offers no wallet and a
+         *     PaymentAndSave session paid by one completes with no saved payment method.
+         */
+        WalletPaymentMethodDto: {
+            /**
+             * Format: uuid
+             * @description Card processor charging this wallet's payments: the session's pinned card processor.
+             * @example d529945e-8d10-4cb4-9dc3-718e57f3f14e
+             */
+            processorId?: string;
         };
         /** @enum {string} */
         WebhookDeliveryLogExportFormat: "Csv" | "Json";
@@ -16522,7 +19613,7 @@ export interface components {
         /** @enum {string} */
         WebhookEndpointStatus: "Active" | "Inactive";
         /** @enum {string} */
-        WebhookEventType: "ping" | "settlement.batch.completed" | "transaction.card.authorized" | "transaction.card.captured" | "transaction.card.declined" | "transaction.card.failed" | "transaction.card.voided" | "transaction.card.refunded" | "transaction.ach.scheduled" | "transaction.ach.in_progress" | "transaction.ach.held" | "transaction.ach.cancelled" | "transaction.ach.cleared" | "transaction.ach.charged_back" | "transaction.ach.failed" | "transaction.ach.refunded" | "invoice.created" | "invoice.paid" | "subscription.created" | "subscription.paid" | "subscription.payment_failed" | "subscription.delinquent" | "quick_payment.created" | "quick_payment.paid" | "merchant.created" | "api_key.created" | "api_key.deleted" | "terminal.added" | "terminal.deactivated" | "terminal.out_of_paper" | "payment_session.created" | "payment_session.completed" | "payment_link.created" | "payment_link.updated" | "application.draft" | "application.invited" | "application.in_progress" | "application.submitted" | "application.awaiting_signature" | "application.under_review" | "application.information_needed" | "application.declined";
+        WebhookEventType: "ping" | "settlement.batch.completed" | "transaction.card.authorized" | "transaction.card.captured" | "transaction.card.declined" | "transaction.card.failed" | "transaction.card.voided" | "transaction.card.refunded" | "transaction.ach.scheduled" | "transaction.ach.in_progress" | "transaction.ach.held" | "transaction.ach.cancelled" | "transaction.ach.cleared" | "transaction.ach.charged_back" | "transaction.ach.failed" | "transaction.ach.refunded" | "invoice.created" | "invoice.paid" | "subscription.created" | "subscription.paid" | "subscription.payment_failed" | "subscription.delinquent" | "quick_payment.created" | "quick_payment.paid" | "merchant.created" | "api_key.created" | "api_key.deleted" | "terminal.added" | "terminal.deactivated" | "terminal.out_of_paper" | "payment_session.created" | "payment_session.completed" | "payment_link.created" | "payment_link.updated" | "application.draft" | "application.invited" | "application.in_progress" | "application.submitted" | "application.awaiting_signature" | "application.under_review" | "application.information_needed" | "application.declined" | "application.deleted";
         WebhookEventTypeIsvDto: {
             /**
              * @description Human-readable description of when this event fires.
